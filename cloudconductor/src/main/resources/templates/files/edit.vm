@@ -1,0 +1,105 @@
+#if($addMode)
+<a class="backButton" href="/web/files"><span>Back</span>
+#else
+<a class="backButton" href="/web/files#$cname"><span>Back</span>
+#end
+</a>
+
+#if( $newError )
+<div class="info_container">
+	<p>$newError</p>
+</div>
+#end
+
+<div class="segment_container">
+	<h2>Edit Config File</h2>
+
+	#if($addMode)
+		<form action="/web/files/NEWCONFIGFILE/save" method="post"
+		enctype="application/x-www-form-urlencoded"> 
+	#else
+		<form action="/web/files/$cname/save" method="post"
+		enctype="application/x-www-form-urlencoded">
+	#end 
+		<div class="segment_content">
+			<table class="install_status">
+				<tr>
+					<td align="left">Name:</td>
+					<td><input style="width: 100%;" name="name" type="text"
+						#if($file) value="$file.name" #end/></td>
+				</tr>
+				<tr>
+					<td align="left">Owner:</td>
+					<td align="center"><input style="width: 100%;" name="owner"
+						type="text" #if($file) value="$file.owner" #end /></td>
+				</tr>
+				<tr>
+					<td align="left">Group:</td>
+					<td align="center"><input style="width: 100%;" name="group"
+						type="text" #if($file) value="$file.group" #end /></td>
+				</tr>
+				<tr>
+					<td align="left">Mode:</td>
+					<td align="center"><input style="width: 100%;" name="mode"
+						type="text" #if($file) value="$file.mode" #end /></td>
+				</tr>
+				<tr>
+					<td align="left">Target Path:</td>
+					<td><input style="width: 100%;" name="targetPath" type="text"
+						#if($file) value="$file.targetPath" #end />
+					</td>
+				</tr>
+				<tr>
+					<td align="left">Template:</td>
+					<td align="left"><input type="checkbox"
+						name="isTemplate" type="text" #if($file.isTemplate) checked="checked" #end/></td>
+				</tr>
+				<tr>
+					<td align="left">Package dependency:</td>
+					<td ><select name="depPackage" size="1" style="width: 100%;">
+						<option selected="selected">- none -</option>
+						#foreach ($pkg in $packages)
+							<option value="$pkg.key" #if ($pkg.value) selected="selected" #end>$pkg.key</option>
+						#end
+					</select></td>
+				</tr>
+				<tr>
+					<td align="left">Services to reload on change:</td>
+					<td align="center"><select name="depServices" size="5" multiple style="width: 100%;">
+						#foreach ($svc in $services)
+							<option value="$svc.key" #if ($svc.value) selected="selected" #end>$svc.key</option>
+						#end
+					</select></td>
+				</tr>
+			</table>
+		</div>
+		
+		<div class="segment_content">
+		<h3>File Content</h3>
+			<div align="center">
+				<textarea class="file_input" name="file_content" rows="15" wrap='off'>#if($file.content)$file.content#end</textarea>
+			</div>
+		</div>
+		
+		<div class="segment_content">
+		<h3>Used by Template(s)</h3>
+			<table  class="install_status">
+				<tr>
+					<th />
+					<th>Name</td>
+				<tr>
+				#foreach ($template in $templates)
+				<tr>
+					<td width="5%" align="center"><input type="checkbox" name="templates" value="$template.key" #if($template.value)  checked="checked" #end></td>
+					<td>$template.key</td>
+				</tr>
+				#end
+			</table>
+		</div>	
+		
+		<div align="right">
+			<input type="submit" value="Submit" />
+		</div>
+		
+	</form>
+</div>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  cloudconductor-server
+  %%
+  Copyright (C) 2013 - 2014 Cinovo AG
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="1" author="psigloch" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+		<sql dbms="postgresql, hsqldb"><![CDATA[
+			CREATE SCHEMA cloudconductor;
+		]]></sql>
+
+		<createTable tableName="package" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+		</createTable>
+
+		<createTable tableName="rpm" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="packageid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.package(id)" foreignKeyName="fk_rpm_pkg" deleteCascade="true" />
+			</column>
+			<column name="deprecated" type="boolean" defaultValueBoolean="false" />
+			<column name="version" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="dependency" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="type" type="integer">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="operator" type="varchar(16)">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappingrpmdep" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="dependencyid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.dependency(id)" foreignKeyName="fk_dependency_rpm" deleteCascade="true" />
+			</column>
+			<column name="rpmid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.rpm(id)" foreignKeyName="fk_rpm_dependency" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sshkey" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="keycontent" type="varchar(1024)">
+				<constraints nullable="false" />
+			</column>
+			<column name="owner" type="varchar(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="template" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="yum" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+		</createTable>
+
+		<createTable tableName="mappingrpmtemplate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_rpm" deleteCascade="true" />
+			</column>
+			<column name="rpmid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.rpm(id)" foreignKeyName="fk_rpm_template" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="host" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_host_template" />
+			</column>
+			<column name="lastseen" type="bigint" />
+		</createTable>
+
+		<createTable tableName="service" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+			<column name="initscript" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="servicestate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="serviceid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.service(id)" foreignKeyName="fk_svcstate_svc_host" deleteCascade="true" />
+			</column>
+			<column name="hostid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.host(id)" foreignKeyName="fk_svcstate_host_svc" deleteCascade="true" />
+			</column>
+			<column name="state" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="packagestate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="rpmid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.rpm(id)" foreignKeyName="fk_packagestate_rpm_host" deleteCascade="true" />
+			</column>
+			<column name="hostid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.host(id)" foreignKeyName="fk_packagestate_host_rpm" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappingsvcpkg" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="pkgid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.package(id)" foreignKeyName="fk_pkg_svc" deleteCascade="true" />
+			</column>
+			<column name="svcid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.service(id)" foreignKeyName="fk_svc_pkg" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappinghostsvcst" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="hostid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.host(id)" foreignKeyName="fk_host_svc" deleteCascade="true" />
+			</column>
+			<column name="svcstid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.servicestate(id)" foreignKeyName="fk_svcst_host" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappingtemplatehost" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_maphost" deleteCascade="true" />
+			</column>
+			<column name="hostid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.host(id)" foreignKeyName="fk_maphost_template" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappingtemplatesshkey" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_sshkey" deleteCascade="true" />
+			</column>
+			<column name="sshkeyid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.sshkey(id)" foreignKeyName="fk_sshkey_template" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="configfile" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="targetpath" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="owner" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="filegroup" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="filemode" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="template" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="reloadable" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="checksum" type="varchar(200)" />
+			<column name="packageid" type="bigint">
+				<constraints references="cloudconductor.package(id)" foreignKeyName="fk_configfile_pkg" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="mappingconfigfileservice" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="configfileid" type="bigint">
+				<constraints references="cloudconductor.configfile(id)" foreignKeyName="fk_configfile_svc" deleteCascade="true" />
+			</column>
+			<column name="serviceid" type="bigint">
+				<constraints references="cloudconductor.service(id)" foreignKeyName="fk_svc_configfile" deleteCascade="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="configdata" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="configfileid" type="bigint">
+				<constraints references="cloudconductor.configfile(id)" foreignKeyName="fk_cdata_cf" deleteCascade="true" />
+			</column>
+			<column name="data" type="text" />
+		</createTable>
+
+		<createTable tableName="mappingconfigfiletemplate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="configfileid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.configfile(id)" foreignKeyName="fk_configfile_template"
+					deleteCascade="true" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_configfile" deleteCascade="true" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2" author="psigloch">
+		<createTable tableName="configvalues" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="template" type="varchar(255)" defaultValue="GLOBAL">
+				<constraints nullable="false" />
+			</column>
+			<column name="service" type="varchar(255)" />
+			<column name="configkey" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="value" type="varchar(255)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3" author="psigloch">
+		<createTable tableName="servicedefaultstate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="serviceid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.service(id)" foreignKeyName="fk_svcdefstate_svc_template"
+					deleteCascade="true" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_svcdefstate_template_svc"
+					deleteCascade="true" />
+			</column>
+			<column name="state" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="yumserver" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="yumpath" type="varchar(150)" />
+			<column name="description" type="varchar(1024)" />
+		</createTable>
+
+		<renameColumn tableName="template" oldColumnName="yum" newColumnName="yum_old" schemaName="cloudconductor" columnDataType="varchar(200)" />
+		<addColumn tableName="template" schemaName="cloudconductor">
+			<column name="yum" type="bigint">
+				<constraints references="cloudconductor.yumserver(id)" foreignKeyName="fk_template_yum" deleteCascade="true" />
+			</column>
+		</addColumn>
+
+		<sql>INSERT INTO cloudconductor.yumserver (yumpath) SELECT DISTINCT yum_old FROM cloudconductor.template</sql>
+		<sql>UPDATE cloudconductor.template as t SET yum = (SELECT id FROM cloudconductor.yumserver as y WHERE y.yumpath = t.yum_old)</sql>
+
+		<dropColumn tableName="template" columnName="yum_old" schemaName="cloudconductor" />
+	</changeSet>
+	<changeSet id="4" author="psigloch">
+		<sql>INSERT INTO cloudconductor.servicedefaultstate (serviceid, templateid, state) SELECT ss.serviceid, h.templateid, 2 FROM
+			cloudconductor.servicestate as ss, cloudconductor.host as h WHERE ss.hostid = h.id;</sql>
+	</changeSet>
+	<changeSet id="5" author="psigloch">
+		<addColumn tableName="template" schemaName="cloudconductor">
+			<column name="autoupdate" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="6" author="psigloch">
+		<renameTable newTableName="packageversion" oldTableName="rpm" schemaName="cloudconductor" />
+	</changeSet>
+	
+	<changeSet id="7" author="psigloch">
+		<createTable tableName="serveroptions" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="bgcolor" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="allowautoupdate" type="boolean" defaultValue="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(1024)" />
+		</createTable>
+		<createTable tableName="additionallinks" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="label" type="varchar(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="url" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="auditlog" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="timestamp" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="username" type="varchar(250)" />
+			<column name="entry" type="varchar(1024)" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		
+		<sql>INSERT INTO cloudconductor.serveroptions (name, bgcolor, allowautoupdate) VALUES ('Default', 'F6F4F0', true)</sql>
+		<sql>INSERT INTO cloudconductor.additionallinks (label, url) VALUES ('Report', 'http://localhost:8090/web/report')</sql>
+	</changeSet>
+	<changeSet id="8" author="psigloch">
+		<addColumn tableName="auditlog" schemaName="cloudconductor">
+			<column name="category" type="integer">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="9" author="psigloch">
+		<renameTable newTableName="file" oldTableName="configfile"  schemaName="cloudconductor"/>
+		<renameTable newTableName="filedata" oldTableName="configdata"  schemaName="cloudconductor"/>
+		<renameColumn tableName="filedata" oldColumnName="configfileid" newColumnName="fileid" schemaName="cloudconductor" columnDataType="bigint"/>
+		<renameTable newTableName="mappingfileservice" oldTableName="mappingconfigfileservice"  schemaName="cloudconductor"/>
+		<renameColumn tableName="mappingfileservice" oldColumnName="configfileid" newColumnName="fileid" schemaName="cloudconductor" columnDataType="bigint"/>
+		<renameTable newTableName="mappingfiletemplate" oldTableName="mappingconfigfiletemplate"  schemaName="cloudconductor"/>
+		<renameColumn tableName="mappingfiletemplate" oldColumnName="configfileid" newColumnName="fileid" schemaName="cloudconductor" columnDataType="bigint"/>
+	</changeSet>
+	
+</databaseChangeLog>

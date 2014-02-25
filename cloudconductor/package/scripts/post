@@ -1,0 +1,9 @@
+echo "Finished install."
+if [ $1 -eq 1 ]; then
+	chkconfig --add cloudconductor
+	chkconfig cloudconductor on
+fi
+
+if [ $1 -eq 2 ]; then
+	service cloudconductor start
+fi

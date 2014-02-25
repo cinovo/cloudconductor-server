@@ -1,0 +1,173 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.cinovo.cloudconductor</groupId>
+	<artifactId>cloudconductor-server-parent</artifactId>
+	<version>2.3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>deploy framework parent</name>
+	<description>Server to manage deployment environments</description>
+	<inceptionYear>2013</inceptionYear>
+	<organization>
+		<name>Cinovo AG</name>
+		<url>http://www.cinovo.de</url>
+	</organization>
+	<url>https://github.com/cinovo/cloudconductor-server</url>
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+		</license>
+	</licenses>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.cinovo.de</url>
+		<!-- switch to Travis -->
+		<!-- <url>https://travis-ci.org/</url> -->
+	</ciManagement>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/cinovo/cloudconductor-server/issues</url>
+	</issueManagement>
+	<scm>
+		<connection>scm:git:ssh://git@git.cinovo.de/srv/repos/git/config-server.git</connection>
+		<developerConnection>scm:git:ssh://git@git.cinovo.de/srv/repos/git/config-server.git</developerConnection>
+		<!-- Switch to github -->
+		<!-- <connection>scm:git:git@github.com:cinovo/cloudconductor-server.git</connection> -->
+		<!-- <developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection> -->
+		<tag>HEAD</tag>
+	</scm>
+	<distributionManagement>
+		<!-- Switch to maven central -->
+		<repository>
+			<id>nexus</id>
+			<url>http://nexus.cinovo.de/nexus/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-snapshot</id>
+			<url>http://nexus.cinovo.de/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<!-- Shared version number properties -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<developers>
+		<developer>
+			<id>psigloch</id>
+			<name>Philipp Sigloch</name>
+			<email>philipp.sigloch@cinovo.de</email>
+			<organization>Cinovo AG</organization>
+		</developer>
+		<developer>
+			<id>hoegertn</id>
+			<name>Thorsten Hoeger</name>
+			<email>thorsten.hoeger@cinovo.de</email>
+			<organization>Cinovo AG</organization>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Maximilian Hilbert</name>
+			<organization>Cinovo AG</organization>
+		</contributor>
+		<contributor>
+			<name>Fabian Toth</name>
+			<organization>Cinovo AG</organization>
+		</contributor>
+		<contributor>
+			<name>Matthias Mayer</name>
+			<email>matthias_mayer@gmx.de</email>
+		</contributor>
+	</contributors>
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.5.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<inherited>true</inherited>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<releaseProfiles>rpm</releaseProfiles>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
+
+	<modules>
+		<module>cloudconductor</module>
+		<module>cloudconductor-api</module>
+	</modules>
+</project>
+
+

@@ -1,0 +1,108 @@
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a> <a
+		class="backButton" href="/web/templates"><span>Templates</span> </a>
+</div>
+
+<div class="info_container">
+	<p>This page shows the current status of the hosts managed by the CloudConductor.</p>
+</div>
+
+#foreach ($host in $hosts)
+<div class="segment_container">
+	#if ($host.hoststate == "warning")
+		<h2 class="warning">
+	#elseif ($host.hoststate == "error")
+		<h2 class="error">
+	#else
+		<h2 class="ok">
+	#end
+	<a name="$host.name">$host.name</a>
+		<span class="h2centered">
+			: $host.template
+		</span>
+		<span class="defaultSize"> 
+			<a class="button" href="/web/templates#$host.template"><span>go to template</span></a>
+			<a class="button" href="/web/hosts/$host.name/delete"><span>Delete</span></a>
+		</span>
+	</h2>
+	
+	<div class="segment_content">
+	
+		<h3>Service Status</h3>
+		<form action="/web/hosts/$host.name/services" method="post">
+			<table class="install_status">
+				<tr>
+				#if( $host.services.isEmpty() )
+					<th>There are no services available on this host.</th>
+					<th />
+					<th />
+					<th />
+				#else
+					<th width="60%" >Service Name</th>
+					<th width="22%" >State</th>
+					<th width="6%">Start</th>
+					<th width="6%">Stop</th>
+					<th width="6%">Restart</th>
+				#end
+				</tr>
+				#foreach( $service in $host.services )
+				<tr>
+					<td>$service.name</td>
+					#if($service.state == "RUNNING") 
+					<td class="versionOk">$service.state</td>
+					#elseif ($service.state == "STOPPED")
+					<td class="versionNot_ok">$service.state</td>
+					#else
+					<td class="versionUpdate">$service.state</td>
+					#end 
+					<td class="button"><input id="${host.name}${service.name}start" type="checkbox" onclick="document.getElementById('${host.name}${service.name}stop').checked = false; document.getElementById('${host.name}${service.name}restart').checked = false;"  name="start" value="$service.name" #if($service.state == "RUNNING" || $service.state == "STARTING" || $service.state == "RESTARTING")disabled="disabled"#end></td>
+					<td class="button"><input id="${host.name}${service.name}stop" type="checkbox" onclick="document.getElementById('${host.name}${service.name}start').checked = false; document.getElementById('${host.name}${service.name}restart').checked = false;" name="stop" value="$service.name" #if($service.state == "STOPPED" || $service.state == "STOPPING")disabled="disabled"#end></td>
+					<td class="button"><input id="${host.name}${service.name}restart" type="checkbox" onclick="document.getElementById('${host.name}${service.name}stop').checked = false; document.getElementById('${host.name}${service.name}start').checked = false;" name="restart" value="$service.name" #if($service.state != "RUNNING")disabled="disabled"#end></td>
+				</tr>
+				#end
+				#if( !$host.services.isEmpty() )
+				<tr>
+					<td />
+					<td />
+					<td class="button" colspan="2"><input type="submit" name="update" value="update" /></<td>
+				</tr>
+				#end
+			</table>
+		</form>
+				
+		<h3>Package differences to template</h3>
+		<table class="install_status">
+			#if( $host.pkgerrors.isEmpty() )
+			<tr class="ok">
+				<th>In sync with template.</th>
+				<th />
+				<th />
+				<th />
+			#else
+			<tr> 
+				<th>Package</th>
+				<th>Host version</th>
+				<th>Template version</th>
+				<th>Problem</th>
+			#end
+			</tr>
+			#foreach( $package in $host.pkgerrors)
+			#if ($package.state == "wrong version") 
+				<tr class="warning">
+			#elseif ($package.state == "package not installed")
+				<tr class="error">
+			#else
+				<tr class="error">
+			#end 
+				<td>$package.name</td>
+				<td>$package.versionInstalled</td>
+				<td>$package.versionTemplate</td>
+				<td>$package.state</td>							
+			</tr>
+			#end
+		</table>
+	</div>
+	<div class="segment_container_footer" #if ($host.hoststate == "warning")id="warning"#elseif ($host.hoststate == "error")id="error"#else	id="ok"#end>Last seen: $host.lastseen</div>
+</div>
+#end
+		

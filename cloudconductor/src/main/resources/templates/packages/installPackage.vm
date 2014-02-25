@@ -1,0 +1,27 @@
+<a class="backButton" href="/web/packages#$packagename"><span>Back</span></a>
+
+<div class="segment_container">
+	<h2>Add package $packagename with version to following templates:</h2>
+
+	<form action="/web/packages/$packagename/package/$rpmid/add" method="post">
+
+		<div class="segment_content">
+			<table class="install_status">
+				#foreach ($template in $sorterTool.sort($templates))
+				<tr>
+					<td width="5%" align="center"><input type="checkbox" name="templates" value="$template">
+					</td>
+					<td>$template</td>
+				</tr>
+				#end
+			</table>
+		</div>
+		#if($templates.size() > 0)
+		<p>
+			<input type="submit" value="Add package" />
+		</p>
+		#else
+		<p>All templates already use this package and version.</p>
+		#end
+	</form>
+</div>

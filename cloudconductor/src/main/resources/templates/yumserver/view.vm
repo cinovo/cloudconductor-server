@@ -1,0 +1,30 @@
+
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a>
+	<a class="backButton" href="/web/pkgsrv/add"><span>Add Server</span> </a>
+</div>
+
+ #if( $error )
+<div class="info_container">
+	<p>$error</p>
+</div>
+#end
+
+<div class="info_container">
+	<p>This page shows all package servers available to the CloudConductor
+		(alphabetically sorted).</p>
+</div>
+
+	#foreach( $server in $servers )
+	<div class="segment_container">
+			<h2>
+				<a name="$server.id">$server.path</a> <span class="defaultSize">
+					<a class="button" href="/web/pkgsrv/$server.id/delete"><span>Delete</span>
+				</a> <a class="button" href="/web/pkgsrv/$server.id/edit"><span>Edit</span>
+				</a> </span>
+			</h2>
+			<div class="segment_content">
+				<p>$server.description</p>
+			</div>
+	</div>
+	#end

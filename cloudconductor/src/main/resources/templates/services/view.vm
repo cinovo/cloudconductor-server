@@ -1,0 +1,67 @@
+<div class="vmenu">
+	<h3>Quickjump</h3>
+	<ul>
+	<li><a href="/web/services"><span>-top-</span></li>
+	#foreach( $service in $services  )
+		<li><a href="/web/services#$service.name"><span>$service.name</span></a></li>
+	#end
+	</ul>
+</div>
+
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a>
+	<a class="backButton" href="/web/services/add"><span>Add Service</span> </a>
+</div>
+
+<div class="info_container">
+	<p>This page shows all services managed by the CloudConductor
+		(alphabetically sorted), their initscript (sorted), and the packages
+		they are used by.</p>
+</div>
+
+#foreach( $service in $services )
+<div class="segment_container">
+		<h2>
+			<a name="$service.name">$service.name</a> <span class="defaultSize">
+				<a class="button" href="/web/services/$service.name/delete"><span>Delete</span>
+			</a> <a class="button" href="/web/services/$service.name/edit"><span>Edit</span>
+			</a> </span>
+		</h2>
+		<br />
+	<div class="segment_content">
+		<table class="install_status">
+			<tr>
+				<td width="10%">Initscript</td>
+				<td>$service.initscript</td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>$service.descr</td>
+			</tr>
+		</table>
+
+		</div>
+		<div class="segment_content">
+		<table class="install_status">
+			<tr>
+				#if( $service.pkgs.isEmpty() )
+				<th width="95%">This service is not used by any package</th> #else
+				<th width="95%">Packages</th> #end
+				<th width="5%"><a
+					href="/web/services/$service.name/package/add"><img
+						src="$imgdir/add_att.png" alt="Add Package" name="Add Package"
+						title="Add Package" /> </a></th>
+			</tr>
+			#foreach( $pkg in $service.pkgs )
+			<tr>
+				<td>$pkg</td>
+				<td class="button"><a
+					href="/web/services/$service.name/package/$pkg/remove"><img
+						src="$imgdir/delete_edit.png" alt="Remove Package"
+						name="Remove Package" title="Remove Package" /> </a></td>
+			</tr>
+			#end
+		</table>
+	</div>
+</div>
+#end

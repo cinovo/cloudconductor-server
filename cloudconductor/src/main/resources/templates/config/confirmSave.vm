@@ -1,0 +1,57 @@
+#if($ptemplate)
+<a class="backButton" href="/web/config/$ptemplate"><span>Back</span>
+#else
+<a class="backButton" href="/web/config"><span>Back</span>
+#end
+</a>
+
+#if( $error )
+<div class="info_container">
+	<p>$error</p>
+</div>
+#end
+
+<div class="segment_container">
+	<h2>Property</h2>
+	
+		#if($ptemplate && $pkey)
+			#if($pservice)
+			<form action="/web/config/$ptemplate/$pservice/$pkey/save" method="post" enctype="application/x-www-form-urlencoded">
+			#else
+			<form action="/web/config/$ptemplate/$pkey/save" method="post" enctype="application/x-www-form-urlencoded">
+			#end
+		#else
+		
+		<form action="/web/config/save" method="post">
+		#end
+		<div class="segment_content">
+			<table class="install_status">
+				<tr>
+					<td align="left">Template:</td>
+					<td><input style="width: 100%;" name="ftemplate" type="text"
+						#if($template) value="$template" #end #if($ptemplate) readonly="readonly" #end/></td>
+				</tr>
+				<tr>
+					<td align="left">Service:</td>
+					<td align="center"><input style="width: 100%;" name="fservice"
+						type="text" #if($service) value="$service" #end #if($pservice) readonly="readonly" #end/></td>
+				</tr>
+				<tr>
+					<td align="left">Key:</td>
+					<td align="center"><input style="width: 100%;" name="fkey"
+						type="text" #if($key) value="$key" #end /></td>
+				</tr>
+				<tr>
+					<td align="left">Value:</td>
+					<td align="center"><input style="width: 100%;" name="fvalue"
+						type="text" #if($value) value="$value" #end /></td>
+				</tr>
+			</table>
+		</div>
+		
+		<div align="right">
+			<input type="submit" value="Submit" />
+		</div>
+		
+	</form>
+</div>

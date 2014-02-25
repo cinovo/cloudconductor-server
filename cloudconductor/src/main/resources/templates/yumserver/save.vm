@@ -1,0 +1,24 @@
+<a class="backButton" href="/web/pkgsrv#$server.id"><span>Back</span> </a>
+<div class="segment_container">
+	<h2>Save package server</h2>
+	<div class="segment_content">
+		<form action="/web/pkgsrv/$server.id/save" method="post"
+			enctype="application/x-www-form-urlencoded">
+			<table class="install_status">
+				<tr>
+					<td align="right">Path:</td>
+					<td><input style="width: 100%;" name="path" type="text"
+						#if($server.path) value="$server.path" #end /></td>
+				</tr>
+				<tr>
+					<td align="right">Description:</td>
+					<td><textarea class="file_input" name="description" rows="10"
+							style="width: 100%;" wrap='off'>#if($server.description)$server.description#end</textarea>
+				</tr>
+			</table>
+			<div align="right">
+				<input type="submit" value="Submit" />
+			</div>
+		</form>
+	</div>
+</div>

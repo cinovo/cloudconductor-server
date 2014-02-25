@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>$windowtitle - $serverOptions.name</title>
+#if($AUTOREFRESH) 
+	<meta http-equiv="refresh" content="15" >
+#end
+<link rel="stylesheet" type="text/css" href="/web/style.css">
+#set( $imgdir = "images" )
+</head>
+<body bgcolor="#$serverOptions.bgcolor">
+	<div id="container">
+		<h1>$serverOptions.name - $windowtitle</h1>
+		#if ($subheading)
+		<h1>$subheading</h1>
+		#end
+		<div id="subtitle">
+		<table>
+			<tr>
+				<td width="33.3%" ></td>
+				<td width="33.3%" >Version $csversion</td>
+				<td width="33.3%" align="right">
+				#if($currentPage && ($currentPage == "/hosts" || $currentPage == "/templates" ))
+					<a href="/web$currentPage/toggleautorefresh"><u>#if($AUTOREFRESH) stop #else start #end auto-refresh</u></a>
+				#end  
+				</td>
+			</tr>
+			</table>
+			
+			
+			<br /> fetched $fetchDate
+		</div>
+
+		#parse("/templates/${modelName}.vm")
+
+	</div>
+	<div class="footer">
+		<p>© 2012-2014 by Cinovo AG <a href="http://www.cinovo.de" target="_blank">http://www.cinovo.de</a></p>
+	</div>
+</body>
+</html>

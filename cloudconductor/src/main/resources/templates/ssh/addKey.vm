@@ -1,0 +1,31 @@
+<a class="backButton" href="/web/ssh/templateView#$template"><span>Back</span>
+</a>
+<div class="segment_container">
+	<h2>Add existing ssh key to template: $template</h2>
+
+	<form action="/web/ssh/$template/key/add" method="post">
+		#if($keys.size() > 0)
+		<p>
+			<input type="submit" value="Add keys" />
+		</p>
+		#end
+		<div class="segment_content">
+			<table class="install_status">
+				#foreach ($key in $sorterTool.sort($keys))
+				<tr>
+					<td width="5%" align="center"><input type="checkbox" name="keys" value="$key">
+					</td>
+					<td>$key</td>
+				</tr>
+				#end
+			</table>
+		</div>
+		#if($keys.size() > 0)
+		<p>
+			<input type="submit" value="Add keys" />
+		</p>
+		#else
+		<p>No unassigned keys available.</p>
+		#end
+	</form>
+</div>

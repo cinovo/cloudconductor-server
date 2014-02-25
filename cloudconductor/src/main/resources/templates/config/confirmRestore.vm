@@ -1,0 +1,22 @@
+<a class="backButton" href="/web/config"><span>Back</span> </a>
+
+<div class="segment_container">
+	<h2>Batch modify config</h2>
+	<div class="segment_content">
+	<p>
+		Start of the Line:<br />
+		# 		comment (ignored in processing)<br />
+		+ 		add/modify the value<br />
+		- 		remove the key/value pair<br />
+		DROP 	The path and it's sub paths<br />
+	</p>
+	</div>
+	<form action="/web/config/batchmod" method="post">
+		<div align="center">
+			<textarea class="file_input" name="restore" rows="15" wrap='off'>$defaultList</textarea>
+		</div>
+		<div align="right">
+			<input type="submit" value="Submit" />
+		</div>
+	</form>
+</div>

@@ -1,0 +1,65 @@
+<!--
+  #%L
+  cloudconductor-server
+  %%
+  Copyright (C) 2013 - 2014 Cinovo AG
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+	<head>
+		<link href="../concordion.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<h1>Config Test</h1>
+		<p>
+			Check config content
+		</p>
+		<div class="example">
+			<h3>Config Values</h3>
+			<table concordion:execute="#result = getConfigValue(#template,#service,#key)">
+				<tr>
+					<th concordion:set="#template">Template</th>
+					<th concordion:set="#service">Service</th>
+					<th concordion:set="#key">Key</th>
+					<th concordion:assertEquals="#result">Value</th>
+				</tr>
+				<tr>
+					<td>host1</td>
+					<td>service1</td>
+					<td>syslog.port</td>
+					<td>514</td>
+				</tr>
+				<tr>
+					<td>host1</td>
+					<td>service1</td>
+					<td>syslog.facility</td>
+					<td>LOCAL1</td>
+				</tr>
+				<tr>
+					<td>host1</td>
+					<td>service1</td>
+					<td>logger.loggly</td>
+					<td>true</td>
+				</tr>
+				<tr>
+					<td>GLOBAL</td>
+					<td>nginx</td>
+					<td>logger.loggly</td>
+					<td>false</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

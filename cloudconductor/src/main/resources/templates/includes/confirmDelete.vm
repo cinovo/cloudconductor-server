@@ -1,0 +1,15 @@
+
+<a class="backButton" href="$backButton"><span>Back</span>
+</a>
+<div class="info_container" align="center">
+	<p>
+		<b>$headline</b>
+	</p>
+	<br />
+	<p>$descr</p>
+	#if ($actionTarget)
+	<form action="$actionTarget" method="post">
+		<input type="submit" value="remove" />
+	</form>
+	#end
+</div>

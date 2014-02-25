@@ -1,0 +1,132 @@
+#!/bin/bash
+
+###
+# chkconfig: 235 65 35
+# description: Manages the services and agents
+###
+
+progname="cloudconductor"
+pidfile=/var/run/$progname
+rundir=/opt/$progname;
+jarfile=de.cinovo.cloudconductor.server.jar
+runuser=root
+gracetime=10;
+maxmem=1024m;
+
+do_start() {
+
+        if [ -f $pidfile ]
+        then
+                pid=`cat $pidfile`
+        res=`ps --pid $pid 2> /dev/null | grep -c $pid 2> /dev/null`
+        if [ $res -eq '0' ]
+        then
+            rm -f $pidfile > /dev/null
+        else
+                        echo "$progname already running with PID $pid"
+                        exit 1;
+        fi
+        fi
+
+        # encoding will be broken otherwise (ticket #1718)
+        export LANG=en_US.UTF-8
+
+        cd $rundir
+
+        pid=$(su -m -c "java -XX:MaxPermSize=128m -Xmx$maxmem -XX:OnOutOfMemoryError='kill -9 %p' -DdevelopmentMode=false $JAVAOPTS -jar $jarfile $JAVAARGS > /dev/null & echo \$! " "$runuser")
+
+        echo "$pid" > $pidfile
+
+        # wait for process to start
+        sleep 4
+
+        if [ `ps --pid $pid 2> /dev/null | grep -c $pid 2> /dev/null` -eq '0' ]; then
+                echo "Process did not start!"
+                rm -f $pidfile
+                exit 1;
+        fi
+
+        echo "Started with PID: $pid"
+}
+
+do_stop() {
+
+        if [ -f $pidfile ]
+        then
+                pid=`cat $pidfile`
+                echo "Stopping $pid"
+
+                kill -s TERM $pid > /dev/null
+                rm -f $pidfile
+
+                count=0;
+                until [ `ps --pid $pid 2> /dev/null | grep -c $pid 2> /dev/null` -eq '0' ] || [ $count -gt $gracetime ]
+        do
+                sleep 1
+                let count=$count+1;
+        done
+
+        if [ $count -gt $gracetime ]; then
+                echo "Force stop of $progname"
+                kill -9 $pid
+        fi
+
+        echo "Stopped"
+        fi
+}
+
+do_status() {
+
+        if [ -f $pidfile ]
+    then
+        pid=`cat $pidfile`
+        res=`ps --pid $pid 2> /dev/null | grep -c $pid 2> /dev/null`
+        if [ $res -eq '0' ]
+        then
+            rm -f $pidfile > /dev/null
+            echo "$progname is not running"
+            exit 1;
+        else
+            echo "$progname is running with PID $pid"
+            exit 0;
+        fi
+    else
+        echo "$progname is not running"
+        exit 3;
+    fi
+
+}
+
+do_signal() {
+
+        if [ -f $pidfile ]
+        then
+                pid=`cat $pidfile`
+                echo "Signalling $pid"
+                kill -s USR2 $pid > /dev/null
+        fi
+}
+
+
+case "$1" in
+start)  echo "Starting $progname"
+        do_start
+        ;;
+stop)  echo "Stopping $progname"
+        do_stop
+        ;;
+status)
+        do_status
+        ;;
+signal)
+        do_signal
+        ;;
+restart)
+                do_stop
+                do_start
+                ;;
+*)      echo "Usage: service $progname start|stop|restart|status|signal"
+        exit 1
+        ;;
+esac
+exit 0

@@ -1,0 +1,58 @@
+<div class="hmenu_left">
+	<a class="backButton" href="/web/templates"><span>Back to Home</span> </a>
+</div>
+
+#foreach ($state in $defaultStates)
+<div class="segment_container">
+	<h2>
+	<a name="$state.template">$state.template</a>
+		<span class="defaultSize"> 
+			<a class="button" href="/web/templates#$state.template"><span>Template</span></a>
+		</span>
+	</h2>
+	
+	<div class="segment_content">
+	
+		<h3>Service Status</h3>
+		<form action="/web/templates/defaultservicestate/$state.template" method="post">
+			<table class="install_status">
+				<tr>
+				#if( $state.services.isEmpty() )
+					<th>There are no services available on this host.</th>
+					<th />
+					<th />
+					<th />
+				#else
+					<th width="60%" >Service Name</th>
+					<th width="30%" >State</th>
+					<th width="5%">Start</th>
+					<th width="5%">Stop</th>
+				#end
+				</tr>
+				#foreach( $service in $state.services )
+				<tr>
+					<td>$service.name</td>
+					#if($service.state == "RUNNING") 
+					<td class="versionOk">$service.state</td>
+					#elseif ($service.state == "STOPPED")
+					<td class="versionNot_ok">$service.state</td>
+					#else
+					<td class="versionUpdate">$service.state</td>
+					#end 
+					<td class="button"><input type="checkbox" name="start" value="$service.name" #if($service.state == "RUNNING" || $service.state == "STARTING" )disabled="disabled"#end></td>
+					<td class="button"><input type="checkbox" name="stop" value="$service.name" #if($service.state == "STOPPED" || $service.state == "STOPPING")disabled="disabled"#end></td>
+				</tr>
+				#end
+				#if( !$state.services.isEmpty() )
+				<tr>
+					<td />
+					<td />
+					<td class="button" colspan="2"><input type="submit" name="update" value="update" /></<td>
+				</tr>
+				#end
+			</table>
+		</form>
+	</div>
+</div>
+#end
+		

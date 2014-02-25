@@ -1,0 +1,99 @@
+<div class="vmenu">
+	<h3>Quickjump</h3>
+	<ul>
+	<li><a href="/web/packages"><span>-top-</span></li>
+	#foreach( $cf in $configfiles )
+		<li><a href="/web/files#$cf.name"><span>$cf.name</span></a></li>
+	#end
+	</ul>
+</div>
+
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a> <a
+		class="backButton" href="/web/templates"><span>Templates</span> </a> <a
+		class="backButton" href="/web/services"><span>Services</span> </a> <a
+		class="backButton" href="/web/files/add"><span>Add
+			new</span> </a> <a
+		class="backButton" href="/web/files/byTemplate"><span>by Template View</span> </a>
+</div>
+
+#foreach ($cf in $configfiles)
+<div class="segment_container">
+	<h2>
+		<a name="$cf.name">$cf.name</a> <span class="defaultSize"> <a
+			class="button" href="/web/files/$cf.name/edit"><span>Edit</span>
+		</a> <a class="button" href="/web/files/$cf.name/delete"><span>Delete</span>
+		</a> </span>
+	</h2>
+
+	<div class="segment_content">
+		<table class="install_status">
+			<tr>
+				<td>Owner</td>
+				<td>$cf.owner : $cf.group</td>
+			</tr>
+			<tr>
+				<td>File mode:</td>
+				<td>$cf.mode</td>
+			</tr>
+
+			<tr>
+				<td>Target path</td>
+				<td>$cf.targetPath</td>
+			</tr>
+			<tr>
+				<td>Template</td>
+				<td><input type="checkbox" disabled="disabled"
+					#if ($cf.isTemplate)checked="checked" #end>
+				</td>
+			</tr>
+			<tr>
+				<td>Package dependency</td>
+				<td>$cf.depPackage</td>
+			</tr>
+		</table>
+	</div>
+
+	#if ($cf.isReloadable)
+	<div class="segment_content">
+		<h3>Restarts following services on change</h3>
+
+		<table class="install_status">
+			<tr>
+				<th>Name</th>
+				<th />
+			</tr>
+			#foreach ($service in $cf.services)
+			<tr>
+				<td>$service</td>
+				<td class="button"><a href="/web/services#$service">Details</a>
+				</td>
+			</tr>
+			#end
+		</table>
+	</div>
+	#end
+
+#if ($cf.templates.size() > 0)
+	<div class="segment_content">
+		<h3>Used by Templates</h3>
+		
+		<table class="install_status">
+			<tr>
+				<th>Name</th>
+				<th  class="button" />
+			</tr>
+			#foreach ($template in $cf.templates)
+			<tr>
+				<td>$template</td>
+				<td  class="button"><a href="/web/templates#$template">Details</a>
+				</td>
+			</tr>
+			#end
+		</table>
+		
+	</div>
+#end
+	<br />
+</div>
+#end

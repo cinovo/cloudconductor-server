@@ -1,0 +1,44 @@
+#if ($serverOptions.description)
+<div class="info_container">
+	<p>$serverOptions.description</p>
+</div>
+#end
+
+<div class="menu">
+	<h2>
+		<center>Overviews</center>
+	</h2>
+	<div class="hmenu">
+		<a href="/web/packages"><span>Packages</span>
+		</a> <a href="/web/templates"><span>Templates</span>
+		</a> <a href="/web/hosts"><span>Hosts</span>
+		</a>
+	</div>
+<!-- 	<h2> -->
+<!-- 		<center>Templates</center> -->
+<!-- 	</h2> -->
+<!-- 	<h2> -->
+<!-- 		<center>Hosts</center> -->
+<!-- 	</h2> -->
+	<h2>
+		<center>Configuration</center>
+	</h2>
+	<div class="hmenu">
+		<a href="/web/services"><span>Services</span>
+		</a> <a href="/web/config"><span>Config</span>
+		</a> <a href="/web/files"><span>Files</span>
+		</a> <a href="/web/ssh"><span>SSH Keys</span>
+		</a> <a href="/web/pkgsrv"><span>Package Servers</span>
+		</a>
+		<a href="/web/options"><span>Options</span>
+		</a>
+	</div>
+	<h2>
+		<center>Others</center>
+	</h2>
+	<div class="hmenu">
+		#foreach( $link in $links )
+			<a href="$link.url" target="_blank"><span>$link.label</span></a>
+		#end
+	</div>
+</div>

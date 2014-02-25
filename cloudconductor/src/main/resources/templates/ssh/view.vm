@@ -1,0 +1,50 @@
+
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a>
+	<a class="backButton" href="/web/ssh/add"><span>Add SSHKey</span> </a>
+	<a class="backButton" href="/web/ssh/byTemplate"><span>by template view</span> </a>
+</div>
+
+<div class="info_container">
+	<p>This page shows all services managed by the CloudConductor
+		(alphabetically sorted), their initscript (sorted), and the packages
+		they are used by.</p>
+</div>
+
+	#foreach( $key in $keys )
+	<div class="segment_container">
+			<h2>
+				<a name="$key.name">$key.name</a> <span class="defaultSize">
+					<a class="button" href="/web/ssh/$key.name/delete"><span>Delete</span>
+				</a> <a class="button" href="/web/ssh/$key.name/edit"><span>Edit</span>
+				</a> </span>
+			</h2>
+			<div class="segment_content">
+				<h3>Used for hosts with template:</h3>
+				<table class="install_status">
+					<tr>
+					#if( $key.templates.isEmpty() )
+					<th>Currently not used by any template</th>
+					#else
+						<th>Template</th>
+					#end
+						<th width="5%"><a
+							href="/web/ssh/$key.name/template/add"><img
+								src="$imgdir/add_att.png" alt="Add template" name="Add template"
+								title="Add template" /> </a>
+						</th>
+					</tr>
+					#foreach( $template in $key.templates )
+					<tr>
+						<td>$template</td>
+						<td class="button"><a
+							href="/web/ssh/$key.name/template/$template/remove"><img
+								src="$imgdir/delete_edit.png" alt="Remove template"
+								name="Remove template" title="Remove template" /> </a>
+						</td>
+					</tr>
+					#end
+				</table>
+			</div>
+	</div>
+	#end

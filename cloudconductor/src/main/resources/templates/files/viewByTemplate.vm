@@ -1,0 +1,65 @@
+#set( $imgdir = "../images" )
+<div class="vmenu">
+	<h3>Quickjump</h3>
+	<ul>
+	<li><a href="/web/packages"><span>-top-</span></li>
+	#foreach( $template in $templates )
+		<li><a href="/web/files/byTemplate#$template.name"><span>$template.name</span></a></li>
+	#end
+	</ul>
+</div>
+
+<div class="hmenu_left">
+	<a class="backButton" href="/web"><span>Back to Home</span> </a> <a
+		class="backButton" href="/web/templates"><span>Templates</span> </a> <a
+		class="backButton" href="/web/services"><span>Services</span> </a> <a
+		class="backButton" href="/web/files/add"><span>Add
+			new</span> </a> <a
+		class="backButton" href="/web/files"><span>by File View</span> </a>
+</div>
+
+#foreach ($template in $templates)
+<div class="segment_container">
+	<h2>
+		<a name="$template.name">$template.name</a> <span class="defaultSize">
+		 <a class="button" href="/web/templates#$template.name"><span>Template</span>
+		</a> </span>
+	</h2>
+
+	<div class="segment_content">
+		<table class="install_status">
+			<tr>
+				<th>Filename</th>
+				<th>isTemplate</th>
+				<th>Package</th>
+				<th>Restarts</th>
+				<th width="5%"><a
+							href="/web/files/$template.name/add"><img
+								src="$imgdir/add_att.png" alt="Add ConfigFile" name="Add ConfigFile"
+								title="Add ConfigFile" /> </a>
+						</th>
+			</tr>
+			#foreach ($file in $template.files) 
+			<tr>
+				<td>$file.name</td>
+				<td><input type="checkbox" disabled="disabled"
+					#if ($file.isTemplate)checked="checked" #end></td>
+				<td>$file.package</td>
+				#if (!$file.restarts.isEmpty()) 
+				<td>$file.restarts</td>
+				#else
+				<td> - </td>
+				#end
+				<td class="button"><a
+					href="/web/files/$template.name/$file.name/remove"><img
+								src="$imgdir/delete_edit.png" alt="Remove ConfigFile"
+								name="Remove ConfigFile" title="Remove ConfigFile" /> </a>
+				</td>
+				
+			</tr>
+			#end
+		</table>
+	</div>
+	<br />
+</div>
+#end
