@@ -1,6 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>oss-parent</artifactId>
+		<groupId>org.sonatype.oss</groupId>
+		<version>7</version>
+	</parent>
 	<groupId>de.cinovo.cloudconductor</groupId>
 	<artifactId>cloudconductor-server-parent</artifactId>
 	<version>2.3-SNAPSHOT</version>
@@ -32,17 +37,6 @@
 		<developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-	<distributionManagement>
-		<!-- Switch to maven central -->
-		<repository>
-			<id>nexus</id>
-			<url>http://nexus.cinovo.de/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>nexus-snapshot</id>
-			<url>http://nexus.cinovo.de/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<!-- Shared version number properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -129,26 +123,10 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<inherited>true</inherited>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.4.1</version>
 				<configuration>
-					<releaseProfiles>rpm</releaseProfiles>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 				</configuration>
