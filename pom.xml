@@ -21,7 +21,7 @@
 	</licenses>
 	<ciManagement>
 		<system>TravisCI</system>
-		<url>https://travis-ci.org/</url>
+		<url>https://travis-ci.org/cinovo/cloudconductor-server</url>
 	</ciManagement>
 	<issueManagement>
 		<system>Github</system>
