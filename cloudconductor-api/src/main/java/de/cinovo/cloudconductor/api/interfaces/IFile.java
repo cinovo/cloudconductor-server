@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -54,7 +53,6 @@ public interface IFile extends IDefaultApi<ConfigFile> {
 	/**
 	 * @param name the file name
 	 * @param data the data to save
-	 * @return response
 	 */
 	@PUT
 	@Path(IRestPath.FILE_DATA)

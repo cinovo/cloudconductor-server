@@ -38,6 +38,7 @@ import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
  * 
  */
 @RunWith(SpringDaemonTestRunner.class)
+@SuppressWarnings("javadoc")
 public class FileTest extends APITest {
 	
 	@Test

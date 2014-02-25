@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -59,7 +58,6 @@ public interface IService extends IDefaultApi<Service> {
 	 * 
 	 * @param service the service name
 	 * @param pkg the package name
-	 * @return a response
 	 */
 	@PUT
 	@Path(IRestPath.SERVICE_PKG_SINGLE)
@@ -70,7 +68,6 @@ public interface IService extends IDefaultApi<Service> {
 	 * 
 	 * @param service the service name
 	 * @param pkg the package name
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.SERVICE_PKG_SINGLE)

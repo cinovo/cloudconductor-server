@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -60,7 +59,6 @@ public interface IHost extends IDefaultApi<Host> {
 	 * @param host the host name
 	 * @param name the service name
 	 * @param service the service
-	 * @return a response
 	 */
 	@PUT
 	@Path(IRestPath.HOST_SERVICE_SVC)
@@ -73,7 +71,6 @@ public interface IHost extends IDefaultApi<Host> {
 	 * 
 	 * @param host the host name
 	 * @param service the service name
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.HOST_SERVICE_SVC)

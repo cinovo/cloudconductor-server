@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -60,7 +59,7 @@ public interface IPackage extends IDefaultApi<Package> {
 	 * 
 	 * @param pkgname the package name
 	 * @param version the version
-	 * @return a response
+	 * @param versionContent the version content
 	 */
 	@PUT
 	@Path(IRestPath.PKG_VERSION_SINGLE)
@@ -72,7 +71,6 @@ public interface IPackage extends IDefaultApi<Package> {
 	 * 
 	 * @param pkgname the package name
 	 * @param version the version
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.PKG_VERSION_SINGLE)

@@ -27,6 +27,7 @@ package de.cinovo.cloudconductor.server.web.interfaces;
  */
 public interface IWebPath {
 	
+	/** web root uri */
 	public static final String WEBROOT = "/web";
 	/**
 	 * the default view
@@ -57,9 +58,14 @@ public interface IWebPath {
 	// ACTIONS
 	// -------------------------------------------------------
 	
+	/** generic add */
 	public static final String ACTION_ADD = "/add";
+	/** generic delete */
 	public static final String ACTION_DELETE = "/delete";
+	/** generic remove */
 	public static final String ACTION_REMOVE = "/remove";
+	/** generic edit */
 	public static final String ACTION_EDIT = "/edit";
+	/** generic save */
 	public static final String ACTION_SAVE = "/save";
 }

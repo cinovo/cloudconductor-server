@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -54,7 +53,6 @@ public interface IDefaultApi<T extends INamed> {
 	/**
 	 * @param name the name of the object to save
 	 * @param apiObject the api object
-	 * @return the api object with given name
 	 */
 	@PUT
 	@Path(IRestPath.DEFAULT_NAME)
@@ -73,7 +71,6 @@ public interface IDefaultApi<T extends INamed> {
 	
 	/**
 	 * @param name the name of the api object
-	 * @return response
 	 */
 	@DELETE
 	@Path(IRestPath.DEFAULT_NAME)

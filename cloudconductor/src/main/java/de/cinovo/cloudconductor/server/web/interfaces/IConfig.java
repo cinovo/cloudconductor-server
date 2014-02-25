@@ -41,23 +41,34 @@ public interface IConfig {
 	
 	/** the root */
 	public static final String ROOT = "/config";
+	/** GLOBAL */
 	public static final String RESERVED_GLOBAL = "GLOBAL";
 	/** the main view sorted by Template */
 	public static final String VIEW_TEMPLATE = "/{" + IWebPath.VAR_TEMPLATE + "}";
 	
+	/** add template */
 	public static final String ADD_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_ADD;
+	/** add service */
 	public static final String ADD_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}" + IWebPath.ACTION_ADD;
 	
+	/** edit template */
 	public static final String EDIT_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_EDIT;
+	/** edit service */
 	public static final String EDIT_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_EDIT;
 	
+	/** delete template */
 	public static final String DELETE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_DELETE;
+	/** delete service */
 	public static final String DELETE_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_DELETE;
+	/** delete key */
 	public static final String DELETE_KEY_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_DELETE;
 	
+	/** save service */
 	public static final String SAVE_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_SAVE;
+	/** save template */
 	public static final String SAVE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_SAVE;
 	
+	/** batch mode */
 	public static final String BATCH_ACTION = "/batchmod";
 	
 	

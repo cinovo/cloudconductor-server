@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -71,7 +70,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * 
 	 * @param name the template name
 	 * @param host the host name
-	 * @return an response
 	 */
 	@PUT
 	@Path(IRestPath.TEMPLATE_HOST_SINGLE)
@@ -82,7 +80,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * 
 	 * @param name the template name
 	 * @param host the host name
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.TEMPLATE_HOST_SINGLE)
@@ -102,7 +99,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * 
 	 * @param name the template name
 	 * @param key the key name
-	 * @return an response
 	 */
 	@PUT
 	@Path(IRestPath.TEMPLATE_SSHKEY_SINGLE)
@@ -113,7 +109,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * 
 	 * @param name the template name
 	 * @param key the key
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.TEMPLATE_SSHKEY_SINGLE)
@@ -133,7 +128,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * 
 	 * @param name the template name
 	 * @param rpm the package version
-	 * @return an response
 	 */
 	@POST
 	@Path(IRestPath.TEMPLATE_VERSION)
@@ -146,7 +140,6 @@ public interface ITemplate extends IDefaultApi<Template> {
 	 * @param name the template name
 	 * @param pkg the package name
 	 * @param version the package version
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.TEMPLATE_VERSION_SINGLE)

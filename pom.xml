@@ -5,7 +5,7 @@
 	<artifactId>cloudconductor-server-parent</artifactId>
 	<version>2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>deploy framework parent</name>
+	<name>CloudConductor parent</name>
 	<description>Server to manage deployment environments</description>
 	<inceptionYear>2013</inceptionYear>
 	<organization>
@@ -20,21 +20,16 @@
 		</license>
 	</licenses>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.cinovo.de</url>
-		<!-- switch to Travis -->
-		<!-- <url>https://travis-ci.org/</url> -->
+		<system>TravisCI</system>
+		<url>https://travis-ci.org/</url>
 	</ciManagement>
 	<issueManagement>
 		<system>Github</system>
 		<url>https://github.com/cinovo/cloudconductor-server/issues</url>
 	</issueManagement>
 	<scm>
-		<connection>scm:git:ssh://git@git.cinovo.de/srv/repos/git/config-server.git</connection>
-		<developerConnection>scm:git:ssh://git@git.cinovo.de/srv/repos/git/config-server.git</developerConnection>
-		<!-- Switch to github -->
-		<!-- <connection>scm:git:git@github.com:cinovo/cloudconductor-server.git</connection> -->
-		<!-- <developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection> -->
+		<connection>scm:git:git@github.com:cinovo/cloudconductor-server.git</connection>
+		<developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<distributionManagement>

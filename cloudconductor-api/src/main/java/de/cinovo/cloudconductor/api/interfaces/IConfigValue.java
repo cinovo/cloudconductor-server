@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -87,7 +86,6 @@ public interface IConfigValue {
 	 * @param template the template name
 	 * @param service the name of the service
 	 * @param pair the key value pair
-	 * @return a response
 	 */
 	@PUT
 	@Path(IRestPath.CONFIG_TEMPLATE_SERVICE)
@@ -99,7 +97,6 @@ public interface IConfigValue {
 	 * 
 	 * @param template the template name
 	 * @param pair the key value pair
-	 * @return a response
 	 */
 	@PUT
 	@Path(IRestPath.CONFIG_TEMPLATE)
@@ -111,7 +108,6 @@ public interface IConfigValue {
 	 * 
 	 * @param template the template name
 	 * @param key the key
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.CONFIG_TEMPLATE_KEY)
@@ -123,7 +119,6 @@ public interface IConfigValue {
 	 * @param template the template name
 	 * @param service the name of the service
 	 * @param key the key
-	 * @return a response
 	 */
 	@DELETE
 	@Path(IRestPath.CONFIG_TEMPLATE_SERVICE_KEY)

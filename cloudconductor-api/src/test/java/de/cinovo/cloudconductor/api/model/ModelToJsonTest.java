@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,9 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.cinovo.cloudconductor.api.DependencyType;
 import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
-import de.cinovo.cloudconductor.api.model.Dependency;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.SSHKey;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -47,6 +43,9 @@ public class ModelToJsonTest {
 	private ObjectMapper mapper = MapperFactory.createDefault();
 	
 	
+	/**
+	 * @throws JsonProcessingException on error
+	 */
 	@Test
 	public void singleObjects() throws JsonProcessingException {
 		
