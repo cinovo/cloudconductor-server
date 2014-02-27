@@ -79,7 +79,7 @@ public class EFile implements IEntity<Long>, INamed {
 	/**
 	 * @return the pkg
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "packageid")
 	public EPackage getPkg() {
 		return this.pkg;

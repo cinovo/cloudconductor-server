@@ -23,7 +23,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.taimos.dao.IEntity;
@@ -63,7 +63,7 @@ public class EFileData implements IEntity<Long> {
 	/**
 	 * @return the parent
 	 */
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@OneToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "fileid")
 	public EFile getParent() {
 		return this.parent;

@@ -160,7 +160,7 @@ public class ConfigFilesImpl extends AbstractWebImpl implements IFile {
 		if (cf == null) {
 			return this.redirect();
 		}
-		this.dFileData.delete(cf.getData());
+		// this.dFileData.delete(cf.getData());
 		this.dFile.delete(cf);
 		this.log("Deleted file " + cfname);
 		return this.redirect();
