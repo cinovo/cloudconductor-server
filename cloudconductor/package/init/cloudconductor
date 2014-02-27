@@ -8,7 +8,7 @@
 progname="cloudconductor"
 pidfile=/var/run/$progname
 rundir=/opt/$progname;
-jarfile=de.cinovo.cloudconductor.server.jar
+jarfile=de.cinovo.cloudconductor.cloudconductor-server.jar
 runuser=root
 gracetime=10;
 maxmem=1024m;
