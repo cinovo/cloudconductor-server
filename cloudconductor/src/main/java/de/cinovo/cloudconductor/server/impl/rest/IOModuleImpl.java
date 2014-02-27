@@ -100,6 +100,7 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 			// We already have this package version. Move on.
 			if (mrpm != null) {
 				mrpm.setDeprecated(false);
+				this.drpm.save(mrpm);
 				continue;
 			}
 			
@@ -116,7 +117,7 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 				}
 			}
 			mrpm.setDependencies(result);
-			mrpm = this.drpm.save(mrpm);
+			this.drpm.save(mrpm);
 		}
 		
 		// perform db clean up
