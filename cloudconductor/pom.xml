@@ -271,6 +271,29 @@
 							</postremoveScriptlet>
 						</configuration>
 					</plugin>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.6</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>/yum/srv/s3-yum.cloudconductor.net</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/target/rpm/cloudconductor/RPMS/noarch/</directory>
+											<includes>
+												<include>*.rpm</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
