@@ -415,4 +415,12 @@
 		<renameColumn tableName="mappingfiletemplate" oldColumnName="configfileid" newColumnName="fileid" schemaName="cloudconductor" columnDataType="bigint"/>
 	</changeSet>
 	
+	<changeSet id="10" author="psigloch">
+		<addColumn tableName="template" schemaName="cloudconductor">
+			<column name="smoothupdate" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+		<addColumn tableName="host" schemaName="cloudconductor">
+			<column name="startedupdate" type="bigint" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
