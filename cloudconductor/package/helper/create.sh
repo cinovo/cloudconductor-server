@@ -23,11 +23,11 @@ if [ ! -z "$YUMPATH" ]; then
 
         echo "Updating the rpm index"
         # create CloudConductor file
-        REQUIREQUERY="\{\"@class\":\"de.cinovo.cloudconductor.server.api.model.Dependency\",\"name\":\"%{REQUIRENAME}\", \"version\":\"%{REQUIREVERSION}\", \"operator\":\"%{REQUIREFLAGS:depflags}\", \"type\":\"REQUIRES\"\}, "
-        PROVIDEQUERY="\{\"@class\":\"de.cinovo.cloudconductor.server.api.model.Dependency\",\"name\":\"%{PROVIDENAME}\", \"version\":\"%{PROVIDEVERSION}\", \"operator\":\"%{PROVIDEFLAGS:depflags}\", \"type\":\"PROVIDES\"\}, "
-        CONFLICTQUERY="\{\"@class\":\"de.cinovo.cloudconductor.server.api.model.Dependency\",\"name\":\"%{CONFLICTNAME}\", \"version\":\"%{CONFLICTVERSION}\", \"operator\":\"%{CONFLICTFLAGS:depflags}\", \"type\":\"CONFLICTS\"\}, "
+        REQUIREQUERY="\{\"@class\":\"de.cinovo.cloudconductor.api.model.Dependency\",\"name\":\"%{REQUIRENAME}\", \"version\":\"%{REQUIREVERSION}\", \"operator\":\"%{REQUIREFLAGS:depflags}\", \"type\":\"REQUIRES\"\}, "
+        PROVIDEQUERY="\{\"@class\":\"de.cinovo.cloudconductor.api.model.Dependency\",\"name\":\"%{PROVIDENAME}\", \"version\":\"%{PROVIDEVERSION}\", \"operator\":\"%{PROVIDEFLAGS:depflags}\", \"type\":\"PROVIDES\"\}, "
+        CONFLICTQUERY="\{\"@class\":\"de.cinovo.cloudconductor.api.model.Dependency\",\"name\":\"%{CONFLICTNAME}\", \"version\":\"%{CONFLICTVERSION}\", \"operator\":\"%{CONFLICTFLAGS:depflags}\", \"type\":\"CONFLICTS\"\}, "
         DEPQUERY="\"dependencies\":\[$REQUIREQUERY, $PROVIDEQUERY, $CONFLICTQUERY\]"
-        MAINQUERY="\{\"@class\":\"de.cinovo.cloudconductor.server.api.model.PackageVersion\", \"name\":\"%{NAME}\", \"version\":\"%{VERSION}-%{RELEASE}\", $DEPQUERY\}, "
+        MAINQUERY="\{\"@class\":\"de.cinovo.cloudconductor.api.model.PackageVersion\", \"name\":\"%{NAME}\", \"version\":\"%{VERSION}-%{RELEASE}\", $DEPQUERY\}, "
 
         INDEX=$(find $YUMPATH -name "*.rpm" | xargs -Ixx rpm -qp --queryformat "$MAINQUERY" xx 2>/dev/null | sed -e s/"}, ]"/"}]"/g -e s/^/[/ -e s/,\ \$/]/ -e s/"}, , {"/"},{"/g)
         echo $INDEX > $YUMPATH/index.cfg
