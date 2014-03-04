@@ -61,7 +61,7 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.MAConverter;
-import de.cinovo.cloudconductor.server.model.tools.PackageCommand;
+import de.cinovo.cloudconductor.server.util.PackageCommand;
 import de.cinovo.cloudconductor.server.util.VersionStringComparator;
 import de.taimos.restutils.RESTAssert;
 
