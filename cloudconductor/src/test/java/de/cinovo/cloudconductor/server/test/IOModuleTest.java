@@ -48,7 +48,7 @@ public class IOModuleTest extends APITest {
 		PackageHandler h = new PackageHandler(this.getCSApi());
 		{
 			Set<Package> packages = h.get();
-			Assert.assertEquals(5, packages.size());
+			Assert.assertEquals(6, packages.size());
 		}
 		
 		{

@@ -32,7 +32,7 @@ public class AgentTest extends APITest {
 		AgentHandler agent = new AgentHandler(this.getCSApi());
 		{
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled());
-			Assert.assertEquals(result.getToInstall().size(), 4);
+			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
 		}
@@ -60,7 +60,7 @@ public class AgentTest extends APITest {
 		{
 			// finally start update on host b
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled());
-			Assert.assertEquals(result.getToInstall().size(), 4);
+			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
 		}
