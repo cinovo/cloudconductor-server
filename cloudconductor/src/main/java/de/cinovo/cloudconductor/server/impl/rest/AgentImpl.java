@@ -160,20 +160,22 @@ public class AgentImpl implements IAgent {
 				continue;
 			}
 			EPackageState state = this.updateExistingState(host, irpm);
-			if (state != null) {
-				leftPackages.remove(state);
-			} else {
-				host = this.createMissingState(host, irpm, pkg);
+			if (state == null) {
+				state = this.createMissingState(host, irpm, pkg);
+				host.getPackages().add(state);
 			}
+			leftPackages.remove(state);
 		}
-		host.getPackages().remove(leftPackages);
-		for (EPackageState state : leftPackages) {
-			this.dpkgstate.delete(state);
+		for (EPackageState pkg : leftPackages) {
+			if (host.getPackages().contains(pkg)) {
+				host.getPackages().remove(pkg);
+				this.dpkgstate.delete(pkg);
+			}
 		}
 		host = this.dhost.save(host);
 		
 		// check whether the host may update or has to wait for another host to finish updateing
-		if (this.sendPackageChanges(template)) {
+		if (this.sendPackageChanges(template, host)) {
 			
 			// Compute instruction lists (install/update/erase) from difference between packages actually installed packages that should be
 			// installed.
@@ -184,8 +186,6 @@ public class AgentImpl implements IAgent {
 			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.computePackageDiff(template.getRPMs(), actual);
 			if (!diff.get(PackageCommand.INSTALL).isEmpty() || !diff.get(PackageCommand.UPDATE).isEmpty() || !diff.get(PackageCommand.ERASE).isEmpty()) {
 				host.setStartedUpdate(DateTime.now().getMillis());
-			} else {
-				host.setStartedUpdate(null);
 			}
 			return new PackageStateChanges(diff.get(PackageCommand.INSTALL), diff.get(PackageCommand.UPDATE), diff.get(PackageCommand.ERASE));
 		}
@@ -194,19 +194,23 @@ public class AgentImpl implements IAgent {
 	
 	/**
 	 * @param template
+	 * @param host
 	 * @param now
 	 */
-	private boolean sendPackageChanges(ETemplate template) {
+	private boolean sendPackageChanges(ETemplate template, EHost host) {
 		DateTime now = DateTime.now();
 		int maxHostsOnUpdate = template.getHosts().size() / 2;
 		int hostsOnUpdate = 0;
 		if (!template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
 			return true;
 		}
+		if (host.getStartedUpdate() != null) {
+			return true;
+		}
 		for (EHost h : template.getHosts()) {
 			if (h.getStartedUpdate() != null) {
 				int timeElapsed = Minutes.minutesBetween(new DateTime(h.getStartedUpdate()), now).getMinutes();
-				if (timeElapsed < AgentImpl.MAX_UPDATE_THRESHOLD) {
+				if (timeElapsed > AgentImpl.MAX_UPDATE_THRESHOLD) {
 					continue;
 				}
 				hostsOnUpdate++;
@@ -224,7 +228,7 @@ public class AgentImpl implements IAgent {
 	 * @param pkg
 	 * @return
 	 */
-	private EHost createMissingState(EHost host, PackageVersion irpm, EPackage pkg) {
+	private EPackageState createMissingState(EHost host, PackageVersion irpm, EPackage pkg) {
 		EPackageState state;
 		EPackageVersion rpm = this.drpm.find(irpm.getName(), irpm.getVersion());
 		if (rpm == null) {
@@ -238,8 +242,7 @@ public class AgentImpl implements IAgent {
 		state.setHost(host);
 		state.setVersion(rpm);
 		state = this.dpkgstate.save(state);
-		host.getPackages().add(state);
-		return host;
+		return state;
 	}
 	
 	/**
@@ -367,6 +370,10 @@ public class AgentImpl implements IAgent {
 		HashSet<ConfigFile> configFiles = new HashSet<>();
 		for (EFile file : template.getConfigFiles()) {
 			configFiles.add(MAConverter.fromModel(file));
+		}
+		if (toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {
+			host.setStartedUpdate(null);
+			this.dhost.save(host);
 		}
 		return new ServiceStatesChanges(toStart, toStop, toRestart, configFiles);
 	}

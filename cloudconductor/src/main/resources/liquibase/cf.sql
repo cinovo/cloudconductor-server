@@ -24,6 +24,7 @@ INSERT INTO cloudconductor.package VALUES (2, 'postgresql92-libs', 'Auto-generat
 INSERT INTO cloudconductor.package VALUES (3, 'nginx', 'Auto-generated from repository update on 2013-09-04 14:20:08.');
 INSERT INTO cloudconductor.package VALUES (4, 'jdk', 'Auto-generated from repository update on 2013-09-04 14:20:08.');
 INSERT INTO cloudconductor.package VALUES (5, 'postgresql92-server', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
+INSERT INTO cloudconductor.package VALUES (6, 'nodejs', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
 
 INSERT INTO cloudconductor.auditlog VALUES (1, 1385544948453, 'Admin', 'Added template dev', 1);
 INSERT INTO cloudconductor.auditlog VALUES (2, 1390125583142, 'Admin', 'Added service service1', 6);
@@ -54,17 +55,18 @@ INSERT INTO cloudconductor.service VALUES (3, 'service1', 'service1', 'service1'
 
 INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar');
 
-INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false);
+INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false, true);
 
 INSERT INTO cloudconductor.yumserver VALUES (1, 'localhost', 'http://localhost:8090/static/yum');
 
-INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832);
+INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL);
 
 INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (3, 5, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1');
 INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs');
+INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1');
 
 
 INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1, 1);
