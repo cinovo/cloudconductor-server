@@ -49,4 +49,9 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 		return this.findByQuery("FROM EFile c WHERE c.name = ?1", name);
 	}
 	
+	@Override
+	public Long count() {
+		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EFile").getSingleResult();
+	}
+	
 }

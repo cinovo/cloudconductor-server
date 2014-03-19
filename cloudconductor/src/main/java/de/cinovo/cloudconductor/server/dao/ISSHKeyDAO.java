@@ -34,4 +34,9 @@ public interface ISSHKeyDAO extends IEntityDAO<ESSHKey, Long>, IFindNamed<ESSHKe
 	 * @return the sshkey
 	 */
 	public ESSHKey findByOwner(String owner);
+	
+	/**
+	 * @return the row count
+	 */
+	public Long count();
 }

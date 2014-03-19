@@ -17,7 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -52,15 +52,15 @@ public class ETemplate implements IEntity<Long>, INamed {
 	private String name;
 	private String description;
 	
-	private Set<EPackageVersion> rpms;
+	private List<EPackageVersion> packageVersions;
 	
-	private Set<EHost> hosts;
+	private List<EHost> hosts;
 	
-	private Set<ESSHKey> sshkeys;
+	private List<ESSHKey> sshkeys;
 	
-	private Set<EFile> configFiles;
+	private List<EFile> configFiles;
 	
-	private EYumServer yum;
+	private EPackageServer yum;
 	
 	private Boolean autoUpdate;
 	
@@ -114,14 +114,14 @@ public class ETemplate implements IEntity<Long>, INamed {
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "fileid"))
-	public Set<EFile> getConfigFiles() {
+	public List<EFile> getConfigFiles() {
 		return this.configFiles;
 	}
 	
 	/**
 	 * @param configFiles the configFiles to set
 	 */
-	public void setConfigFiles(Set<EFile> configFiles) {
+	public void setConfigFiles(List<EFile> configFiles) {
 		this.configFiles = configFiles;
 	}
 	
@@ -129,14 +129,14 @@ public class ETemplate implements IEntity<Long>, INamed {
 	 * @return the hosts
 	 */
 	@OneToMany(mappedBy = "template", fetch = FetchType.LAZY)
-	public Set<EHost> getHosts() {
+	public List<EHost> getHosts() {
 		return this.hosts;
 	}
 	
 	/**
 	 * @param hosts the hosts to set
 	 */
-	public void setHosts(Set<EHost> hosts) {
+	public void setHosts(List<EHost> hosts) {
 		this.hosts = hosts;
 	}
 	
@@ -146,15 +146,15 @@ public class ETemplate implements IEntity<Long>, INamed {
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingrpmtemplate", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "rpmid"))
-	public Set<EPackageVersion> getRPMs() {
-		return this.rpms;
+	public List<EPackageVersion> getPackageVersions() {
+		return this.packageVersions;
 	}
 	
 	/**
 	 * @param rpms the rpms to set
 	 */
-	public void setRPMs(Set<EPackageVersion> rpms) {
-		this.rpms = rpms;
+	public void setPackageVersions(List<EPackageVersion> rpms) {
+		this.packageVersions = rpms;
 	}
 	
 	/**
@@ -163,14 +163,14 @@ public class ETemplate implements IEntity<Long>, INamed {
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingtemplatesshkey", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "sshkeyid"))
-	public Set<ESSHKey> getSshkeys() {
+	public List<ESSHKey> getSshkeys() {
 		return this.sshkeys;
 	}
 	
 	/**
 	 * @param sshkeys the sshkeys to set
 	 */
-	public void setSshkeys(Set<ESSHKey> sshkeys) {
+	public void setSshkeys(List<ESSHKey> sshkeys) {
 		this.sshkeys = sshkeys;
 	}
 	
@@ -179,7 +179,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 	 */
 	@ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	@JoinColumn(name = "yum")
-	public EYumServer getYum() {
+	public EPackageServer getYum() {
 		return this.yum;
 	}
 	
@@ -188,13 +188,13 @@ public class ETemplate implements IEntity<Long>, INamed {
 	 */
 	@Transient
 	public String getYumPath() {
-		return this.yum.getYumPath();
+		return this.yum.getPath();
 	}
 	
 	/**
 	 * @param yum the yum to set
 	 */
-	public void setYum(EYumServer yum) {
+	public void setYum(EPackageServer yum) {
 		this.yum = yum;
 	}
 	

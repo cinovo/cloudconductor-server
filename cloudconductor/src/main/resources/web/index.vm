@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+#if($AUTOREFRESH) 
+	<meta http-equiv="refresh" content="15" />
+#end
+    <link rel="shortcut icon" href="/web2/images/favicon.ico"/>
+
+	<!-- Bootstrap core CSS -->
+    <link href="/web2/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this template -->
+    <link href="/web2/css/offcanvas.css" rel="stylesheet"/>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+    
+    <title>$C2InstanceOptions.name [CloudConductor]</title>
+</head>
+
+<body data-spy="scroll" data-target="#sidebar" data-offset="10"> 
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="border-color:#$C2InstanceOptions.bgcolor;">
+    <div class="container">
+	    <div class="navbar-header">
+	    	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	           	<span class="sr-only">Toggle navigation</span>
+	           	<span class="icon-bar"></span>
+	           	<span class="icon-bar"></span>
+	           	<span class="icon-bar"></span>
+	        </button>
+	        <a class="navbar-brand" href="/web2"><img src="/web2/images/50x50.jpg" /><span style="color:#$C2InstanceOptions.bgcolor;">$C2InstanceOptions.name</span></a>
+		</div>
+    	<div class="collapse navbar-collapse">
+        	<ul class="nav navbar-nav">
+        		#foreach($element in $NAVELEMENT.getMainMenu())
+        			<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web2${element.getPath()}">${element.getIdentifier()}</a></li>
+        		#end
+        		
+        		#foreach($mapEntry in $NAVELEMENT.getSubMenuCategories())
+        			#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)}) 
+        				#if(${element.getIdentifier()} == $CURRENTNAVELEMENT) #set($activeClass = "active") #end
+        			#end
+        			<li class="dropdown #if($activeClass)$activeClass #end">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">${mapEntry.getViewName()} <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)}) 
+								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web2${element.getPath()}">${element.getIdentifier()}</a></li>
+							#end
+						</ul>
+					</li>
+        		#end 
+            	<!--
+				<li><a href="/web2/templates">Templates</a></li>
+            	<li><a href="#about">Hosts</a></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Configuration <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="/web2/services">Services</a></li>
+						<li><a href="#">Files</a></li>
+						<li class="divider"></li>
+						<li><a href="#">SSH Keys</a></li>
+						<li class="divider"></li>
+						<li><a href="#">One more separated link</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">C2 Options</a></li>
+						<li><a href="#">Package Servers</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+					#foreach( $link in $LINKLIST )
+						<li><a href="$link.url" target="_blank"><span>$link.label</span></a></li>
+					#end
+					</ul>
+				</li>-->
+          	</ul>
+		</div><!-- /.nav-collapse -->
+	</div><!-- /.container -->
+</div><!-- /.navbar -->
+
+<!-- breadcrumbs -->	
+#if(! $BREDCRUMBS.isEmpty() )
+<div class="subnavbar">
+	<div class="container">
+		<ol class="breadcrumb">
+		#foreach( $crumb in $BREDCRUMBS)
+			 #if($velocityCount != $BREDCRUMBS.size()) 
+				<li><a href="$crumb.value">$crumb.key</a></li>
+			#else 
+				<li class="active">$crumb.key</li>
+			#end
+			
+		#end
+		</ol>
+	</div>
+</div>
+#end
+
+<!-- Content -->
+<div class="container">
+	<div class="row row-offcanvas row-offcanvas-right">
+		#if(! $SIDEBAR.isEmpty()) 
+		<div class="col-xs-12 col-sm-10">
+		#else
+		<div class="col-xs-12 col-sm-12">
+		#end
+		#parse("/web/pages/${VIEWNAME}.vm")
+		</div>
+				
+		#if( (! $SIDEBARTYPE) || $SIDEBARTYPE == "SIMPLE") 
+			#parse("/web/sidebar/simple.vm")
+		#elseif($SIDEBARTYPE == "ALPHABETICAL")
+			#parse("/web/sidebar/alphabetical.vm")
+		#end
+		
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="container">
+	<hr />
+    <footer>
+	    <p>&copy; 2012-2014 by Cinovo AG <a href="http://www.cinovo.de" target="_blank">http://www.cinovo.de</a></p>
+  	</footer>
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/web2/bootstrap/js/bootstrap.js"></script>
+<script src="/web2/js/cloudconductor-web.js"></script>
+</body>
+</html>

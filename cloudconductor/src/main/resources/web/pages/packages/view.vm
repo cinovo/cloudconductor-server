@@ -1,0 +1,61 @@
+
+#foreach( $package in $PACKAGES)
+<div id="$package.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${package.name}-hide">
+			<h3 class="panel-title">$package.name<span class="pull-right"><span class="caret"></span></span></h3>
+		</div>
+		<div id="${package.name}-hide" class="collapse in">
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Version</th>
+				<th class="actionButton">Install</th>
+			</tr>
+		</thead>
+		<tbody class="table-hover">
+		
+			#foreach($version in ${VERSIONS.get($package.name)})
+			<tr>
+				<td>$version.version</td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-export" data-ref="${package.name}/version/${version.id}/install" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Install"></button></td>
+			</tr>
+			#end
+			<tr><td colspan="2" /></tr>
+		</tbody>
+		<thead>
+			
+			<tr>
+				<th>Service</th>
+				<th class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${package.name}/services/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Add Service"></button></th>
+			</tr>
+		</thead>
+		<tbody>
+			#if(${SERVICES.get($package.name).size()} > 0)
+				#foreach($service in ${SERVICES.get($package.name)})
+				<tr>
+					<td>$service.name</td>
+					<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-remove" data-ref="${package.name}/services/${service.name}/remove" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Remove"></button></td>
+				</tr>
+				#end
+			#else
+				<tr class="warning">
+					<td colspan="2">No service added</td>
+				</tr>
+			#end
+		</tbody>
+		</table>
+		</div>
+	</div>
+</div>
+#end
+
+<!-- Modal -->
+<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     
+    </div>
+  </div>
+</div>

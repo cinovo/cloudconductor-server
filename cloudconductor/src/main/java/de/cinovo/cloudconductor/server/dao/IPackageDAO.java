@@ -29,5 +29,8 @@ import de.taimos.dao.IEntityDAO;
  */
 public interface IPackageDAO extends IEntityDAO<EPackage, Long>, IFindNamed<EPackage> {
 	
-	// nothing to add
+	/**
+	 * @return the row count
+	 */
+	public Long count();
 }

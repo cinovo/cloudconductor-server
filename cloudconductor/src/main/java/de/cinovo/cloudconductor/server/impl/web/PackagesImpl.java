@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.server.impl.web;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +34,8 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.PackageComparator;
-import de.cinovo.cloudconductor.server.util.RPMComparator;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackages;
+import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
 import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
@@ -81,7 +80,7 @@ public class PackagesImpl extends AbstractWebImpl implements IPackages {
 		for (EPackage pkg : packages) {
 			// Build versions model.
 			List<EPackageVersion> rpms = new ArrayList<>(pkg.getRPMs());
-			Collections.sort(rpms, new RPMComparator());
+			Collections.sort(rpms, new PackageVersionComparator());
 			
 			List<Object> versionsModel = new ArrayList<>();
 			for (EPackageVersion version : rpms) {
@@ -235,7 +234,7 @@ public class PackagesImpl extends AbstractWebImpl implements IPackages {
 		List<ETemplate> templates = this.dTemplate.findList();
 		List<String> ts = new ArrayList<>();
 		for (ETemplate temp : templates) {
-			if (temp.getRPMs().contains(rpm)) {
+			if (temp.getPackageVersions().contains(rpm)) {
 				continue;
 			}
 			ts.add(temp.getName());
@@ -258,17 +257,17 @@ public class PackagesImpl extends AbstractWebImpl implements IPackages {
 			List<EService> services = this.dSvc.findList();
 			for (String temp : templates) {
 				ETemplate t = this.dTemplate.findByName(temp);
-				if (t.getRPMs() == null) {
-					t.setRPMs(new HashSet<EPackageVersion>());
+				if (t.getPackageVersions() == null) {
+					t.setPackageVersions(new ArrayList<EPackageVersion>());
 				}
 				// check if package exists remove old rpm
-				for (EPackageVersion existing : t.getRPMs()) {
+				for (EPackageVersion existing : t.getPackageVersions()) {
 					if (existing.getPkg().equals(rpm.getPkg())) {
-						t.getRPMs().remove(existing);
+						t.getPackageVersions().remove(existing);
 						break;
 					}
 				}
-				t.getRPMs().add(rpm);
+				t.getPackageVersions().add(rpm);
 				this.dTemplate.save(t);
 				// update default list
 				for (EService s : services) {

@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class FileImpl extends ImplHelper implements IFile {
 		}
 		
 		if ((configFile.getDependentServices() != null) && !configFile.getDependentServices().isEmpty()) {
-			Set<EService> services = this.findByName(this.dservice, configFile.getDependentServices());
+			List<EService> services = this.findByName(this.dservice, configFile.getDependentServices());
 			cf.setDependentServices(services);
 		} else {
 			cf.setDependentServices(null);

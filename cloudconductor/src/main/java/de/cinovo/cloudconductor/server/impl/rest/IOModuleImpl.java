@@ -45,7 +45,7 @@ import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.AMConverter;
-import de.cinovo.cloudconductor.server.util.RPMComparator;
+import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -159,7 +159,7 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 			boolean found = false;
 			// check if it's used somewhere
 			for (ETemplate t : templates) {
-				if (t.getRPMs().contains(dbrpm)) {
+				if (t.getPackageVersions().contains(dbrpm)) {
 					// mark deprecated
 					dbrpm.setDeprecated(true);
 					found = true;
@@ -178,13 +178,13 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 	}
 	
 	private void autoUpdate(List<ETemplate> templates) {
-		RPMComparator rpmComp = new RPMComparator();
+		PackageVersionComparator rpmComp = new PackageVersionComparator();
 		for (ETemplate t : templates) {
 			if ((t.getAutoUpdate() == null) || !t.getAutoUpdate()) {
 				continue;
 			}
-			Set<EPackageVersion> list = new HashSet<>(t.getRPMs());
-			for (EPackageVersion rpm : t.getRPMs()) {
+			List<EPackageVersion> list = new ArrayList<>(t.getPackageVersions());
+			for (EPackageVersion rpm : t.getPackageVersions()) {
 				List<EPackageVersion> eprpms = new ArrayList<>(rpm.getPkg().getRPMs());
 				Collections.sort(eprpms, rpmComp);
 				EPackageVersion newest = eprpms.get(eprpms.size() - 1);
@@ -193,7 +193,7 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 					list.add(newest);
 				}
 			}
-			t.setRPMs(list);
+			t.setPackageVersions(list);
 			this.dtemplate.save(t);
 		}
 	}

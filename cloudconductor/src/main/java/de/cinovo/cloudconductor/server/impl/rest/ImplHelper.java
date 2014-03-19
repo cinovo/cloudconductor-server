@@ -20,7 +20,8 @@ package de.cinovo.cloudconductor.server.impl.rest;
  * #L%
  */
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.NotFoundException;
@@ -60,8 +61,8 @@ public abstract class ImplHelper {
 		return found;
 	}
 	
-	protected final <T extends IEntity<?>> Set<T> findByName(IFindNamed<T> dao, Set<String> names) {
-		Set<T> found = new HashSet<>();
+	protected final <T extends IEntity<?>> List<T> findByName(IFindNamed<T> dao, Set<String> names) {
+		List<T> found = new ArrayList<>();
 		for (String s : names) {
 			T t = dao.findByName(s);
 			this.assertModelFound(t);

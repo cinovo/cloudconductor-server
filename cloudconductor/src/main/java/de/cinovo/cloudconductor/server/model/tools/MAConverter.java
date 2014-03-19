@@ -77,7 +77,7 @@ public class MAConverter {
 	 */
 	public static Template fromModel(ETemplate model) {
 		Map<String, String> rpms = new HashMap<>();
-		for (EPackageVersion rpm : model.getRPMs()) {
+		for (EPackageVersion rpm : model.getPackageVersions()) {
 			rpms.put(rpm.getPkg().getName(), rpm.getVersion());
 		}
 		return new Template(model.getName(), model.getDescription(), model.getYumPath(), rpms, //

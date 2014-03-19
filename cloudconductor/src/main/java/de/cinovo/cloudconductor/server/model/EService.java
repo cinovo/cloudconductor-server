@@ -17,8 +17,8 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -51,7 +51,7 @@ public class EService implements IEntity<Long>, INamed {
 	private String name;
 	private String description;
 	private String initScript;
-	private Set<EPackage> packages = new HashSet<>();
+	private List<EPackage> packages = new ArrayList<>();
 	
 	
 	@Override
@@ -104,14 +104,14 @@ public class EService implements IEntity<Long>, INamed {
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingsvcpkg", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "svcid"), inverseJoinColumns = @JoinColumn(name = "pkgid"))
-	public Set<EPackage> getPackages() {
+	public List<EPackage> getPackages() {
 		return this.packages;
 	}
 	
 	/**
 	 * @param packages the packages to set
 	 */
-	public void setPackages(Set<EPackage> packages) {
+	public void setPackages(List<EPackage> packages) {
 		this.packages = packages;
 	}
 	

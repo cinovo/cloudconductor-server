@@ -43,8 +43,8 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.AuditCategory;
-import de.cinovo.cloudconductor.server.util.RPMComparator;
 import de.cinovo.cloudconductor.server.web.interfaces.ITemplate;
+import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
 import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
@@ -81,7 +81,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 	}
 	
 	
-	private RPMComparator rpmComp = new RPMComparator();
+	private PackageVersionComparator rpmComp = new PackageVersionComparator();
 	private DateTimeFormatter germanFmt = DateTimeFormat.forPattern("HH:mm:ss - dd.MM.yyyy");
 	
 	
@@ -97,7 +97,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 			template.put("yum", t.getYumPath());
 			template.put("autoupdate", t.getAutoUpdate());
 			List<Map<String, Object>> rpms = new ArrayList<>();
-			for (EPackageVersion rpm : t.getRPMs()) {
+			for (EPackageVersion rpm : t.getPackageVersions()) {
 				Map<String, Object> rpmmap = new HashMap<>();
 				rpmmap.put("name", rpm.getPkg().getName());
 				rpmmap.put("version", rpm.getVersion());
@@ -168,9 +168,9 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		ETemplate template = this.dTemplate.findByName(tname);
 		Set<EPackageVersion> removedRPMS = new HashSet<>();
 		for (String pkg : pkgs) {
-			for (EPackageVersion rpm : template.getRPMs()) {
+			for (EPackageVersion rpm : template.getPackageVersions()) {
 				if (rpm.getPkg().getName().equals(pkg)) {
-					template.getRPMs().remove(rpm);
+					template.getPackageVersions().remove(rpm);
 					removedRPMS.add(rpm);
 					break;
 				}
@@ -210,16 +210,16 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		for (String pkg : pkgs) {
 			EPackage ep = this.dPkg.findByName(pkg);
 			// delete old version
-			for (EPackageVersion installed : template.getRPMs()) {
+			for (EPackageVersion installed : template.getPackageVersions()) {
 				if (installed.getPkg().getName().equals(ep.getName())) {
-					template.getRPMs().remove(installed);
+					template.getPackageVersions().remove(installed);
 					break;
 				}
 			}
 			// add newest version
 			List<EPackageVersion> rpms = new ArrayList<>(ep.getRPMs());
 			Collections.sort(rpms, this.rpmComp);
-			template.getRPMs().add(rpms.get(rpms.size() - 1));
+			template.getPackageVersions().add(rpms.get(rpms.size() - 1));
 		}
 		this.dTemplate.save(template);
 		return this.redirect(null, tname);
@@ -328,7 +328,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		ETemplate template = this.dTemplate.findByName(tname);
 		List<EPackage> pkgs = this.dPkg.findList();
 		List<EPackage> alreadyInstalled = new ArrayList<>();
-		for (EPackageVersion rpm : template.getRPMs()) {
+		for (EPackageVersion rpm : template.getPackageVersions()) {
 			alreadyInstalled.add(rpm.getPkg());
 		}
 		
@@ -361,7 +361,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 			List<EPackageVersion> rpms = new ArrayList<>(ep.getRPMs());
 			Collections.sort(rpms, this.rpmComp);
 			EPackageVersion rpm = rpms.get(rpms.size() - 1);
-			template.getRPMs().add(rpm);
+			template.getPackageVersions().add(rpm);
 			for (EService s : services) {
 				if (s.getPackages().contains(rpm.getPkg())) {
 					EServiceDefaultState sds = this.dSvcDefState.findByName(s.getName(), template.getName());

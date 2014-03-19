@@ -18,8 +18,10 @@ package de.cinovo.cloudconductor.server.web.helper;
  */
 
 import java.io.Serializable;
-
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -32,7 +34,9 @@ public class FormErrorException extends Exception implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private String parentUrl;
-	private MultivaluedMap<String, String> formParams;
+	private Map<String, Object> formParams = new HashMap<>();
+	
+	private Set<String> failedElements = new HashSet<>();
 	
 	
 	/**
@@ -45,17 +49,6 @@ public class FormErrorException extends Exception implements Serializable {
 	}
 	
 	/**
-	 * @param parentUrl the parent url to redirect to
-	 * @param msg the error message
-	 * @param formParams parameters from a form
-	 */
-	public FormErrorException(String parentUrl, String msg, MultivaluedMap<String, String> formParams) {
-		super(msg);
-		this.parentUrl = parentUrl;
-		this.formParams = formParams;
-	}
-	
-	/**
 	 * @return the parentUrl
 	 */
 	public String getParentUrl() {
@@ -65,8 +58,37 @@ public class FormErrorException extends Exception implements Serializable {
 	/**
 	 * @return the formParams
 	 */
-	public MultivaluedMap<String, String> getFormParams() {
+	public Map<String, Object> getFormParams() {
 		return this.formParams;
 	}
 	
+	/**
+	 * @param elementName the form element name
+	 * @param value the value
+	 */
+	public void addFormParam(String elementName, String value) {
+		this.formParams.put(elementName, value);
+	}
+	
+	/**
+	 * @param elementName the form element name
+	 * @param value the value
+	 * @param failed set if element has error
+	 */
+	public void addFormParam(String elementName, String value, boolean failed) {
+		this.formParams.put(elementName, value);
+		if (failed) {
+			this.failedElements.add(elementName);
+		}
+	}
+	
+	public void addElementError(String elementName, boolean failed) {
+		if (failed) {
+			this.failedElements.add(elementName);
+		}
+	}
+	
+	public boolean hasError(String elementName) {
+		return this.failedElements.contains(elementName);
+	}
 }

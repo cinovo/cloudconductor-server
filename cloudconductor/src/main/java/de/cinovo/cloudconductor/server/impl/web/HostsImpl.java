@@ -108,7 +108,7 @@ public class HostsImpl extends AbstractWebImpl implements IHost {
 				host.put("hoststate", "ok");
 			}
 			
-			Set<EPackageVersion> trpms = h.getTemplate().getRPMs();
+			List<EPackageVersion> trpms = h.getTemplate().getPackageVersions();
 			Set<EPackageVersion> missing = new HashSet<>(trpms);
 			
 			List<Map<String, Object>> pkgErrors = new ArrayList<>();

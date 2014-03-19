@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.dao;
+package de.cinovo.cloudconductor.server.web2.comparators;
 
 /*
  * #%L
@@ -17,16 +17,29 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import de.cinovo.cloudconductor.server.model.EYumServer;
-import de.taimos.dao.IEntityDAO;
+import java.util.Comparator;
+
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
+ * Comparator for comparing two package versions.
  * 
  * @author psigloch
- * 
  */
-public interface IYumServerDAO extends IEntityDAO<EYumServer, Long> {
-	// nothing else to add
+public class PackageVersionComparator implements Comparator<EPackageVersion> {
+	
+	private static final VersionStringComparator versionStringComparator = new VersionStringComparator();
+	
+	
+	@Override
+	public int compare(EPackageVersion v1, EPackageVersion v2) {
+		int pc = v1.getPkg().getName().compareTo(v2.getPkg().getName());
+		if (pc != 0) {
+			return pc;
+		}
+		return PackageVersionComparator.versionStringComparator.compare(v1.getVersion(), v2.getVersion());
+	}
+	
 }

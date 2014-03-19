@@ -1,0 +1,38 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a service to the package <strong>${packageName}</strong></h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+	<fieldset>
+	<form id="addService">
+		<div class="row">
+		#if( $services.isEmpty() )
+			<div class="col-lg-6">
+				<div class="alert alert-warning">No Services available to add.</div>
+			</div>
+		#else
+			#foreach ($service in $services)
+				<div class="col-lg-6 formlist">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<input type="checkbox" name="services" value="$service.getName()">
+						</span>
+						<span class="form-control">${service.getName()}</span>
+					</div><!-- /input-group -->	
+				</div><!-- /.col-lg-6 -->
+			#end
+		#end
+		</div>
+	</form>
+	</fieldset>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-info" data-ref="${packageName}/services/new" data-call-type="GET" data-target="#popModal">Create new service</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    #if(! $services.isEmpty() )
+    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/add" data-call-type="POST" data-target="#popModal" data-form="addService">Add service(s)</button>
+    #end
+</div>

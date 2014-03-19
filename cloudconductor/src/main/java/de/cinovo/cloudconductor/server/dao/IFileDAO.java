@@ -36,4 +36,9 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	 */
 	public EFileData findDataByFile(long configFileId);
 	
+	/**
+	 * @return the row count
+	 */
+	public Long count();
+	
 }

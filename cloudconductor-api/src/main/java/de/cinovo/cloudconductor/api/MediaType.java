@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.api;
  * #L%
  */
 
-
 /**
  * Media types used and supported by the config server <br>
  * <br>
@@ -46,4 +45,8 @@ public interface MediaType {
 	static final String TEXT_HTML = "text/html;charset=UTF-8";
 	/** GIF MEDIA TYPE */
 	static final String IMAGE_GIF = "image/gif";
+	/** JS MEDIA TYPE */
+	static final String APPLICATION_JAVASCRIPT = "application/javascript";
+	/** font opentype MEDIA TYPE */
+	static final String FONT_OPENTYPE = "font/opentype";
 }

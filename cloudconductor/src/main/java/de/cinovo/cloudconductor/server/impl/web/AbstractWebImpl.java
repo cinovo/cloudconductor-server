@@ -43,7 +43,7 @@ import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.dao.IYumServerDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.tools.AuditCategory;
 import de.cinovo.cloudconductor.server.util.StringMapComparator;
@@ -74,7 +74,7 @@ public abstract class AbstractWebImpl implements IContextAware {
 	@Autowired
 	protected IServiceStateDAO dSvcState;
 	@Autowired
-	protected IYumServerDAO dPackageServer;
+	protected IPackageServerDAO dPackageServer;
 	@Autowired
 	protected IServiceDefaultStateDAO dSvcDefState;
 	@Autowired
@@ -183,15 +183,6 @@ public abstract class AbstractWebImpl implements IContextAware {
 		} catch (URISyntaxException e) {
 			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 		}
-	}
-	
-	protected boolean existsError() {
-		String attribute = (String) this.mc.getHttpServletRequest().getSession().getAttribute(FormErrorExceptionHander.FORM_ERROR_MESSAGE);
-		return (attribute != null) && !attribute.isEmpty();
-	}
-	
-	protected String getError() {
-		return (String) this.mc.getHttpServletRequest().getSession().getAttribute(FormErrorExceptionHander.FORM_ERROR_MESSAGE);
 	}
 	
 	protected MultivaluedMap<String, String> getErrorFields() {

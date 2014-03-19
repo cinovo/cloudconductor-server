@@ -1,0 +1,39 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Create a new service for the package <strong>${packageName}</strong></h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+	<form id="newService">
+		<div class="row">
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('servicename'))has-error #end">
+					<span class="input-group-addon">Service-Name:</span>
+					<input type="text" class="form-control" placeholder="Service-Name" name="servicename" #if(${ERROR.getFormParams().get('servicename')})value="${ERROR.getFormParams().get('servicename')}"#end>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('initscript'))has-error #end">
+					<span class="input-group-addon">InitScript-Name:</span>
+					<input type="text" class="form-control" placeholder="InitScript-Name" name="initscript" #if(${ERROR.getFormParams().get('initscript')})value="${ERROR.getFormParams().get('initscript')}"#end>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			
+			<div class="col-lg-6 formlist">
+				<div class="input-group">
+					<span class="input-group-addon">Description:</span>
+					<input type="text" class="form-control" placeholder="Description of some sort" name="description" #if(${ERROR.getFormParams().get('initscript')})value="${ERROR.getFormParams().get('description')}"#end>
+				</div>
+			</div><!-- /.col-lg-6 -->
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    #if(! $services.isEmpty() )
+    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/new" data-call-type="POST" data-target="#popModal" data-form="newService">Create and add service</button>
+    #end
+</div>

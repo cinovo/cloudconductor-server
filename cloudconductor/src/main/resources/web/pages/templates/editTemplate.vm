@@ -1,0 +1,56 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Modify the template <strong>${template.getName()}</strong></h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+	<form id="editTemplate">
+		<div class="row">
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('templatename'))has-error #end">
+					<span class="input-group-addon">Template-Name:</span>
+					<input type="text" class="form-control" placeholder="Template-Name" name="templatename" #if(${ERROR.getFormParams().get('templatename')})value="${ERROR.getFormParams().get('templatename')}"#elseif(${template.getName()})value="${template.getName()}"#end>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('packageManager'))has-error #end">
+					<span class="input-group-addon">Package-Server:</span>
+					<select name="packageManager" class="form-control">
+						<option value="-1" selected="selected">- none -</option>
+						#if(${ERROR.getFormParams().get('packageManager')}) 
+							#set($curPath=${ERROR.getFormParams().get('packageManager')})
+						#elseif($template.getYum().getId())
+							#set($curPath=${template.getYum().getId()})
+						#end	
+						#foreach ($ya in $availablePM)
+							<option value="$ya.getId()" #if ($curPath == $ya.getId()) selected="selected" #end>$ya.getPath()</option>
+						#end
+					</select>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			
+			<div class="col-lg-6 formlist">
+				<div class="input-group">
+					<span class="input-group-addon">Description:</span>
+					<input type="text" class="form-control" placeholder="Description" name="description" #if(${ERROR.getFormParams().get('description')})value="${ERROR.getFormParams().get('description')}"#elseif(${template.getDescription()})value="${template.getDescription()}"#end>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			
+			#if ($C2InstanceOptions.allowautoupdate)
+			<div class="col-lg-6 formlist">
+				<div class="input-group">
+					<span class="input-group-addon"><input type="checkbox" name="autoupdate" value="true" #if(${ERROR.getFormParams().get('autoupdate')})checked #elseif(${template.getAutoUpdate()})checked #end></span>
+					<span class="form-control">Automatically update packaged of this template</span>
+				</div>
+			</div><!-- /.col-lg-6 -->
+			#end
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" data-ref="${template.getName()}/edit" data-call-type="POST" data-target="#popModal" data-form="editTemplate">Save</button>
+</div>

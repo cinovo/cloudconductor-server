@@ -19,8 +19,8 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import org.springframework.stereotype.Repository;
 
-import de.cinovo.cloudconductor.server.dao.IYumServerDAO;
-import de.cinovo.cloudconductor.server.model.EYumServer;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
@@ -31,11 +31,11 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * 
  */
 @Repository("YumServerDAOHib")
-public class YumServerDAOHib extends EntityDAOHibernate<EYumServer, Long> implements IYumServerDAO {
+public class YumServerDAOHib extends EntityDAOHibernate<EPackageServer, Long> implements IPackageServerDAO {
 	
 	@Override
-	public Class<EYumServer> getEntityClass() {
-		return EYumServer.class;
+	public Class<EPackageServer> getEntityClass() {
+		return EPackageServer.class;
 	}
 	
 }

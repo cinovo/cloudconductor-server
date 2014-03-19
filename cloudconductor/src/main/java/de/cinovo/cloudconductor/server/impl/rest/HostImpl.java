@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server.impl.rest;
  */
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
@@ -171,7 +172,7 @@ public class HostImpl extends ImplHelper implements IHost {
 		RESTAssert.assertNotNull(host);
 		EHost h = this.findByName(this.dhost, host);
 		this.assertModelFound(h);
-		Set<EPackageVersion> trpms = h.getTemplate().getRPMs();
+		List<EPackageVersion> trpms = h.getTemplate().getPackageVersions();
 		if ((h.getPackages() == null) || h.getPackages().isEmpty()) {
 			return false;
 		}

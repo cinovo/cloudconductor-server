@@ -26,8 +26,8 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.model.EYumServer;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackageServer;
 import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
@@ -60,12 +60,12 @@ public class PackageServerImpl extends AbstractWebImpl implements IPackageServer
 	@Override
 	@Transactional
 	public ViewModel view() {
-		List<EYumServer> servers = this.dPackageServer.findList();
+		List<EPackageServer> servers = this.dPackageServer.findList();
 		List<Map<String, Object>> result = new ArrayList<>();
-		for (EYumServer server : servers) {
+		for (EPackageServer server : servers) {
 			Map<String, Object> keymap = new HashMap<>();
 			keymap.put("id", server.getId());
-			keymap.put("path", server.getYumPath());
+			keymap.put("path", server.getPath());
 			keymap.put("description", (server.getDescription() == null) || server.getDescription().isEmpty() ? "no description" : server.getDescription());
 			result.add(keymap);
 		}
@@ -89,10 +89,10 @@ public class PackageServerImpl extends AbstractWebImpl implements IPackageServer
 	@Override
 	@Transactional
 	public ViewModel viewEdit(Long serverid) {
-		EYumServer server = this.dPackageServer.findById(serverid);
+		EPackageServer server = this.dPackageServer.findById(serverid);
 		Map<String, Object> result = new HashMap<>();
 		result.put("id", server.getId());
-		result.put("path", server.getYumPath());
+		result.put("path", server.getPath());
 		result.put("description", server.getDescription());
 		final ViewModel vm = this.createView("save");
 		vm.addModel("server", result);
@@ -117,12 +117,12 @@ public class PackageServerImpl extends AbstractWebImpl implements IPackageServer
 			return vm;
 		}
 		
-		EYumServer server = this.dPackageServer.findById(serverid);
+		EPackageServer server = this.dPackageServer.findById(serverid);
 		if (server == null) {
-			server = new EYumServer();
+			server = new EPackageServer();
 		}
 		server.setDescription(description);
-		server.setYumPath(path);
+		server.setPath(path);
 		server = this.dPackageServer.save(server);
 		return this.redirect(null, server.getId().toString());
 	}
@@ -131,8 +131,8 @@ public class PackageServerImpl extends AbstractWebImpl implements IPackageServer
 	@Transactional
 	public ViewModel viewDelete(Long serverid) {
 		RESTAssert.assertNotNull(serverid);
-		EYumServer server = this.dPackageServer.findById(serverid);
-		String msg = "Do you really want to remove the package server " + server.getYumPath() + "?";
+		EPackageServer server = this.dPackageServer.findById(serverid);
+		String msg = "Do you really want to remove the package server " + server.getPath() + "?";
 		String header = "Remove package server";
 		String back = "#" + serverid;
 		return this.createDeleteView(header, msg, back, serverid.toString());
@@ -142,7 +142,7 @@ public class PackageServerImpl extends AbstractWebImpl implements IPackageServer
 	@Transactional
 	public Response delete(Long serverid) {
 		RESTAssert.assertNotNull(serverid);
-		EYumServer server = this.dPackageServer.findById(serverid);
+		EPackageServer server = this.dPackageServer.findById(serverid);
 		List<ETemplate> tmplt = this.dTemplate.findByPackageServer(serverid);
 		if ((tmplt != null) && (tmplt.size() > 0)) {
 			// TODO Print some error

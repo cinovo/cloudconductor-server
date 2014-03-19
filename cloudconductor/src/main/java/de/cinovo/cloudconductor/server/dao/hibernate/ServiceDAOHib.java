@@ -57,4 +57,9 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 		return this.findListByQuery("FROM EService s WHERE s.name IN ?1", find);
 	}
 	
+	@Override
+	public Long count() {
+		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EService").getSingleResult();
+	}
+	
 }

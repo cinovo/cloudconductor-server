@@ -41,11 +41,11 @@ import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.model.EYumServer;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -96,11 +96,11 @@ public class AMConverter {
 		model.setName(api.getName());
 		model.setDescription(api.getDescription());
 		Pattern pattern = Pattern.compile("\\w*://.*");
-		model.setYum(new EYumServer());
+		model.setYum(new EPackageServer());
 		if (pattern.matcher(api.getYum()).matches()) {
-			model.getYum().setYumPath(api.getYum());
+			model.getYum().setPath(api.getYum());
 		} else {
-			model.getYum().setYumPath("http://" + api.getYum());
+			model.getYum().setPath("http://" + api.getYum());
 		}
 		return model;
 	}

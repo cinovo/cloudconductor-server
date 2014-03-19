@@ -59,7 +59,7 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.MAConverter;
-import de.cinovo.cloudconductor.server.util.VersionStringComparator;
+import de.cinovo.cloudconductor.server.web2.comparators.VersionStringComparator;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -189,7 +189,7 @@ public class AgentImpl implements IAgent {
 		for (EPackageState state : host.getPackages()) {
 			actual.add(state.getVersion());
 		}
-		List<List<PackageVersion>> diff = this.computePackageDiff(template.getRPMs(), actual);
+		List<List<PackageVersion>> diff = this.computePackageDiff(template.getPackageVersions(), actual);
 		return new PackageStateChanges(diff.get(0), diff.get(1), diff.get(2));
 	}
 	
@@ -197,7 +197,7 @@ public class AgentImpl implements IAgent {
 		List<EService> services = this.dsvc.findList();
 		Set<EService> templateServices = new HashSet<>();
 		for (EService s : services) {
-			for (EPackageVersion p : template.getRPMs()) {
+			for (EPackageVersion p : template.getPackageVersions()) {
 				if (s.getPackages().contains(p.getPkg())) {
 					templateServices.add(s);
 				}

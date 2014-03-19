@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.impl.rest;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,7 @@ import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.AMConverter;
 import de.cinovo.cloudconductor.server.model.tools.MAConverter;
-import de.cinovo.cloudconductor.server.util.RPMComparator;
+import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -79,7 +80,7 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 	@Autowired
 	private AMConverter amc;
 	
-	private RPMComparator rpmComp = new RPMComparator();
+	private PackageVersionComparator rpmComp = new PackageVersionComparator();
 	
 	
 	@Override
@@ -99,15 +100,15 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		ETemplate model = this.amc.toModel(apiObject);
 		
 		if ((apiObject.getRpms() != null) && !apiObject.getRpms().isEmpty()) {
-			Set<EPackageVersion> found = new HashSet<>();
+			List<EPackageVersion> found = new ArrayList<>();
 			for (Entry<String, String> s : apiObject.getRpms().entrySet()) {
 				EPackageVersion rpm = this.drpm.find(s.getKey(), s.getValue());
 				this.assertModelFound(rpm);
 				found.add(rpm);
 			}
-			model.setRPMs(found);
+			model.setPackageVersions(found);
 		} else {
-			model.setRPMs(null);
+			model.setPackageVersions(null);
 		}
 		
 		if ((apiObject.getHosts() != null) && !apiObject.getHosts().isEmpty()) {
@@ -221,7 +222,7 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		RESTAssert.assertNotEmpty(name);
 		ETemplate model = this.findByName(this.dtemplate, name);
 		Set<PackageVersion> result = new HashSet<>();
-		for (EPackageVersion p : model.getRPMs()) {
+		for (EPackageVersion p : model.getPackageVersions()) {
 			result.add(MAConverter.fromModel(p));
 		}
 		return result.toArray(new PackageVersion[result.size()]);
@@ -247,18 +248,18 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		this.assertModelFound(erpm);
 		
 		boolean exists = false;
-		for (EPackageVersion r : model.getRPMs()) {
+		for (EPackageVersion r : model.getPackageVersions()) {
 			if (r.getPkg().getName().equals(erpm.getPkg().getName())) {
 				if (r.getVersion().equals(erpm.getVersion())) {
 					exists = true;
 				} else {
-					model.getRPMs().remove(r);
+					model.getPackageVersions().remove(r);
 				}
 				break;
 			}
 		}
 		if (!exists) {
-			model.getRPMs().add(erpm);
+			model.getPackageVersions().add(erpm);
 			this.dtemplate.save(model);
 		}
 	}
@@ -273,7 +274,7 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		EPackageVersion erpm = this.drpm.find(pkg, version);
 		this.assertModelFound(erpm);
 		
-		model.getRPMs().remove(erpm);
+		model.getPackageVersions().remove(erpm);
 		model = this.dtemplate.save(model);
 		
 		for (EHost host : model.getHosts()) {
@@ -294,7 +295,7 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		List<EService> services = this.dsvc.findList();
 		Set<Service> result = new HashSet<>();
 		for (EService s : services) {
-			for (EPackageVersion p : model.getRPMs()) {
+			for (EPackageVersion p : model.getPackageVersions()) {
 				if (s.getPackages().contains(p.getPkg())) {
 					result.add(MAConverter.fromModel(s));
 				}

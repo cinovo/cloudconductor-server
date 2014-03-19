@@ -1,0 +1,124 @@
+<div class="jumbotron" style="background-color:#$C2InstanceOptions.bgcolor;">
+	<div class="container">
+		<span class="c2-logo pull-left"><img src="/web2/images/200x200.jpg" /></span>
+        <h1>$C2InstanceOptions.name</h1>
+        <p>$C2InstanceOptions.description</p>
+	</div>
+</div>
+
+<div class="row row-offcanvas row-offcanvas-right">
+	<div class="col-6 col-sm-6 col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading" data-toggle="collapse" data-target="#templates">
+				<h3 class="panel-title">
+					Templates
+					<span class="pull-right"><span class="caret"></span></span>
+				</h3>
+			</div>
+			<div id="templates" class="list-group collapse in">
+			#foreach($template in $TEMPLATELIST)
+				<a href="/web2/templates#$template.key" class="list-group-item alternatebg">
+					<span class="badge">$template.value Hosts</span>
+					$template.key
+				</a>
+			#end
+			</div>
+		</div>
+	</div>		
+
+	<div class="col-6 col-sm-6 col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading" data-toggle="collapse" data-target="#hostwatch">
+				<h3 class="panel-title">
+					Host Watch
+					<span class="pull-right"><span class="caret"></span></span>
+				</h3>
+			</div>
+			<div id="hostwatch" class="list-group collapse in">
+			#if(!$HOSTLIST.isEmpty()) 
+			#foreach($host in $HOSTLIST)
+				<a href="web2/hosts#$host.key" class="list-group-item #if($listTool.size($host.value) < 2)list-group-item-warning #else list-group-item-danger #end">
+					#foreach($hv in $host.value)
+					<span class="badge">$hv</span>
+					#end
+					$host.key
+				</a>
+			#end
+			#else
+				<a class="list-group-item list-group-item-success">
+					No problems found.
+				</a>
+			#end
+				<div class="panel-footer small-footer small"><small>last update: $NOW</small></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row row-offcanvas row-offcanvas-right">	
+	<div class="col-6 col-sm-6 col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading" data-toggle="collapse" data-target="#servicewatch">
+				<h3 class="panel-title">
+					Service Watch
+					<span class="pull-right"><span class="caret"></span></span>
+				</h3>
+			</div>
+			<div id="servicewatch" class="list-group collapse in">
+			#if(!$SERCVICELIST.isEmpty()) 
+			#foreach($service in $SERCVICELIST)
+				<a class="list-group-item #if($service.value == 'STOPPED')list-group-item-danger #else list-group-item-warning #end">
+					<span class="badge">$service.value</span>
+					$service.key
+				</a>
+			#end
+			#else
+				<a class="list-group-item list-group-item-success">
+					No problems found.
+				</a>
+			#end
+				<div class="panel-footer small-footer small"><small>last update: $NOW</small></div>
+			 </div> 
+		</div>
+	</div>
+	
+	<div class="col-6 col-sm-6 col-lg-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading" data-toggle="collapse" data-target="#status">
+				<h3 class="panel-title">
+					Status
+					<span class="pull-right"><span class="caret"></span></span>
+				</h3>
+			</div>
+			<div id="status" class="list-group collapse in">
+				<a class="list-group-item alternatebg">
+					<span class="badge">$C2InstanceVersion</span>
+					Version
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$TEMPLATELIST.size()</span>
+					Templates
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$HOSTCOUNT</span>
+					Hosts
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$PACKAGECOUNT</span>
+					Packages
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$SERVICECOUNT</span>
+					Services
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$FILECOUNT</span>
+					Files
+				</a>
+				<a class="list-group-item alternatebg">
+					<span class="badge">$SSHKEYCOUNT</span>
+					SSH Keys
+				</a>
+			</div>
+		</div>
+	</div>
+</div>

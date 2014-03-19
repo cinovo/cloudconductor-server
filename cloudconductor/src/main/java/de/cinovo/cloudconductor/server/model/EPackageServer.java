@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,11 +35,11 @@ import de.taimos.dao.IEntity;
  */
 @Entity
 @Table(name = "yumserver", schema = "cloudconductor")
-public class EYumServer implements IEntity<Long> {
+public class EPackageServer implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private String yumPath;
+	private String path;
 	private String description;
 	
 	
@@ -57,17 +58,18 @@ public class EYumServer implements IEntity<Long> {
 	}
 	
 	/**
-	 * @return the yumpath
+	 * @return the path
 	 */
-	public String getYumPath() {
-		return this.yumPath;
+	@Column(name = "yumPath")
+	public String getPath() {
+		return this.path;
 	}
 	
 	/**
-	 * @param yumPath the yumpath to set
+	 * @param path the path to set
 	 */
-	public void setYumPath(String yumPath) {
-		this.yumPath = yumPath;
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	/**
@@ -86,12 +88,12 @@ public class EYumServer implements IEntity<Long> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof EYumServer)) {
+		if (!(obj instanceof EPackageServer)) {
 			return false;
 		}
-		EYumServer other = (EYumServer) obj;
+		EPackageServer other = (EPackageServer) obj;
 		
-		if (this.getYumPath().equals(other.getYumPath()) && this.id.equals(other.getId())) {
+		if (this.getPath().equals(other.getPath()) && this.id.equals(other.getId())) {
 			return true;
 		}
 		return false;
@@ -99,7 +101,7 @@ public class EYumServer implements IEntity<Long> {
 	
 	@Override
 	public int hashCode() {
-		int val = (this.getYumPath() == null) ? 0 : this.getYumPath().hashCode();
+		int val = (this.getPath() == null) ? 0 : this.getPath().hashCode();
 		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
 		return val * idVal;
 	}

@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.util;
+package de.cinovo.cloudconductor.server.dao;
 
 /*
  * #%L
@@ -17,29 +17,16 @@ package de.cinovo.cloudconductor.server.util;
  * #L%
  */
 
-import java.util.Comparator;
-
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * Comparator for comparing two package versions.
  * 
  * @author psigloch
+ * 
  */
-public class RPMComparator implements Comparator<EPackageVersion> {
-	
-	private static final VersionStringComparator versionStringComparator = new VersionStringComparator();
-	
-	
-	@Override
-	public int compare(EPackageVersion v1, EPackageVersion v2) {
-		int pc = v1.getPkg().getName().compareTo(v2.getPkg().getName());
-		if (pc != 0) {
-			return pc;
-		}
-		return RPMComparator.versionStringComparator.compare(v1.getVersion(), v2.getVersion());
-	}
-	
+public interface IPackageServerDAO extends IEntityDAO<EPackageServer, Long> {
+	// nothing else to add
 }

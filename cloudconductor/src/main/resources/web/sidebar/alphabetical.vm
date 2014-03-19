@@ -1,0 +1,18 @@
+#if(! $SIDEBAR.isEmpty()) 
+	<div class="col-xs-2 col-sm-2 sidebar-offcanvas list-group navbar" id="sidebar" >			
+        <ul class="nav sidebar" id="sidenav" data-spy="affix" data-offset-top="50">
+		#foreach( $element in $SIDEBAR)
+			#if ( (! $case) || $case != ${element.substring(0,1).toUpperCase()})
+				#if( $case ) 
+					</span>
+				#end
+			#set( $case = ${element.substring(0,1).toUpperCase()} )
+				<li class="list-group-item" data-toggle="collapse" data-parent="#sidebar" href="#collapse$case">$case</li>
+				<span id="collapse$case" class="collapse out">
+			#end
+            <li class="list-group-item"><a href="#${element}">$element</a></li>
+		#end
+			</span>
+        </ul>
+	</div>
+#end

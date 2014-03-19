@@ -254,7 +254,7 @@ public class ConfigFilesImpl extends AbstractWebImpl implements IFile {
 		
 		if (cf == null) {
 			cf = new EFile();
-			cf.setDependentServices(new HashSet<EService>());
+			cf.setDependentServices(new ArrayList<EService>());
 		}
 		
 		cf.setName(name);

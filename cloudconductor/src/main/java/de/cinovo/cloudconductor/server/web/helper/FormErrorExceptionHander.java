@@ -39,13 +39,13 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
 public class FormErrorExceptionHander implements ExceptionMapper<FormErrorException> {
 	
 	/**
-	 * identifier for an error message
-	 */
-	public static final String FORM_ERROR_MESSAGE = "FORM_ERROR_MESSAGE";
-	/**
 	 * identifier for error data from a form
 	 */
 	public static final String FORM_ERROR_DATA = "FORM_ERROR_DATA";
+	/**
+	 * identifier for error data from a form
+	 */
+	public static final String REQUEST_ERROR_PARAM = "errors";
 	
 	@Context
 	protected MessageContext mc;
@@ -55,12 +55,11 @@ public class FormErrorExceptionHander implements ExceptionMapper<FormErrorExcept
 	public Response toResponse(FormErrorException exception) {
 		ResponseBuilder seeOther;
 		try {
-			seeOther = Response.seeOther(new URI(exception.getParentUrl()));
+			seeOther = Response.seeOther(new URI(exception.getParentUrl() + "?" + FormErrorExceptionHander.REQUEST_ERROR_PARAM + "=true"));
 		} catch (URISyntaxException e) {
 			return Response.serverError().build();
 		}
-		this.mc.getHttpServletRequest().getSession(true).setAttribute(FormErrorExceptionHander.FORM_ERROR_MESSAGE, exception.getMessage());
-		this.mc.getHttpServletRequest().getSession(true).setAttribute(FormErrorExceptionHander.FORM_ERROR_DATA, exception.getFormParams());
+		this.mc.getHttpServletRequest().getSession(true).setAttribute(FormErrorExceptionHander.FORM_ERROR_DATA, exception);
 		return seeOther.build();
 	}
 }

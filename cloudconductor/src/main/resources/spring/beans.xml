@@ -1,22 +1,8 @@
-<!--
-  #%L
-  cloudconductor-server
-  %%
-  Copyright (C) 2013 - 2014 Cinovo AG
-  %%
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  
-       http://www.apache.org/licenses/LICENSE-2.0
-  
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-  #L%
-  -->
+<!-- #%L cloudconductor-server %% Copyright (C) 2013 - 2014 Cinovo AG %% Licensed under the Apache License, Version 2.0 (the "License"); you 
+	may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations 
+	under the License. #L% -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xmlns:context="http://www.springframework.org/schema/context" xmlns:cxf="http://cxf.apache.org/core" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
@@ -31,7 +17,7 @@
 	<import resource="classpath:spring/daemon.xml" />
 	<import resource="dao.xml" />
 	<import resource="jettyOverwrite.xml" />
-	
+
 	<jaxrs:server id="serverREST" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/api" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
 			<bean class="de.cinovo.cloudconductor.server.impl.rest.FileImpl" />
@@ -77,5 +63,19 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
+	<jaxrs:server id="serverUI2" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web2" depends-on="cxf-engine">
+		<jaxrs:serviceBeans>
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.IndexImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.PackagesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.TemplatesImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="exMapper" />
+			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
+			<bean class="de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander" />
+			<bean id="authTokenProvider2" class="de.cinovo.cloudconductor.server.security.AuthProvider" />
+			<bean class="de.cinovo.cloudconductor.server.web2.TemplateWriter" />
+		</jaxrs:providers>
+	</jaxrs:server>
 	<bean id="amc" class="de.cinovo.cloudconductor.server.model.tools.AMConverter" />
 </beans>

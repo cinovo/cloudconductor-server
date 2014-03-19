@@ -1,0 +1,97 @@
+#foreach( $template in $TEMPLATES)
+<div id="$template.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" >
+			<h3 class="panel-title" data-toggle="collapse" data-target="#${template.name}-hide">
+				$template.name
+				<span class="pull-right"><span class="caret" /></span></span>
+			</h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-import" data-ref="${template.name}/package/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Install Package"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${template.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Template"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${template.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete Template"></button>
+				</div>
+			</span>			
+		</div>
+		<div id="${template.name}-hide" class="collapse in">
+			
+			<form id="${template.name}-form">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Package name</th>
+							<th class="actionButton"><input type="checkbox" name="toggle" value="updatePackage" rel="tooltip-left" title="Update all"></th>
+							<th>Version</th>
+							<th class="actionButton"><input type="checkbox" name="toggle" value="removePackage" rel="tooltip-left" title="Remove all"></th>
+						</tr>
+					</thead>
+					<tbody class="table-hover small-lines">
+					#foreach($version in ${template.getPackageVersions()})
+						<tr #if(${version.getDeprecated()})class="danger"#end #if(${UPDATE.contains($version.getName())})class="warning"#end>
+							<td>${version.getPkg().getName()}</td>
+							<td class="actionButton">
+							#if(${version.getDeprecated()} || ${UPDATE.contains($version.getName())})
+								<input type="checkbox" name="updatePackage" value="${version.getPkg().getName()}" rel="tooltip-left" title="Update">
+							#end
+							</td>
+							<td>${version.getVersion()}</td>
+							<td class="actionButton"><input type="checkbox" name="deletePackage" value="${version.getPkg().getName()}" rel="tooltip-left" title="Remove"></td>
+						</tr>
+					#end
+						<tr>
+							<td></td>
+							<td class="actionButton"><button type="button" class="btn btn-default btn-sm glyphicon glyphicon-transfer" data-ref="${template.name}/update" data-call-type="POST" data-toggle='modal' data-form="${template.name}-form" rel="tooltip-down" title="Update"></button></td>
+							<td></td>
+							<td class="actionButton"><button type="button" class="btn btn-default btn-sm glyphicon glyphicon-trash" data-ref="${template.name}/remove" data-call-type="POST" data-toggle='modal' data-form="${template.name}-form" rel="tooltip-down" title="Uninstall"></button></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			
+			<table class="table table-striped">		
+				<thead>
+					<tr>
+						<th>Hosts for this Template</th>								
+						<th class="actionButton"><button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-cog" rel="tooltip-left" title="Configure the default service state fo this template"></button></th>
+					</tr>
+				</thead>
+				<tbody>
+				#if(${template.getHosts().isEmpty()})
+					<tr>
+						<td colspan="2">This template has no hosts running</td>
+					</tr>
+				#end
+				#foreach($host in ${template.getHosts()})
+					<tr class="success">
+						<td>${host.getName()}</td>
+						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" rel="tooltip-left" title="Jump to host"></button></td>
+					</tr>
+				#end
+				</tbody>
+			</table>
+			
+			<div class="panel-footer info-footer">
+				<span rel="tooltip-left" title="Package-Server"> ${template.getYumPath()}</span>
+				#if(${template.getAutoUpdate()})
+				<span class="pull-right glyphicon glyphicon-refresh" rel="tooltip" title="Autoupdate enabled"></span>
+				#else
+				<span class="pull-right glyphicon glyphicon-ban-circle" rel="tooltip" title="Autoupdate disabled"></span>
+				#end
+			</div>
+			
+		</div>
+	</div>
+</div>
+#end
+
+<!-- Modal -->
+<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     
+    </div>
+  </div>
+</div>

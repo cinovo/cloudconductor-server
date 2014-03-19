@@ -43,4 +43,9 @@ public class PackageDAOHib extends EntityDAOHibernate<EPackage, Long> implements
 		return this.findByQuery("FROM EPackage p WHERE p.name = ?1", name);
 	}
 	
+	@Override
+	public Long count() {
+		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EPackage").getSingleResult();
+	}
+	
 }

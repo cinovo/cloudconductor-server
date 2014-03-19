@@ -17,7 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,7 +58,7 @@ public class EFile implements IEntity<Long>, INamed {
 	private boolean isTemplate;
 	private boolean isReloadable;
 	private String checksum;
-	private Set<EService> dependentServices;
+	private List<EService> dependentServices;
 	private EFileData data;
 	
 	
@@ -197,14 +197,14 @@ public class EFile implements IEntity<Long>, INamed {
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfileservice", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
-	public Set<EService> getDependentServices() {
+	public List<EService> getDependentServices() {
 		return this.dependentServices;
 	}
 	
 	/**
 	 * @param dependentServices the dependentServices to set
 	 */
-	public void setDependentServices(Set<EService> dependentServices) {
+	public void setDependentServices(List<EService> dependentServices) {
 		this.dependentServices = dependentServices;
 	}
 	

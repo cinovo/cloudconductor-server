@@ -47,4 +47,9 @@ public class SSHKeyDAOHib extends EntityDAOHibernate<ESSHKey, Long> implements I
 	public ESSHKey findByName(String name) {
 		return this.findByOwner(name);
 	}
+	
+	@Override
+	public Long count() {
+		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM ESSHKey").getSingleResult();
+	}
 }

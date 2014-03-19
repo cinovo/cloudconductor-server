@@ -65,7 +65,7 @@ public class ReportImpl extends AbstractWebImpl implements IReport {
 		Set<EPackageVersion> installedPackages = Sets.newHashSet();
 		
 		for (ETemplate temp : templates) {
-			for (EPackageVersion rpm : temp.getRPMs()) {
+			for (EPackageVersion rpm : temp.getPackageVersions()) {
 				installedPackages.add(rpm);
 			}
 		}

@@ -37,4 +37,10 @@ public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<ESer
 	 * @return list of services
 	 */
 	public List<EService> findByName(Set<String> names);
+	
+	/**
+	 * @return the row count
+	 */
+	public Long count();
+	
 }
