@@ -46,12 +46,11 @@ public interface ITemplate {
 	
 	public static final String UPDATE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
 	public static final String REMOVE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REMOVE;
-	
 	public static final String EDIT_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	public static final String ADD_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}/package" + IWebPath.ACTION_ADD;
 	public static final String DELETE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
-	public static final String DEFAULT_SERVICE_STATE = "/defaultservicestate";
-	public static final String CHANGE_DEFAULT_SERVICE_STATE = "/defaultservicestate/{" + IWebPath.VAR_NAME + "}";
+	
+	public static final String DEFAULT_SERVICE_STATE = "/{" + IWebPath.VAR_NAME + "}/services/default";
 	
 	
 	@GET
@@ -69,18 +68,16 @@ public interface ITemplate {
 	@Produces(MediaType.APPLICATION_JSON)
 	public abstract AjaxRedirect changeTemplateState(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("deletePackage") List<String> deletePackages);
 	
-	//
-	// @GET
-	// @Path(IWebPath.ACTION_ADD)
-	// @Produces(MediaType.TEXT_HTML)
-	// public abstract ViewModel viewAddTemplate();
-	//
-	// @POST
-	// @Path(IWebPath.ACTION_ADD)
-	// @Produces(MediaType.TEXT_HTML)
-	// public abstract Object addTemplate(@FormParam("templatename") String templatename, @FormParam("yum") Long yum,
-	// @FormParam("description") String description, @FormParam("autoupdate") String autoupdate);
-	//
+	@GET
+	@Path(IWebPath.ACTION_ADD)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel addTemplateView();
+	
+	@POST
+	@Path(IWebPath.ACTION_ADD)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxRedirect addTemplate(@FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManager, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate) throws FormErrorException;
+	
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
@@ -105,25 +102,19 @@ public interface ITemplate {
 	@Path(ITemplate.DELETE_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
 	public abstract ViewModel deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
-	//
-	// @POST
-	// @Path(ITemplate.DELETE_TEMPLATE_ACTION)
-	// @Produces(MediaType.TEXT_HTML)
-	// public abstract Object deleteTemplate(@PathParam(IWebPath.VAR_NAME) String tname);
-	//
-	// @GET
-	// @Path(ITemplate.DEFAULT_SERVICE_STATE)
-	// @Produces(MediaType.TEXT_HTML)
-	// public abstract ViewModel viewDefaultServiceStates();
-	//
-	// @POST
-	// @Path(ITemplate.CHANGE_DEFAULT_SERVICE_STATE)
-	// @Produces(MediaType.TEXT_HTML)
-	// public abstract Response changeDefaultServiceStates(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("start") String[] start,
-	// @FormParam("stop") String[] stop, @FormParam("restart") String[] restart);
-	//
-	// @GET
-	// @Path("/toggleautorefresh")
-	// public Response handleAutorefresh();
 	
+	@POST
+	@Path(ITemplate.DELETE_TEMPLATE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxRedirect deleteTemplate(@PathParam(IWebPath.VAR_NAME) String tname) throws FormErrorException;
+	
+	@GET
+	@Path(ITemplate.DEFAULT_SERVICE_STATE)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel defaultServiceStatesView(@PathParam(IWebPath.VAR_NAME) String tname);
+	
+	@POST
+	@Path(ITemplate.DEFAULT_SERVICE_STATE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxRedirect changeDefaultServiceStates(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("startService") List<String> startService, @FormParam("stopService") List<String> stopService);
 }

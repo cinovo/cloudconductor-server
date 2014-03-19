@@ -8,7 +8,7 @@
 #end 
 	<fieldset>
 	<form id="addService">
-		<div class="row">
+		<div class="row-lg-12">
 		#if( $services.isEmpty() )
 			<div class="col-lg-6">
 				<div class="alert alert-warning">No Services available to add.</div>

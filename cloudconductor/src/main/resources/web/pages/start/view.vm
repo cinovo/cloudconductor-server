@@ -1,6 +1,6 @@
 <div class="jumbotron" style="background-color:#$C2InstanceOptions.bgcolor;">
 	<div class="container">
-		<span class="c2-logo pull-left"><img src="/web2/images/200x200.jpg" /></span>
+		<span class="c2-logo pull-left"><img src="/web2/images/200x200.jpg"  class="img-circle"/></span>
         <h1>$C2InstanceOptions.name</h1>
         <p>$C2InstanceOptions.description</p>
 	</div>

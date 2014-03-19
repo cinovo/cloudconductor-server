@@ -114,6 +114,9 @@ th.actionButton,
 	padding-top: 4px;
 	padding-bottom: 4px;
 } 
+span.form-control {
+	overflow-x:auto;
+}
 /* 
  * Sidebar
  * --------------------------------------------------
@@ -154,7 +157,7 @@ th.actionButton,
 	margin-right: -15px;
 }
 
-.col-lg-6.formlist {
+.formlist {
 	margin-bottom: 5px;
 }
 

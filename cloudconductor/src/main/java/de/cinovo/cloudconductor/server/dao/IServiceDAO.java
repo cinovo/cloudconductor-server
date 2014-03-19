@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.dao;
 import java.util.List;
 import java.util.Set;
 
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dao.IEntityDAO;
 
@@ -43,4 +44,5 @@ public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<ESer
 	 */
 	public Long count();
 	
+	public List<EService> findByPackage(EPackage pkg);
 }

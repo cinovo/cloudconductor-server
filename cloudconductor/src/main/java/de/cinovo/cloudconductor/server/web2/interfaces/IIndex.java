@@ -20,11 +20,13 @@ package de.cinovo.cloudconductor.server.web2.interfaces;
 import java.io.InputStream;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
@@ -104,5 +106,10 @@ public interface IIndex {
 	@Path("bootstrap/fonts/{font}")
 	@Produces(MediaType.FONT_OPENTYPE)
 	public abstract InputStream getBSFonts(@PathParam("font") String font);
+	
+	@POST
+	@Path("autorefresh/toggle")
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxRedirect toggleAutoRefresh();
 	
 }

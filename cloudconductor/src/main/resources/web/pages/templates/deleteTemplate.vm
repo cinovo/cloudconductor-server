@@ -3,10 +3,18 @@
     <h4 class="modal-title">Delete the template <strong>${template.getName()}</strong></h4>
 </div>
 <div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#else 
 	<div class="alert alert-warning">Your are going to delete the template <strong>${template.getName()}</strong> permanently.<br />
 	Are you sure?</div>
+#end
 </div>
 <div class="modal-footer">
+    #if(! $ERROR )
     <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
    	<button type="button" class="btn btn-primary" data-ref="${template.getName()}/delete" data-call-type="POST" data-target="#popModal">Yes</button>
+   	#else
+   	<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+   	#end
 </div>

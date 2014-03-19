@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpSession;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web2.helper.AWebPage;
+import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
 import de.cinovo.cloudconductor.server.web2.interfaces.IIndex;
 import de.cinovo.cloudconductor.server.web2.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.ViewModel;
@@ -37,6 +40,8 @@ import de.taimos.cxf_renderer.model.ViewModel;
  */
 public class IndexImpl extends AWebPage implements IIndex {
 	
+	/** */
+	public static final String AUTOREFRESH = "AUTOREFRESH";
 	@Autowired
 	protected IAdditionalLinksDAO dLinks;
 	
@@ -206,4 +211,17 @@ public class IndexImpl extends AWebPage implements IIndex {
 		return this.sortMap(result);
 	}
 	
+	@Override
+	public AjaxRedirect toggleAutoRefresh() {
+		final HttpSession session = this.mc.getHttpServletRequest().getSession();
+		Boolean val = (Boolean) session.getAttribute(IndexImpl.AUTOREFRESH);
+		if (val == null) {
+			session.setAttribute(IndexImpl.AUTOREFRESH, true);
+		} else {
+			session.setAttribute(IndexImpl.AUTOREFRESH, !val.booleanValue());
+		}
+		String path = this.mc.getHttpServletRequest().getPathInfo();
+		path = path.substring(IWebPath.WEBROOT.length(), path.length());
+		return new AjaxRedirect(path);
+	}
 }

@@ -117,8 +117,8 @@ public class PackagesImpl extends AWebPage implements IPackages {
 			}
 			ts.add(temp);
 		}
-		
 		this.sortNamedList(ts);
+		version.getPkg().getName();// needed caused by lazy loading
 		// Fill template with models and return.
 		final ViewModel vm = this.createModal("installPackage");
 		vm.addModel("templates", ts);

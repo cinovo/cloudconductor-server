@@ -7,14 +7,14 @@
 	<div class="alert alert-danger">$ERROR.getMessage()</div>
 #end 
 	<form id="addVersion">
-		<div class="row">
+		<div class="row-lg-12">
 		#if( $templates.isEmpty() )
-			<div class="col-lg-6">
+			<div class="col-lg-12">
 				<div class="alert alert-warning">This package is already installed on all available templates</div>
 			</div>
 		#else
 			#foreach ($template in $templates)
-				<div class="col-lg-6 formlist">
+				<div class="col-lg-12 formlist">
 					<div class="input-group">
 						<span class="input-group-addon">
 							<input type="checkbox" name="templates" value="$template.getName()">

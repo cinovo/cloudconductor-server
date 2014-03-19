@@ -1,0 +1,45 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Default Service states of template <strong>${template.getName()}</strong></h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+	
+	<form id="defaultStates">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Service</th>
+					<th>State</th>
+					<th class="actionButton"><input type="checkbox" name="toggle" value="startService" rel="tooltip-left" title="Start all"></th>
+					<th class="actionButton"><input type="checkbox" name="toggle" value="stopService" rel="tooltip-left" title="Stop all"></th>
+				</tr>
+			</thead>
+			<tbody class="table-hover small-lines">
+			#foreach($state in ${defaultStates})
+				<tr #if(${state.getState()} == 'RUNNING')class="success"#else class="danger"#end>
+					<td>${state.getService().getName()}</td>
+					<td>${state.getState()}</td>
+					<td class="actionButton">
+						#if(${state.getState()} != 'RUNNING')
+							<input type="checkbox" name="startService" value="${state.getService().getName()}" rel="tooltip-left" title="Start the service at startup">
+						#end
+					</td>
+					<td class="actionButton">
+						#if(${state.getState()} != 'STOPPED')
+							<input type="checkbox" name="stopService" value="${state.getService().getName()}" rel="tooltip-left" title="Stop the service at startup">
+						#end
+					</td>
+				</tr>
+			#end
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+   	<button type="button" class="btn btn-primary" data-ref="${template.name}/services/default" data-call-type="POST" data-target="#popModal" data-form="defaultStates">Save</button>
+</div>

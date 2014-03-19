@@ -60,36 +60,13 @@
 						</ul>
 					</li>
         		#end 
-            	<!--
-				<li><a href="/web2/templates">Templates</a></li>
-            	<li><a href="#about">Hosts</a></li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Configuration <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="/web2/services">Services</a></li>
-						<li><a href="#">Files</a></li>
-						<li class="divider"></li>
-						<li><a href="#">SSH Keys</a></li>
-						<li class="divider"></li>
-						<li><a href="#">One more separated link</a></li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#">C2 Options</a></li>
-						<li><a href="#">Package Servers</a></li>
-					</ul>
-				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-					#foreach( $link in $LINKLIST )
-						<li><a href="$link.url" target="_blank"><span>$link.label</span></a></li>
-					#end
-					</ul>
-				</li>-->
           	</ul>
+          	<ul class="nav navbar-nav navbar-right">
+          	#foreach($element in ${TOPACTIONS})
+          		<li><a href="#" rel="tooltip" data-ref="${element.value}" data-toggle="modal" data-target="#popModal" data-call-type="GET" data-original-title="${element.key}">${element.key}</a></li>
+          	#end
+            	<li #if($AUTOREFRESH)class="active"#end><a href="#" class="glyphicon glyphicon-refresh" rel="tooltip" data-ref="/web2/autorefresh/toggle" data-toggle="modal" data-call-type="POST" data-original-title="Toggle auto-refesh"></a></li>
+          </ul>
 		</div><!-- /.nav-collapse -->
 	</div><!-- /.container -->
 </div><!-- /.navbar -->

@@ -177,7 +177,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 	/**
 	 * @return the yum server
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "yum")
 	public EPackageServer getYum() {
 		return this.yum;

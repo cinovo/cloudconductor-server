@@ -25,7 +25,7 @@
 							<th>Package name</th>
 							<th class="actionButton"><input type="checkbox" name="toggle" value="updatePackage" rel="tooltip-left" title="Update all"></th>
 							<th>Version</th>
-							<th class="actionButton"><input type="checkbox" name="toggle" value="removePackage" rel="tooltip-left" title="Remove all"></th>
+							<th class="actionButton"><input type="checkbox" name="toggle" value="deletePackage" rel="tooltip-left" title="Remove all"></th>
 						</tr>
 					</thead>
 					<tbody class="table-hover small-lines">
@@ -55,7 +55,7 @@
 				<thead>
 					<tr>
 						<th>Hosts for this Template</th>								
-						<th class="actionButton"><button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-cog" rel="tooltip-left" title="Configure the default service state fo this template"></button></th>
+						<th class="actionButton"><button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-cog" data-ref="${template.name}/services/default" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Configure the default service state fo this template"></button></th>
 					</tr>
 				</thead>
 				<tbody>

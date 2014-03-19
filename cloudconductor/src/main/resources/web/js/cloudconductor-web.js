@@ -1,3 +1,18 @@
+
+function initTooltips() {
+	$("[rel=tooltip]").tooltip({ placement: 'right'});
+	$("[rel=tooltip-left]").tooltip({ placement: 'left'});
+	$("[rel=tooltip-down]").tooltip({ placement: 'bottom'});
+}
+
+function enableCheckboxToggle() {
+	 $("input[name=toggle]").click(function() {
+		 console.log("clicked");
+	     $(this).closest("form").find("input:checkbox[name="+$(this).prop("value")+"]").prop("checked", $(this).prop("checked"));
+	 });
+}
+
+
 $.fn.openmodal = function() {
 	$(this).click(function() {
 	var modal = $(this);
@@ -6,9 +21,13 @@ $.fn.openmodal = function() {
 	var modal = $(this).data('target');
 	var type = $(this).data('call-type');
 	var form = $(this).data('form');
+	var targetUrl=path+target;
+	if(target.substring(0, 4) == "/web") {
+		targetUrl=target;
+	}
 	 $.ajax({
             type: type,
-            url: path+target,
+            url: targetUrl,
             data: $('form#'+form).serialize(),
             success: function (data) {
             	if(data.type && data.type == "REDIRECT") {
@@ -18,6 +37,8 @@ $.fn.openmodal = function() {
 				} else {
 	            	$(modal).find('.modal-content').empty().html(data);
 	            	$(modal).find("button[data-target='"+modal+"']").openmodal();
+	            	initTooltips();
+	            	enableCheckboxToggle();
             	}
             },
             error: function (xhr, ajaxOption, thorwnError) {
@@ -32,19 +53,12 @@ $.fn.openmodal = function() {
 
 $(document).ready(function () {
 	//init tooltips
-    $("[rel=tooltip]").tooltip({ placement: 'right'});
-	$("[rel=tooltip-left]").tooltip({ placement: 'left'});
-	$("[rel=tooltip-down]").tooltip({ placement: 'bottom'});
+    initTooltips();
 	//init checkbox toggles
-	$("input[name=toggle]").click(function() {
-        $(this).closest("form").find("input:checkbox[name="+$(this).prop("value")+"]").prop("checked", $(this).prop("checked"));
-    });  
+    enableCheckboxToggle();
 	//do smth on click of button
-	$("button[name=moep]").click(function() {
-		alert($(this).prop("value"));
-    });  
-	
 	$("button[data-toggle='modal']").openmodal();
+	$("a[data-toggle='modal']").openmodal();
 	
 	$('#sidenav').on('activate.bs.scrollspy', function () {
 		var data = $('body').data('bs.scrollspy');

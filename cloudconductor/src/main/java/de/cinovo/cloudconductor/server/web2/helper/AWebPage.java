@@ -26,6 +26,7 @@ import de.cinovo.cloudconductor.server.web.helper.FormErrorException;
 import de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.web2.CSViewModel;
 import de.cinovo.cloudconductor.server.web2.comparators.INamedComparator;
+import de.cinovo.cloudconductor.server.web2.impl.IndexImpl;
 import de.cinovo.cloudconductor.server.web2.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web2.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.ViewModel;
@@ -47,6 +48,7 @@ public abstract class AWebPage implements IContextAware {
 	@Autowired
 	protected IServerOptionsDAO dServerOptions;
 	
+	private LinkedHashMap<String, String> topActions = new LinkedHashMap<>();
 	private LinkedHashMap<String, String> breadcrumbs = new LinkedHashMap<>();
 	private Set<String> sidebar = Sets.newTreeSet();
 	
@@ -84,6 +86,8 @@ public abstract class AWebPage implements IContextAware {
 		view.addModel("SIDEBARTYPE", this.getSidebarType());
 		view.addModel("NAVELEMENT", this.navRegistry);
 		view.addModel("CURRENTNAVELEMENT", this.getNavElementName());
+		view.addModel("TOPACTIONS", this.topActions.entrySet());
+		view.addModel(IndexImpl.AUTOREFRESH, this.mc.getHttpServletRequest().getSession().getAttribute(IndexImpl.AUTOREFRESH));
 		return view;
 	}
 	
@@ -101,6 +105,10 @@ public abstract class AWebPage implements IContextAware {
 			this.breadcrumbs.put("Home", IWebPath.WEBROOT);
 		}
 		this.breadcrumbs.put(name, link);
+	}
+	
+	protected void addTopAction(String link, String name) {
+		this.topActions.put(name, link);
 	}
 	
 	protected void addSidebarElement(String element) {
@@ -170,4 +178,12 @@ public abstract class AWebPage implements IContextAware {
 		this.dAudit.save(log);
 	}
 	
+	protected String auditFormat(String[] str) {
+		StringBuilder b = new StringBuilder();
+		for (String s : str) {
+			b.append(s);
+			b.append(",");
+		}
+		return b.deleteCharAt(b.length() - 1).toString();
+	}
 }

@@ -7,18 +7,23 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.helper.FormErrorException;
+import de.cinovo.cloudconductor.server.web2.comparators.DefaultStateComparator;
 import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.web2.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
@@ -46,6 +51,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	private IServiceStateDAO dSvcState;
 	@Autowired
 	private IPackageServerDAO dPackageServer;
+	@Autowired
+	private IServiceDAO dSvc;
+	@Autowired
+	private IPackageVersionDAO dPkgVersion;
 	
 	
 	@Override
@@ -57,6 +66,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	protected void init() {
 		this.navRegistry.registerMainMenu(this.getNavElementName(), ITemplate.ROOT);
 		this.addBreadCrumb(IWebPath.WEBROOT + ITemplate.ROOT, this.getNavElementName());
+		this.addTopAction(IWebPath.WEBROOT + ITemplate.ROOT + IWebPath.ACTION_ADD, "Create new Template");
 	}
 	
 	@Override
@@ -181,6 +191,154 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	public AjaxRedirect editTemplate(String tname, String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
 		RESTAssert.assertNotEmpty(tname);
 		
+		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate);
+		
+		// save the new settings
+		ETemplate template = this.dTemplate.findByName(tname);
+		RESTAssert.assertNotNull(template);
+		template.setName(templatename);
+		template.setDescription(description);
+		template.setYum(this.dPackageServer.findById(packageManagerId));
+		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		this.dTemplate.save(template);
+		this.audit("Modified template " + tname);
+		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+	}
+	
+	@Override
+	@Transactional
+	public ViewModel addPackageView(String tname) {
+		RESTAssert.assertNotEmpty(tname);
+		ETemplate template = this.dTemplate.findByName(tname);
+		List<EPackage> pkgList = this.dPkg.findList();
+		for (EPackageVersion pv : template.getPackageVersions()) {
+			pkgList.remove(pv.getPkg());
+		}
+		
+		this.sortNamedList(pkgList);
+		final ViewModel vm = this.createModal("addPackage");
+		vm.addModel("template", template);
+		vm.addModel("packages", pkgList);
+		return vm;
+	}
+	
+	@Override
+	@Transactional
+	public AjaxRedirect addPackage(String tname, String[] pkgs) throws FormErrorException {
+		RESTAssert.assertNotEmpty(tname);
+		if ((pkgs == null) || (pkgs.length < 1)) {
+			throw this.createError("Please choose one or more packages!");
+		}
+		ETemplate template = this.dTemplate.findByName(tname);
+		RESTAssert.assertNotNull(template);
+		for (String pkg : pkgs) {
+			EPackage ep = this.dPkg.findByName(pkg);
+			List<EPackageVersion> pvs = new ArrayList<>(ep.getRPMs());
+			Collections.sort(pvs, new PackageVersionComparator());
+			template.getPackageVersions().add(pvs.get(pvs.size() - 1));
+			
+			for (EService s : this.dSvc.findByPackage(ep)) {
+				EServiceDefaultState sds = this.dSvcDefState.findByName(s.getName(), template.getName());
+				if (sds == null) {
+					sds = new EServiceDefaultState();
+					sds.setService(s);
+					sds.setTemplate(template);
+					sds.setState(ServiceState.STOPPED);
+					this.dSvcDefState.save(sds);
+				}
+				break;
+			}
+		}
+		this.dTemplate.save(template);
+		this.audit("Added packages " + this.auditFormat(pkgs) + " to template " + tname);
+		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+	}
+	
+	@Override
+	@Transactional
+	public ViewModel deleteTemplateView(String tname) {
+		RESTAssert.assertNotEmpty(tname);
+		ETemplate template = this.dTemplate.findByName(tname);
+		RESTAssert.assertNotNull(template);
+		ViewModel modal = this.createModal("deleteTemplate");
+		modal.addModel("template", template);
+		return modal;
+	}
+	
+	@Override
+	@Transactional
+	public AjaxRedirect deleteTemplate(String tname) throws FormErrorException {
+		RESTAssert.assertNotEmpty(tname);
+		ETemplate template = this.dTemplate.findByName(tname);
+		if ((template == null) || (template.getHosts().size() > 0)) {
+			throw this.createError("The template <b>" + tname + "</b> can't be removed. There are still hosts alive using this Template");
+		}
+		this.dTemplate.delete(template);
+		this.audit("Deleted template " + tname);
+		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+	}
+	
+	@Override
+	@Transactional
+	public ViewModel defaultServiceStatesView(String tname) {
+		ETemplate template = this.dTemplate.findByName(tname);
+		List<EServiceDefaultState> defaultStates = this.dSvcDefState.findByTemplate(template.getName());
+		Collections.sort(defaultStates, new DefaultStateComparator());
+		ViewModel modal = this.createModal("defaultServices");
+		modal.addModel("template", template);
+		modal.addModel("defaultStates", defaultStates);
+		return modal;
+	}
+	
+	@Override
+	@Transactional
+	public AjaxRedirect changeDefaultServiceStates(String tname, List<String> startService, List<String> stopService) {
+		RESTAssert.assertNotEmpty(tname);
+		if (startService.isEmpty() && stopService.isEmpty()) {
+			return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+		}
+		List<EServiceDefaultState> services = this.dSvcDefState.findByTemplate(tname);
+		for (EServiceDefaultState eservice : services) {
+			if (startService.contains(eservice.getService().getName())) {
+				eservice.setState(ServiceState.RUNNING);
+				this.dSvcDefState.save(eservice);
+			}
+		}
+		for (EServiceDefaultState eservice : services) {
+			if (stopService.contains(eservice.getService().getName())) {
+				eservice.setState(ServiceState.STOPPED);
+				this.dSvcDefState.save(eservice);
+			}
+		}
+		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+	}
+	
+	@Override
+	@Transactional
+	public ViewModel addTemplateView() {
+		ViewModel modal = this.createModal("addTemplate");
+		modal.addModel("availablePM", this.dPackageServer.findList());
+		return modal;
+	}
+	
+	@Override
+	@Transactional
+	public AjaxRedirect addTemplate(String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
+		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate);
+		
+		// save the new settings
+		ETemplate template = new ETemplate();
+		RESTAssert.assertNotNull(template);
+		template.setName(templatename);
+		template.setDescription(description);
+		template.setYum(this.dPackageServer.findById(packageManagerId));
+		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		this.dTemplate.save(template);
+		this.audit("Created new template " + template.getName());
+		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
+	}
+	
+	private void templateOptionErrorHandling(String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
 		String errorMessage = "Please fill in all the information.";
 		FormErrorException error = null;
 		// templatename and packageManagerId are needed, description and auto update are not
@@ -200,51 +358,5 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			error.addFormParam("autoupdate", autoupdate);
 			throw error;
 		}
-		
-		// save the new settings
-		ETemplate template = this.dTemplate.findByName(tname);
-		RESTAssert.assertNotNull(template);
-		template.setName(templatename);
-		template.setDescription(description);
-		template.setYum(this.dPackageServer.findById(packageManagerId));
-		template.setAutoUpdate(Boolean.valueOf(autoupdate));
-		this.dTemplate.save(template);
-		this.audit("Modified template " + tname);
-		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
-	}
-	
-	@Override
-	@Transactional
-	public ViewModel addPackageView(String tname) {
-		RESTAssert.assertNotEmpty(tname);
-		ETemplate template = this.dTemplate.findByName(tname);
-		List<EPackage> pkgList = new ArrayList<>();
-		for (EPackage p : this.dPkg.findList()) {
-			if (!template.getPackageVersions().contains(p)) {
-				pkgList.add(p);
-			}
-		}
-		this.sortNamedList(pkgList);
-		final ViewModel vm = this.createModal("addPackage");
-		vm.addModel("template", template);
-		vm.addModel("packages", pkgList);
-		return vm;
-	}
-	
-	@Override
-	@Transactional
-	public AjaxRedirect addPackage(String tname, String[] pkgs) throws FormErrorException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public ViewModel deleteTemplateView(String tname) {
-		RESTAssert.assertNotEmpty(tname);
-		ETemplate template = this.dTemplate.findByName(tname);
-		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("deleteTemplate");
-		modal.addModel("template", template);
-		return modal;
 	}
 }

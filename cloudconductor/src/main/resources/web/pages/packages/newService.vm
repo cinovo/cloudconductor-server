@@ -7,22 +7,22 @@
 	<div class="alert alert-danger">$ERROR.getMessage()</div>
 #end 
 	<form id="newService">
-		<div class="row">
-			<div class="col-lg-6 formlist">
+		<div class="row-lg-12">
+			<div class="col-lg-12 formlist">
 				<div class="input-group #if($ERROR.hasError('servicename'))has-error #end">
 					<span class="input-group-addon">Service-Name:</span>
 					<input type="text" class="form-control" placeholder="Service-Name" name="servicename" #if(${ERROR.getFormParams().get('servicename')})value="${ERROR.getFormParams().get('servicename')}"#end>
 				</div>
 			</div><!-- /.col-lg-6 -->
 			
-			<div class="col-lg-6 formlist">
+			<div class="col-lg-12 formlist">
 				<div class="input-group #if($ERROR.hasError('initscript'))has-error #end">
 					<span class="input-group-addon">InitScript-Name:</span>
 					<input type="text" class="form-control" placeholder="InitScript-Name" name="initscript" #if(${ERROR.getFormParams().get('initscript')})value="${ERROR.getFormParams().get('initscript')}"#end>
 				</div>
 			</div><!-- /.col-lg-6 -->
 			
-			<div class="col-lg-6 formlist">
+			<div class="col-lg-12 formlist">
 				<div class="input-group">
 					<span class="input-group-addon">Description:</span>
 					<input type="text" class="form-control" placeholder="Description of some sort" name="description" #if(${ERROR.getFormParams().get('initscript')})value="${ERROR.getFormParams().get('description')}"#end>

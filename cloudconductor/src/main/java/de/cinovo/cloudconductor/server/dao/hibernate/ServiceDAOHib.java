@@ -23,6 +23,7 @@ import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
@@ -55,6 +56,11 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 		}
 		find.append(")");
 		return this.findListByQuery("FROM EService s WHERE s.name IN ?1", find);
+	}
+	
+	@Override
+	public List<EService> findByPackage(EPackage pkg) {
+		return this.findListByQuery("FROM EService s WHERE ?1 in elements(s.packages)", pkg);
 	}
 	
 	@Override

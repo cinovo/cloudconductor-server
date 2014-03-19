@@ -62,13 +62,5 @@ public class CSViewModel extends ViewModel {
 		this.addModel("listTool", new ListTool());
 		this.addModel("sorterTool", new SortTool());
 		this.addModel("NOW", CSViewModel.NOW_TIME_FORMAT.format(new Date()));
-		
-		// if ((additionalTitle == null) || additionalTitle.isEmpty()) {
-		// this.addModel("windowtitle", "CloudConductor");
-		// } else {
-		// this.addModel("windowtitle", "CloudConductor " + additionalTitle);
-		// }
-		// this.addModel("subheading", subheading);
-		//
 	}
 }
