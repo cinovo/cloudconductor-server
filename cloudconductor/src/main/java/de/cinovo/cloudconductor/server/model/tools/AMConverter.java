@@ -17,8 +17,6 @@ package de.cinovo.cloudconductor.server.model.tools;
  * #L%
  */
 
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.model.ConfigFile;
@@ -37,15 +35,16 @@ import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.dao.IYumServerDAO;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.model.EYumServer;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -80,6 +79,8 @@ public class AMConverter {
 	
 	@Autowired
 	private IDependencyDAO ddependendy;
+	@Autowired
+	private IYumServerDAO packageServer;
 	
 	
 	/**	 */
@@ -95,12 +96,11 @@ public class AMConverter {
 		ETemplate model = new ETemplate();
 		model.setName(api.getName());
 		model.setDescription(api.getDescription());
-		Pattern pattern = Pattern.compile("\\w*://.*");
-		model.setYum(new EPackageServer());
-		if (pattern.matcher(api.getYum()).matches()) {
-			model.getYum().setPath(api.getYum());
-		} else {
-			model.getYum().setPath("http://" + api.getYum());
+		for (EYumServer serv : this.packageServer.findList()) {
+			if (serv.getYumPath().equals(api.getYum()) || serv.getYumPath().equals("http://" + api.getYum())) {
+				model.setYum(serv);
+				break;
+			}
 		}
 		return model;
 	}

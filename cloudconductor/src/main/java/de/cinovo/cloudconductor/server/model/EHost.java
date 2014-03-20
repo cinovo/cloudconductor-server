@@ -52,6 +52,7 @@ public class EHost implements IEntity<Long>, INamed {
 	private Long lastSeen;
 	private Set<EServiceState> services = new HashSet<>();
 	private Set<EPackageState> packages = new HashSet<>();
+	private Long startedUpdate;
 	
 	
 	@Override
@@ -155,6 +156,20 @@ public class EHost implements IEntity<Long>, INamed {
 	 */
 	public void setLastSeen(Long lastSeen) {
 		this.lastSeen = lastSeen;
+	}
+	
+	/**
+	 * @return the onUpdate
+	 */
+	public Long getStartedUpdate() {
+		return this.startedUpdate;
+	}
+	
+	/**
+	 * @param onUpdate the onUpdate to set
+	 */
+	public void setStartedUpdate(Long onUpdate) {
+		this.startedUpdate = onUpdate;
 	}
 	
 }

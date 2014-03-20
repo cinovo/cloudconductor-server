@@ -30,6 +30,8 @@ import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ArrayListMultimap;
+
 import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IAgent;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
@@ -59,7 +61,8 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.MAConverter;
-import de.cinovo.cloudconductor.server.web2.comparators.VersionStringComparator;
+import de.cinovo.cloudconductor.server.util.PackageCommand;
+import de.cinovo.cloudconductor.server.util.VersionStringComparator;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -71,7 +74,25 @@ import de.taimos.restutils.RESTAssert;
  */
 public class AgentImpl implements IAgent {
 	
+	private static final int MAX_UPDATE_THRESHOLD = 15;
+	
 	private VersionStringComparator versionComp = new VersionStringComparator();
+	
+	private Comparator<EPackageVersion> packageVersionComparator = new Comparator<EPackageVersion>() {
+		
+		private final VersionStringComparator versionComparator = new VersionStringComparator();
+		
+		
+		@Override
+		public int compare(EPackageVersion p1, EPackageVersion p2) {
+			int pkgNameComp = p1.getPkg().getName().compareTo(p2.getPkg().getName());
+			if (pkgNameComp != 0) {
+				return pkgNameComp;
+			}
+			return this.versionComparator.compare(p1.getVersion(), p2.getVersion());
+		}
+		
+	};
 	
 	@Autowired
 	private IHostDAO dhost;
@@ -135,69 +156,127 @@ public class AgentImpl implements IAgent {
 					break;
 				}
 			}
-			// EPackage pkg = this.dpkg.findByName(irpm.getName());
 			if (pkg == null) {
 				continue;
 			}
-			boolean found = false;
+			EPackageState state = this.updateExistingState(host, irpm);
+			if (state == null) {
+				state = this.createMissingState(host, irpm, pkg);
+				host.getPackages().add(state);
+			}
+			leftPackages.remove(state);
+		}
+		for (EPackageState pkg : leftPackages) {
+			if (host.getPackages().contains(pkg)) {
+				host.getPackages().remove(pkg);
+				this.dpkgstate.delete(pkg);
+			}
+		}
+		host = this.dhost.save(host);
+		
+		// check whether the host may update or has to wait for another host to finish updateing
+		if (this.sendPackageChanges(template, host)) {
+			
+			// Compute instruction lists (install/update/erase) from difference between packages actually installed packages that should be
+			// installed.
+			Set<EPackageVersion> actual = new HashSet<>();
 			for (EPackageState state : host.getPackages()) {
-				if (state.getVersion().getPkg().getName().equals(irpm.getName())) {
-					found = true;
-					leftPackages.remove(state);
-					int comp = this.versionComp.compare(state.getVersion().getVersion(), irpm.getVersion());
-					if (comp == 0) {
-						break;
-					}
-					EPackageVersion rpm = this.drpm.find(irpm.getName(), irpm.getVersion());
-					if (rpm == null) {
-						rpm = new EPackageVersion();
-						rpm.setPkg(state.getVersion().getPkg());
-						rpm.setVersion(irpm.getVersion());
-						rpm.setDeprecated(true);
-						rpm = this.drpm.save(rpm);
-					}
-					state.setVersion(rpm);
-					state = this.dpkgstate.save(state);
+				actual.add(state.getVersion());
+			}
+			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.computePackageDiff(template.getRPMs(), actual);
+			if (!diff.get(PackageCommand.INSTALL).isEmpty() || !diff.get(PackageCommand.UPDATE).isEmpty() || !diff.get(PackageCommand.ERASE).isEmpty()) {
+				host.setStartedUpdate(DateTime.now().getMillis());
+			}
+			return new PackageStateChanges(diff.get(PackageCommand.INSTALL), diff.get(PackageCommand.UPDATE), diff.get(PackageCommand.ERASE));
+		}
+		return new PackageStateChanges(new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>());
+	}
+	
+	/**
+	 * @param template
+	 * @param host
+	 * @param now
+	 */
+	private boolean sendPackageChanges(ETemplate template, EHost host) {
+		DateTime now = DateTime.now();
+		int maxHostsOnUpdate = template.getHosts().size() / 2;
+		int hostsOnUpdate = 0;
+		if (!template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
+			return true;
+		}
+		if (host.getStartedUpdate() != null) {
+			return true;
+		}
+		for (EHost h : template.getHosts()) {
+			if (h.getStartedUpdate() != null) {
+				int timeElapsed = Minutes.minutesBetween(new DateTime(h.getStartedUpdate()), now).getMinutes();
+				if (timeElapsed > AgentImpl.MAX_UPDATE_THRESHOLD) {
+					continue;
+				}
+				hostsOnUpdate++;
+			}
+		}
+		if (maxHostsOnUpdate > hostsOnUpdate) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @param host
+	 * @param irpm
+	 * @param pkg
+	 * @return
+	 */
+	private EPackageState createMissingState(EHost host, PackageVersion irpm, EPackage pkg) {
+		EPackageState state;
+		EPackageVersion rpm = this.drpm.find(irpm.getName(), irpm.getVersion());
+		if (rpm == null) {
+			rpm = new EPackageVersion();
+			rpm.setPkg(pkg);
+			rpm.setVersion(irpm.getVersion());
+			rpm.setDeprecated(true);
+			rpm = this.drpm.save(rpm);
+		}
+		state = new EPackageState();
+		state.setHost(host);
+		state.setVersion(rpm);
+		state = this.dpkgstate.save(state);
+		return state;
+	}
+	
+	/**
+	 * @param host
+	 * @param irpm
+	 * @return
+	 */
+	private EPackageState updateExistingState(EHost host, PackageVersion irpm) {
+		for (EPackageState state : host.getPackages()) {
+			if (state.getVersion().getPkg().getName().equals(irpm.getName())) {
+				int comp = this.versionComp.compare(state.getVersion().getVersion(), irpm.getVersion());
+				if (comp == 0) {
 					break;
 				}
-			}
-			
-			if (!found) {
 				EPackageVersion rpm = this.drpm.find(irpm.getName(), irpm.getVersion());
 				if (rpm == null) {
 					rpm = new EPackageVersion();
-					rpm.setPkg(pkg);
+					rpm.setPkg(state.getVersion().getPkg());
 					rpm.setVersion(irpm.getVersion());
 					rpm.setDeprecated(true);
 					rpm = this.drpm.save(rpm);
 				}
-				EPackageState state = new EPackageState();
-				state.setHost(host);
 				state.setVersion(rpm);
-				state = this.dpkgstate.save(state);
-				host.getPackages().add(state);
+				return this.dpkgstate.save(state);
 			}
 		}
-		host.getPackages().remove(leftPackages);
-		for (EPackageState state : leftPackages) {
-			this.dpkgstate.delete(state);
-		}
-		host = this.dhost.save(host);
-		// Compute instruction lists (install/update/erase) from difference between packages actually installed packages that should be
-		// installed.
-		Set<EPackageVersion> actual = new HashSet<>();
-		for (EPackageState state : host.getPackages()) {
-			actual.add(state.getVersion());
-		}
-		List<List<PackageVersion>> diff = this.computePackageDiff(template.getPackageVersions(), actual);
-		return new PackageStateChanges(diff.get(0), diff.get(1), diff.get(2));
+		return null;
 	}
 	
 	private boolean asserHostServices(ETemplate template, EHost host) {
 		List<EService> services = this.dsvc.findList();
 		Set<EService> templateServices = new HashSet<>();
 		for (EService s : services) {
-			for (EPackageVersion p : template.getPackageVersions()) {
+			for (EPackageVersion p : template.getRPMs()) {
 				if (s.getPackages().contains(p.getPkg())) {
 					templateServices.add(s);
 				}
@@ -292,37 +371,24 @@ public class AgentImpl implements IAgent {
 		for (EFile file : template.getConfigFiles()) {
 			configFiles.add(MAConverter.fromModel(file));
 		}
+		if (toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {
+			host.setStartedUpdate(null);
+			this.dhost.save(host);
+		}
 		return new ServiceStatesChanges(toStart, toStop, toRestart, configFiles);
 	}
 	
-	private ArrayList<List<PackageVersion>> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
-		// Comparator for the tree set operations.
-		Comparator<EPackageVersion> comparator = new Comparator<EPackageVersion>() {
-			
-			private final VersionStringComparator versionComparator = new VersionStringComparator();
-			
-			
-			@Override
-			public int compare(EPackageVersion p1, EPackageVersion p2) {
-				int pkgNameComp = p1.getPkg().getName().compareTo(p2.getPkg().getName());
-				if (pkgNameComp != 0) {
-					return pkgNameComp;
-				}
-				return this.versionComparator.compare(p1.getVersion(), p2.getVersion());
-			}
-			
-		};
-		
+	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
 		// Determine which package versions need to be erased and which are to be installed.
-		TreeSet<EPackageVersion> toInstall = new TreeSet<EPackageVersion>(comparator);
+		TreeSet<EPackageVersion> toInstall = new TreeSet<EPackageVersion>(this.packageVersionComparator);
 		toInstall.addAll(nominal);
 		toInstall.removeAll(actual);
-		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(comparator);
+		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(this.packageVersionComparator);
 		toErase.addAll(actual);
 		toErase.removeAll(nominal);
 		
 		// Resolve the removal of an older version and the installation of a newer one to an update instruction.
-		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(comparator);
+		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(this.packageVersionComparator);
 		for (EPackageVersion i : toInstall) {
 			EPackageVersion e = toErase.lower(i);
 			if ((e != null) && e.getPkg().getName().equals(i.getPkg().getName())) {
@@ -333,23 +399,22 @@ public class AgentImpl implements IAgent {
 		toInstall.removeAll(toUpdate);
 		
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
-		ArrayList<List<PackageVersion>> results = new ArrayList<List<PackageVersion>>();
-		results.add(this.convertToRpmDescriptions(toInstall));
-		results.add(this.convertToRpmDescriptions(toUpdate));
-		results.add(this.convertToRpmDescriptions(toErase));
-		return results;
+		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
+		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
+		result = this.fillPackageDiff(result, PackageCommand.UPDATE, toUpdate);
+		result = this.fillPackageDiff(result, PackageCommand.ERASE, toErase);
+		return result;
 	}
 	
-	private List<PackageVersion> convertToRpmDescriptions(Collection<EPackageVersion> packageVersions) {
-		List<PackageVersion> results = new ArrayList<>();
+	private ArrayListMultimap<PackageCommand, PackageVersion> fillPackageDiff(ArrayListMultimap<PackageCommand, PackageVersion> map, PackageCommand command, Collection<EPackageVersion> packageVersions) {
 		for (EPackageVersion pv : packageVersions) {
 			String rpmName = pv.getPkg().getName();
 			Set<Dependency> dep = new HashSet<>();
 			for (EDependency edep : pv.getDependencies()) {
 				dep.add(MAConverter.fromModel(edep));
 			}
-			results.add(new PackageVersion(rpmName, pv.getVersion(), dep));
+			map.put(command, new PackageVersion(rpmName, pv.getVersion(), dep));
 		}
-		return results;
+		return map;
 	}
 }

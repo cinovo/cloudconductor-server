@@ -47,7 +47,7 @@ public class PackageTest extends APITest {
 		PackageHandler h = new PackageHandler(this.getCSApi());
 		{
 			Set<Package> set = h.get();
-			Assert.assertEquals(5, set.size());
+			Assert.assertEquals(6, set.size());
 		}
 		{
 			Package pkg = h.get("nginx");
@@ -58,14 +58,14 @@ public class PackageTest extends APITest {
 			Package p = new Package("package1", "package1", null);
 			h.save(p);
 			Set<Package> set = h.get();
-			Assert.assertEquals(6, set.size());
+			Assert.assertEquals(7, set.size());
 			Package pkg = h.get("package1");
 			Assert.assertEquals("package1", pkg.getName());
 		}
 		{
 			h.delete("package1");
 			Set<Package> set = h.get();
-			Assert.assertEquals(5, set.size());
+			Assert.assertEquals(6, set.size());
 		}
 	}
 	

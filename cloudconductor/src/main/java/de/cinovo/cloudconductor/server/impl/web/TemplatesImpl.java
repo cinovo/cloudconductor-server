@@ -285,12 +285,13 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		vm.addModel("yumSelected", template.getYumPath());
 		vm.addModel("description", template.getDescription());
 		vm.addModel("autoupdate", template.getAutoUpdate());
+		vm.addModel("smoothupdate", template.getSmoothUpdate());
 		return vm;
 	}
 	
 	@Override
 	@Transactional
-	public Object editTemplate(String tname, String templatename, Long yum, String description, String autoupdate) {
+	public Object editTemplate(String tname, String templatename, Long yum, String description, String autoupdate, String smoothupdate) {
 		String error = null;
 		if ((templatename == null) || templatename.isEmpty() || templatename.contains(" ")) {
 			error = "Please choose a template name!";
@@ -307,6 +308,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 			vm.addModel("yum", yum);
 			vm.addModel("description", description);
 			vm.addModel("autoupdate", autoupdate);
+			vm.addModel("smoothupdate", smoothupdate);
 			return vm;
 		}
 		
@@ -316,6 +318,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		template.setDescription(description);
 		template.setYum(this.dPackageServer.findById(yum));
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
 		this.log("Modified template " + tname);
 		return this.redirect(null, tname);

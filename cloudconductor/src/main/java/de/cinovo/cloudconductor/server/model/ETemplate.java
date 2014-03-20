@@ -64,6 +64,8 @@ public class ETemplate implements IEntity<Long>, INamed {
 	
 	private Boolean autoUpdate;
 	
+	private Boolean smoothUpdate;
+	
 	
 	@Override
 	@Id
@@ -203,6 +205,20 @@ public class ETemplate implements IEntity<Long>, INamed {
 	 */
 	public Boolean getAutoUpdate() {
 		return this.autoUpdate;
+	}
+	
+	/**
+	 * @return the smoothUpdate
+	 */
+	public Boolean getSmoothUpdate() {
+		return this.smoothUpdate;
+	}
+	
+	/**
+	 * @param smoothUpdate the smoothUpdate to set
+	 */
+	public void setSmoothUpdate(Boolean smoothUpdate) {
+		this.smoothUpdate = smoothUpdate;
 	}
 	
 	/**

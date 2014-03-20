@@ -36,6 +36,11 @@
 						value="true" #if($autoupdate)checked="checked"#end /></td>
 				</tr>
 				#end
+				<tr>
+					<td>Smooth Update:</td>
+					<td><input type="checkbox" name="smoothupdate"
+						value="true" #if($smoothupdate)checked="checked"#end /> (Delay updates for 50% of the hosts to prevent downtime of a service)</td>
+				</tr>
 			</table>
 		</div>
 		<p>

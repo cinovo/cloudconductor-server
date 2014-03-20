@@ -93,4 +93,25 @@ public class EPackageState implements IEntity<Long> {
 		this.version = version;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof EPackageState)) {
+			return false;
+		}
+		EPackageState other = (EPackageState) obj;
+		if (this.getVersion() == null) {
+			return false;
+		}
+		if (!this.getVersion().equals(other.getVersion())) {
+			return false;
+		}
+		return this.getHost().equals(other.getHost());
+	}
+	
+	@Override
+	public int hashCode() {
+		int val = (this.getVersion() == null) ? 0 : this.getVersion().hashCode();
+		int parent = (this.getHost() == null) ? 0 : this.getHost().hashCode();
+		return val * parent;
+	}
 }
