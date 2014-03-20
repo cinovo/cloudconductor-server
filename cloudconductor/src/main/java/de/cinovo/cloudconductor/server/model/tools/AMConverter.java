@@ -31,20 +31,20 @@ import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.dao.IYumServerDAO;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.model.EYumServer;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -80,7 +80,7 @@ public class AMConverter {
 	@Autowired
 	private IDependencyDAO ddependendy;
 	@Autowired
-	private IYumServerDAO packageServer;
+	private IPackageServerDAO packageServer;
 	
 	
 	/**	 */
@@ -96,8 +96,8 @@ public class AMConverter {
 		ETemplate model = new ETemplate();
 		model.setName(api.getName());
 		model.setDescription(api.getDescription());
-		for (EYumServer serv : this.packageServer.findList()) {
-			if (serv.getYumPath().equals(api.getYum()) || serv.getYumPath().equals("http://" + api.getYum())) {
+		for (EPackageServer serv : this.packageServer.findList()) {
+			if (serv.getPath().equals(api.getYum()) || serv.getPath().equals("http://" + api.getYum())) {
 				model.setYum(serv);
 				break;
 			}

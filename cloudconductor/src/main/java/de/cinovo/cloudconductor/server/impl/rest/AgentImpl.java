@@ -19,7 +19,6 @@ package de.cinovo.cloudconductor.server.impl.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,7 +61,8 @@ import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.tools.MAConverter;
 import de.cinovo.cloudconductor.server.util.PackageCommand;
-import de.cinovo.cloudconductor.server.util.VersionStringComparator;
+import de.cinovo.cloudconductor.server.web2.comparators.PackageVersionComparator;
+import de.cinovo.cloudconductor.server.web2.comparators.VersionStringComparator;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -75,24 +75,6 @@ import de.taimos.restutils.RESTAssert;
 public class AgentImpl implements IAgent {
 	
 	private static final int MAX_UPDATE_THRESHOLD = 15;
-	
-	private VersionStringComparator versionComp = new VersionStringComparator();
-	
-	private Comparator<EPackageVersion> packageVersionComparator = new Comparator<EPackageVersion>() {
-		
-		private final VersionStringComparator versionComparator = new VersionStringComparator();
-		
-		
-		@Override
-		public int compare(EPackageVersion p1, EPackageVersion p2) {
-			int pkgNameComp = p1.getPkg().getName().compareTo(p2.getPkg().getName());
-			if (pkgNameComp != 0) {
-				return pkgNameComp;
-			}
-			return this.versionComparator.compare(p1.getVersion(), p2.getVersion());
-		}
-		
-	};
 	
 	@Autowired
 	private IHostDAO dhost;
@@ -183,7 +165,7 @@ public class AgentImpl implements IAgent {
 			for (EPackageState state : host.getPackages()) {
 				actual.add(state.getVersion());
 			}
-			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.computePackageDiff(template.getRPMs(), actual);
+			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.computePackageDiff(template.getPackageVersions(), actual);
 			if (!diff.get(PackageCommand.INSTALL).isEmpty() || !diff.get(PackageCommand.UPDATE).isEmpty() || !diff.get(PackageCommand.ERASE).isEmpty()) {
 				host.setStartedUpdate(DateTime.now().getMillis());
 			}
@@ -251,9 +233,10 @@ public class AgentImpl implements IAgent {
 	 * @return
 	 */
 	private EPackageState updateExistingState(EHost host, PackageVersion irpm) {
+		VersionStringComparator vsc = new VersionStringComparator();
 		for (EPackageState state : host.getPackages()) {
 			if (state.getVersion().getPkg().getName().equals(irpm.getName())) {
-				int comp = this.versionComp.compare(state.getVersion().getVersion(), irpm.getVersion());
+				int comp = vsc.compare(state.getVersion().getVersion(), irpm.getVersion());
 				if (comp == 0) {
 					break;
 				}
@@ -276,7 +259,7 @@ public class AgentImpl implements IAgent {
 		List<EService> services = this.dsvc.findList();
 		Set<EService> templateServices = new HashSet<>();
 		for (EService s : services) {
-			for (EPackageVersion p : template.getRPMs()) {
+			for (EPackageVersion p : template.getPackageVersions()) {
 				if (s.getPackages().contains(p.getPkg())) {
 					templateServices.add(s);
 				}
@@ -380,15 +363,15 @@ public class AgentImpl implements IAgent {
 	
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
 		// Determine which package versions need to be erased and which are to be installed.
-		TreeSet<EPackageVersion> toInstall = new TreeSet<EPackageVersion>(this.packageVersionComparator);
+		TreeSet<EPackageVersion> toInstall = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		toInstall.addAll(nominal);
 		toInstall.removeAll(actual);
-		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(this.packageVersionComparator);
+		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		toErase.addAll(actual);
 		toErase.removeAll(nominal);
 		
 		// Resolve the removal of an older version and the installation of a newer one to an update instruction.
-		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(this.packageVersionComparator);
+		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		for (EPackageVersion i : toInstall) {
 			EPackageVersion e = toErase.lower(i);
 			if ((e != null) && e.getPkg().getName().equals(i.getPkg().getName())) {
