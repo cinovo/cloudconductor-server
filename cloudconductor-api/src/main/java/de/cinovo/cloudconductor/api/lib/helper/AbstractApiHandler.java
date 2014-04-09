@@ -19,12 +19,14 @@ package de.cinovo.cloudconductor.api.lib.helper;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.http.HttpResponse;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.lib.exceptions.ClientErrorException;
@@ -89,7 +91,8 @@ public abstract class AbstractApiHandler {
 	}
 	
 	protected final <T> T _put(String path, Object put, JavaType type) throws CloudConductorException {
-		HttpResponse response = this._put(path, put);
+		HttpResponse response = this.request(path, put, type).put();
+		AbstractApiHandler.assertSuccess(path, response);
 		if (type == null) {
 			return null;
 		}
@@ -111,7 +114,8 @@ public abstract class AbstractApiHandler {
 	}
 	
 	protected final <T> T _post(String path, Object post, JavaType type) throws CloudConductorException {
-		HttpResponse response = this._post(path, post);
+		HttpResponse response = this.request(path, post, type).post();
+		AbstractApiHandler.assertSuccess(path, response);
 		if (type == null) {
 			return null;
 		}
@@ -157,7 +161,11 @@ public abstract class AbstractApiHandler {
 	 */
 	protected final <T> T objectFromResponse(HttpResponse response, JavaType type) throws SerializationException {
 		try {
-			return AbstractApiHandler.mapper.readValue(WS.getResponseAsString(response), type);
+			String value = WS.getResponseAsString(response);
+			if (value.isEmpty()) {
+				return null;
+			}
+			return AbstractApiHandler.mapper.readValue(value, type);
 		} catch (IOException e) {
 			throw new SerializationException("Failed to read object", e);
 		}
@@ -195,12 +203,21 @@ public abstract class AbstractApiHandler {
 	 * @throws SerializationException if the object could not be mapped to a JSON string
 	 */
 	protected final HTTPRequest request(String path, Object obj) throws SerializationException {
+		return this.request(path, obj, null);
+	}
+	
+	protected final HTTPRequest request(String path, Object obj, JavaType type) throws SerializationException {
 		try {
-			String body = AbstractApiHandler.mapper.writeValueAsString(obj);
+			ObjectWriter bodyWriter = AbstractApiHandler.mapper.writer();
+			if ((type != null) && ((obj instanceof Set) || (obj instanceof List))) {
+				bodyWriter = bodyWriter.withType(type);
+			}
+			String body = bodyWriter.writeValueAsString(obj);
 			return this.request(path).body(body).header("Content-Type", MediaType.APPLICATION_JSON);
 		} catch (IOException e) {
 			throw new SerializationException();
 		}
+		
 	}
 	
 	protected static final void assertSuccess(String path, HttpResponse response) throws ClientErrorException, ServerErrorException {

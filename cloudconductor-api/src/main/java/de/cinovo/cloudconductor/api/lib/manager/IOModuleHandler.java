@@ -31,6 +31,6 @@ public class IOModuleHandler extends AbstractApiHandler {
 	 */
 	public void importPackages(Set<PackageVersion> versions) throws CloudConductorException {
 		String path = this.pathGenerator(IRestPath.IO + IRestPath.IO_VERSION);
-		this._post(path, versions.toArray(new PackageVersion[versions.size()]));
+		this._post(path, versions, this.getSetType(PackageVersion.class));
 	}
 }
