@@ -1,8 +1,113 @@
-<!-- Modal -->
-<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-     
-    </div>
-  </div>
+#foreach( $host in $HOSTS)
+#set ( $diff = ((${NOW.getMillis()} - ${host.lastSeen}) / 60000) )
+#if($diff > 10)#set ($pannelType ="warning")#elseif($diff > 30)#set ($pannelType ="danger")#{else}#set ($pannelType ="primary")#end 
+<div id="$host.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-$pannelType">
+		<div class="panel-heading panel-toggle" >
+			<h3 class="panel-title" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide">
+				$host.name
+				<span class="pull-right"><span class="caret" /></span></span>
+			</h3>
+			<span class="pull-right">
+				${host.getTemplate().name}
+				<span class="btn-group">
+					<a type="button" class="btn btn-default glyphicon glyphicon-folder-open" href="templates#${host.getTemplate().name}" rel="tooltip-down" title="Goto template ${host.getTemplate().name}"></a>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${host.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete host"></button>
+				</span>
+			</span>			
+		</div>
+		<div id="${host.name.replace(".", "-")}-hide" class="collapse in">
+		
+			<form id="${host.name.replace(".", "-")}-form">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Service Name</th>
+							<th>State</th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle" value="startService" rel="tooltip-left" title="Start all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle-exclusive-all" value="stopService,restartService" rel="tooltip-left" title="Stop all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle-exclusive-all" value="restartService,stopService" rel="tooltip-left" title="Restart all"></th>
+						</tr>
+					</thead>
+					<tbody class="table-hover small-lines">
+					#foreach($service in ${host.getServices()})
+						#set($isStarted=false)
+						#set($isStopped=false)
+						#if(${service.state} == "RUNNING")
+							#set($state="success")
+							#set($stateSymbol="glyphicon glyphicon-expand")
+							#set($isStarted = true)
+						#elseif(${service.state} == "STARTING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-collapse-up")
+							#set($isStarted = true)
+						#elseif(${service.state} =="STOPPING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-collapse-down")
+							#set($isStopped = true)
+						#elseif(${service.state} == "RESTARTING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-refresh")
+							#set($isStopped = true)
+						#else
+							#set($state="danger")
+							#set($stateSymbol="glyphicon glyphicon-unchecked")
+							#set($isStopped = true)
+						#end
+						<tr class="$state">
+							<td>${service.getService().getName()}</td>
+							<td class="stateSymbol"><span class="${stateSymbol}" rel="tooltip-left" title="${service.state.toString().toLowerCase()}"></span></td>
+							<td class="actionButton"><input type="checkbox" name="startService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Start" #if($isStarted)disabled="disabled"#end ></td>
+							<td class="actionButton"><input type="checkbox" name="stopService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Stop" #if($isStopped)disabled="disabled"#end)></td>
+							<td class="actionButton"><input type="checkbox" name="restartService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Restart" #if($isStopped)disabled="disabled"#end)></td>
+							
+						</tr>
+					#end
+						<tr>
+							<td></td>
+							<td></td>
+							<td colspan="3" class="actionButton">
+								<button type="button" class="btn btn-default btn-block" data-ref="${host.name}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			
+			<table class="table table-striped">
+					<thead>
+						#if(!${DIFFERENCES.get(${host.name}).isEmpty()})
+						<tr>
+							<th>Package</th>
+							<th>Host Version</th>
+							<th>Template Version</th>
+							<th>Action</th>
+						</tr>
+						#end
+					</thead>
+					<tbody>
+						#if(${DIFFERENCES.get(${host.name}).isEmpty()})
+						<tr class="success">
+							<td colspan="2" align='center'>All Packages are in sync with the template</td>
+						</tr>
+						#end
+						#foreach($diff in ${DIFFERENCES.get(${host.name})})
+						<tr>
+							<td>$diff.name</td>
+							<td>$diff.installed</td>
+							<td>$diff.template</td>
+							<td><span class="badge">$diff.state</span></td>
+						</tr>	
+						#end
+					</tbody>
+			</table>
+		
+			<div class="panel-footer info-footer">
+			Last seen: $diff Minutes ago ($dateTool.format('HH:mm:ss - dd.MM.yyyy', $host.lastSeen))
+			</div>
+		</div>
+	</div>
 </div>
+#end

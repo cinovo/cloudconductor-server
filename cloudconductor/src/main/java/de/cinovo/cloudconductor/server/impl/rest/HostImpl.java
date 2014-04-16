@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.impl.rest;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,7 @@ public class HostImpl extends ImplHelper implements IHost {
 		EHost model = this.amc.toModel(apiObject);
 		
 		if ((apiObject.getServices() != null) && !apiObject.getServices().isEmpty()) {
-			Set<EServiceState> found = new HashSet<>();
+			ArrayList<EServiceState> found = new ArrayList<>();
 			for (String s : apiObject.getServices()) {
 				EServiceState m = this.dss.findByName(s, apiObject.getName());
 				if (m != null) {

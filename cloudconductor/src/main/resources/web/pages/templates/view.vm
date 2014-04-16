@@ -4,7 +4,7 @@
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
 		<div class="panel-heading panel-toggle" >
-			<h3 class="panel-title" data-toggle="collapse" data-target="#${template.name}-hide">
+			<h3 class="panel-title" data-toggle="collapse" data-target="#${template.name.replace(".", "-")}-hide">
 				$template.name
 				<span class="pull-right"><span class="caret" /></span></span>
 			</h3>
@@ -18,14 +18,14 @@
 		</div>
 		<div id="${template.name}-hide" class="collapse in">
 			
-			<form id="${template.name}-form">
+			<form id="${template.name.replace(".", "-")}-form">
 				<table class="table table-striped">
 					<thead>
 						<tr>
 							<th>Package name</th>
-							<th class="actionButton"><input type="checkbox" name="toggle" value="updatePackage" rel="tooltip-left" title="Update all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle" value="updatePackage" rel="tooltip-left" title="Update all"></th>
 							<th>Version</th>
-							<th class="actionButton"><input type="checkbox" name="toggle" value="deletePackage" rel="tooltip-left" title="Remove all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle" value="deletePackage" rel="tooltip-left" title="Remove all"></th>
 						</tr>
 					</thead>
 					<tbody class="table-hover small-lines">
@@ -67,7 +67,7 @@
 				#foreach($host in ${template.getHosts()})
 					<tr class="success">
 						<td>${host.getName()}</td>
-						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" rel="tooltip-left" title="Jump to host"></button></td>
+						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" data-ref="/web2/hosts/${host.getName()}" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Jump to host"></button></td>
 					</tr>
 				#end
 				</tbody>
@@ -86,12 +86,3 @@
 	</div>
 </div>
 #end
-
-<!-- Modal -->
-<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-     
-    </div>
-  </div>
-</div>

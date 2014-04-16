@@ -34,6 +34,6 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     #if(! $services.isEmpty() )
-    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/new" data-call-type="POST" data-target="#popModal" data-form="newService">Create and add service</button>
+    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/new" data-call-type="POST" data-target="#popModal" data-toggle="update-modal" data-form="newService">Create and add service</button>
     #end
 </div>

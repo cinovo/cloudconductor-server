@@ -33,6 +33,6 @@
     <button type="button" class="btn btn-info" data-ref="${packageName}/services/new" data-call-type="GET" data-target="#popModal">Create new service</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     #if(! $services.isEmpty() )
-    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/add" data-call-type="POST" data-target="#popModal" data-form="addService">Add service(s)</button>
+    	<button type="button" class="btn btn-primary" data-ref="${packageName}/services/add" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="addService">Add service(s)</button>
     #end
 </div>

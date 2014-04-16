@@ -46,11 +46,11 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.tools.AuditCategory;
-import de.cinovo.cloudconductor.server.util.StringMapComparator;
 import de.cinovo.cloudconductor.server.web.helper.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.web.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.cinovo.cloudconductor.server.web2.comparators.StringMapComparator;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**

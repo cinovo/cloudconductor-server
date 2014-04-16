@@ -1,13 +1,20 @@
 package de.cinovo.cloudconductor.server.web2.helper;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
+
+import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
+import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -19,9 +26,21 @@ import com.google.common.collect.TreeMultimap;
 @Component
 public class NavbarRegistry {
 	
+	@Autowired
+	protected IAdditionalLinksDAO dLinks;
+	
 	private TreeSet<NavbarElement> mainMenu = new TreeSet<>();
 	private Multimap<NavbarHardLinks, NavbarElement> subMenu = TreeMultimap.create();
 	
+	
+	@PostConstruct
+	public void init() {
+		List<EAdditionalLinks> links = this.dLinks.findList();
+		int counter = 0;
+		for (EAdditionalLinks link : links) {
+			this.registerSubMenu(NavbarHardLinks.links, link.getLabel(), link.getUrl(), counter++);
+		}
+	}
 	
 	public void registerMainMenu(String identifier, String relativePath) {
 		this.mainMenu.add(new NavbarElement(identifier, relativePath));
@@ -37,6 +56,7 @@ public class NavbarRegistry {
 	
 	public void registerSubMenu(NavbarHardLinks menu, String identifier, String relativePath, int orderNo) {
 		this.subMenu.put(menu, new NavbarElement(identifier, relativePath, orderNo));
+		
 	}
 	
 	public TreeSet<NavbarElement> getMainMenu() {

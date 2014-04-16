@@ -18,11 +18,11 @@ package de.cinovo.cloudconductor.server.web2;
  */
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
-import org.apache.velocity.tools.generic.ListTool;
+import org.apache.velocity.tools.generic.DateTool;
 import org.apache.velocity.tools.generic.SortTool;
+import org.joda.time.DateTime;
 
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.taimos.cxf_renderer.model.ViewModel;
@@ -59,8 +59,8 @@ public class CSViewModel extends ViewModel {
 			this.addModel("VIEWNAME", viewName);
 		}
 		
-		this.addModel("listTool", new ListTool());
+		this.addModel("dateTool", new DateTool());
 		this.addModel("sorterTool", new SortTool());
-		this.addModel("NOW", CSViewModel.NOW_TIME_FORMAT.format(new Date()));
+		this.addModel("NOW", DateTime.now());
 	}
 }

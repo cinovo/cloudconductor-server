@@ -17,8 +17,8 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,8 +50,8 @@ public class EHost implements IEntity<Long>, INamed {
 	private String description;
 	private ETemplate template;
 	private Long lastSeen;
-	private Set<EServiceState> services = new HashSet<>();
-	private Set<EPackageState> packages = new HashSet<>();
+	private List<EServiceState> services = new ArrayList<>();
+	private List<EPackageState> packages = new ArrayList<>();
 	private Long startedUpdate;
 	
 	
@@ -102,14 +102,14 @@ public class EHost implements IEntity<Long>, INamed {
 	 * @return the services
 	 */
 	@OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
-	public Set<EServiceState> getServices() {
+	public List<EServiceState> getServices() {
 		return this.services;
 	}
 	
 	/**
 	 * @param services the services to set
 	 */
-	public void setServices(Set<EServiceState> services) {
+	public void setServices(List<EServiceState> services) {
 		this.services = services;
 	}
 	
@@ -117,14 +117,14 @@ public class EHost implements IEntity<Long>, INamed {
 	 * @return the packages
 	 */
 	@OneToMany(mappedBy = "host", fetch = FetchType.LAZY)
-	public Set<EPackageState> getPackages() {
+	public List<EPackageState> getPackages() {
 		return this.packages;
 	}
 	
 	/**
 	 * @param packages the packages to set
 	 */
-	public void setPackages(Set<EPackageState> packages) {
+	public void setPackages(List<EPackageState> packages) {
 		this.packages = packages;
 	}
 	

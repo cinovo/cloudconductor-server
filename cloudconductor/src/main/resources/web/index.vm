@@ -7,9 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-#if($AUTOREFRESH) 
-	<meta http-equiv="refresh" content="15" />
-#end
     <link rel="shortcut icon" href="/web2/images/favicon.ico"/>
 
 	<!-- Bootstrap core CSS -->
@@ -48,14 +45,24 @@
         		#end
         		
         		#foreach($mapEntry in $NAVELEMENT.getSubMenuCategories())
+        			#set($activeClass = "")
         			#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)}) 
         				#if(${element.getIdentifier()} == $CURRENTNAVELEMENT) #set($activeClass = "active") #end
         			#end
-        			<li class="dropdown #if($activeClass)$activeClass #end">
+        			<li class="dropdown $activeClass">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">${mapEntry.getViewName()} <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)}) 
+							#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)})
+								#if(${element.getPath().startsWith("http://")})
+								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="${element.getPath()}" target="_blank">${element.getIdentifier()}</a></li>
+								#else 
 								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web2${element.getPath()}">${element.getIdentifier()}</a></li>
+								#end
+							#end
+							#if(${mapEntry.getViewName()} == "Configuration" ) 
+								 <li role="presentation" class="divider"></li>
+								 <li><a data-ref="/web2/options/links" data-call-type="GET" data-toggle='modal' data-target="#popModal">Links</a></li>
+								 <li><a data-ref="/web2/options" data-call-type="GET" data-toggle='modal' data-target="#popModal">Options</a></li>
 							#end
 						</ul>
 					</li>
@@ -65,7 +72,7 @@
           	#foreach($element in ${TOPACTIONS})
           		<li><a href="#" rel="tooltip" data-ref="${element.value}" data-toggle="modal" data-target="#popModal" data-call-type="GET" data-original-title="${element.key}">${element.key}</a></li>
           	#end
-            	<li #if($AUTOREFRESH)class="active"#end><a href="#" class="glyphicon glyphicon-refresh" rel="tooltip" data-ref="/web2/autorefresh/toggle" data-toggle="modal" data-call-type="POST" data-original-title="Toggle auto-refesh"></a></li>
+            	<li id="autorefresh_button" #if($AUTOREFRESH)class="active"#end><a href="#" class="glyphicon glyphicon-refresh" rel="tooltip" data-ref="/web2/autorefresh/toggle" data-toggle="modal" data-call-type="POST" data-original-title="Toggle auto-refesh"></a></li>
           </ul>
 		</div><!-- /.nav-collapse -->
 	</div><!-- /.container -->
@@ -106,6 +113,15 @@
 			#parse("/web/sidebar/alphabetical.vm")
 		#end
 		
+		
+		<!-- Modal -->
+		<div class="modal fade" id="popModal" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		     
+		    </div>
+		  </div>
+		</div>
     </div>
 </div>
 

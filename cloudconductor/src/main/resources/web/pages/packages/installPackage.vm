@@ -30,6 +30,6 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     #if(! $templates.isEmpty() )
-    <button type="button" class="btn btn-primary" data-ref="${version.getPkg().getName()}/version/${version.getId()}/install" data-call-type="POST" data-target="#popModal" data-form="addVersion">Install</button>
+    <button type="button" class="btn btn-primary" data-ref="${version.getPkg().getName()}/version/${version.getId()}/install" data-call-type="POST" data-target="#popModal" data-toggle="update-modal" data-form="addVersion">Install</button>
     #end
 </div>

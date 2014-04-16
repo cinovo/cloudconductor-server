@@ -37,6 +37,9 @@ footer {
  	background-color: #0096dc;
  	color: #ffffff;
  }
+ .navbar-right>.active>a {
+ 	margin-top:-1px;
+ }
  
  .subnavbar {
 	border: 1px solid transparent;
@@ -106,6 +109,15 @@ th.actionButton,
 	text-align: center;
 	width: 5%;
 }	
+
+td.stateSymbol, td.stateSymbol {
+	text-align: center;
+	width: 5%;
+	font-size: 16px;
+	padding: 0;
+	margin: 0;
+}	
+
 .panel .table {
 	margin-bottom: 2px;
 }
@@ -116,6 +128,21 @@ th.actionButton,
 } 
 span.form-control {
 	overflow-x:auto;
+}
+
+.formlist>.input-group {
+	width:100%;
+}
+
+.formlist>.input-group>span.input-group-addon {
+	width:150px;
+}
+
+.formlist>.input-group>span.input-group-addon {
+	width:150px;
+}
+.formlist>.input-group>span.input-group-addon input[type="radio"], input[type="checkbox"] {
+	text-align:right;
 }
 /* 
  * Sidebar

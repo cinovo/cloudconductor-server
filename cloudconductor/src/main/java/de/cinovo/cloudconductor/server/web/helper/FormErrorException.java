@@ -34,6 +34,16 @@ public class FormErrorException extends Exception implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private String parentUrl;
+	
+	
+	/**
+	 * @param parentUrl the parentUrl to set
+	 */
+	public void setParentUrl(String parentUrl) {
+		this.parentUrl = parentUrl;
+	}
+	
+	
 	private Map<String, Object> formParams = new HashMap<>();
 	
 	private Set<String> failedElements = new HashSet<>();

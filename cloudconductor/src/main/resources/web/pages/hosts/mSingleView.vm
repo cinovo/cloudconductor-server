@@ -1,0 +1,96 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">$host.name</h4>
+    <h5 class="modal-title">${host.getTemplate().name}</h5>
+</div>
+#set ( $diff = ((${NOW.getMillis()} - ${host.lastSeen}) / 60000) )
+#if($diff > 10)#set ($pannelType ="warning")#elseif($diff > 30)#set ($pannelType ="danger")#{else}#set ($pannelType ="primary")#end
+<div class="modal-body">
+ 			<form id="${host.name.replace(".", "-")}-form">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Service Name</th>
+							<th>State</th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle" value="startService" rel="tooltip-left" title="Start all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle-exclusive-all" value="stopService,restartService" rel="tooltip-left" title="Stop all"></th>
+							<th class="actionButton"><input type="checkbox" behavior="toggle-exclusive-all" value="restartService,stopService" rel="tooltip-left" title="Restart all"></th>
+						</tr>
+					</thead>
+					<tbody class="table-hover small-lines">
+					#foreach($service in ${host.getServices()})
+						#set($isStarted=false)
+						#set($isStopped=false)
+						#if(${service.state} == "RUNNING")
+							#set($state="success")
+							#set($stateSymbol="glyphicon glyphicon-expand")
+							#set($isStarted = true)
+						#elseif(${service.state} == "STARTING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-collapse-up")
+							#set($isStarted = true)
+						#elseif(${service.state} =="STOPPING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-collapse-down")
+							#set($isStopped = true)
+						#elseif(${service.state} == "RESTARTING")
+							#set($state="warning")
+							#set($stateSymbol="glyphicon glyphicon-refresh")
+							#set($isStopped = true)
+						#else
+							#set($state="danger")
+							#set($stateSymbol="glyphicon glyphicon-unchecked")
+							#set($isStopped = true)
+						#end
+						<tr class="$state">
+							<td>${service.getService().getName()}</td>
+							<td class="stateSymbol"><span class="${stateSymbol}" rel="tooltip-left" title="${service.state.toString().toLowerCase()}"></span></td>
+							<td class="actionButton"><input type="checkbox" name="startService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Start" #if($isStarted)disabled="disabled"#end ></td>
+							<td class="actionButton"><input type="checkbox" name="stopService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Stop" #if($isStopped)disabled="disabled"#end)></td>
+							<td class="actionButton"><input type="checkbox" name="restartService" behavior="toggle-exclusive" value="${service.getService().getName()}" rel="tooltip-left" title="Restart" #if($isStopped)disabled="disabled"#end)></td>
+							
+						</tr>
+					#end
+						<tr>
+							<td></td>
+							<td></td>
+							<td colspan="3" class="actionButton">
+								<button type="button" class="btn btn-default btn-block" data-ref="/web2/hosts/${host.name}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			
+			<table class="table table-striped">
+					<thead>
+						#if(!${DIFFERENCES.isEmpty()})
+						<tr>
+							<th>Package</th>
+							<th>Host Version</th>
+							<th>Template Version</th>
+							<th>Action</th>
+						</tr>
+						#end
+					</thead>
+					<tbody>
+						#if(${DIFFERENCES.isEmpty()})
+						<tr class="success">
+							<td colspan="2" align='center'>All Packages are in sync with the template</td>
+						</tr>
+						#end
+						#foreach($diff in ${DIFFERENCES})
+						<tr>
+							<td>$diff.name</td>
+							<td>$diff.installed</td>
+							<td>$diff.template</td>
+							<td>$diff.state</td>
+						</tr>	
+						#end
+					</tbody>
+			</table>
+</div>
+<div class="modal-footer">
+  Last seen: $diff Minutes ago ($dateTool.format('HH:mm:ss - dd.MM.yyyy', $host.lastSeen))
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

@@ -69,6 +69,7 @@
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.PackagesImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.TemplatesImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.HostImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.ServerOptionsImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="exMapper" />

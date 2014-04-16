@@ -9,30 +9,44 @@ package de.cinovo.cloudconductor.server.web2.helper;
  */
 public class AjaxRedirect {
 	
-	private static final String REDIRECT = "REDIRECT";
-	private String type;
+	public enum AjaxRedirectType {
+		REFRESH, GET, POST
+	}
+	
+	
+	private AjaxRedirectType type;
 	private String path;
+	private String info;
 	
 	
 	/**
 	 * @param path the redirect path
 	 */
 	public AjaxRedirect(String path) {
-		this.type = AjaxRedirect.REDIRECT;
+		this.type = AjaxRedirectType.REFRESH;
+		this.path = path;
+	}
+	
+	/**
+	 * @param path the redirect path
+	 * @param type AjaxRedirectType
+	 */
+	public AjaxRedirect(String path, AjaxRedirectType type) {
+		this.type = type;
 		this.path = path;
 	}
 	
 	/**
 	 * @return the type
 	 */
-	public String getType() {
+	public AjaxRedirectType getType() {
 		return this.type;
 	}
 	
 	/**
 	 * @param type the type to set
 	 */
-	public void setType(String type) {
+	public void setType(AjaxRedirectType type) {
 		this.type = type;
 	}
 	
@@ -48,6 +62,20 @@ public class AjaxRedirect {
 	 */
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	/**
+	 * @return the info
+	 */
+	public String getInfo() {
+		return this.info;
+	}
+	
+	/**
+	 * @param info the info
+	 */
+	public void setInfo(String info) {
+		this.info = info;
 	}
 	
 }

@@ -41,5 +41,5 @@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-   	<button type="button" class="btn btn-primary" data-ref="${template.name}/services/default" data-call-type="POST" data-target="#popModal" data-form="defaultStates">Save</button>
+   	<button type="button" class="btn btn-primary" data-ref="${template.name}/services/default" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="defaultStates">Save</button>
 </div>

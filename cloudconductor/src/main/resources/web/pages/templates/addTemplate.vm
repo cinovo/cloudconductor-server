@@ -50,5 +50,5 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary" data-ref="add" data-call-type="POST" data-target="#popModal" data-form="editTemplate">Save</button>
+    <button type="button" class="btn btn-primary" data-ref="add" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="editTemplate">Save</button>
 </div>

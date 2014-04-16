@@ -17,11 +17,16 @@ package de.cinovo.cloudconductor.server.web2.interfaces;
  * #L%
  */
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.web.helper.FormErrorException;
+import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
@@ -37,7 +42,8 @@ public interface IHost {
 	/** the root */
 	public static final String ROOT = "/hosts";
 	
-	public static final String SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services";
+	public static final String SINGLE_HOST = "/{" + IWebPath.VAR_NAME + "}";
+	public static final String SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
 	public static final String DELETE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
 	
 	
@@ -46,24 +52,24 @@ public interface IHost {
 	@Produces(MediaType.TEXT_HTML)
 	public ViewModel view();
 	
-	// @POST
-	// @Path(IHost.SERVICE_ACTION)
-	// @Produces(MediaType.TEXT_HTML)
-	// public Response handleServices(@PathParam(IWebPath.VAR_NAME) String hname, @FormParam("start") String[] start, @FormParam("stop")
-	// String[] stop, @FormParam("restart") String[] restart);
-	//
-	// @GET
-	// @Path(IHost.DELETE_ACTION)
-	// @Produces(MediaType.TEXT_HTML)
-	// public ViewModel viewDelete(@PathParam(IWebPath.VAR_NAME) String hname);
-	//
-	// @POST
-	// @Path(IHost.DELETE_ACTION)
-	// @Produces(MediaType.TEXT_HTML)
-	// public Object delete(@PathParam(IWebPath.VAR_NAME) String hname);
-	//
-	// @GET
-	// @Path("/toggleautorefresh")
-	// public Response handleAutorefresh();
+	@GET
+	@Path(IHost.SINGLE_HOST)
+	@Produces(MediaType.TEXT_HTML)
+	public ViewModel view(@PathParam(IWebPath.VAR_NAME) String hname);
+	
+	@POST
+	@Path(IHost.SERVICE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public AjaxRedirect changeServiceStates(@PathParam(IWebPath.VAR_NAME) String hname, @FormParam("startService") String[] start, @FormParam("stopService") String[] stop, @FormParam("restartService") String[] restart);
+	
+	@GET
+	@Path(IHost.DELETE_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public ViewModel deleteHostView(@PathParam(IWebPath.VAR_NAME) String hname);
+	
+	@POST
+	@Path(IHost.DELETE_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public AjaxRedirect deleteHost(@PathParam(IWebPath.VAR_NAME) String hname) throws FormErrorException;
 	
 }
