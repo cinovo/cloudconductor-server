@@ -239,7 +239,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 	
 	@Override
 	@Transactional
-	public Object addTemplate(String templatename, Long yum, String description, String autoupdate) {
+	public Object addTemplate(String templatename, Long yum, String description, String autoupdate, String smoothupdate) {
 		String error = null;
 		if ((templatename == null) || templatename.isEmpty() || templatename.contains(" ")) {
 			error = "Please choose a template name!";
@@ -266,6 +266,7 @@ public class TemplatesImpl extends AbstractWebImpl implements ITemplate {
 		template.setDescription(description);
 		template.setYum(this.dPackageServer.findById(yum));
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
 		this.log("Added template " + templatename);
 		return this.redirect();

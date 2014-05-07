@@ -121,10 +121,7 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotNull(template);
 		
 		if (host == null) {
-			host = new EHost();
-			host.setName(hname);
-			host.setTemplate(template);
-			host = this.dhost.save(host);
+			host = this.createNewHost(hname, template);
 		}
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
@@ -174,6 +171,15 @@ public class AgentImpl implements IAgent {
 		return new PackageStateChanges(new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>());
 	}
 	
+	private EHost createNewHost(String hname, ETemplate template) {
+		EHost host;
+		host = new EHost();
+		host.setName(hname);
+		host.setTemplate(template);
+		host = this.dhost.save(host);
+		return host;
+	}
+	
 	/**
 	 * @param template
 	 * @param host
@@ -183,7 +189,7 @@ public class AgentImpl implements IAgent {
 		DateTime now = DateTime.now();
 		int maxHostsOnUpdate = template.getHosts().size() / 2;
 		int hostsOnUpdate = 0;
-		if (!template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
+		if ((template.getSmoothUpdate() == null) || !template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
 			return true;
 		}
 		if (host.getStartedUpdate() != null) {
@@ -298,6 +304,9 @@ public class AgentImpl implements IAgent {
 		EHost host = this.dhost.findByName(hname);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
+		if (host == null) {
+			host = this.createNewHost(hname, template);
+		}
 		if (this.asserHostServices(template, host)) {
 			host = this.dhost.findByName(hname);
 		}
