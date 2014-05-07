@@ -67,7 +67,7 @@ public interface ITemplate {
 	@POST
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract Object addTemplate(@FormParam("templatename") String templatename, @FormParam("yum") Long yum, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate);
+	public abstract Object addTemplate(@FormParam("templatename") String templatename, @FormParam("yum") Long yum, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate);
 	
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)

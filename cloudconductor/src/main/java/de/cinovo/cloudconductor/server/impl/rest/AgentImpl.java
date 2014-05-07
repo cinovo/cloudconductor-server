@@ -207,7 +207,7 @@ public class AgentImpl implements IAgent {
 		DateTime now = DateTime.now();
 		int maxHostsOnUpdate = template.getHosts().size() / 2;
 		int hostsOnUpdate = 0;
-		if (!template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
+		if ((template.getSmoothUpdate() == null) || !template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
 			return true;
 		}
 		if (host.getStartedUpdate() != null) {
