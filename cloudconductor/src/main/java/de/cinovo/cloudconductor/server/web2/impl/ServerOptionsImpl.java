@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.helper.FormErrorException;
@@ -12,9 +13,11 @@ import de.cinovo.cloudconductor.server.web2.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
 import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect.AjaxRedirectType;
 import de.cinovo.cloudconductor.server.web2.helper.NavbarHardLinks;
+import de.cinovo.cloudconductor.server.web2.helper.NavbarRegistry;
 import de.cinovo.cloudconductor.server.web2.interfaces.IServerOptions;
 import de.cinovo.cloudconductor.server.web2.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.ViewModel;
+import de.taimos.restutils.RESTAssert;
 
 public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
@@ -22,6 +25,8 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	protected IAdditionalLinksDAO dLinks;
 	@Autowired
 	protected ITemplateDAO dTemplate;
+	@Autowired
+	protected NavbarRegistry navReg;
 	
 	
 	@Override
@@ -31,8 +36,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
 	@Override
 	protected void init() {
-		this.navRegistry.registerSubMenu(NavbarHardLinks.config, this.getNavElementName(), IServerOptions.ROOT, 100);
-		this.addBreadCrumb(IWebPath.WEBROOT + IServerOptions.ROOT, this.getNavElementName());
+		// nothing to do
 	}
 	
 	@Override
@@ -58,10 +62,9 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	@Override
 	@Transactional
 	public AjaxRedirect saveOptions(String name, String bgcolor, String autoUpdate, String descr) throws FormErrorException {
-		String errorMessage = "Please fill in all the information.";
 		FormErrorException error = null;
-		error = this.checkForEmpty(name, errorMessage, error, "name");
-		error = this.checkForEmpty(bgcolor, errorMessage, error, "bgcolor");
+		error = this.checkForEmpty(name, error, "name");
+		error = this.checkForEmpty(bgcolor, error, "bgcolor");
 		if (error != null) {
 			// add the currently entered values to the answer
 			error.addFormParam("name", name);
@@ -89,6 +92,56 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		}
 		AjaxRedirect ajaxRedirect = new AjaxRedirect(IWebPath.WEBROOT + IServerOptions.ROOT, AjaxRedirectType.GET);
 		ajaxRedirect.setInfo("Successfully saved");
+		return ajaxRedirect;
+	}
+	
+	@Override
+	public ViewModel addLinkView() {
+		final ViewModel modal = this.createModal("mAddLink");
+		return modal;
+	}
+	
+	@Override
+	public AjaxRedirect addLink(String label, String link) throws FormErrorException {
+		FormErrorException error = null;
+		error = this.checkForEmpty(label, error, "label");
+		error = this.checkForEmpty(link, error, "link");
+		if (error != null) {
+			// add the currently entered values to the answer
+			error.addFormParam("label", label);
+			error.addFormParam("link", link);
+			error.setParentUrl(IServerOptions.ROOT + IServerOptions.ADD_LINK);
+			throw error;
+		}
+		EAdditionalLinks add = new EAdditionalLinks();
+		add.setLabel(label);
+		add.setUrl(link);
+		add = this.dLinks.save(add);
+		
+		this.navReg.registerSubMenu(NavbarHardLinks.links, add.getLabel(), add.getUrl());
+		
+		AjaxRedirect ajaxRedirect = new AjaxRedirect(IWebPath.WEBROOT + IServerOptions.ROOT + IServerOptions.LINKS_ROOT, AjaxRedirectType.GET);
+		ajaxRedirect.setInfo("Successfully saved");
+		return ajaxRedirect;
+	}
+	
+	@Override
+	public ViewModel deleteLinkView(String label) {
+		EAdditionalLinks link = this.dLinks.findByLabel(label);
+		RESTAssert.assertNotNull(link);
+		final ViewModel modal = this.createModal("mDeleteLink");
+		modal.addModel("link", link);
+		return modal;
+	}
+	
+	@Override
+	public AjaxRedirect deleteLink(String label) {
+		EAdditionalLinks link = this.dLinks.findByLabel(label);
+		RESTAssert.assertNotNull(link);
+		this.dLinks.delete(link);
+		this.navReg.unregisterSubMenu(NavbarHardLinks.links, link.getLabel());
+		AjaxRedirect ajaxRedirect = new AjaxRedirect(IWebPath.WEBROOT + IServerOptions.ROOT + IServerOptions.LINKS_ROOT, AjaxRedirectType.GET);
+		ajaxRedirect.setInfo("The link " + label + " has been deleted.");
 		return ajaxRedirect;
 	}
 	

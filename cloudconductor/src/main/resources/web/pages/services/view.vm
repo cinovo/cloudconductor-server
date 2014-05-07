@@ -1,0 +1,54 @@
+#foreach( $service in $SERVICES)
+<div id="$service.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${service.name}-hide">
+			<h3 class="panel-title">$service.name<span class="pull-right"><span class="caret"></span></span></h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${service.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Service"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${service.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete Service"></button>
+				</div>
+			</span>		
+		</div>
+		<div id="${service.name}-hide" class="collapse in">
+		<div class="panel-body"><div class="well well-sm">${service.description}</div></div>
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				<th colspan="2">Initscript</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td colspan="2">${service.initScript}</td>
+			</tr>
+		</tbody>		
+		
+		
+		<thead>
+			<tr>
+				<th>Packages</th>
+				<th class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${service.name}/package/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Add a Package"></button></th>
+			</tr>
+		</thead>
+		<tbody class="table-hover">
+			#if(${service.getPackages().isEmpty()})
+			<tr>
+				<td colspan="2">This service is not used by any package</td>
+			</tr>
+			#else
+			#foreach($package in ${service.getPackages()})
+			<tr>
+				<td>$package.name</td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-remove" data-ref="${service.name}/package/${package.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Delete"></button></td>
+			</tr>
+			#end
+			#end
+			<tr><td colspan="2" /></tr>
+		</tbody>
+		</table>
+		</div>
+	</div>
+</div>
+#end

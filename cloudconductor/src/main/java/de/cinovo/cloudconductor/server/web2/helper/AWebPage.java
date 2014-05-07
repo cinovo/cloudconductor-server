@@ -154,11 +154,19 @@ public abstract class AWebPage implements IContextAware {
 		return result;
 	}
 	
+	protected FormErrorException checkForEmpty(String variable, FormErrorException error, String formElement) {
+		return this.checkForEmpty(variable, null, error, formElement);
+	}
+	
 	protected FormErrorException checkForEmpty(String variable, String errorMessage, FormErrorException error, String formElement) {
+		String eMsg = "Please fill in all the information.";
+		if ((errorMessage != null) && !errorMessage.isEmpty()) {
+			eMsg = errorMessage;
+		}
 		if ((variable == null) || variable.isEmpty()) {
 			FormErrorException anError = error;
 			if (error == null) {
-				anError = this.createError(errorMessage);
+				anError = this.createError(eMsg);
 			}
 			anError.addElementError(formElement, true);
 			return anError;

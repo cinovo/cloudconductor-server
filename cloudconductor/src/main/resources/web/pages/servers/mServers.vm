@@ -1,0 +1,35 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Package Servers</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Url</th>
+				<th>Description</th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody class="table-hover small-lines">
+			#foreach ($server in $servers) 
+			<tr>
+				<td>$server.path</td>
+				<td>$server.description</td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-edit" data-ref="/web2/pkgsrv/${server.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Edit"></button></td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="/web2/pkgsrv/${server.id}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete"></button></td>
+			</tr>
+			#end
+			
+		</tbody>
+	</table>	
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" data-ref="/web2/pkgsrv/add" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Add a new Server</button>
+</div>

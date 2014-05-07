@@ -1,0 +1,32 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a new Service</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="servers">
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
+						<span class="input-group-addon">Service-Name</span>
+						<input type="text" class="form-control" name="name" type="text" #if(${ERROR.getFormParams().get('name')})value="${ERROR.getFormParams().get('name')}"#elseif(${SERVICE.name})value="${SERVICE.name}"#else placeholder="SomeService" #end >
+				</div>
+			</div>
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('description'))has-error #end">
+						<span class="input-group-addon">Description</span>
+						<input type="text" class="form-control" name="description" type="text" #if(${ERROR.getFormParams().get('description')})value="${ERROR.getFormParams().get('description')}"#elseif(${SERVICE.description})value="${SERVICE.description}"#else placeholder="A Description" #end >
+				</div>
+			</div>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    #if(${server})
+    	<button type="button" class="btn btn-primary" data-ref="/web2/pkgsrv/${server.id}/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
+    #else
+    	<button type="button" class="btn btn-primary" data-ref="/web2/pkgsrv/0/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
+    #end
+</div>

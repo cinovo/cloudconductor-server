@@ -61,8 +61,10 @@
 							#end
 							#if(${mapEntry.getViewName()} == "Configuration" ) 
 								 <li role="presentation" class="divider"></li>
-								 <li><a data-ref="/web2/options/links" data-call-type="GET" data-toggle='modal' data-target="#popModal">Links</a></li>
+								 <li><a data-ref="/web2/pkgsrv" data-call-type="GET" data-toggle='modal' data-target="#popModal">Package Servers</a></li>
 								 <li><a data-ref="/web2/options" data-call-type="GET" data-toggle='modal' data-target="#popModal">Options</a></li>
+								 <li role="presentation" class="divider"></li>
+								 <li><a data-ref="/web2/options/links" data-call-type="GET" data-toggle='modal' data-target="#popModal">Links</a></li>
 							#end
 						</ul>
 					</li>

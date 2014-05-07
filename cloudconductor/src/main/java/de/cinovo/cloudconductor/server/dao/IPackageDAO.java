@@ -17,7 +17,10 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import java.util.List;
+
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dao.IEntityDAO;
 
 /**
@@ -33,4 +36,6 @@ public interface IPackageDAO extends IEntityDAO<EPackage, Long>, IFindNamed<EPac
 	 * @return the row count
 	 */
 	public Long count();
+	
+	public List<EPackage> findNotUsedPackage(EService service);
 }

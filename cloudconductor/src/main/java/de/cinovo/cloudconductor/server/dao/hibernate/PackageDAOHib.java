@@ -17,10 +17,13 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
@@ -48,4 +51,12 @@ public class PackageDAOHib extends EntityDAOHibernate<EPackage, Long> implements
 		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EPackage").getSingleResult();
 	}
 	
+	@Override
+	public List<EPackage> findNotUsedPackage(EService service) {
+		if (service.getPackages().isEmpty()) {
+			return this.findList();
+		}
+		String query = "FROM EPackage as p WHERE p not in ?1";
+		return this.findListByQuery(query, service.getPackages());
+	}
 }

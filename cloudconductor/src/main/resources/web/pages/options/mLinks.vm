@@ -1,40 +1,33 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title">Server Options</h4>
+    <h4 class="modal-title">Links</h4>
 </div>
 <div class="modal-body">
 #if( $ERROR )
 	<div class="alert alert-danger">$ERROR.getMessage()</div>
 #end 
-		<form id="options">
-			<div class="col-lg-6 formlist">
-				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
-						<span class="input-group-addon">Server-Name</span>
-						<input type="text" class="form-control" name="name" type="text" #if($options.name) value="$options.name" #else placeholder="Server-Name" #end >
-				</div>
-			</div>
-			<div class="col-lg-6 formlist">
-				<div class="input-group #if($ERROR.hasError('bgcolor'))has-error #end">
-						<span class="input-group-addon">Color identifier</span>
-						<input type="text" class="form-control" name="bgcolor" type="text" #if($options.bgcolor) value="$options.bgcolor" #else placeholder="F6F4F0" #end >
-				</div>
-			</div>
-			<div class="col-lg-6 formlist">	
-				<div class="input-group #if($ERROR.hasError('allowautoupdate'))has-error #end">
-						<span class="input-group-addon"><input type="checkbox" name="allowautoupdate" #if($options.allowautoupdate) checked="checked" #end ></span>
-						<span class="form-control">Allow Auto Update</span>
-				</div>
-			</div>
-			<div class="col-lg-6 formlist">	
-				<div class="input-group">
-					<span class="input-group-addon">Description</span>
-					<textarea class="form-control" rows="3" name="description">#if($options.description)$options.description#end</textarea>
-				</div>
-			</div>
-		</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Link</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody class="table-hover small-lines">
+			#foreach ($link in $links) 
+			<tr>
+				<td>$link.label</td>
+				<td>$link.url</td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="/web2/options/links/${link.label}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete"></button></td>
+			</tr>
+			#end
+			
+		</tbody>
+	</table>	
 </div>
 
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary" data-ref="/web2/options/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="options">Save</button>
+    <button type="button" class="btn btn-primary" data-ref="/web2/options/links/add" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Add a new link</button>
 </div>

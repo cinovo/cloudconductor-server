@@ -50,6 +50,10 @@ public class NavbarRegistry {
 		this.subMenu.put(menu, new NavbarElement(identifier, relativePath));
 	}
 	
+	public void unregisterSubMenu(NavbarHardLinks menu, String identifier) {
+		this.subMenu.get(menu).remove(new NavbarElement(identifier, null));
+	}
+	
 	public void registerMainMenu(String identifier, String relativePath, int orderNo) {
 		this.mainMenu.add(new NavbarElement(identifier, relativePath, orderNo));
 	}
@@ -112,6 +116,22 @@ public class NavbarRegistry {
 				return this.identifier.compareTo(other.identifier);
 			}
 			return result;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof NavbarElement)) {
+				return false;
+			}
+			if (!this.identifier.equals(((NavbarElement) obj).identifier)) {
+				return false;
+			}
+			return true;
+		}
+		
+		@Override
+		public int hashCode() {
+			return this.identifier.hashCode();
 		}
 	}
 	
