@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.web2.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import de.cinovo.cloudconductor.server.web2.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web2.helper.AjaxRedirect;
 import de.cinovo.cloudconductor.server.web2.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web2.helper.SidebarType;
-import de.cinovo.cloudconductor.server.web2.interfaces.IServerOptions;
 import de.cinovo.cloudconductor.server.web2.interfaces.IServices;
 import de.cinovo.cloudconductor.server.web2.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.ViewModel;
@@ -67,17 +67,24 @@ public class ServiceImpl extends AWebPage implements IServices {
 	@Override
 	public ViewModel newServiceView() {
 		ViewModel modal = this.createModal("mModService");
-		modal.addModel("PACKAGES", this.dPackage.findList());
+		List<EPackage> packages = this.dPackage.findList();
+		this.sortNamedList(packages);
+		modal.addModel("PACKAGES", packages);
 		return modal;
 	}
 	
 	@Override
+	@Transactional
 	public ViewModel editServiceView(String service) {
 		RESTAssert.assertNotEmpty(service);
 		ViewModel modal = this.createModal("mModService");
 		EService svc = this.dService.findByName(service);
+		RESTAssert.assertNotNull(svc);
+		svc.getPackages().size();
+		List<EPackage> packages = this.dPackage.findList();
+		this.sortNamedList(packages);
 		modal.addModel("SERVICE", svc);
-		modal.addModel("PACKAGES", this.dPackage.findNotUsedPackage(svc));
+		modal.addModel("PACKAGES", packages);
 		return modal;
 	}
 	
@@ -155,10 +162,10 @@ public class ServiceImpl extends AWebPage implements IServices {
 		RESTAssert.assertNotEmpty(initscript);
 		RESTAssert.assertNotEmpty(description);
 		FormErrorException error = null;
-		error = this.checkForEmpty(newservice, error, "name");
-		error = this.checkForEmpty(initscript, error, "script");
-		error = this.checkForEmpty(initscript, error, description);
-		if (this.dService.findByName(newservice) != null) {
+		error = this.assertNotEmpty(newservice, error, "name");
+		error = this.assertNotEmpty(initscript, error, "script");
+		error = this.assertNotEmpty(initscript, error, description);
+		if (!service.equals(newservice) && (this.dService.findByName(newservice) != null)) {
 			error = error == null ? this.createError("The service name already exists.") : error;
 			error.addElementError("name", true);
 		}
@@ -172,11 +179,17 @@ public class ServiceImpl extends AWebPage implements IServices {
 			error.addFormParam("name", newservice);
 			error.addFormParam("script", initscript);
 			error.addFormParam("description", description);
-			error.setParentUrl(IServerOptions.ROOT);
+			error.addFormParam("pkgs", Arrays.asList(pkgs));
+			error.setParentUrl(IServices.ROOT, service, IWebPath.ACTION_EDIT);
+			if (service.equals("0")) {
+				error.setParentUrl(IServices.ROOT, IWebPath.ACTION_ADD);
+			}
 			throw error;
 		}
-		
 		EService svc = this.dService.findByName(service);
+		if (svc == null) {
+			svc = new EService();
+		}
 		svc.setName(newservice);
 		svc.setInitScript(initscript);
 		svc.setDescription(description);

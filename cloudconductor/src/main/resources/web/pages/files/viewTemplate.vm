@@ -1,0 +1,62 @@
+#foreach($template in ${TEMPLATES})
+<div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${template.name}-hide">
+			<h3 class="panel-title">$template.name <span class="pull-right"><span class="caret"></span></span></h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<a type="button" class="btn btn-default glyphicon glyphicon-link" href="templates#${template.name}" rel="tooltip-down" title="Jump to template"></a>
+				</div>
+			</span>		
+		</div>
+		<div id="${template.name}-hide" class="collapse in">
+			
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Filename</th>
+				<th class="stateSymbol">Template</th>
+				<th class="stateSymbol">Reloadable</th>
+				<th>Package</th>
+				<th>Restarts</th>
+				<th></th>
+				<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" rel="tooltip-left" title="Add file"></button></th>
+			</tr>
+		</thead>
+		<tbody>
+			#foreach($file in ${FILES})
+			#if($template.configFiles.contains($file))
+			#set($found=true)
+			<tr>
+				<td>$file.name</td>
+				<td class="stateSymbol">
+					<input type="checkbox" rel="tooltip-left" title="is a template" #if(${file.isTemplate()})checked#end disabled>				
+				</td>
+				<td class="stateSymbol"><input type="checkbox" rel="tooltip-left" title="is reloadable" #if(${file.isReloadable()})checked#end disabled></td>
+				<td>#if(${file.pkg.name})${file.pkg.name}#else - #end</td>
+				<td>#foreach($res in ${file.dependentServices}) 
+						$res.name;
+					#end 
+				</td>
+				<td class="stateSymbol">
+					<button class="btn btn-primary btn-xs glyphicon glyphicon-edit" data-ref="${file.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit File"></button>
+				</td>
+				<td class="stateSymbol">
+					<button class="btn btn-primary btn-xs glyphicon glyphicon-trash" rel="tooltip-left" title="Delete file"></button>
+				</td>
+			</tr>
+			#end
+			#end
+			#if(! $found)
+				<tr>
+					<td  colspan="7">none</td>
+				</tr>
+			#end
+		</tbody>		
+						
+		</table>
+		</div>
+	</div>
+</div>
+#end

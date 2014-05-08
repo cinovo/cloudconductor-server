@@ -50,6 +50,7 @@ public abstract class AWebPage implements IContextAware {
 	
 	private LinkedHashMap<String, String> topActions = new LinkedHashMap<>();
 	private LinkedHashMap<String, String> breadcrumbs = new LinkedHashMap<>();
+	private List<ViewFilter> filters = new ArrayList<>();
 	private Set<String> sidebar = Sets.newTreeSet();
 	
 	protected MessageContext mc;
@@ -80,13 +81,44 @@ public abstract class AWebPage implements IContextAware {
 	}
 	
 	protected ViewModel createView() {
-		CSViewModel view = new CSViewModel(this.getTemplateFolder() + "/view", false, this.dServerOptions.get());
+		return this.createView("view");
+	}
+	
+	protected String getCurrentFilter() {
+		if (this.filters.isEmpty()) {
+			return null;
+		}
+		String f = this.mc.getUriInfo().getQueryParameters().getFirst("filter");
+		if (f != null) {
+			for (ViewFilter vf : this.filters) {
+				if (vf.getId().equals(f)) {
+					return vf.getName();
+				}
+			}
+		}
+		for (ViewFilter vf : this.filters) {
+			if (vf.isDefault()) {
+				return vf.getName();
+			}
+		}
+		return this.filters.iterator().next().getName();
+	}
+	
+	protected void addFilter(String id, String name, boolean isDefault) {
+		this.filters.add(new ViewFilter(id, name, isDefault));
+		Collections.sort(this.filters);
+	}
+	
+	protected ViewModel createView(String viewname) {
+		CSViewModel view = new CSViewModel(this.getTemplateFolder() + "/" + viewname, false, this.dServerOptions.get());
 		view.addModel("BREDCRUMBS", this.breadcrumbs.entrySet());
 		view.addModel("SIDEBAR", this.sidebar);
 		view.addModel("SIDEBARTYPE", this.getSidebarType());
 		view.addModel("NAVELEMENT", this.navRegistry);
 		view.addModel("CURRENTNAVELEMENT", this.getNavElementName());
 		view.addModel("TOPACTIONS", this.topActions.entrySet());
+		view.addModel("FILTERS", this.filters);
+		view.addModel("CURRENTFILTER", this.getCurrentFilter());
 		view.addModel(IndexImpl.AUTOREFRESH, this.mc.getHttpServletRequest().getSession().getAttribute(IndexImpl.AUTOREFRESH));
 		return view;
 	}
@@ -111,12 +143,22 @@ public abstract class AWebPage implements IContextAware {
 		this.topActions.put(name, link);
 	}
 	
+	protected void removeSidebarElement(String element) {
+		this.sidebar.remove(element);
+	}
+	
 	protected void addSidebarElement(String element) {
 		this.sidebar.add(element);
 	}
 	
 	protected void addSidebarElement(Collection<String> elements) {
 		this.sidebar.addAll(elements);
+	}
+	
+	protected void addSidebarElements(Collection<? extends INamed> elements) {
+		for (INamed n : elements) {
+			this.sidebar.add(n.getName());
+		}
 	}
 	
 	protected <K extends Comparable<K>, V> List<Map.Entry<K, V>> sortMap(Map<K, V> map) {
@@ -154,7 +196,7 @@ public abstract class AWebPage implements IContextAware {
 		return result;
 	}
 	
-	protected FormErrorException checkForEmpty(String variable, FormErrorException error, String formElement) {
+	protected FormErrorException assertNotEmpty(String variable, FormErrorException error, String formElement) {
 		return this.checkForEmpty(variable, null, error, formElement);
 	}
 	

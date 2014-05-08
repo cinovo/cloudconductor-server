@@ -1,0 +1,110 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a new File</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="files">
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
+					<span class="input-group-addon">File-Name</span>
+					<input type="text" class="form-control" name="name" type="text" #if(${ERROR.getFormParams().get('name')})value="${ERROR.getFormParams().get('name')}"#elseif(${FILE.name})value="${FILE.name}"#else placeholder="SomeFile" #end >
+				</div>
+			</div>
+
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('owner'))has-error #end">
+					<span class="input-group-addon">Owner</span>
+					<input type="text" class="form-control" name="owner" type="text" #if(${ERROR.getFormParams().get('owner')})value="${ERROR.getFormParams().get('owner')}"#elseif(${FILE.owner})value="${FILE.owner}"#else placeholder="root" #end >
+				</div>
+			</div>
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('group'))has-error #end">
+					<span class="input-group-addon">Group</span>
+					<input type="text" class="form-control" name="group" type="text" #if(${ERROR.getFormParams().get('group')})value="${ERROR.getFormParams().get('group')}"#elseif(${FILE.group})value="${FILE.group}"#else placeholder="root" #end >
+				</div>
+			</div>			
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('mode'))has-error #end">
+					<span class="input-group-addon">File mode</span>
+					<input type="text" class="form-control" name="mode" type="text" #if(${ERROR.getFormParams().get('mode')})value="${ERROR.getFormParams().get('mode')}"#elseif(${FILE.fileMode})value="${FILE.fileMode}"#else placeholder="664" #end >
+				</div>
+			</div>
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('isTemplate'))has-error #end">
+					<span class="input-group-addon">
+						<input type="checkbox" name="isTemplate" value="true" #if(${ERROR.getFormParams().get('isTemplate')})checked #elseif(${FILE.isTemplate()}) checked #end >
+					</span>
+					<span class="form-control">File is a template</span>
+				</div>
+			</div>
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('targetPath'))has-error #end">
+					<span class="input-group-addon">Target path</span>
+					<input type="text" class="form-control" name="targetPath" type="text" #if(${ERROR.getFormParams().get('targetPath')})value="${ERROR.getFormParams().get('targetPath')}"#elseif(${FILE.targetPath})value="${FILE.targetPath}"#else placeholder="/opt/somepath/filename.ending" #end >
+				</div>
+			</div>
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('depPackage'))has-error #end">
+					<span class="input-group-addon">Dependency</span>
+					<select class="form-control" name="depPackage" size="1">
+						<option selected="selected">- none -</option>
+						#foreach ($pkg in $PACKAGES)
+							<option value="$pkg.name" 
+							#if(${ERROR.getFormParams().get('depPackage')} && ${ERROR.getFormParams().get('depPackage')} == $pkg.name)
+								selected="selected"
+							#elseif(${FILE.pkg} == $pkg)
+								selected="selected" 
+							#end>$pkg.name</option>
+						#end
+					</select>
+				</div>
+			</div>
+			
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('depServices'))has-error #end">
+					<span class="input-group-addon">Services to reload </span>
+					<select class="form-control" name="depServices" size="3" multiple>
+						#foreach ($svc in $SERVICES)
+							<option value="$svc.name" #if(${ERROR.getFormParams().get('depServices')} && ${ERROR.getFormParams().get('depServices').contains($svc.name)})
+								selected="selected"
+							#elseif(${FILE.dependentServices.contains($svc)})
+								selected="selected" 
+							#end>$svc.name</option>
+						#end
+					</select>
+				</div>
+			</div>
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('file_content'))has-error #end">
+					<span class="input-group-addon">Content</span>
+					<textarea class="form-control" rows="20" name="file_content" >#if(${ERROR.getFormParams().get('file_content')})${ERROR.getFormParams().get('file_content')}#elseif(${FILE.data})${FILE.data.data}#end</textarea>
+				</div>
+			</div>
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('templates'))has-error #end">
+					<span class="input-group-addon">Used by </span>
+					<select class="form-control" name="templates" size="3" multiple>
+						#foreach ($temp in $TEMPLATES)
+							<option value="$temp.name" #if(${ERROR.getFormParams().get('templates')} && ${ERROR.getFormParams().get('templates').contains($temp.name)})
+								selected="selected"
+							#elseif($FILE && ${temp.configFiles.contains($FILE)})
+								selected="selected" 
+							#end>$temp.name</option>
+						#end
+					</select>
+				</div>
+			</div>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    #if(${FILE})
+    	<button type="button" class="btn btn-primary" data-ref="${FILE.name}/save" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="files">Save</button>
+    #else
+    	<button type="button" class="btn btn-primary" data-ref="0/save" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="files">Save</button>
+    #end
+</div>

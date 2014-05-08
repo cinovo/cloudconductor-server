@@ -99,6 +99,11 @@ h3.panel-title {
 	padding-left: 15px;
 }
 
+h3.panel-title>small {
+	color: #FFFFFF;
+	padding-left: 10px;
+}
+
 .panel-heading>span.pull-right {
 	margin-top: -33px;
 	margin-right: 35px;
@@ -127,6 +132,10 @@ td.stateSymbol, td.stateSymbol {
 	margin-bottom: 2px;
 }
 
+.label.label-default.tab {
+	margin-right: 15%;
+}
+
 .table>tbody.small-lines>tr>td {
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -135,13 +144,18 @@ span.form-control {
 	overflow-x:auto;
 }
 
+span.form-control.small{
+	overflow-x:hidden;
+}
+
 .formlist>.input-group {
 	width:100%;
 }
 
-.formlist>.input-group>span.input-group-addon {
-	width:150px;
+.formlist>.input-group>span.input-group-addon.small {
+	width:50px;
 }
+
 
 .formlist>.input-group>span.input-group-addon {
 	width:150px;

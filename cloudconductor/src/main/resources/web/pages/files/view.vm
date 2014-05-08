@@ -1,0 +1,81 @@
+#foreach( $file in $FILES)
+<div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${file.name}-hide">
+			<h3 class="panel-title">$file.name <small>$file.targetPath</small><span class="pull-right"><span class="caret"></span></span></h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${file.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit File"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${file.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete File"></button>
+				</div>
+			</span>		
+		</div>
+		<div id="${file.name}-hide" class="collapse in">
+			
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Owner</th>
+				<th>File mode</th>
+				<th class="stateSymbol">Template</th>
+				<th>Reloadable</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>$file.owner : $file.group</td>
+				<td>#if(!${file.fileMode.startsWith(0)})0#end$file.fileMode</td>
+				<td class="stateSymbol">
+					<input type="checkbox" rel="tooltip-left" title="is a template" #if(${file.isTemplate()})checked#end disabled>				
+				</td>
+				<td class="stateSymbol"><input type="checkbox" rel="tooltip-left" title="is reloadable" #if(${file.isReloadable()})checked#end disabled></td>
+				<td></td>
+			</tr>
+		</tbody>		
+		
+		#if(! ${file.getDependentServices().isEmpty()})
+		<thead>
+			<tr>
+				<th colspan="5">Restarts following services on change</th>
+			</tr>
+		</thead>
+		<tbody>
+			#foreach($dep in ${file.dependentServices})
+			<tr>
+				<td  colspan="4">$dep.name</td>
+				<td class="stateSymbol"><a type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" href="services#$dep.name" rel="tooltip-left" title="" data-original-title="Jump to service"></a></td>
+			</tr>
+			#end
+		</tbody>
+		#end
+				
+		<thead>
+			<tr>
+				<th colspan="5">Used by Templates</th>
+			</tr>
+		</thead>
+		<tbody>
+			#set($found=false)
+			#foreach($template in ${TEMPLATES})
+				#if($template.configFiles.contains($file))
+				#set($found=true)
+				<tr>
+					<td  colspan="4">$template.name</td>
+					<td class="stateSymbol"><a type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" href="templates#$template.name" rel="tooltip-left" title="" data-original-title="Jump to template"></a></td>
+				</tr>
+				#end
+			#end
+			#if(!$found)
+				<tr>
+					<td  colspan="5">none</td>
+				</tr>
+			#end
+		</tbody>
+		
+		</table>
+		</div>
+	</div>
+</div>
+#end

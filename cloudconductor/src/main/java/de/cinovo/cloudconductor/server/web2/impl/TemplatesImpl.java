@@ -188,10 +188,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public AjaxRedirect editTemplate(String tname, String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
+	public AjaxRedirect editTemplate(String tname, String templatename, Long packageManagerId, String description, String autoupdate, String smoothupdate) throws FormErrorException {
 		RESTAssert.assertNotEmpty(tname);
 		
-		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate);
+		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate, smoothupdate);
 		
 		// save the new settings
 		ETemplate template = this.dTemplate.findByName(tname);
@@ -200,6 +200,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		template.setDescription(description);
 		template.setYum(this.dPackageServer.findById(packageManagerId));
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
 		this.audit("Modified template " + tname);
 		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
@@ -275,6 +276,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		}
 		this.dTemplate.delete(template);
 		this.audit("Deleted template " + tname);
+		this.removeSidebarElement(tname);
 		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	
@@ -323,8 +325,8 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public AjaxRedirect addTemplate(String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
-		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate);
+	public AjaxRedirect addTemplate(String templatename, Long packageManagerId, String description, String autoupdate, String smoothupdate) throws FormErrorException {
+		this.templateOptionErrorHandling(templatename, packageManagerId, description, autoupdate, smoothupdate);
 		
 		// save the new settings
 		ETemplate template = new ETemplate();
@@ -333,12 +335,13 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		template.setDescription(description);
 		template.setYum(this.dPackageServer.findById(packageManagerId));
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
+		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
 		this.audit("Created new template " + template.getName());
 		return new AjaxRedirect(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	
-	private void templateOptionErrorHandling(String templatename, Long packageManagerId, String description, String autoupdate) throws FormErrorException {
+	private void templateOptionErrorHandling(String templatename, Long packageManagerId, String description, String autoupdate, String smoothupdate) throws FormErrorException {
 		String errorMessage = "Please fill in all the information.";
 		FormErrorException error = null;
 		// templatename and packageManagerId are needed, description and auto update are not
@@ -356,6 +359,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			error.addFormParam("packageManager", packageManagerId.toString());
 			error.addFormParam("description", description);
 			error.addFormParam("autoupdate", autoupdate);
+			error.addFormParam("smoothupdate", smoothupdate);
 			throw error;
 		}
 	}

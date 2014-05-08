@@ -7,11 +7,10 @@
 	<div class="panel panel-$pannelType">
 		<div class="panel-heading panel-toggle" >
 			<h3 class="panel-title" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide">
-				$host.name
+				$host.name <small>${host.getTemplate().name}</small>
 				<span class="pull-right"><span class="caret" /></span></span>
 			</h3>
 			<span class="pull-right">
-				${host.getTemplate().name}
 				<span class="btn-group">
 					<a type="button" class="btn btn-default glyphicon glyphicon-folder-open" href="templates#${host.getTemplate().name}" rel="tooltip-down" title="Goto template ${host.getTemplate().name}"></a>
 					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${host.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete host"></button>

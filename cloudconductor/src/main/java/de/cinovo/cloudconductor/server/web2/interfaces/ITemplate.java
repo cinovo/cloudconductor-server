@@ -76,7 +76,7 @@ public interface ITemplate {
 	@POST
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxRedirect addTemplate(@FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManager, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate) throws FormErrorException;
+	public abstract AjaxRedirect addTemplate(@FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManager, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
 	
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
@@ -86,7 +86,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxRedirect editTemplate(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManagerId, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate) throws FormErrorException;
+	public abstract AjaxRedirect editTemplate(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManagerId, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
 	
 	@GET
 	@Path(ITemplate.ADD_PACKAGE_ACTION)

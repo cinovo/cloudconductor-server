@@ -93,7 +93,20 @@
 			#end
 			
 		#end
+		#if (! $FILTERS.isEmpty())
+		<li>
+		<div class="btn-group btn-group-sm">
+			 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">$CURRENTFILTER <span class="caret"></span></button>
+			 <ul class="dropdown-menu">
+			 	#foreach($f in $FILTERS)
+			 	<li><a href="?filter=$f.id">${f.getName()}</a></li>
+			    #end
+			 </ul>
+		</div>
+		</li>
+		#end
 		</ol>
+		
 	</div>
 </div>
 #end
@@ -101,7 +114,7 @@
 <!-- Content -->
 <div class="container">
 	<div class="row row-offcanvas row-offcanvas-right">
-		#if(! $SIDEBAR.isEmpty()) 
+		#if( $SIDEBARTYPE  && (! $SIDEBAR.isEmpty())) 
 		<div class="col-xs-12 col-sm-10">
 		#else
 		<div class="col-xs-12 col-sm-12">
@@ -109,7 +122,7 @@
 		#parse("/web/pages/${VIEWNAME}.vm")
 		</div>
 				
-		#if( (! $SIDEBARTYPE) || $SIDEBARTYPE == "SIMPLE") 
+		#if( $SIDEBARTYPE == "SIMPLE") 
 			#parse("/web/sidebar/simple.vm")
 		#elseif($SIDEBARTYPE == "ALPHABETICAL")
 			#parse("/web/sidebar/alphabetical.vm")

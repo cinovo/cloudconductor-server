@@ -63,8 +63,8 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	@Transactional
 	public AjaxRedirect saveOptions(String name, String bgcolor, String autoUpdate, String descr) throws FormErrorException {
 		FormErrorException error = null;
-		error = this.checkForEmpty(name, error, "name");
-		error = this.checkForEmpty(bgcolor, error, "bgcolor");
+		error = this.assertNotEmpty(name, error, "name");
+		error = this.assertNotEmpty(bgcolor, error, "bgcolor");
 		if (error != null) {
 			// add the currently entered values to the answer
 			error.addFormParam("name", name);
@@ -104,13 +104,13 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	@Override
 	public AjaxRedirect addLink(String label, String link) throws FormErrorException {
 		FormErrorException error = null;
-		error = this.checkForEmpty(label, error, "label");
-		error = this.checkForEmpty(link, error, "link");
+		error = this.assertNotEmpty(label, error, "label");
+		error = this.assertNotEmpty(link, error, "link");
 		if (error != null) {
 			// add the currently entered values to the answer
 			error.addFormParam("label", label);
 			error.addFormParam("link", link);
-			error.setParentUrl(IServerOptions.ROOT + IServerOptions.ADD_LINK);
+			error.setParentUrl(IServerOptions.ROOT, IServerOptions.ADD_LINK);
 			throw error;
 		}
 		EAdditionalLinks add = new EAdditionalLinks();

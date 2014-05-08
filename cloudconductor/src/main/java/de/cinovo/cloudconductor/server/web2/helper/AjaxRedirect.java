@@ -29,11 +29,29 @@ public class AjaxRedirect {
 	
 	/**
 	 * @param path the redirect path
+	 * @param filter the filter
+	 */
+	public AjaxRedirect(String path, String filter) {
+		this.type = AjaxRedirectType.REFRESH;
+		this.path = path + "?filter=" + filter;
+	}
+	
+	/**
+	 * @param path the redirect path
 	 * @param type AjaxRedirectType
 	 */
 	public AjaxRedirect(String path, AjaxRedirectType type) {
 		this.type = type;
 		this.path = path;
+	}
+	
+	/**
+	 * @param path the redirect path
+	 * @param filter the filter
+	 */
+	public AjaxRedirect(String path, String filter, AjaxRedirectType type) {
+		this.type = type;
+		this.path = path + "?filter=" + filter;
 	}
 	
 	/**

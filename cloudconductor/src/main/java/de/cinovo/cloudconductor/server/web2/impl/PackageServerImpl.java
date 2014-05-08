@@ -75,16 +75,16 @@ public class PackageServerImpl extends AWebPage implements IPackageServer {
 	public AjaxRedirect saveServer(Long serverid, String path, String description) throws FormErrorException {
 		RESTAssert.assertNotNull(serverid);
 		FormErrorException error = null;
-		error = this.checkForEmpty(path, error, "path");
-		error = this.checkForEmpty(description, error, "description");
+		error = this.assertNotEmpty(path, error, "path");
+		error = this.assertNotEmpty(description, error, "description");
 		if (error != null) {
 			// add the currently entered values to the answer
 			error.addFormParam("path", path);
 			error.addFormParam("description", description);
 			if (serverid > 0) {
-				error.setParentUrl(IPackageServer.ROOT + "/" + serverid + IWebPath.ACTION_EDIT);
+				error.setParentUrl(IPackageServer.ROOT, serverid.toString(), IWebPath.ACTION_EDIT);
 			} else {
-				error.setParentUrl(IPackageServer.ROOT + IWebPath.ACTION_ADD);
+				error.setParentUrl(IPackageServer.ROOT, IWebPath.ACTION_ADD);
 			}
 			throw error;
 		}

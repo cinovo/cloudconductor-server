@@ -37,10 +37,17 @@ public class FormErrorException extends Exception implements Serializable {
 	
 	
 	/**
-	 * @param parentUrl the parentUrl to set
+	 * @param parts the parentUrl to set
 	 */
-	public void setParentUrl(String parentUrl) {
-		this.parentUrl = parentUrl;
+	public void setParentUrl(String... parts) {
+		StringBuilder b = new StringBuilder();
+		for (String p : parts) {
+			if (!p.startsWith("/")) {
+				b.append("/");
+			}
+			b.append(p);
+		}
+		this.parentUrl = b.toString();
 	}
 	
 	
@@ -76,7 +83,7 @@ public class FormErrorException extends Exception implements Serializable {
 	 * @param elementName the form element name
 	 * @param value the value
 	 */
-	public void addFormParam(String elementName, String value) {
+	public void addFormParam(String elementName, Object value) {
 		this.formParams.put(elementName, value);
 	}
 	
@@ -85,7 +92,7 @@ public class FormErrorException extends Exception implements Serializable {
 	 * @param value the value
 	 * @param failed set if element has error
 	 */
-	public void addFormParam(String elementName, String value, boolean failed) {
+	public void addFormParam(String elementName, Object value, boolean failed) {
 		this.formParams.put(elementName, value);
 		if (failed) {
 			this.failedElements.add(elementName);

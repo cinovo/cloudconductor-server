@@ -65,7 +65,7 @@
 				</tr>
 				<tr>
 					<td align="left">Services to reload on change:</td>
-					<td align="center"><select name="depServices" size="5" multiple style="width: 100%;">
+					<td align="center"><select name="depServices" size="3" multiple style="width: 100%;">
 						#foreach ($svc in $services)
 							<option value="$svc.key" #if ($svc.value) selected="selected" #end>$svc.key</option>
 						#end

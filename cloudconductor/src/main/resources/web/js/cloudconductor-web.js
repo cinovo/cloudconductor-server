@@ -55,8 +55,11 @@ function initButtons() {
 }
 
 function ajaxCall(object, target) {
-	var path = $(location).prop("pathname") +"/";
+	var pathname = $(location).prop("pathname");
+	var path = pathname +"/";
 	var ref = object.data('ref');
+	var search = $(location).prop("search");
+	var hash = $(location).prop("hash")
 	var type = object.data('call-type');
 	var form = object.data('form');
 	var targetUrl=path+ref;
@@ -70,6 +73,11 @@ function ajaxCall(object, target) {
         success: function (data) {
         	var reloaded = object.data('reloaded');
         	if(data.type && data.type == "REFRESH") {
+        		var reload = data.path;
+        		if(reload == pathname) {
+        			reload +=search;
+        			reload +=hash;
+        		}
         		window.location.assign(data.path);
         		window.location.reload(true);
 			}else if(data.type && data.type == "GET") { 
