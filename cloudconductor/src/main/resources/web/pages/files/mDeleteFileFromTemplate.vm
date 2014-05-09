@@ -1,0 +1,12 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Delete the file <strong>${FILE.name}</strong> from template <strong>${TEMPLATE.name}</strong></h4>
+</div>
+<div class="modal-body">
+	<div class="alert alert-warning">Your are going to delete the file <strong>${FILE.name}</strong> from template <strong>${TEMPLATE.name}</strong>.<br />
+	Is this correct?</div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+   	<button type="button" class="btn btn-primary" data-ref="${TEMPLATE.name}/${FILE.name}/delete" data-toggle="update-modal" data-call-type="POST" data-target="#popModal">Yes</button>
+</div>

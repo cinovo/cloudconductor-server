@@ -1,0 +1,54 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a new File</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="addfiles">
+			<table class="table table-striped">
+		<thead>
+			<tr>
+				<th class="stateSymbol"></th>
+				<th>Filename</th>
+				<th class="stateSymbol">Template</th>
+				<th class="stateSymbol">Reloadable</th>
+				<th>Package</th>
+				<th>Restarts</th>
+			</tr>
+		</thead>
+		<tbody>
+			#foreach($file in ${FILES})
+			#if(!$TEMPLATE.configFiles.contains($file))
+			#set($found=true)
+			<tr>
+				<td class="stateSymbol"><input type="checkbox" name="files" rel="tooltip-right" title="select" value="$file.name"></td>
+				<td>$file.name</td>
+				<td class="stateSymbol">
+					<input type="checkbox" rel="tooltip-left" title="is a template" #if(${file.isTemplate()})checked#end disabled>				
+				</td>
+				<td class="stateSymbol"><input type="checkbox" rel="tooltip-left" title="is reloadable" #if(${file.isReloadable()})checked#end disabled></td>
+				<td>#if(${file.pkg.name})${file.pkg.name}#else - #end</td>
+				<td>#foreach($res in ${file.dependentServices}) 
+						$res.name;
+					#end 
+				</td>
+			</tr>
+			#end
+			#end
+			#if(! $found)
+				<tr>
+					<td  colspan="7">none</td>
+				</tr>
+			#end
+		</tbody>		
+						
+		</table>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+   	<button type="button" class="btn btn-primary" data-ref="${TEMPLATE.name}/add" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="addfiles">Apply</button>
+</div>

@@ -1,0 +1,43 @@
+<div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${TEMPLATE}-hide">
+			<h3 class="panel-title">$TEMPLATE <span class="pull-right"><span class="caret"></span></span></h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-import" data-ref="${TEMPLATE}/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="New Key-Value pair"></button>
+					#if(!${TEMPLATE.name.equals("GLOBAL")})
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="template/${TEMPLATE}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete template"></button>
+					#end
+				</div>
+			</span>		
+		</div>
+		<div id="${TEMPLATE}-hide" class="collapse in">
+			
+		<table class="table table-striped">
+		#foreach($config in ${CONFIGS})
+			<thead>
+			#if($config.getKey())
+				<tr class="info">
+					<th colspan="2">$config.getKey()</th>
+					<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${TEMPLATE}/${config.getKey()}/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add key-value pair"></button></th>
+					<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="template/${TEMPLATE}/service/${config.getKey()}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete service"></button></th>
+				</tr>
+				#end
+			</thead>
+			<tbody>
+			#foreach($val in $config.getValue())
+				<tr>
+					<td>${val.configkey}</td>
+					<td>${val.value}</td>
+					<td class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-edit" data-ref="${val.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Edit Config"></button></td>
+					<td class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="${val.id}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete Config"></button></td>
+				</tr>
+			#end
+				<tr><td colspan="4"></td></tr>
+			</tbody>		
+		#end			
+		</table>
+		</div>
+	</div>
+</div>

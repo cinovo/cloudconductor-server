@@ -148,6 +148,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Override
+	@Transactional
 	public ViewModel deleteFileFromTemplateView(String name, String template) {
 		RESTAssert.assertNotEmpty(name);
 		RESTAssert.assertNotEmpty(template);
@@ -155,19 +156,24 @@ public class FilesImpl extends AWebPage implements IFiles {
 		RESTAssert.assertNotNull(t);
 		EFile file = this.dFile.findByName(name);
 		RESTAssert.assertNotNull(file);
-		ViewModel modal = this.createModal("mDeleteFile");
+		ViewModel modal = this.createModal("mDeleteFileFromTemplate");
 		modal.addModel("FILE", file);
 		modal.addModel("TEMPLATE", t);
 		return modal;
 	}
 	
 	@Override
+	@Transactional
 	public ViewModel addFileToTemplateView(String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
+		t.getConfigFiles().size(); // lazy loading ...
 		RESTAssert.assertNotNull(t);
-		ViewModel modal = this.createModal("mDeleteFile");
+		ViewModel modal = this.createModal("mAddFile");
 		List<EFile> files = this.dFile.findList();
+		for (EFile f : files) {
+			f.getDependentServices().size(); // lazy loading ...
+		}
 		modal.addModel("FILES", files);
 		modal.addModel("TEMPLATE", t);
 		return modal;
@@ -303,6 +309,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Override
+	@Transactional
 	public AjaxRedirect deleteFileFromTemplate(String name, String template) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(name);
@@ -318,6 +325,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Override
+	@Transactional
 	public AjaxRedirect addFileToTemplate(String[] name, String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);

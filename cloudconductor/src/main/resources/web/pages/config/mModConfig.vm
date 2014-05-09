@@ -1,0 +1,45 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a new Config</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="config">
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('template'))has-error #end">
+					<span class="input-group-addon">Template</span>
+					<input type="text" class="form-control" name="template" type="text" #if(${ERROR.getFormParams().get('template')})value="${ERROR.getFormParams().get('template')}"#elseif(${CONFIG})value="${CONFIG.template}"#elseif($TEMPLATE)value="$TEMPLATE"#else placeholder="GLOBAL" #end >
+				</div>
+			</div>
+
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('service'))has-error #end">
+					<span class="input-group-addon">Service</span>
+					<input type="text" class="form-control" name="service" type="text" #if(${ERROR.getFormParams().get('service')})value="${ERROR.getFormParams().get('service')}"#elseif(${CONFIG.service})value="${CONFIG.service}"#elseif($SERVICE)value="$SERVICE"#end >
+				</div>
+			</div>
+			<div class="col-lg-6 formlist">
+				<div class="input-group #if($ERROR.hasError('key'))has-error #end">
+					<span class="input-group-addon">Key</span>
+					<input type="text" class="form-control" name="key" type="text" #if(${ERROR.getFormParams().get('key')})value="${ERROR.getFormParams().get('key')}"#elseif(${CONFIG.configkey})value="${CONFIG.configkey}"#else placeholder="AKEY" #end >
+				</div>
+			</div>			
+			<div class="col-lg-12 formlist">
+				<div class="input-group #if($ERROR.hasError('value'))has-error #end">
+					<span class="input-group-addon">Value</span>
+					<input type="text" class="form-control" name="value" type="text" #if(${ERROR.getFormParams().get('value')})value="${ERROR.getFormParams().get('value')}"#elseif(${CONFIG.value})value="${CONFIG.value}"#else placeholder="664" #end >
+				</div>
+			</div>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    #if(${CONFIG})
+    	<button type="button" class="btn btn-primary" data-ref="${CONFIG.id}/save" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="config">Save</button>
+    #else
+    	<button type="button" class="btn btn-primary" data-ref="0/save" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="config">Save</button>
+    #end
+</div>

@@ -35,6 +35,7 @@ public class NavbarRegistry {
 	
 	@PostConstruct
 	public void init() {
+		System.out.println("MOOOOOOOOOOOOOOOOOOOOEPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
 		List<EAdditionalLinks> links = this.dLinks.findList();
 		int counter = 0;
 		for (EAdditionalLinks link : links) {

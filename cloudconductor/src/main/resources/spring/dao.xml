@@ -24,8 +24,14 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
 	<import resource="dao-${ds.type:POSTGRESQL}.xml" />
-
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+		<property name="dataSource" ref="dataSource" />
+		<property name="changeLog" value="classpath:liquibase/changelog.xml" />
+	</bean>
+	<jdbc:initialize-database enabled="${ds.demodata:false}">
+		<jdbc:script location="${ds.demofile:foo}" />
+	</jdbc:initialize-database>
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
 		<property name="dataSource" ref="dataSource" />
 		<property name="persistenceUnitName" value="cloudconductor" />
 		<property name="packagesToScan">
@@ -45,12 +51,6 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	<tx:annotation-driven />
-	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
-		<property name="dataSource" ref="dataSource" />
-		<property name="changeLog" value="classpath:liquibase/changelog.xml" />
-	</bean>
-	<jdbc:initialize-database enabled="${ds.demodata:false}">
-		<jdbc:script location="${ds.demofile:foo}" />
-	</jdbc:initialize-database>
+
 	
 </beans>

@@ -27,6 +27,7 @@ import de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.web2.CSViewModel;
 import de.cinovo.cloudconductor.server.web2.comparators.INamedComparator;
 import de.cinovo.cloudconductor.server.web2.impl.IndexImpl;
+import de.cinovo.cloudconductor.server.web2.interfaces.IConfig;
 import de.cinovo.cloudconductor.server.web2.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web2.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.ViewModel;
@@ -105,8 +106,28 @@ public abstract class AWebPage implements IContextAware {
 	}
 	
 	protected void addFilter(String id, String name, boolean isDefault) {
-		this.filters.add(new ViewFilter(id, name, isDefault));
-		Collections.sort(this.filters);
+		boolean exists = false;
+		for (ViewFilter f : this.filters) {
+			if (f.getName().equals(name) && f.getId().equals(id)) {
+				exists = true;
+			}
+		}
+		if (!exists) {
+			this.filters.add(new ViewFilter(id, name, isDefault));
+			Collections.sort(this.filters);
+		}
+	}
+	
+	protected void removeFilter(String id) {
+		if (id.equals(IConfig.RESERVED_GLOBAL)) {
+			return;
+		}
+		for (ViewFilter f : this.filters) {
+			if (f.getId().equals(id)) {
+				this.filters.remove(f);
+				break;
+			}
+		}
 	}
 	
 	protected ViewModel createView(String viewname) {
@@ -167,6 +188,15 @@ public abstract class AWebPage implements IContextAware {
 			
 			@Override
 			public int compare(Map.Entry<K, V> a, Map.Entry<K, V> b) {
+				if ((a.getKey() == null) && (b.getKey() == null)) {
+					return 0;
+				}
+				if ((a.getKey() != null) && (b.getKey() == null)) {
+					return 1;
+				}
+				if ((a.getKey() == null) && (b.getKey() != null)) {
+					return -1;
+				}
 				return a.getKey().compareTo(b.getKey());
 			}
 		});
@@ -234,6 +264,6 @@ public abstract class AWebPage implements IContextAware {
 			b.append(s);
 			b.append(",");
 		}
-		return b.deleteCharAt(b.length() - 1).toString();
+		return b.length() > 1 ? b.deleteCharAt(b.length() - 1).toString() : b.toString();
 	}
 }

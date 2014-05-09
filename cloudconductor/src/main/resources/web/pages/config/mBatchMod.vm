@@ -1,0 +1,26 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Batch modify config</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="batch">
+			<div class="col-lg-12 formlist">
+				<textarea class="form-control" rows="9" name="batch">$BATCHDEFAULT</textarea>
+			</div>
+			<div class="well well-sm">
+				<h4>Possible line commands</h4>
+				<p><strong>#</strong> comment (ignored in processing)<p>
+				<p><strong>+</strong> add/modify the value<p>
+				<p><strong>-</strong> remove the key/value pair<p>
+	            <p><strong>DROP</strong> The path and it's sub paths<p>
+			</div>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" data-ref="batchmod" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="batch">Save</button>
+</div>

@@ -1,0 +1,28 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Delete a key-value pair from <strong>${CONFIG.template}</strong></h4>
+</div>
+<div class="modal-body">
+	
+	#if(${CONFIG}) 
+	<div class="alert alert-warning">Your are going to delete the key-value pair with key <strong>${CONFIG.configkey}</strong> from the template <strong>${CONFIG.template}</strong>
+		#if(${CONFIG.service} && !${CONFIG.service.isEmpty()})and service <strong>${CONFIG.service}</strong>#end.<br />
+	Is this correct?</div>
+	#elseif($TEMPLATE && $SERVICE)
+	<div class="alert alert-warning">Your are going to delete all key-value pairs for service <strong>${SERVICE}</strong> of the template <strong>${TEMPLATE}</strong>.<br />
+	Is this correct?</div>
+	#elseif($TEMPLATE)
+	<div class="alert alert-warning">Your are going to delete the template <strong>${TEMPLATE}</strong> and all its key-value pairs.<br />
+	Is this correct?</div>
+	#end
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+    #if(${CONFIG}) 
+   	<button type="button" class="btn btn-primary" data-ref="${CONFIG.id}/delete" data-toggle="update-modal" data-call-type="POST" data-target="#popModal">Yes</button>
+   	#elseif($TEMPLATE && $SERVICE)
+   	<button type="button" class="btn btn-primary" data-ref="template/${TEMPLATE}/service/$SERVICE/delete" data-toggle="update-modal" data-call-type="POST" data-target="#popModal">Yes</button>
+   	#elseif($TEMPLATE)
+   	<button type="button" class="btn btn-primary" data-ref="template/${TEMPLATE}/delete" data-toggle="update-modal" data-call-type="POST" data-target="#popModal">Yes</button>
+   	#end
+</div>

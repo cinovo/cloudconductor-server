@@ -1,0 +1,39 @@
+
+<div id="printable">
+	<h1>Installation Status: $C2InstanceOptions.name - ${dateTool.format('dd.MM.yyyy HH:mm:ss', $NOW.toDate())}</h1>
+		<div class="segment_content">
+			
+			<table class="install_status">
+				#foreach( $package in $packages )
+				<tr>
+					<td>$package.name</td>
+					<td class="versionOk">$package.version</td>
+				</tr>
+				#end
+			</table>
+		</div>
+	<div class="info_container">
+		<table class="signature">
+			<tr>
+				<td>installiert am</td>
+				<td class="signature" width="30%"></td>
+				<td>durch</td>
+				<td class="signature" width="40%"></td>
+			</tr>
+			#if($C2InstanceOptions.needsApproval)
+			<tr>
+				<td>technische Freigabe</td>
+				<td class="signature"></td>
+				<td>durch</td>
+				<td class="signature"></td>
+			</tr>
+			<tr>
+				<td>fachliche Freigabe </td>
+				<td class="signature"></td>
+				<td>durch</td>
+				<td class="signature"></td>
+			</tr>
+			#end
+		</table>
+	</div>
+</div>

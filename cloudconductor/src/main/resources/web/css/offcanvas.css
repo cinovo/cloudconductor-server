@@ -215,6 +215,55 @@ span.form-control.small{
 .modal-title {
 	text-align:center;
 }
+
+@media print {
+	body * {
+    	visibility:hidden;
+    	text-align: center;
+		font-size: 12px;
+		font-family: verdana, helvetica, arial, sans-serif;
+    } 
+    
+    #printable, #printable * {
+        visibility:visible;
+    }
+    
+    #printable { /* aligning the printable area */
+       height: 100%;
+       margin-top: -80px;
+       margin-bottom: -80px;
+   	}
+   	
+   	table {
+   		width: 100%;
+   	}
+	tr td.versionOk {
+		width: 40%;
+		text-align: left;
+		color: #008209;
+	}
+	
+	table.install_status tr td,table.service_status tr td {
+		border: 1px dotted #dddddd;
+		text-align: left;
+	}
+	tr td.signature {
+		border-bottom: 1px solid black;
+		empty-cells: show;
+	}
+	
+	table.signature tr td {
+		background-color: #e5eecc;
+	}
+	
+	table.signature {
+		margin: 5px 5px 10px 5px;
+		border-collapse: separate;
+		border-spacing: 10px;
+	}
+
+ }
+
 /*
  * Off Canvas
  * --------------------------------------------------

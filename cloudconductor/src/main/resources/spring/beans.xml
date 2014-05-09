@@ -73,6 +73,9 @@
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.PackageServerImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.ServiceImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web2.impl.FilesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.ConfigImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.SSHKeyImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web2.impl.ReportImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="exMapper" />

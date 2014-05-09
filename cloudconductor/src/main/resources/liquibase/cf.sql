@@ -78,4 +78,6 @@ INSERT INTO cloudconductor.mappingrpmtemplate VALUES (5, 1, 5);
 INSERT INTO cloudconductor.mappingsvcpkg VALUES (1, 5, 1);
 INSERT INTO cloudconductor.mappingsvcpkg VALUES (2, 3, 2);
 
+UPDATE cloudconductor.template SET smoothupdate=true WHERE id=1;
+
 SET DATABASE REFERENTIAL INTEGRITY TRUE;

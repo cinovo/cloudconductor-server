@@ -85,4 +85,9 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 		return this.findListByQuery("FROM EConfigValue c WHERE c.template = ?1", template);
 	}
 	
+	@Override
+	public List<String> findTemplates() {
+		return this.entityManager.createQuery("SELECT DISTINCT conf.template FROM EConfigValue conf").getResultList();
+	}
+	
 }

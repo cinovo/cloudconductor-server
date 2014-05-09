@@ -1,0 +1,37 @@
+#foreach($key in $KEYS) 
+<div id="$key.owner" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${key.owner}-hide">
+			<h3 class="panel-title">$key.owner <span class="pull-right"><span class="caret"></span></span></h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${key.owner}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${key.owner}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete"></button>
+				</div>
+			</span>		
+		</div>
+		<div id="${key.owner}-hide" class="collapse in">
+			
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Used for hosts with template</th>
+					<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${key.owner}/template/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add a template"></button></th>
+				</tr>
+			</thead>
+			<tbody>
+			#foreach($template in $TEMPLATES)
+				#if($template.getSshkeys().contains($key))
+				<tr>
+					<td>${template.name}</td>
+					<td class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="${key.owner}/template/${template.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete Config"></button></td>
+				</tr>
+				#end
+			#end
+			</tbody>		
+		</table>
+		</div>
+	</div>
+</div>
+#end
