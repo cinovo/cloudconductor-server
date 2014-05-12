@@ -138,12 +138,12 @@ public class AgentImpl implements IAgent {
 			if (pkg == null) {
 				continue;
 			}
-			EPackageState state = this.updateExistingState(host, irpm);
+			EPackageState state = this.updateExistingState(host, irpm, leftPackages);
 			if (state == null) {
 				state = this.createMissingState(host, irpm, pkg);
 				host.getPackages().add(state);
 			}
-			leftPackages.remove(state);
+			
 		}
 		for (EPackageState pkg : leftPackages) {
 			if (host.getPackages().contains(pkg)) {
@@ -236,9 +236,10 @@ public class AgentImpl implements IAgent {
 	/**
 	 * @param host
 	 * @param irpm
+	 * @param leftPackages
 	 * @return
 	 */
-	private EPackageState updateExistingState(EHost host, PackageVersion irpm) {
+	private EPackageState updateExistingState(EHost host, PackageVersion irpm, HashSet<EPackageState> leftPackages) {
 		VersionStringComparator vsc = new VersionStringComparator();
 		for (EPackageState state : host.getPackages()) {
 			if (state.getVersion().getPkg().getName().equals(irpm.getName())) {
@@ -254,6 +255,7 @@ public class AgentImpl implements IAgent {
 					rpm.setDeprecated(true);
 					rpm = this.drpm.save(rpm);
 				}
+				leftPackages.remove(state);
 				state.setVersion(rpm);
 				return this.dpkgstate.save(state);
 			}
