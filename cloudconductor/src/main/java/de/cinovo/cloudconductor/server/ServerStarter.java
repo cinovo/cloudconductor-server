@@ -25,7 +25,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
-import de.cinovo.cloudconductor.server.web2.tasks.CleanUpTask;
+import de.cinovo.cloudconductor.server.util.CleanUpTask;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.properties.FilePropertyProvider;

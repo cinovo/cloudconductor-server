@@ -67,7 +67,7 @@
 				#foreach($host in ${template.getHosts()})
 					<tr class="success">
 						<td>${host.getName()}</td>
-						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" data-ref="/web2/hosts/${host.getName()}" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Jump to host"></button></td>
+						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" data-ref="/web/hosts/${host.getName()}" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Jump to host"></button></td>
 					</tr>
 				#end
 				</tbody>

@@ -19,7 +19,7 @@ package de.cinovo.cloudconductor.server.dao;
 
 import java.util.List;
 
-import de.cinovo.cloudconductor.server.model.config.EConfigValue;
+import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dao.IEntityDAO;
 
 /**
@@ -89,5 +89,8 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	 */
 	public List<EConfigValue> findAll(String template);
 	
+	/**
+	 * @return the names of existing templates
+	 */
 	public List<String> findTemplates();
 }

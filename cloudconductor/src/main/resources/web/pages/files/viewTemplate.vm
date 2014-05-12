@@ -24,7 +24,7 @@
 				<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${template.name}/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add file"></button></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="table-hover small-lines">
 			#foreach($file in ${FILES})
 			#if($template.configFiles.contains($file))
 			#set($found=true)

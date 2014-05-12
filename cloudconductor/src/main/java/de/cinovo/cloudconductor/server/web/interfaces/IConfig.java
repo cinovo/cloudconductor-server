@@ -1,36 +1,20 @@
 package de.cinovo.cloudconductor.server.web.interfaces;
 
-/*
- * #%L
- * cloudconductor-server
- * %%
- * Copyright (C) 2013 - 2014 Cinovo AG
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
- * #L%
- */
-
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
- * 
- * Copyright 2013 Cinovo AG<br>
+ * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
@@ -43,108 +27,156 @@ public interface IConfig {
 	public static final String ROOT = "/config";
 	/** GLOBAL */
 	public static final String RESERVED_GLOBAL = "GLOBAL";
-	/** the main view sorted by Template */
-	public static final String VIEW_TEMPLATE = "/{" + IWebPath.VAR_TEMPLATE + "}";
+	/***/
+	public static final String EDIT_KV_PAIR = "/{" + IWebPath.VAR_ID + "}" + IWebPath.ACTION_EDIT;
 	
-	/** add template */
-	public static final String ADD_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_ADD;
-	/** add service */
-	public static final String ADD_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}" + IWebPath.ACTION_ADD;
+	/***/
+	public static final String DELETE_KV_PAIR = "/{" + IWebPath.VAR_ID + "}" + IWebPath.ACTION_DELETE;
+	/***/
+	public static final String DELETE_SERVICE = "/template/{" + IWebPath.VAR_TEMPLATE + "}/service/{" + IWebPath.VAR_SERVICE + "}" + IWebPath.ACTION_DELETE;
+	/***/
+	public static final String DELETE_TEMPLATE = "/template/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_DELETE;
 	
-	/** edit template */
-	public static final String EDIT_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_EDIT;
-	/** edit service */
-	public static final String EDIT_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_EDIT;
+	/***/
+	public static final String ADD_KV_TEMPLATE = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_ADD;
+	/***/
+	public static final String ADD_KV_SERVICE = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}" + IWebPath.ACTION_ADD;
 	
-	/** delete template */
-	public static final String DELETE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_DELETE;
-	/** delete service */
-	public static final String DELETE_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_DELETE;
-	/** delete key */
-	public static final String DELETE_KEY_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_DELETE;
-	
-	/** save service */
-	public static final String SAVE_SERVICE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_SERVICE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_SAVE;
-	/** save template */
-	public static final String SAVE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/{" + IWebPath.VAR_KEY + "}" + IWebPath.ACTION_SAVE;
-	
+	/***/
+	public static final String SAVE_KV_PAIR = "/{" + IWebPath.VAR_ID + "}" + IWebPath.ACTION_SAVE;
 	/** batch mode */
 	public static final String BATCH_ACTION = "/batchmod";
 	
 	
+	/**
+	 * @param filter the filter
+	 * @return the view
+	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract Response view();
+	public abstract ViewModel view(@QueryParam("filter") String filter);
 	
+	/**
+	 * @param id the config id
+	 * @return the modal content
+	 */
 	@GET
-	@Path(IConfig.VIEW_TEMPLATE)
+	@Path(IConfig.DELETE_KV_PAIR)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public abstract ViewModel deleteConfigView(@PathParam(IWebPath.VAR_ID) String id);
 	
+	/**
+	 * @param template the template name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IConfig.DELETE_TEMPLATE)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel deleteTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	
+	/**
+	 * @param template the template name
+	 * @param service the service name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IConfig.DELETE_SERVICE)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel deleteServiceView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
+	
+	/**
+	 * @param id the config id
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IConfig.EDIT_KV_PAIR)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel editConfigView(@PathParam(IWebPath.VAR_ID) String id);
+	
+	/**
+	 * @return the modal content
+	 */
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAdd();
+	public abstract ViewModel addConfigView();
 	
+	/**
+	 * @param template the template name
+	 * @return the modal content
+	 */
 	@GET
-	@Path(IConfig.ADD_TEMPLATE_ACTION)
+	@Path(IConfig.ADD_KV_TEMPLATE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAdd(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public abstract ViewModel addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
+	/**
+	 * @param template the template name
+	 * @param service the service
+	 * @return the modal content
+	 */
 	@GET
-	@Path(IConfig.ADD_SERVICE_ACTION)
+	@Path(IConfig.ADD_KV_SERVICE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAdd(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
+	public abstract ViewModel addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
 	
-	@GET
-	@Path(IConfig.EDIT_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewEdit(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service, @PathParam(IWebPath.VAR_KEY) String key);
-	
-	@GET
-	@Path(IConfig.EDIT_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewEdit(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_KEY) String key);
-	
-	@GET
-	@Path(IConfig.DELETE_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response delete(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_KEY) String key);
-	
-	@GET
-	@Path(IConfig.DELETE_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response delete(@PathParam(IWebPath.VAR_TEMPLATE) String template);
-	
-	@GET
-	@Path(IConfig.DELETE_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response delete(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service, @PathParam(IWebPath.VAR_KEY) String key);
-	
-	@POST
-	@Path(IConfig.SAVE_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object save(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service, @PathParam(IWebPath.VAR_KEY) String key, @FormParam("ftemplate") String ftemplate, @FormParam("fservice") String fservice, @FormParam("fkey") String fkey, @FormParam("fvalue") String fvalue);
-	
-	@POST
-	@Path(IConfig.SAVE_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object save(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_KEY) String key, @FormParam("ftemplate") String ftemplate, @FormParam("fservice") String fservice, @FormParam("fkey") String fkey, @FormParam("fvalue") String fvalue);
-	
-	@POST
-	@Path(IWebPath.ACTION_SAVE)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object save(@FormParam("ftemplate") String ftemplate, @FormParam("fservice") String fservice, @FormParam("fkey") String fkey, @FormParam("fvalue") String fvalue);
-	
+	/**
+	 * @return the modal content
+	 */
 	@GET
 	@Path(IConfig.BATCH_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewRestore();
+	public abstract ViewModel batchModView();
 	
+	/**
+	 * @param oldId the id of the old config, may be 0 if a new config is created
+	 * @param template the template name
+	 * @param service the servic name
+	 * @param key the key
+	 * @param value the value
+	 * @return an ajax answer
+	 * @throws FormErrorException on form errors
+	 */
+	@POST
+	@Path(IConfig.SAVE_KV_PAIR)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer save(@PathParam(IWebPath.VAR_ID) String oldId, @FormParam(IWebPath.VAR_TEMPLATE) String template, @FormParam(IWebPath.VAR_SERVICE) String service, @FormParam("key") String key, @FormParam("value") String value) throws FormErrorException;
+	
+	/**
+	 * @param id the config id
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IConfig.DELETE_KV_PAIR)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer deleteConfig(@PathParam(IWebPath.VAR_ID) String id);
+	
+	/**
+	 * @param template the template name
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IConfig.DELETE_TEMPLATE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer deleteTemplate(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	
+	/**
+	 * @param template the template name
+	 * @param service the service name
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IConfig.DELETE_SERVICE)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer deleteService(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
+	
+	/**
+	 * @param batch the batch string
+	 * @return an ajax answer
+	 */
 	@POST
 	@Path(IConfig.BATCH_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response restore(@FormParam("restore") String restore);
-	
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer batchMod(@FormParam("batch") String batch);
 }

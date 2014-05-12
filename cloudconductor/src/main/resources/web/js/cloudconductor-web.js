@@ -117,6 +117,9 @@ $.fn.ajaxCall = function() {
 
 $.fn.openmodal = function() {
 	$(this).click(function() {
+		if($(this).attr('modal-type') == 'big') {
+			$($(this).data('target')).find('.modal-dialog').addClass("modal-lg");
+		}
 		ajaxCall($(this), $($(this).data('target')).find('.modal-content'));
 	});
 }
@@ -128,7 +131,6 @@ $(document).ready(function () {
     enableCheckboxToggle();
 	//do smth on click of button
     initButtons();
-	
 	
 	$('#sidenav').on('activate.bs.scrollspy', function () {
 		var data = $('body').data('bs.scrollspy');

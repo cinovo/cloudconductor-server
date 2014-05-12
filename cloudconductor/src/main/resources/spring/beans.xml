@@ -20,15 +20,15 @@
 
 	<jaxrs:server id="serverREST" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/api" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.FileImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.HostImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.PackageImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.ServiceImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.SSHKeyImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.TemplateImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.ConfigValueImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.IOModuleImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.rest.AgentImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.FileImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.HostImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.PackageImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.ServiceImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.SSHKeyImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.TemplateImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.ConfigValueImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.IOModuleImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.AgentImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:features>
 			<bean class="de.cinovo.cloudconductor.server.rest.filter.RestDocFilter" />
@@ -41,49 +41,26 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 
-	<jaxrs:server id="serverUI" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web" depends-on="cxf-engine">
+	<jaxrs:server id="serverUI2" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
-			<bean class="de.cinovo.cloudconductor.server.impl.web.StartPageImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.PackagesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.ServicesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.TemplatesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.HostsImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.ConfigFilesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.SSHKeyImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.ConfigValueImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.ReportImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.PackageServerImpl" />
-			<bean class="de.cinovo.cloudconductor.server.impl.web.ServerOptionsImpl" />
-		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<ref bean="exMapper" />
-			<bean class="de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander" />
-			<bean id="authTokenProvider" class="de.cinovo.cloudconductor.server.security.AuthProvider" />
-			<bean class="de.cinovo.cloudconductor.server.web.helper.TemplateWriter" />
-		</jaxrs:providers>
-	</jaxrs:server>
-
-	<jaxrs:server id="serverUI2" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web2" depends-on="cxf-engine">
-		<jaxrs:serviceBeans>
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.IndexImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.PackagesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.TemplatesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.HostImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.ServerOptionsImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.PackageServerImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.ServiceImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.FilesImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.ConfigImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.SSHKeyImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web2.impl.ReportImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.IndexImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.PackagesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.TemplatesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.HostImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.ServerOptionsImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.PackageServerImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.ServiceImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.FilesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.ConfigImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.SSHKeyImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.ReportImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<ref bean="exMapper" />
 			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
-			<bean class="de.cinovo.cloudconductor.server.web.helper.FormErrorExceptionHander" />
+			<bean class="de.cinovo.cloudconductor.server.util.FormErrorExceptionHander" />
 			<bean id="authTokenProvider2" class="de.cinovo.cloudconductor.server.security.AuthProvider" />
-			<bean class="de.cinovo.cloudconductor.server.web2.TemplateWriter" />
+			<bean class="de.cinovo.cloudconductor.server.web.TemplateWriter" />
 		</jaxrs:providers>
 	</jaxrs:server>
-	<bean id="amc" class="de.cinovo.cloudconductor.server.model.tools.AMConverter" />
 </beans>

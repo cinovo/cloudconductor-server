@@ -38,6 +38,9 @@ public interface IReport {
 	public static final String ROOT = "/report";
 	
 	
+	/**
+	 * @return the view
+	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)

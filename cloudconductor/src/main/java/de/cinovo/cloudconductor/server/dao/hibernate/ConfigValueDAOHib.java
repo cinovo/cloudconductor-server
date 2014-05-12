@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
-import de.cinovo.cloudconductor.server.model.config.EConfigValue;
+import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**

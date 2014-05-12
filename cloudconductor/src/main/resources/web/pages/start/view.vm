@@ -1,6 +1,6 @@
 <div class="jumbotron" style="background-color:#$C2InstanceOptions.bgcolor;">
 	<div class="container">
-		<span class="c2-logo pull-left"><img src="/web2/images/200x200.jpg"  class="img-circle"/></span>
+		<span class="c2-logo pull-left"><img src="/web/images/200x200.jpg"  class="img-circle"/></span>
         <h1>$C2InstanceOptions.name</h1>
         <p>$C2InstanceOptions.description</p>
 	</div>
@@ -17,7 +17,7 @@
 			</div>
 			<div id="templates" class="list-group collapse in">
 			#foreach($template in $TEMPLATELIST)
-				<a href="/web2/templates#$template.key" class="list-group-item alternatebg">
+				<a href="/web/templates#$template.key" class="list-group-item alternatebg">
 					<span class="badge">$template.value Hosts</span>
 					$template.key
 				</a>
@@ -37,7 +37,7 @@
 			<div id="hostwatch" class="list-group collapse in">
 			#if(!$HOSTLIST.isEmpty()) 
 			#foreach($host in $HOSTLIST)
-				<a href="web2/hosts#$host.key" class="list-group-item #if($listTool.size($host.value) < 2)list-group-item-warning #else list-group-item-danger #end">
+				<a href="web/hosts#$host.key" class="list-group-item #if($listTool.size($host.value) < 2)list-group-item-warning #else list-group-item-danger #end">
 					#foreach($hv in $host.value)
 					<span class="badge">$hv</span>
 					#end

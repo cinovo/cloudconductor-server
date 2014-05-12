@@ -25,8 +25,8 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     #if(${server})
-    	<button type="button" class="btn btn-primary" data-ref="/web2/pkgsrv/${server.id}/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
+    	<button type="button" class="btn btn-primary" data-ref="/web/pkgsrv/${server.id}/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
     #else
-    	<button type="button" class="btn btn-primary" data-ref="/web2/pkgsrv/0/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
+    	<button type="button" class="btn btn-primary" data-ref="/web/pkgsrv/0/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="servers">Save</button>
     #end
 </div>

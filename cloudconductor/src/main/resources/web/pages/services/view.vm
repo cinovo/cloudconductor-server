@@ -19,7 +19,7 @@
 				<th colspan="2">Initscript</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="table-hover small-lines">
 			<tr>
 				<td colspan="2">${service.initScript}</td>
 			</tr>
@@ -32,7 +32,7 @@
 				<th class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${service.name}/package/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip" title="Add a Package"></button></th>
 			</tr>
 		</thead>
-		<tbody class="table-hover">
+		<tbody class="table-hover small-lines">
 			#if(${service.getPackages().isEmpty()})
 			<tr>
 				<td colspan="2">This service is not used by any package</td>

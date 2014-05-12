@@ -22,8 +22,8 @@ import java.util.Collection;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IAuditLogDAO;
+import de.cinovo.cloudconductor.server.model.AuditCategory;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
-import de.cinovo.cloudconductor.server.model.tools.AuditCategory;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**

@@ -19,7 +19,7 @@
 					<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${template.name}/key/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add a key"></button></th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="table-hover small-lines">
 			#foreach($key in $KEYS)
 				#if($template.getSshkeys().contains($key))
 				<tr>

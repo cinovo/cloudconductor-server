@@ -14,7 +14,7 @@
 		</div>
 		<div id="${TEMPLATE}-hide" class="collapse in">
 			
-		<table class="table table-striped">
+		<table class="table table-striped ">
 		#foreach($config in ${CONFIGS})
 			<thead>
 			#if($config.getKey())
@@ -25,7 +25,7 @@
 				</tr>
 				#end
 			</thead>
-			<tbody>
+			<tbody class="small-lines">
 			#foreach($val in $config.getValue())
 				<tr>
 					<td>${val.configkey}</td>

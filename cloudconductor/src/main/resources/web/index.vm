@@ -7,13 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <link rel="shortcut icon" href="/web2/images/favicon.ico"/>
+    <link rel="shortcut icon" href="/web/images/favicon.ico"/>
 
 	<!-- Bootstrap core CSS -->
-    <link href="/web2/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/web/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
 
     <!-- Custom styles for this template -->
-    <link href="/web2/css/cloudconductor.css" rel="stylesheet"/>
+    <link href="/web/css/cloudconductor.css" rel="stylesheet"/>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -36,12 +36,12 @@
 	           	<span class="icon-bar"></span>
 	           	<span class="icon-bar"></span>
 	        </button>
-	        <a class="navbar-brand" href="/web2"><img src="/web2/images/50x50.jpg" /><span style="color:#$C2InstanceOptions.bgcolor;">$C2InstanceOptions.name</span></a>
+	        <a class="navbar-brand" href="/web"><img src="/web/images/50x50.jpg" /><span style="color:#$C2InstanceOptions.bgcolor;">$C2InstanceOptions.name</span></a>
 		</div>
     	<div class="collapse navbar-collapse">
         	<ul class="nav navbar-nav">
         		#foreach($element in $NAVELEMENT.getMainMenu())
-        			<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web2${element.getPath()}">${element.getIdentifier()}</a></li>
+        			<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web${element.getPath()}">${element.getIdentifier()}</a></li>
         		#end
         		
         		#foreach($mapEntry in $NAVELEMENT.getSubMenuCategories())
@@ -53,18 +53,19 @@
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">${mapEntry.getViewName()} <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							#foreach($element in ${NAVELEMENT.getSubMenu($mapEntry)})
+								#if(${element.getPath()})
 								#if(${element.getPath().startsWith("http://")})
 								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="${element.getPath()}" target="_blank">${element.getIdentifier()}</a></li>
 								#else 
-								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web2${element.getPath()}">${element.getIdentifier()}</a></li>
+								<li #if(${element.getIdentifier()} == $CURRENTNAVELEMENT)class="active" #end><a href="/web${element.getPath()}">${element.getIdentifier()}</a></li>
+								#end
 								#end
 							#end
-							#if(${mapEntry.getViewName()} == "Configuration" ) 
+							#if(${mapEntry.getViewName()} == "Options" ) 
+								 <li><a href="" data-ref="/web/pkgsrv" data-call-type="GET" data-toggle='modal' data-target="#popModal">Package Servers</a></li>
+								 <li><a href="" data-ref="/web/options" data-call-type="GET" data-toggle='modal' data-target="#popModal">Options</a></li>
 								 <li role="presentation" class="divider"></li>
-								 <li><a data-ref="/web2/pkgsrv" data-call-type="GET" data-toggle='modal' data-target="#popModal">Package Servers</a></li>
-								 <li><a data-ref="/web2/options" data-call-type="GET" data-toggle='modal' data-target="#popModal">Options</a></li>
-								 <li role="presentation" class="divider"></li>
-								 <li><a data-ref="/web2/options/links" data-call-type="GET" data-toggle='modal' data-target="#popModal">Links</a></li>
+								 <li><a href="" data-ref="/web/options/links" data-call-type="GET" data-toggle='modal' data-target="#popModal">Links</a></li>
 							#end
 						</ul>
 					</li>
@@ -74,7 +75,7 @@
           	#foreach($element in ${TOPACTIONS})
           		<li><a href="#" rel="tooltip" data-ref="${element.value}" data-toggle="modal" data-target="#popModal" data-call-type="GET" data-original-title="${element.key}">${element.key}</a></li>
           	#end
-            	<li id="autorefresh_button" #if($AUTOREFRESH)class="active"#end><a href="#" class="glyphicon glyphicon-refresh" rel="tooltip" data-ref="/web2/autorefresh/toggle" data-toggle="modal" data-call-type="POST" data-original-title="Toggle auto-refesh"></a></li>
+            	<li id="autorefresh_button" #if($AUTOREFRESH)class="active"#end><a href="#" class="glyphicon glyphicon-refresh" rel="tooltip" data-ref="/web/autorefresh/toggle" data-toggle="modal" data-call-type="POST" data-original-title="Toggle auto-refesh"></a></li>
           </ul>
 		</div><!-- /.nav-collapse -->
 	</div><!-- /.container -->
@@ -151,8 +152,8 @@
 <!-- Bootstrap core JavaScript -->
 <!-- Placed at the end of the document so the pages load faster -->
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> -->
-<script src="/web2/js/jquery-1.11.1.min.js"></script>
-<script src="/web2/bootstrap/js/bootstrap.min.js"></script>
-<script src="/web2/js/cloudconductor-web.js"></script>
+<script src="/web/js/jquery-1.11.1.min.js"></script>
+<script src="/web/bootstrap/js/bootstrap.min.js"></script>
+<script src="/web/js/cloudconductor-web.js"></script>
 </body>
 </html>

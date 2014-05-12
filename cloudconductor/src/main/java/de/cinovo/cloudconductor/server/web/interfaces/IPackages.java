@@ -23,9 +23,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
@@ -41,13 +42,14 @@ public interface IPackages {
 	
 	/** the root */
 	public static final String ROOT = "/packages";
-	
+	/** */
 	public static final String ADD_SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services" + IWebPath.ACTION_ADD;
-	public static final String ADD_NEW_SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services" + IWebPath.ACTION_ADD + "/new";
-	
+	/** */
+	public static final String NEW_SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services" + IWebPath.ACTION_NEW;
+	/** */
 	public static final String REMOVE_SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services/{" + IWebPath.VAR_SERVICE + "}" + IWebPath.ACTION_REMOVE;
-	
-	public static final String ADD_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}/package/{" + IWebPath.VAR_VERSION + "}" + IWebPath.ACTION_ADD;
+	/** */
+	public static final String ADD_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}/version/{" + IWebPath.VAR_VERSION + "}" + IWebPath.ACTION_INSTALL;
 	
 	
 	/**
@@ -60,39 +62,88 @@ public interface IPackages {
 	@Produces(MediaType.TEXT_HTML)
 	public abstract ViewModel view();
 	
+	/**
+	 * @param pname the package name
+	 * @return the modal content
+	 */
 	@GET
 	@Path(IPackages.ADD_SERVICE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAddService(@PathParam(IWebPath.VAR_NAME) String pname);
+	public abstract ViewModel addServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
 	
+	/**
+	 * @param pname the package name
+	 * @param services the service names to add
+	 * @return an ajax answer
+	 * @throws FormErrorException on form errors
+	 */
 	@POST
 	@Path(IPackages.ADD_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object addService(@PathParam(IWebPath.VAR_NAME) String pname, @FormParam("service") String[] services);
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer addService(@PathParam(IWebPath.VAR_NAME) String pname, @FormParam("services") String[] services) throws FormErrorException;
 	
+	/**
+	 * @param pname the package name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IPackages.NEW_SERVICE_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel newServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
+	
+	/**
+	 * @param pname the package name
+	 * @param servicename the service name
+	 * @param initscript the initscript name
+	 * @param description the description of the service
+	 * @return an ajax answer
+	 * @throws FormErrorException on form errors
+	 */
 	@POST
-	@Path(IPackages.ADD_NEW_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object addService(@PathParam(IWebPath.VAR_NAME) String pname, @FormParam("servicename") String servicename, @FormParam("initscript") String initscript, @FormParam("description") String description);
+	@Path(IPackages.NEW_SERVICE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer newService(@PathParam(IWebPath.VAR_NAME) String pname, @FormParam("servicename") String servicename, @FormParam("initscript") String initscript, @FormParam("description") String description) throws FormErrorException;
 	
+	/**
+	 * @param pname the package name
+	 * @param sname the service name
+	 * @return the modal
+	 */
 	@GET
 	@Path(IPackages.REMOVE_SERVICE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewDeleteService(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
+	public abstract ViewModel deleteServiceView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
 	
+	/**
+	 * @param pname the package name
+	 * @param sname the service name
+	 * @return an ajax answer
+	 */
 	@POST
 	@Path(IPackages.REMOVE_SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response deleteService(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer deleteService(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
 	
+	/**
+	 * @param pname the package name
+	 * @param versionId the version id
+	 * @return the view for adding package version to a template
+	 */
 	@GET
 	@Path(IPackages.ADD_PACKAGE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAddPackage(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long rpmid);
+	public abstract ViewModel addPackageView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long versionId);
 	
+	/**
+	 * @param pname the package name
+	 * @param versionId the package version id
+	 * @param templates the selected template names
+	 * @return a redirect to the package page
+	 * @throws FormErrorException error in case of wrong input
+	 */
 	@POST
 	@Path(IPackages.ADD_PACKAGE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response addPackage(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long rpmid, @FormParam("templates") String[] templates);
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer addPackage(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long versionId, @FormParam("templates") String[] templates) throws FormErrorException;
 	
 }

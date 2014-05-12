@@ -37,5 +37,9 @@ public interface IPackageDAO extends IEntityDAO<EPackage, Long>, IFindNamed<EPac
 	 */
 	public Long count();
 	
+	/**
+	 * @param service the service
+	 * @return list of unused packages
+	 */
 	public List<EPackage> findNotUsedPackage(EService service);
 }

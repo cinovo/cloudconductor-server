@@ -55,7 +55,7 @@
 							<td></td>
 							<td></td>
 							<td colspan="3" class="actionButton">
-								<button type="button" class="btn btn-default btn-block" data-ref="/web2/hosts/${host.name}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
+								<button type="button" class="btn btn-default btn-block" data-ref="/web/hosts/${host.name}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
 							</td>
 						</tr>
 					</tbody>

@@ -19,7 +19,7 @@
 			<tr>
 				<td>$link.label</td>
 				<td>$link.url</td>
-				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="/web2/options/links/${link.label}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete"></button></td>
+				<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="/web/options/links/${link.label}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete"></button></td>
 			</tr>
 			#end
 			
@@ -29,5 +29,5 @@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary" data-ref="/web2/options/links/add" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Add a new link</button>
+    <button type="button" class="btn btn-primary" data-ref="/web/options/links/add" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Add a new link</button>
 </div>

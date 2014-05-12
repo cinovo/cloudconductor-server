@@ -212,6 +212,11 @@ span.form-control.small{
 	max-height:400px;
 }
 
+.modal-body.big { 
+	overflow-y: auto;
+	max-height:none;
+}
+
 .modal-title {
 	text-align:center;
 }

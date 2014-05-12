@@ -7,31 +7,31 @@
 	<div class="alert alert-danger">$ERROR.getMessage()</div>
 #end 
 		<form id="options">
-			<div class="col-lg-6 formlist">
+			<div class="col-lg-12 formlist">
 				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
 						<span class="input-group-addon">Server-Name</span>
 						<input type="text" class="form-control" name="name" type="text" #if(${ERROR.getFormParams().get('name')})value="${ERROR.getFormParams().get('name')}"#elseif($options.name) value="$options.name" #else placeholder="Server-Name" #end >
 				</div>
 			</div>
-			<div class="col-lg-6 formlist">
+			<div class="col-lg-12 formlist">
 				<div class="input-group #if($ERROR.hasError('bgcolor'))has-error #end">
 						<span class="input-group-addon">Color identifier</span>
 						<input type="text" class="form-control" name="bgcolor" type="text" #if(${ERROR.getFormParams().get('bgcolor')})value="${ERROR.getFormParams().get('bgcolor')}"#elseif($options.bgcolor) value="$options.bgcolor" #else placeholder="F6F4F0" #end >
 				</div>
 			</div>
-			<div class="col-lg-6 formlist">	
+			<div class="col-lg-12 formlist">	
 				<div class="input-group #if($ERROR.hasError('allowautoupdate'))has-error #end">
 						<span class="input-group-addon"><input type="checkbox" name="allowautoupdate" #if(${ERROR.getFormParams().get('allowautoupdate')})checked="checked"#elseif($options.allowautoupdate) checked="checked" #end ></span>
 						<span class="form-control">Allow Auto Update</span>
 				</div>
 			</div>
-			<div class="col-lg-6 formlist">	
+			<div class="col-lg-12 formlist">	
 				<div class="input-group #if($ERROR.hasError('needsapproval'))has-error #end">
 						<span class="input-group-addon"><input type="checkbox" name="needsapproval" #if(${ERROR.getFormParams().get('needsapproval')})checked="checked"#elseif($options.needsApproval) checked="checked" #end ></span>
 						<span class="form-control">Reports need approval</span>
 				</div>
 			</div>
-			<div class="col-lg-6 formlist">	
+			<div class="col-lg-12 formlist">	
 				<div class="input-group">
 					<span class="input-group-addon">Description</span>
 					<textarea class="form-control" rows="3" name="description">#if(${ERROR.getFormParams().get('description')})${ERROR.getFormParams().get('description')}#elseif($options.description)$options.description#end</textarea>
@@ -42,5 +42,5 @@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary" data-ref="/web2/options/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="options">Save</button>
+    <button type="button" class="btn btn-primary" data-ref="/web/options/save" data-call-type="POST" data-toggle="update-modal" data-target="#popModal" data-form="options">Save</button>
 </div>

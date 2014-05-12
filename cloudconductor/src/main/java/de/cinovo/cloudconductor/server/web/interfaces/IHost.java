@@ -23,9 +23,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
@@ -41,32 +42,60 @@ public interface IHost {
 	/** the root */
 	public static final String ROOT = "/hosts";
 	
-	public static final String SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}/services";
+	/***/
+	public static final String SINGLE_HOST = "/{" + IWebPath.VAR_NAME + "}";
+	/***/
+	public static final String SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
+	/***/
 	public static final String DELETE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
 	
 	
+	/**
+	 * @return the view
+	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public ViewModel view();
 	
+	/**
+	 * @param hname the host name
+	 * @return the view
+	 */
+	@GET
+	@Path(IHost.SINGLE_HOST)
+	@Produces(MediaType.TEXT_HTML)
+	public ViewModel view(@PathParam(IWebPath.VAR_NAME) String hname);
+	
+	/**
+	 * @param hname the host name
+	 * @param start services to start
+	 * @param stop services to stop
+	 * @param restart services to restart
+	 * @return an ajax answer
+	 */
 	@POST
 	@Path(IHost.SERVICE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public Response handleServices(@PathParam(IWebPath.VAR_NAME) String hname, @FormParam("start") String[] start, @FormParam("stop") String[] stop, @FormParam("restart") String[] restart);
+	@Produces(MediaType.APPLICATION_JSON)
+	public AjaxAnswer changeServiceStates(@PathParam(IWebPath.VAR_NAME) String hname, @FormParam("startService") String[] start, @FormParam("stopService") String[] stop, @FormParam("restartService") String[] restart);
 	
+	/**
+	 * @param hname the host name
+	 * @return an ajax answer
+	 */
 	@GET
 	@Path(IHost.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel viewDelete(@PathParam(IWebPath.VAR_NAME) String hname);
+	public ViewModel deleteHostView(@PathParam(IWebPath.VAR_NAME) String hname);
 	
+	/**
+	 * @param hname the host name
+	 * @return an ajax answer
+	 * @throws FormErrorException on form errors
+	 */
 	@POST
 	@Path(IHost.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public Object delete(@PathParam(IWebPath.VAR_NAME) String hname);
-	
-	@GET
-	@Path("/toggleautorefresh")
-	public Response handleAutorefresh();
+	public AjaxAnswer deleteHost(@PathParam(IWebPath.VAR_NAME) String hname) throws FormErrorException;
 	
 }

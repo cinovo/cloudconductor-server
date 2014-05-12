@@ -23,7 +23,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import de.cinovo.cloudconductor.server.model.tools.AuditCategory;
 import de.taimos.dao.IEntity;
 
 /**

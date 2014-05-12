@@ -23,9 +23,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
@@ -40,88 +42,137 @@ public interface ISSHKey {
 	
 	/** the root */
 	public static final String ROOT = "/ssh";
-	/** the main view sorted by Template */
-	public static final String VIEW_TEMPLATE = "/byTemplate";
 	
+	/***/
 	public static final String ADD_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}/template" + IWebPath.ACTION_ADD;
+	/***/
 	public static final String ADD_KEY_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}/key" + IWebPath.ACTION_ADD;
 	
-	public static final String REMOVE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}/template/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_REMOVE;
+	/***/
+	public static final String REMOVE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}/template/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_DELETE;
 	
+	/***/
 	public static final String DELETE_KEY_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
 	
+	/***/
 	public static final String SAVE_KEY_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_SAVE;
+	/***/
 	public static final String EDIT_KEY_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	
 	
+	/**
+	 * @param filter the filter
+	 * @return the view
+	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view();
+	public abstract ViewModel view(@QueryParam("filter") String filter);
 	
-	@GET
-	@Path(ISSHKey.VIEW_TEMPLATE)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewByTemplate();
-	
-	@GET
-	@Path(ISSHKey.ADD_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAddTemplate(@PathParam(IWebPath.VAR_NAME) String owner);
-	
-	@POST
-	@Path(ISSHKey.ADD_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object addTemplate(@PathParam(IWebPath.VAR_NAME) String owner, @FormParam("templates") String[] templates);
-	
-	@GET
-	@Path(ISSHKey.ADD_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewAddKey(@PathParam(IWebPath.VAR_TEMPLATE) String template);
-	
-	@POST
-	@Path(ISSHKey.ADD_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Object addKey(@PathParam(IWebPath.VAR_TEMPLATE) String template, @FormParam("keys") String[] keys);
-	
-	@GET
-	@Path(ISSHKey.REMOVE_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewRemoveTemplate(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
-	
-	@POST
-	@Path(ISSHKey.REMOVE_TEMPLATE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response removeTemplate(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
-	
-	@GET
-	@Path(ISSHKey.DELETE_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewDelete(@PathParam(IWebPath.VAR_NAME) String owner);
-	
-	@POST
-	@Path(ISSHKey.DELETE_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response delete(@PathParam(IWebPath.VAR_NAME) String owner);
-	
-	@GET
-	@Path(ISSHKey.EDIT_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel edit(@PathParam(IWebPath.VAR_NAME) String owner);
-	
+	/**
+	 * @return the modal content
+	 */
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel add();
+	public abstract ViewModel addView();
 	
-	@POST
-	@Path(IWebPath.ACTION_SAVE)
+	/**
+	 * @param owner the owner
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ISSHKey.ADD_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract Response save(@FormParam("owner") String fowner, @FormParam("key_content") String key, @FormParam("templates") String[] templates);
+	public abstract ViewModel addTemplateView(@PathParam(IWebPath.VAR_NAME) String owner);
 	
+	/**
+	 * @param template the template name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ISSHKey.ADD_KEY_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel addKeyView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	
+	/**
+	 * @param owner the owner
+	 * @param tname the template name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ISSHKey.REMOVE_TEMPLATE_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
+	
+	/**
+	 * @param owner the owner
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ISSHKey.DELETE_KEY_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel deleteView(@PathParam(IWebPath.VAR_NAME) String owner);
+	
+	/**
+	 * @param owner the owner
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ISSHKey.EDIT_KEY_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract ViewModel editView(@PathParam(IWebPath.VAR_NAME) String owner);
+	
+	/**
+	 * @param oldOwner the old owner name
+	 * @param owner the new owner name
+	 * @param key the ssh key
+	 * @param templates associated tempalte names
+	 * @return an ajax answer
+	 * @throws FormErrorException one form errors
+	 */
 	@POST
 	@Path(ISSHKey.SAVE_KEY_ACTION)
-	@Produces(MediaType.TEXT_HTML)
-	public abstract Response save(@PathParam(IWebPath.VAR_NAME) String owner, @FormParam("owner") String fowner, @FormParam("key_content") String key, @FormParam("templates") String[] templates);
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer save(@PathParam(IWebPath.VAR_NAME) String oldOwner, @FormParam("owner") String owner, @FormParam("key_content") String key, @FormParam("templates") String[] templates) throws FormErrorException;
+	
+	/**
+	 * @param owner the owner
+	 * @param templates the template names
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(ISSHKey.ADD_TEMPLATE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer addTemplate(@PathParam(IWebPath.VAR_NAME) String owner, @FormParam("templates") String[] templates);
+	
+	/**
+	 * @param template the template name
+	 * @param keys the keys
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(ISSHKey.ADD_KEY_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer addKey(@PathParam(IWebPath.VAR_TEMPLATE) String template, @FormParam("keys") String[] keys);
+	
+	/**
+	 * @param owner the owner
+	 * @param tname the template name
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(ISSHKey.REMOVE_TEMPLATE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer deleteTemplate(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
+	
+	/**
+	 * @param owner the owner
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(ISSHKey.DELETE_KEY_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer delete(@PathParam(IWebPath.VAR_NAME) String owner);
 	
 }
