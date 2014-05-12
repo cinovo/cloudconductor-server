@@ -61,7 +61,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
 	@Override
 	@Transactional
-	public AjaxRedirect saveOptions(String name, String bgcolor, String autoUpdate, String descr) throws FormErrorException {
+	public AjaxRedirect saveOptions(String name, String bgcolor, String autoUpdate, String descr, String needsapproval) throws FormErrorException {
 		FormErrorException error = null;
 		error = this.assertNotEmpty(name, error, "name");
 		error = this.assertNotEmpty(bgcolor, error, "bgcolor");
@@ -70,6 +70,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 			error.addFormParam("name", name);
 			error.addFormParam("bgcolor", bgcolor);
 			error.addFormParam("allowautoupdate", autoUpdate);
+			error.addFormParam("needsapproval", needsapproval);
 			error.addFormParam("description", descr);
 			error.setParentUrl(IServerOptions.ROOT);
 			throw error;
@@ -79,6 +80,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		options.setName(name);
 		options.setBgcolor(bgcolor);
 		options.setAllowautoupdate(autoUpdate == null ? false : true);
+		options.setNeedsApproval(needsapproval == null ? false : true);
 		options.setDescription(descr);
 		this.dServerOptions.save(options);
 		

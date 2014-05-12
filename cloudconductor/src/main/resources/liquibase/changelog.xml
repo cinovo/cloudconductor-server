@@ -424,5 +424,10 @@
 		</addColumn>
 	</changeSet>
 	
-	
+	<changeSet id="11" author="psigloch">
+		<addColumn tableName="serveroptions" schemaName="cloudconductor">
+			<column name="needsapproval" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+		<sql>UPDATE cloudconductor.serveroptions SET needsapproval=false WHERE name='Default'</sql>
+	</changeSet>
 </databaseChangeLog>

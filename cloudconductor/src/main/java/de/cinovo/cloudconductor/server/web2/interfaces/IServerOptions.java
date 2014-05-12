@@ -32,7 +32,7 @@ public interface IServerOptions {
 	@POST
 	@Path(IWebPath.ACTION_SAVE)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxRedirect saveOptions(@FormParam("name") String name, @FormParam("bgcolor") String bgcolor, @FormParam("allowautoupdate") String autoUpdate, @FormParam("description") String descr) throws FormErrorException;
+	public abstract AjaxRedirect saveOptions(@FormParam("name") String name, @FormParam("bgcolor") String bgcolor, @FormParam("allowautoupdate") String autoUpdate, @FormParam("description") String descr, @FormParam("needsapproval") String needsapproval) throws FormErrorException;
 	
 	@GET
 	@Path(IServerOptions.LINKS_ROOT)

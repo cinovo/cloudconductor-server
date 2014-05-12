@@ -26,6 +26,12 @@
 				</div>
 			</div>
 			<div class="col-lg-6 formlist">	
+				<div class="input-group #if($ERROR.hasError('needsapproval'))has-error #end">
+						<span class="input-group-addon"><input type="checkbox" name="needsapproval" #if(${ERROR.getFormParams().get('needsapproval')})checked="checked"#elseif($options.needsApproval) checked="checked" #end ></span>
+						<span class="form-control">Reports need approval</span>
+				</div>
+			</div>
+			<div class="col-lg-6 formlist">	
 				<div class="input-group">
 					<span class="input-group-addon">Description</span>
 					<textarea class="form-control" rows="3" name="description">#if(${ERROR.getFormParams().get('description')})${ERROR.getFormParams().get('description')}#elseif($options.description)$options.description#end</textarea>

@@ -48,6 +48,8 @@ public class EServerOptions implements IEntity<Long> {
 	
 	private String description;
 	
+	private boolean needsApproval;
+	
 	
 	@Override
 	@Id
@@ -117,6 +119,20 @@ public class EServerOptions implements IEntity<Long> {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	/**
+	 * @return the needsApproval
+	 */
+	public boolean isNeedsApproval() {
+		return this.needsApproval;
+	}
+	
+	/**
+	 * @param needsApproval the needsApproval to set
+	 */
+	public void setNeedsApproval(boolean needsApproval) {
+		this.needsApproval = needsApproval;
 	}
 	
 }
