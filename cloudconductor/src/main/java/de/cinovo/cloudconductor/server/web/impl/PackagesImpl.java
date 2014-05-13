@@ -78,11 +78,11 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	@Transactional
 	public ViewModel view() {
 		List<EPackage> packageList = this.dPkg.findList();
-		Collections.sort(packageList, new PackageComparator());
 		
 		List<EService> serviceList = this.dSvc.findList();
 		Multimap<String, EService> serviceMap = ArrayListMultimap.create();
 		Multimap<String, EPackageVersion> versionMap = ArrayListMultimap.create();
+		Collections.sort(packageList, new PackageComparator());
 		
 		for (EPackage pkg : packageList) {
 			this.addSidebarElement(pkg.getName());
@@ -95,7 +95,6 @@ public class PackagesImpl extends AWebPage implements IPackages {
 				}
 			}
 		}
-		
 		ViewModel view = this.createView();
 		view.addModel("PACKAGES", packageList);
 		view.addModel("SERVICES", serviceMap);

@@ -13,8 +13,8 @@
 				<tr>
 					<th>Service</th>
 					<th>State</th>
-					<th class="actionButton"><input type="checkbox" name="toggle" value="startService" rel="tooltip-left" title="Start all"></th>
-					<th class="actionButton"><input type="checkbox" name="toggle" value="stopService" rel="tooltip-left" title="Stop all"></th>
+					<th class="actionButton"><input type="checkbox" behavior="toggle" value="startService" rel="tooltip-left" title="Start all"></th>
+					<th class="actionButton"><input type="checkbox" behavior="toggle" value="stopService" rel="tooltip-left" title="Stop all"></th>
 				</tr>
 			</thead>
 			<tbody class="table-hover small-lines">
@@ -23,14 +23,10 @@
 					<td>${state.getService().getName()}</td>
 					<td>${state.getState()}</td>
 					<td class="actionButton">
-						#if(${state.getState()} != 'RUNNING')
-							<input type="checkbox" name="startService" value="${state.getService().getName()}" rel="tooltip-left" title="Start the service at startup">
-						#end
+						<input type="checkbox" name="startService" value="${state.getService().getName()}" rel="tooltip-left" title="Start the service at startup" #if(${state.getState()} == 'RUNNING')disabled #end>
 					</td>
 					<td class="actionButton">
-						#if(${state.getState()} != 'STOPPED')
-							<input type="checkbox" name="stopService" value="${state.getService().getName()}" rel="tooltip-left" title="Stop the service at startup">
-						#end
+						<input type="checkbox" name="stopService" value="${state.getService().getName()}" rel="tooltip-left" title="Stop the service at startup"#if(${state.getState()} == 'STOPPED') disabled #end>
 					</td>
 				</tr>
 			#end

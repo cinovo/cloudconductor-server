@@ -2,7 +2,9 @@ package de.cinovo.cloudconductor.server.web.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,19 +113,22 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		}
 		
 		// delete old versions
+		Set<EPackageVersion> remove = new HashSet<>();
 		for (EPackageVersion installed : template.getPackageVersions()) {
 			if (updatePackages.contains(installed.getPkg().getName())) {
-				template.getPackageVersions().remove(installed);
-				break;
+				remove.add(installed);
 			}
 		}
+		template.getPackageVersions().removeAll(remove);
 		
 		// add newest version
 		for (String pkg : updatePackages) {
 			EPackage ep = this.dPkg.findByName(pkg);
 			List<EPackageVersion> rpms = new ArrayList<>(ep.getRPMs());
 			Collections.sort(rpms, new PackageVersionComparator());
-			template.getPackageVersions().add(rpms.get(rpms.size() - 1));
+			if (!template.getPackageVersions().contains(rpms.get(rpms.size() - 1))) {
+				template.getPackageVersions().add(rpms.get(rpms.size() - 1));
+			}
 		}
 		
 		this.dTemplate.save(template);
@@ -140,12 +145,13 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		}
 		
 		// delete packges from template
+		Set<EPackageVersion> remove = new HashSet<>();
 		for (EPackageVersion installed : template.getPackageVersions()) {
 			if (deletePackages.contains(installed.getPkg().getName())) {
-				template.getPackageVersions().remove(installed);
-				break;
+				remove.add(installed);
 			}
 		}
+		template.getPackageVersions().removeAll(remove);
 		
 		// delete packages from default state
 		List<EServiceDefaultState> defaultStates = this.dSvcDefState.findByTemplate(tname);
@@ -284,12 +290,30 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	@Transactional
 	public ViewModel defaultServiceStatesView(String tname) {
 		ETemplate template = this.dTemplate.findByName(tname);
+		for (EService svc : this.dSvc.findList()) {
+			for (EPackageVersion pkv : template.getPackageVersions()) {
+				if (svc.getPackages().contains(pkv.getPkg())) {
+					this.setDefaultService(svc, template);
+				}
+			}
+		}
 		List<EServiceDefaultState> defaultStates = this.dSvcDefState.findByTemplate(template.getName());
 		Collections.sort(defaultStates, new DefaultStateComparator());
 		ViewModel modal = this.createModal("mDefaultServices");
 		modal.addModel("template", template);
 		modal.addModel("defaultStates", defaultStates);
 		return modal;
+	}
+	
+	private void setDefaultService(EService service, ETemplate template) {
+		EServiceDefaultState sds = this.dSvcDefState.findByName(service.getName(), template.getName());
+		if (sds == null) {
+			sds = new EServiceDefaultState();
+			sds.setService(service);
+			sds.setTemplate(template);
+			sds.setState(ServiceState.STOPPED);
+			this.dSvcDefState.save(sds);
+		}
 	}
 	
 	@Override

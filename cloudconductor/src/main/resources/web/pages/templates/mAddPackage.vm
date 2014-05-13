@@ -17,10 +17,10 @@
 			#foreach ($package in $packages)
 				<div class="col-lg-6 formlist">
 					<div class="input-group">
-						<span class="input-group-addon">
+						<span class="input-group-addon small">
 							<input type="checkbox" name="pkg" value="${package.getName()}">
 						</span>
-						<span class="form-control">${package.getName()}</span>
+						<span class="form-control small">${package.getName()}</span>
 					</div><!-- /input-group -->	
 				</div><!-- /.col-lg-6 -->
 			#end
