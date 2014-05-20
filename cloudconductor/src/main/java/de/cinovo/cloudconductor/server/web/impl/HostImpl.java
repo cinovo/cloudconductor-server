@@ -67,14 +67,18 @@ public class HostImpl extends AWebPage implements IHost {
 		List<EHost> eHosts = this.dHost.findList();
 		Map<String, String[]> reporttimes = new HashMap<>();
 		Map<String, List<?>> thDiff = new HashMap<>();
+		StateComparator comp = new StateComparator();
 		for (EHost h : eHosts) {
 			this.addSidebarElement(h.getName());
-			Collections.sort(h.getServices(), new StateComparator());
+			Collections.sort(h.getServices(), comp);
 			h.getTemplate().getName(); // this line is caused by lazy loading
 			DateTime last = new DateTime(h.getLastSeen());
 			String diff = String.valueOf(Minutes.minutesBetween(last, new DateTime()).getMinutes());
 			reporttimes.put(h.getName(), new String[] {diff, this.germanFmt.print(last)});
 			thDiff.put(h.getName(), this.createHostTemplateDiff(h));
+			for (EServiceState s : h.getServices()) {
+				s.getService().getName();// this line is caused by lazy loading
+			}
 		}
 		this.sortNamedList(eHosts);
 		ViewModel view = this.createView();

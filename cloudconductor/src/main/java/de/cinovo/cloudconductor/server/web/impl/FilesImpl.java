@@ -84,6 +84,9 @@ public class FilesImpl extends AWebPage implements IFiles {
 		for (EFile f : files) {
 			this.addSidebarElement(f.getName());
 			f.getDependentServices().size(); // lazy loading ...
+			if (f.getPkg() != null) {
+				f.getPkg().getName(); // lazy loading ...
+			}
 		}
 		this.addSidebarElements(files);
 		List<ETemplate> templates = this.dTemplate.findList();
