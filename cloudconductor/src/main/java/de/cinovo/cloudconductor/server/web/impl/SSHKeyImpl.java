@@ -11,12 +11,13 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.interfaces.ISSHKey;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -55,15 +56,12 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public ViewModel view(String filter) {
+	public RenderedView view(String filter) {
 		List<ESSHKey> keys = this.dSSH.findList();
 		List<ETemplate> templates = this.dTemplate.findList();
-		for (ETemplate t : templates) {
-			t.getSshkeys().size(); // lazy loading ...
-		}
 		this.sortNamedList(keys);
 		
-		ViewModel view;
+		CSViewModel view;
 		if ((filter != null) && filter.equals("template")) {
 			view = this.createView("viewTemplate");
 			view.addModel("SIDEBARTYPE", null);
@@ -72,83 +70,82 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 		}
 		view.addModel("KEYS", keys);
 		view.addModel("TEMPLATES", templates);
-		return view;
+		return view.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel addTemplateView(String owner) {
+	public RenderedView addTemplateView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
 		List<ETemplate> templates = this.dTemplate.findList();
-		for (ETemplate t : templates) {
-			t.getSshkeys().size(); // lazy loading ...
-		}
-		final ViewModel model = this.createModal("mAddTemplate");
+		final CSViewModel model = this.createModal("mAddTemplate");
 		model.addModel("KEY", key);
 		model.addModel("TEMPLATES", templates);
-		return model;
+		return model.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel addKeyView(String template) {
+	public RenderedView addKeyView(String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
 		RESTAssert.assertNotNull(t);
-		ViewModel modal = this.createModal("mAddKey");
+		CSViewModel modal = this.createModal("mAddKey");
 		modal.addModel("KEYS", this.dSSH.findList());
 		modal.addModel("TEMPLATE", t);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel deleteTemplateView(String owner, String tname) {
+	public RenderedView deleteTemplateView(String owner, String tname) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("mDeleteTemplate");
+		CSViewModel modal = this.createModal("mDeleteTemplate");
 		modal.addModel("KEY", key);
 		modal.addModel("TEMPLATE", template);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel deleteView(String owner) {
+	public RenderedView deleteView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
-		ViewModel modal = this.createModal("mDeleteKey");
+		CSViewModel modal = this.createModal("mDeleteKey");
 		modal.addModel("KEY", key);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel editView(String owner) {
+	public RenderedView editView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
-		ViewModel modal = this.addView();
+		CSViewModel modal = this.prepareView();
 		modal.addModel("KEY", key);
-		return modal;
+		return modal.render();
 	}
 	
-	@Override
-	@Transactional
-	public ViewModel addView() {
+	private CSViewModel prepareView() {
 		List<ETemplate> templates = this.dTemplate.findList();
-		for (ETemplate t : templates) {
-			t.getSshkeys().size(); // lazy loading ...
-		}
-		ViewModel modal = this.createModal("mModKey");
+		CSViewModel modal = this.createModal("mModKey");
 		modal.addModel("TEMPLATES", templates);
 		return modal;
+	}
+	
+	@Override
+	@Transactional
+	public RenderedView addView() {
+		CSViewModel modal = this.prepareView();
+		return modal.render();
 	}
 	
 	@Override

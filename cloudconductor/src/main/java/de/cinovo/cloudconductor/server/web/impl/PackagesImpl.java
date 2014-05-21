@@ -23,13 +23,14 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackages;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -76,7 +77,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
+	public RenderedView view() {
 		List<EPackage> packageList = this.dPkg.findList();
 		
 		List<EService> serviceList = this.dSvc.findList();
@@ -95,16 +96,16 @@ public class PackagesImpl extends AWebPage implements IPackages {
 				}
 			}
 		}
-		ViewModel view = this.createView();
+		CSViewModel view = this.createView();
 		view.addModel("PACKAGES", packageList);
 		view.addModel("SERVICES", serviceMap);
 		view.addModel("VERSIONS", versionMap);
-		return view;
+		return view.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel addPackageView(String pname, Long versionid) {
+	public RenderedView addPackageView(String pname, Long versionid) {
 		RESTAssert.assertNotEmpty(pname);
 		RESTAssert.assertNotNull(versionid);
 		EPackageVersion version = this.dVersion.findById(versionid);
@@ -117,12 +118,11 @@ public class PackagesImpl extends AWebPage implements IPackages {
 			ts.add(temp);
 		}
 		this.sortNamedList(ts);
-		version.getPkg().getName();// needed caused by lazy loading
 		// Fill template with models and return.
-		final ViewModel vm = this.createModal("mInstallPackage");
+		final CSViewModel vm = this.createModal("mInstallPackage");
 		vm.addModel("templates", ts);
 		vm.addModel("version", version);
-		return vm;
+		return vm.render();
 	}
 	
 	@Override
@@ -175,7 +175,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public ViewModel addServiceView(String pname) {
+	public RenderedView addServiceView(String pname) {
 		RESTAssert.assertNotEmpty(pname);
 		EPackage pkg = this.dPkg.findByName(pname);
 		List<EService> serviceList = new ArrayList<>();
@@ -186,10 +186,10 @@ public class PackagesImpl extends AWebPage implements IPackages {
 		}
 		// Fill template with models and return.
 		this.sortNamedList(serviceList);
-		final ViewModel modal = this.createModal("mAddService");
+		final CSViewModel modal = this.createModal("mAddService");
 		modal.addModel("services", serviceList);
 		modal.addModel("packageName", pname);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
@@ -210,10 +210,10 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public ViewModel newServiceView(String pname) {
-		ViewModel modal = this.createModal("mNewService");
+	public RenderedView newServiceView(String pname) {
+		CSViewModel modal = this.createModal("mNewService");
 		modal.addModel("packageName", pname);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
@@ -248,11 +248,11 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public ViewModel deleteServiceView(String pname, String sname) {
-		ViewModel modal = this.createModal("mDeleteService");
+	public RenderedView deleteServiceView(String pname, String sname) {
+		CSViewModel modal = this.createModal("mDeleteService");
 		modal.addModel("packageName", pname);
 		modal.addModel("serviceName", sname);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

@@ -26,8 +26,8 @@ import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * 
@@ -60,7 +60,7 @@ public interface IPackages {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view();
+	public abstract RenderedView view();
 	
 	/**
 	 * @param pname the package name
@@ -69,7 +69,7 @@ public interface IPackages {
 	@GET
 	@Path(IPackages.ADD_SERVICE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
+	public abstract RenderedView addServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
 	
 	/**
 	 * @param pname the package name
@@ -89,7 +89,7 @@ public interface IPackages {
 	@GET
 	@Path(IPackages.NEW_SERVICE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel newServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
+	public abstract RenderedView newServiceView(@PathParam(IWebPath.VAR_NAME) String pname);
 	
 	/**
 	 * @param pname the package name
@@ -112,7 +112,7 @@ public interface IPackages {
 	@GET
 	@Path(IPackages.REMOVE_SERVICE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel deleteServiceView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
+	public abstract RenderedView deleteServiceView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_SERVICE) String sname);
 	
 	/**
 	 * @param pname the package name
@@ -132,7 +132,7 @@ public interface IPackages {
 	@GET
 	@Path(IPackages.ADD_PACKAGE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addPackageView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long versionId);
+	public abstract RenderedView addPackageView(@PathParam(IWebPath.VAR_NAME) String pname, @PathParam(IWebPath.VAR_VERSION) Long versionId);
 	
 	/**
 	 * @param pname the package name

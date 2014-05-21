@@ -9,8 +9,8 @@ import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -39,7 +39,7 @@ public interface IServerOptions {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view();
+	public abstract RenderedView view();
 	
 	/**
 	 * @param name the server name
@@ -61,7 +61,7 @@ public interface IServerOptions {
 	@GET
 	@Path(IServerOptions.LINKS_ROOT)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel viewLinks();
+	public abstract RenderedView viewLinks();
 	
 	/**
 	 * @return the modal
@@ -69,7 +69,7 @@ public interface IServerOptions {
 	@GET
 	@Path(IServerOptions.ADD_LINK)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addLinkView();
+	public abstract RenderedView addLinkView();
 	
 	/**
 	 * @param label the label
@@ -89,7 +89,7 @@ public interface IServerOptions {
 	@GET
 	@Path(IServerOptions.DELETE_LINK)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel deleteLinkView(@PathParam(IWebPath.VAR_NAME) String label);
+	public abstract RenderedView deleteLinkView(@PathParam(IWebPath.VAR_NAME) String label);
 	
 	/**
 	 * @param label the label

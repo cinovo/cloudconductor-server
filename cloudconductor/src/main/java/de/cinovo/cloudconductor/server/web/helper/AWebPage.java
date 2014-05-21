@@ -30,7 +30,6 @@ import de.cinovo.cloudconductor.server.web.impl.IndexImpl;
 import de.cinovo.cloudconductor.server.web.interfaces.IConfig;
 import de.cinovo.cloudconductor.server.web.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -81,7 +80,7 @@ public abstract class AWebPage implements IContextAware {
 		return AuditCategory.UNDEFINED;
 	}
 	
-	protected ViewModel createView() {
+	protected CSViewModel createView() {
 		return this.createView("view");
 	}
 	
@@ -130,7 +129,7 @@ public abstract class AWebPage implements IContextAware {
 		}
 	}
 	
-	protected ViewModel createView(String viewname) {
+	protected CSViewModel createView(String viewname) {
 		CSViewModel view = new CSViewModel(this.getTemplateFolder() + "/" + viewname, false, this.dServerOptions.get());
 		view.addModel("BREDCRUMBS", this.breadcrumbs.entrySet());
 		view.addModel("SIDEBAR", this.sidebar);
@@ -144,7 +143,7 @@ public abstract class AWebPage implements IContextAware {
 		return view;
 	}
 	
-	protected ViewModel createModal(String modalName) {
+	protected CSViewModel createModal(String modalName) {
 		CSViewModel modal = new CSViewModel(CSViewModel.MODAL_IDENTIFIER + this.getTemplateFolder() + "/" + modalName, true, this.dServerOptions.get());
 		if (this.hasError()) {
 			FormErrorException error = this.pollError();

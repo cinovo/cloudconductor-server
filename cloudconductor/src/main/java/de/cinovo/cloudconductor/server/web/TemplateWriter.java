@@ -17,38 +17,40 @@ package de.cinovo.cloudconductor.server.web;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-
-import de.taimos.cxf_renderer.velocity.VelocityBodyWriter;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * Custom message body provider for the web templates.
  * 
- * @author mhilbert/psigloch
+ * @author psigloch
  */
 @Provider
-public class TemplateWriter extends VelocityBodyWriter {
+public class TemplateWriter implements MessageBodyWriter<RenderedView> {
 	
 	@Override
-	protected String generateTemplateName(final String viewName, final MediaType mediaType) {
-		if (viewName.startsWith(CSViewModel.MODAL_IDENTIFIER)) {
-			String view = viewName.substring(CSViewModel.MODAL_IDENTIFIER.length(), viewName.length());
-			return "/web/pages/" + view + ".vm";
-		}
-		return "/web/index.vm";
+	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+		return RenderedView.class.isAssignableFrom(type) && mediaType.getSubtype().equals("html");
 	}
 	
 	@Override
-	protected List<MediaType> getMediaTypes() {
-		final List<MediaType> r = new ArrayList<>(super.getMediaTypes());
-		r.add(MediaType.valueOf(de.cinovo.cloudconductor.api.MediaType.TEXT_HTML));
-		return r;
+	public long getSize(RenderedView t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+		return t.getContent().length();
+	}
+	
+	@Override
+	public void writeTo(RenderedView t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+		entityStream.write(t.getContent().getBytes("UTF-8"));
 	}
 	
 }

@@ -9,12 +9,13 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer.AjaxAnswerType;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackageServer;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -48,34 +49,34 @@ public class PackageServerImpl extends AWebPage implements IPackageServer {
 	}
 	
 	@Override
-	public ViewModel view() {
-		final ViewModel modal = this.createModal("mServers");
+	public RenderedView view() {
+		final CSViewModel modal = this.createModal("mServers");
 		modal.addModel("servers", this.dPckSrv.findList());
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel addServerView() {
-		final ViewModel modal = this.createModal("mModServer");
-		return modal;
+	public RenderedView addServerView() {
+		final CSViewModel modal = this.createModal("mModServer");
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel editServerView(Long serverid) {
+	public RenderedView editServerView(Long serverid) {
 		EPackageServer server = this.dPckSrv.findById(serverid);
 		RESTAssert.assertNotNull(server);
-		final ViewModel modal = this.createModal("mModServer");
+		final CSViewModel modal = this.createModal("mModServer");
 		modal.addModel("server", server);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel deleteServerView(Long serverid) {
+	public RenderedView deleteServerView(Long serverid) {
 		EPackageServer server = this.dPckSrv.findById(serverid);
 		RESTAssert.assertNotNull(server);
-		final ViewModel modal = this.createModal("mDeleteServer");
+		final CSViewModel modal = this.createModal("mDeleteServer");
 		modal.addModel("server", server);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

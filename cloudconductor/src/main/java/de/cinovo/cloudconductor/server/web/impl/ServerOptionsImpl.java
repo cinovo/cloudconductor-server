@@ -9,6 +9,8 @@ import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer.AjaxAnswerType;
@@ -16,7 +18,6 @@ import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.NavbarRegistry;
 import de.cinovo.cloudconductor.server.web.interfaces.IServerOptions;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -53,17 +54,17 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
-		final ViewModel modal = this.createModal("mOptions");
+	public RenderedView view() {
+		final CSViewModel modal = this.createModal("mOptions");
 		modal.addModel("options", this.dServerOptions.get());
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel viewLinks() {
-		final ViewModel modal = this.createModal("mLinks");
+	public RenderedView viewLinks() {
+		final CSViewModel modal = this.createModal("mLinks");
 		modal.addModel("links", this.dLinks.findList());
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
@@ -105,9 +106,9 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	}
 	
 	@Override
-	public ViewModel addLinkView() {
-		final ViewModel modal = this.createModal("mAddLink");
-		return modal;
+	public RenderedView addLinkView() {
+		final CSViewModel modal = this.createModal("mAddLink");
+		return modal.render();
 	}
 	
 	@Override
@@ -135,12 +136,12 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	}
 	
 	@Override
-	public ViewModel deleteLinkView(String label) {
+	public RenderedView deleteLinkView(String label) {
 		EAdditionalLinks link = this.dLinks.findByLabel(label);
 		RESTAssert.assertNotNull(link);
-		final ViewModel modal = this.createModal("mDeleteLink");
+		final CSViewModel modal = this.createModal("mDeleteLink");
 		modal.addModel("link", link);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

@@ -30,10 +30,11 @@ import com.google.common.collect.Sets;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.ReportPackage;
 import de.cinovo.cloudconductor.server.web.interfaces.IReport;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -65,7 +66,7 @@ public class ReportImpl extends AWebPage implements IReport {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
+	public RenderedView view() {
 		// Build hosts model.
 		List<ETemplate> templates = this.dTemplate.findList();
 		
@@ -86,8 +87,8 @@ public class ReportImpl extends AWebPage implements IReport {
 		Collections.sort(packagesModel);
 		
 		// Fill template with models and return.
-		final ViewModel vm = this.createView();
+		final CSViewModel vm = this.createView();
 		vm.addModel("packages", packagesModel);
-		return vm;
+		return vm.render();
 	}
 }

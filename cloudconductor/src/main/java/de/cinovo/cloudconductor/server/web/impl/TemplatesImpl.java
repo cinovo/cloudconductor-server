@@ -27,11 +27,12 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.ITemplate;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -78,14 +79,13 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
+	public RenderedView view() {
 		List<ETemplate> etemplates = this.dTemplate.findList();
 		List<String> updates = new ArrayList<>();
 		for (ETemplate t : etemplates) {
 			this.addSidebarElement(t.getName());
 			this.sortNamedList(t.getHosts());
 			Collections.sort(t.getPackageVersions(), new PackageVersionComparator());
-			t.getYumPath(); // this line is caused by lazy loading
 			
 			// collect updateable packages
 			for (EPackageVersion pv : t.getPackageVersions()) {
@@ -97,10 +97,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			}
 		}
 		this.sortNamedList(etemplates);
-		ViewModel view = this.createView();
+		CSViewModel view = this.createView();
 		view.addModel("TEMPLATES", etemplates);
 		view.addModel("UPDATE", updates);
-		return view;
+		return view.render();
 	}
 	
 	@Override
@@ -181,15 +181,15 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel editTemplateView(String tname) {
+	public RenderedView editTemplateView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
 		
-		final ViewModel vm = this.createModal("mEditTemplate");
+		final CSViewModel vm = this.createModal("mEditTemplate");
 		vm.addModel("template", template);
 		vm.addModel("availablePM", this.dPackageServer.findList());
-		return vm;
+		return vm.render();
 	}
 	
 	@Override
@@ -214,7 +214,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel addPackageView(String tname) {
+	public RenderedView addPackageView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		List<EPackage> pkgList = this.dPkg.findList();
@@ -223,10 +223,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		}
 		
 		this.sortNamedList(pkgList);
-		final ViewModel vm = this.createModal("mAddPackage");
+		final CSViewModel vm = this.createModal("mAddPackage");
 		vm.addModel("template", template);
 		vm.addModel("packages", pkgList);
-		return vm;
+		return vm.render();
 	}
 	
 	@Override
@@ -263,13 +263,13 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel deleteTemplateView(String tname) {
+	public RenderedView deleteTemplateView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("mDeleteTemplate");
+		CSViewModel modal = this.createModal("mDeleteTemplate");
 		modal.addModel("template", template);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
@@ -288,7 +288,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel defaultServiceStatesView(String tname) {
+	public RenderedView defaultServiceStatesView(String tname) {
 		ETemplate template = this.dTemplate.findByName(tname);
 		for (EService svc : this.dSvc.findList()) {
 			for (EPackageVersion pkv : template.getPackageVersions()) {
@@ -299,10 +299,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		}
 		List<EServiceDefaultState> defaultStates = this.dSvcDefState.findByTemplate(template.getName());
 		Collections.sort(defaultStates, new DefaultStateComparator());
-		ViewModel modal = this.createModal("mDefaultServices");
+		CSViewModel modal = this.createModal("mDefaultServices");
 		modal.addModel("template", template);
 		modal.addModel("defaultStates", defaultStates);
-		return modal;
+		return modal.render();
 	}
 	
 	private void setDefaultService(EService service, ETemplate template) {
@@ -341,10 +341,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public ViewModel addTemplateView() {
-		ViewModel modal = this.createModal("mAddTemplate");
+	public RenderedView addTemplateView() {
+		CSViewModel modal = this.createModal("mAddTemplate");
 		modal.addModel("availablePM", this.dPackageServer.findList());
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

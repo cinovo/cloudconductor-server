@@ -10,8 +10,8 @@ import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -49,7 +49,7 @@ public interface IFiles {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel view(@QueryParam("filter") String filter);
+	public RenderedView view(@QueryParam("filter") String filter);
 	
 	/**
 	 * @return the modal content
@@ -57,7 +57,7 @@ public interface IFiles {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel newFileView();
+	public RenderedView newFileView();
 	
 	/**
 	 * @param name the file name
@@ -66,7 +66,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.EDIT_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel editFileView(@PathParam(IWebPath.VAR_NAME) String name);
+	public RenderedView editFileView(@PathParam(IWebPath.VAR_NAME) String name);
 	
 	/**
 	 * @param name the file name
@@ -75,7 +75,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel deleteFileView(@PathParam(IWebPath.VAR_NAME) String name);
+	public RenderedView deleteFileView(@PathParam(IWebPath.VAR_NAME) String name);
 	
 	/**
 	 * @param name the file name
@@ -85,7 +85,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.REMOVE_FROM_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel deleteFileFromTemplateView(@PathParam(IWebPath.VAR_NAME) String name, @PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public RenderedView deleteFileFromTemplateView(@PathParam(IWebPath.VAR_NAME) String name, @PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param template the template name
@@ -94,7 +94,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.ADD_TO_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public ViewModel addFileToTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public RenderedView addFileToTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param oldname the old file name

@@ -28,8 +28,8 @@ import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -66,7 +66,7 @@ public interface ITemplate {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view();
+	public abstract RenderedView view();
 	
 	/**
 	 * @param tname the template name
@@ -94,7 +94,7 @@ public interface ITemplate {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addTemplateView();
+	public abstract RenderedView addTemplateView();
 	
 	/**
 	 * @param templatename the template name
@@ -117,7 +117,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel editTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
+	public abstract RenderedView editTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the old template name
@@ -141,7 +141,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.ADD_PACKAGE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addPackageView(@PathParam(IWebPath.VAR_NAME) String tname);
+	public abstract RenderedView addPackageView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name
@@ -161,7 +161,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.DELETE_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
+	public abstract RenderedView deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name
@@ -180,7 +180,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.DEFAULT_SERVICE_STATE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel defaultServiceStatesView(@PathParam(IWebPath.VAR_NAME) String tname);
+	public abstract RenderedView defaultServiceStatesView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name

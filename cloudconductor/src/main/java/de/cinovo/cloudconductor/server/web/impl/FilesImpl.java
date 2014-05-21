@@ -23,13 +23,14 @@ import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IFiles;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -79,22 +80,15 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public ViewModel view(String filter) {
+	public RenderedView view(String filter) {
 		List<EFile> files = this.dFile.findList();
 		for (EFile f : files) {
 			this.addSidebarElement(f.getName());
-			f.getDependentServices().size(); // lazy loading ...
-			if (f.getPkg() != null) {
-				f.getPkg().getName(); // lazy loading ...
-			}
 		}
 		this.addSidebarElements(files);
 		List<ETemplate> templates = this.dTemplate.findList();
-		for (ETemplate t : templates) {
-			t.getConfigFiles().size(); // lazy loading ...
-		}
 		this.sortNamedList(files);
-		ViewModel view;
+		CSViewModel view;
 		if ((filter != null) && filter.equals(IFiles.TEMPLATE_FILTER)) {
 			view = this.createView("viewTemplate");
 			view.addModel("SIDEBARTYPE", null);
@@ -103,90 +97,80 @@ public class FilesImpl extends AWebPage implements IFiles {
 		}
 		view.addModel("FILES", files);
 		view.addModel("TEMPLATES", templates);
-		return view;
+		return view.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel newFileView() {
+	public RenderedView newFileView() {
 		List<EPackage> packages = this.dPackage.findList();
 		this.sortNamedList(packages);
 		List<EService> services = this.dService.findList();
 		this.sortNamedList(services);
 		List<ETemplate> templates = this.dTemplate.findList();
 		this.sortNamedList(templates);
-		ViewModel modal = this.createModal("mModFile");
+		CSViewModel modal = this.createModal("mModFile");
 		modal.addModel("PACKAGES", packages);
 		modal.addModel("SERVICES", services);
 		modal.addModel("TEMPLATES", templates);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel editFileView(String name) {
+	public RenderedView editFileView(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile oldFile = this.dFile.findByName(name);
-		for (EService a : oldFile.getDependentServices()) {
-			a.getId(); // lazy loading ...
-		}
 		List<EPackage> packages = this.dPackage.findList();
 		List<EService> services = this.dService.findList();
 		this.sortNamedList(services);
 		this.sortNamedList(packages);
 		List<ETemplate> templates = this.dTemplate.findList();
-		for (ETemplate t : templates) {
-			t.getConfigFiles().size(); // lazy loading ...
-		}
 		this.sortNamedList(templates);
-		ViewModel modal = this.createModal("mModFile");
+		CSViewModel modal = this.createModal("mModFile");
 		modal.addModel("FILE", oldFile);
 		modal.addModel("PACKAGES", packages);
 		modal.addModel("SERVICES", services);
 		modal.addModel("TEMPLATES", templates);
-		return modal;
+		return modal.render();
 		
 	}
 	
 	@Override
-	public ViewModel deleteFileView(String name) {
+	public RenderedView deleteFileView(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile file = this.dFile.findByName(name);
-		ViewModel modal = this.createModal("mDeleteFile");
+		CSViewModel modal = this.createModal("mDeleteFile");
 		modal.addModel("FILE", file);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel deleteFileFromTemplateView(String name, String template) {
+	public RenderedView deleteFileFromTemplateView(String name, String template) {
 		RESTAssert.assertNotEmpty(name);
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
 		RESTAssert.assertNotNull(t);
 		EFile file = this.dFile.findByName(name);
 		RESTAssert.assertNotNull(file);
-		ViewModel modal = this.createModal("mDeleteFileFromTemplate");
+		CSViewModel modal = this.createModal("mDeleteFileFromTemplate");
 		modal.addModel("FILE", file);
 		modal.addModel("TEMPLATE", t);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel addFileToTemplateView(String template) {
+	public RenderedView addFileToTemplateView(String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
-		t.getConfigFiles().size(); // lazy loading ...
 		RESTAssert.assertNotNull(t);
-		ViewModel modal = this.createModal("mAddFile");
+		CSViewModel modal = this.createModal("mAddFile");
 		List<EFile> files = this.dFile.findList();
-		for (EFile f : files) {
-			f.getDependentServices().size(); // lazy loading ...
-		}
 		modal.addModel("FILES", files);
 		modal.addModel("TEMPLATE", t);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

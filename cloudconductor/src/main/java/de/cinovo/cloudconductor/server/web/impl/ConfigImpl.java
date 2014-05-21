@@ -21,12 +21,13 @@ import de.cinovo.cloudconductor.server.comparators.ConfigComperator;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.interfaces.IConfig;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -73,7 +74,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 	
 	@Override
 	@Transactional
-	public ViewModel view(String filter) {
+	public RenderedView view(String filter) {
 		String template = filter == null ? IConfig.RESERVED_GLOBAL : filter;
 		
 		List<EConfigValue> configs = this.dConfig.findAll(template);
@@ -92,75 +93,75 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		for (Entry<String, List<EConfigValue>> a : conf.entrySet()) {
 			Collections.sort(a.getValue(), comperator);
 		}
-		ViewModel view = this.createView();
+		CSViewModel view = this.createView();
 		view.addModel("CONFIGS", this.sortMap(conf));
 		view.addModel("TEMPLATE", template);
-		return view;
+		return view.render();
 	}
 	
 	@Override
-	public ViewModel deleteConfigView(String id) {
+	public RenderedView deleteConfigView(String id) {
 		RESTAssert.assertNotEmpty(id);
 		EConfigValue config = this.dConfig.findById(Long.valueOf(id));
 		RESTAssert.assertNotNull(config);
-		ViewModel modal = this.createModal("mDeleteConfig");
+		CSViewModel modal = this.createModal("mDeleteConfig");
 		modal.addModel("CONFIG", config);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel deleteTemplateView(String template) {
+	public RenderedView deleteTemplateView(String template) {
 		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("mDeleteConfig");
+		CSViewModel modal = this.createModal("mDeleteConfig");
 		modal.addModel("TEMPLATE", template);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel deleteServiceView(String template, String service) {
+	public RenderedView deleteServiceView(String template, String service) {
 		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("mDeleteConfig");
+		CSViewModel modal = this.createModal("mDeleteConfig");
 		modal.addModel("TEMPLATE", template);
 		modal.addModel("SERVICE", service);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel editConfigView(String id) {
+	public RenderedView editConfigView(String id) {
 		RESTAssert.assertNotEmpty(id);
 		EConfigValue config = this.dConfig.findById(Long.valueOf(id));
 		RESTAssert.assertNotNull(config);
-		ViewModel modal = this.createModal("mModConfig");
+		CSViewModel modal = this.createModal("mModConfig");
 		modal.addModel("CONFIG", config);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel addConfigView() {
-		ViewModel modal = this.createModal("mModConfig");
-		return modal;
+	public RenderedView addConfigView() {
+		CSViewModel modal = this.createModal("mModConfig");
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel addConfigView(String template) {
+	public RenderedView addConfigView(String template) {
 		RESTAssert.assertNotNull(template);
-		ViewModel modal = this.createModal("mModConfig");
+		CSViewModel modal = this.createModal("mModConfig");
 		modal.addModel("TEMPLATE", template);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel addConfigView(String template, String service) {
+	public RenderedView addConfigView(String template, String service) {
 		RESTAssert.assertNotNull(template);
 		RESTAssert.assertNotNull(service);
-		ViewModel modal = this.createModal("mModConfig");
+		CSViewModel modal = this.createModal("mModConfig");
 		modal.addModel("TEMPLATE", template);
 		modal.addModel("SERVICE", service);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
-	public ViewModel batchModView() {
+	public RenderedView batchModView() {
 		List<EConfigValue> total = this.dConfig.findList();
 		StringBuffer buffer = new StringBuffer();
 		for (EConfigValue value : total) {
@@ -174,9 +175,9 @@ public class ConfigImpl extends AWebPage implements IConfig {
 			buffer.append(value.getValue());
 			buffer.append(System.lineSeparator());
 		}
-		ViewModel modal = this.createModal("mBatchMod");
+		CSViewModel modal = this.createModal("mBatchMod");
 		modal.addModel("BATCHDEFAULT", buffer.toString());
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

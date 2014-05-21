@@ -24,11 +24,12 @@ import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.IHost;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -63,7 +64,7 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
+	public RenderedView view() {
 		List<EHost> eHosts = this.dHost.findList();
 		Map<String, String[]> reporttimes = new HashMap<>();
 		Map<String, List<?>> thDiff = new HashMap<>();
@@ -71,32 +72,27 @@ public class HostImpl extends AWebPage implements IHost {
 		for (EHost h : eHosts) {
 			this.addSidebarElement(h.getName());
 			Collections.sort(h.getServices(), comp);
-			h.getTemplate().getName(); // this line is caused by lazy loading
 			DateTime last = new DateTime(h.getLastSeen());
 			String diff = String.valueOf(Minutes.minutesBetween(last, new DateTime()).getMinutes());
 			reporttimes.put(h.getName(), new String[] {diff, this.germanFmt.print(last)});
 			thDiff.put(h.getName(), this.createHostTemplateDiff(h));
-			for (EServiceState s : h.getServices()) {
-				s.getService().getName();// this line is caused by lazy loading
-			}
 		}
 		this.sortNamedList(eHosts);
-		ViewModel view = this.createView();
+		CSViewModel view = this.createView();
 		view.addModel("HOSTS", eHosts);
 		view.addModel("DIFFERENCES", thDiff);
-		return view;
+		return view.render();
 	}
 	
 	@Override
 	@Transactional
-	public ViewModel view(String hname) {
+	public RenderedView view(String hname) {
 		EHost eHosts = this.dHost.findByName(hname);
 		Collections.sort(eHosts.getServices(), new StateComparator());
-		eHosts.getTemplate().getName(); // this line is caused by lazy loading
-		ViewModel modal = this.createModal("mSingleView");
+		CSViewModel modal = this.createModal("mSingleView");
 		modal.addModel("host", eHosts);
 		modal.addModel("DIFFERENCES", this.createHostTemplateDiff(eHosts));
-		return modal;
+		return modal.render();
 	}
 	
 	@Override
@@ -137,13 +133,13 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public ViewModel deleteHostView(String hname) {
+	public RenderedView deleteHostView(String hname) {
 		RESTAssert.assertNotEmpty(hname);
 		EHost host = this.dHost.findByName(hname);
 		RESTAssert.assertNotNull(host);
-		ViewModel modal = this.createModal("mDeleteHost");
+		CSViewModel modal = this.createModal("mDeleteHost");
 		modal.addModel("host", host);
-		return modal;
+		return modal.render();
 	}
 	
 	@Override

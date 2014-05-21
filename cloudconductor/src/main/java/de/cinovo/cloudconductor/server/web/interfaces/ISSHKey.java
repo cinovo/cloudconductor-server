@@ -27,8 +27,8 @@ import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -67,7 +67,7 @@ public interface ISSHKey {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view(@QueryParam("filter") String filter);
+	public abstract RenderedView view(@QueryParam("filter") String filter);
 	
 	/**
 	 * @return the modal content
@@ -75,7 +75,7 @@ public interface ISSHKey {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addView();
+	public abstract RenderedView addView();
 	
 	/**
 	 * @param owner the owner
@@ -84,7 +84,7 @@ public interface ISSHKey {
 	@GET
 	@Path(ISSHKey.ADD_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addTemplateView(@PathParam(IWebPath.VAR_NAME) String owner);
+	public abstract RenderedView addTemplateView(@PathParam(IWebPath.VAR_NAME) String owner);
 	
 	/**
 	 * @param template the template name
@@ -93,7 +93,7 @@ public interface ISSHKey {
 	@GET
 	@Path(ISSHKey.ADD_KEY_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel addKeyView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public abstract RenderedView addKeyView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param owner the owner
@@ -103,7 +103,7 @@ public interface ISSHKey {
 	@GET
 	@Path(ISSHKey.REMOVE_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
+	public abstract RenderedView deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String owner, @PathParam(IWebPath.VAR_TEMPLATE) String tname);
 	
 	/**
 	 * @param owner the owner
@@ -112,7 +112,7 @@ public interface ISSHKey {
 	@GET
 	@Path(ISSHKey.DELETE_KEY_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel deleteView(@PathParam(IWebPath.VAR_NAME) String owner);
+	public abstract RenderedView deleteView(@PathParam(IWebPath.VAR_NAME) String owner);
 	
 	/**
 	 * @param owner the owner
@@ -121,7 +121,7 @@ public interface ISSHKey {
 	@GET
 	@Path(ISSHKey.EDIT_KEY_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel editView(@PathParam(IWebPath.VAR_NAME) String owner);
+	public abstract RenderedView editView(@PathParam(IWebPath.VAR_NAME) String owner);
 	
 	/**
 	 * @param oldOwner the old owner name

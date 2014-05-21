@@ -25,11 +25,12 @@ import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.web.CSViewModel;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.IIndex;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -108,10 +109,11 @@ public class IndexImpl extends AWebPage implements IIndex {
 	
 	@Override
 	@Transactional
-	public ViewModel view() {
+	public RenderedView view() {
+		System.out.println(DateTime.now().toDate().getTime());
 		List<EHost> hostList = this.dHost.findList();
 		List<ETemplate> templateList = this.dTemplate.findList();
-		ViewModel view = this.createView();
+		CSViewModel view = this.createView();
 		view.addModel("LINKLIST", this.dLinks.findList());
 		view.addModel("TEMPLATELIST", this.getTemplateList(templateList));
 		view.addModel("HOSTLIST", this.getHostWatch(hostList));
@@ -121,7 +123,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 		view.addModel("SERVICECOUNT", this.dSvc.count());
 		view.addModel("FILECOUNT", this.dFile.count());
 		view.addModel("SSHKEYCOUNT", this.dSSH.count());
-		return view;
+		return view.render();
 	}
 	
 	private List<Entry<String, String>> getTemplateList(List<ETemplate> templateList) {

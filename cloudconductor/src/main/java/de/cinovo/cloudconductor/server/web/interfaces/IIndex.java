@@ -26,8 +26,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
-import de.taimos.cxf_renderer.model.ViewModel;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -45,7 +45,7 @@ public interface IIndex {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract ViewModel view();
+	public abstract RenderedView view();
 	
 	/**
 	 * Returns the css style used in the web pages.

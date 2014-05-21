@@ -17,6 +17,18 @@ package de.cinovo.cloudconductor.server.web;
  * #L%
  */
 
+import java.io.StringWriter;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.ws.rs.InternalServerErrorException;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.tools.generic.DateTool;
 import org.apache.velocity.tools.generic.SortTool;
 import org.joda.time.DateTime;
@@ -32,6 +44,44 @@ import de.taimos.cxf_renderer.model.ViewModel;
  * 
  */
 public class CSViewModel extends ViewModel {
+	
+	static {
+		try {
+			// Use ClasspathLoader
+			Velocity.setProperty(RuntimeConstants.RESOURCE_LOADER, "class");
+			Velocity.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+			// Use UTF-8
+			Velocity.setProperty("input.encoding", "UTF-8");
+			Velocity.setProperty("output.encoding", "UTF-8");
+			// Use log4j
+			Velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getCanonicalName());
+			Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
+			Velocity.init();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private static String evaluateVM(final String name, final Map<String, Object> variables) {
+		try {
+			/* lets make a Context and put data into it */
+			final VelocityContext context = new VelocityContext();
+			
+			final Set<Entry<String, Object>> entrySet = variables.entrySet();
+			for (final Entry<String, Object> entry : entrySet) {
+				context.put(entry.getKey(), entry.getValue());
+			}
+			
+			final Template template = Velocity.getTemplate(name);
+			final StringWriter w = new StringWriter();
+			template.merge(context, w);
+			return w.toString();
+		} catch (final Exception e) {
+			throw new InternalServerErrorException(e);
+		}
+	}
+	
 	
 	/**
 	 * modal identifier
@@ -58,5 +108,23 @@ public class CSViewModel extends ViewModel {
 		this.addModel("dateTool", new DateTool());
 		this.addModel("sorterTool", new SortTool());
 		this.addModel("NOW", DateTime.now());
+	}
+	
+	protected String generateTemplateName() {
+		if (this.getViewName().startsWith(CSViewModel.MODAL_IDENTIFIER)) {
+			String view = this.getViewName().substring(CSViewModel.MODAL_IDENTIFIER.length(), this.getViewName().length());
+			return "/web/pages/" + view + ".vm";
+		}
+		return "/web/index.vm";
+	}
+	
+	/**
+	 * @return the rendered view
+	 */
+	public RenderedView render() {
+		RenderedView view = new RenderedView();
+		String evaluateVM = CSViewModel.evaluateVM(this.generateTemplateName(), this.getModel());
+		view.setContent(evaluateVM);
+		return view;
 	}
 }
