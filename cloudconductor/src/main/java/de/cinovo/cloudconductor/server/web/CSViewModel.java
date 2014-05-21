@@ -98,7 +98,7 @@ public class CSViewModel extends ViewModel {
 		super(viewName);
 		this.addModel("C2InstanceOptions", options);
 		String implementationVersion = this.getClass().getPackage().getImplementationVersion();
-		this.addModel("C2InstanceVersion", implementationVersion != null ? implementationVersion : "(unknown)");
+		this.addModel("C2InstanceVersion", implementationVersion != null ? implementationVersion : "DEV-SNAPSHOT");
 		if (isModal) {
 			this.addModel("VIEWNAME", CSViewModel.MODAL_IDENTIFIER + viewName);
 		} else {
