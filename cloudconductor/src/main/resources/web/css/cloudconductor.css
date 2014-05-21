@@ -225,7 +225,7 @@ span.form-control.small{
 	body * {
     	visibility:hidden;
     	text-align: center;
-		font-size: 12px;
+		font-size: 10px;
 		font-family: verdana, helvetica, arial, sans-serif;
     } 
     
@@ -239,6 +239,10 @@ span.form-control.small{
        margin-bottom: -80px;
    	}
    	
+   	h1 {
+   	   font-size: 14px;
+   	   font-weight: bold;
+   	}
    	table {
    		width: 100%;
    	}

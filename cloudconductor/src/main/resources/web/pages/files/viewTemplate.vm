@@ -20,7 +20,7 @@
 				<th class="stateSymbol">Reloadable</th>
 				<th>Package</th>
 				<th>Restarts</th>
-				<th></th>
+				<th class="stateSymbol"></th>
 				<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${template.name}/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add file"></button></th>
 			</tr>
 		</thead>
