@@ -35,7 +35,8 @@ public interface IFiles {
 	public static final String EDIT_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	/***/
 	public static final String SAVE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_SAVE;
-	
+	/***/
+	public static final String ADD_TO_FILE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + "/templates" + IWebPath.ACTION_ADD;
 	/***/
 	public static final String ADD_TO_TEMPLATE_ACTION = "/{" + IWebPath.VAR_TEMPLATE + "}" + IWebPath.ACTION_ADD;
 	/***/
@@ -97,6 +98,15 @@ public interface IFiles {
 	public RenderedView addFileToTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
+	 * @param file the file name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IFiles.ADD_TO_FILE_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public RenderedView addTemplateToFileView(@PathParam(IWebPath.VAR_NAME) String file);
+	
+	/**
 	 * @param oldname the old file name
 	 * @param newname the new file name
 	 * @param owner the owner
@@ -144,4 +154,14 @@ public interface IFiles {
 	@Path(IFiles.ADD_TO_TEMPLATE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
 	public AjaxAnswer addFileToTemplate(@FormParam("files") String[] name, @PathParam(IWebPath.VAR_TEMPLATE) String template);
+	
+	/**
+	 * @param name array of file names
+	 * @param template the template anem
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IFiles.ADD_TO_FILE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public AjaxAnswer addTemplateToFile(@FormParam("templates") String[] template, @PathParam(IWebPath.VAR_NAME) String name);
 }

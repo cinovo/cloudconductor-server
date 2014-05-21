@@ -27,7 +27,7 @@
 
 <body data-spy="scroll" data-target="#sidebar" data-offset="10"> 
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="border-color:#$C2InstanceOptions.bgcolor;">
+<div class="navbar navbar-default navbar-fixed-top " role="navigation" style="border-color:#$C2InstanceOptions.bgcolor;">
     <div class="container">
 	    <div class="navbar-header">
 	    	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -96,8 +96,8 @@
 		#end
 		#if (! $FILTERS.isEmpty())
 		<li>
-		<div class="btn-group btn-group-sm">
-			 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">$CURRENTFILTER <span class="caret"></span></button>
+		<div class="btn-group btn-group-xs">
+			 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">$CURRENTFILTER <span class="caret"></span></button>
 			 <ul class="dropdown-menu">
 			 	#foreach($f in $FILTERS)
 			 	<li><a href="?filter=$f.id">${f.getName()}</a></li>

@@ -175,6 +175,19 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
+	public RenderedView addTemplateToFileView(String file) {
+		RESTAssert.assertNotEmpty(file);
+		EFile f = this.dFile.findByName(file);
+		RESTAssert.assertNotNull(f);
+		CSViewModel modal = this.createModal("mAddTemplate");
+		List<ETemplate> templates = this.dTemplate.findList();
+		modal.addModel("FILE", f);
+		modal.addModel("TEMPLATES", templates);
+		return modal.render();
+	}
+	
+	@Override
+	@Transactional
 	public AjaxAnswer saveFile(String oldname, String newname, String owner, String group, String mode, String targetPath, String content, Boolean isTemplate, String depPackage, String[] depServices, String[] templates) throws FormErrorException {
 		RESTAssert.assertNotEmpty(oldname);
 		EFile cf = this.dFile.findByName(oldname);
@@ -329,6 +342,20 @@ public class FilesImpl extends AWebPage implements IFiles {
 			this.dTemplate.save(t);
 		}
 		this.audit("Added files " + this.auditFormat(name) + " to template " + template);
+		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, IFiles.TEMPLATE_FILTER + "#" + template);
+	}
+	
+	@Override
+	@Transactional
+	public AjaxAnswer addTemplateToFile(String[] template, String name) {
+		RESTAssert.assertNotEmpty(name);
+		EFile f = this.dFile.findByName(name);
+		for (String temp : template) {
+			ETemplate t = this.dTemplate.findByName(temp);
+			t.getConfigFiles().add(f);
+			this.dTemplate.save(t);
+		}
+		this.audit("Added templates " + this.auditFormat(template) + " to file " + name);
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, IFiles.TEMPLATE_FILTER + "#" + template);
 	}
 	

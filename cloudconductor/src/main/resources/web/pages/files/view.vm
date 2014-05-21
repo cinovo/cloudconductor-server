@@ -21,6 +21,7 @@
 				<th class="stateSymbol">Template</th>
 				<th>Reloadable</th>
 				<th></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody class="small-lines">
@@ -32,19 +33,20 @@
 				</td>
 				<td class="stateSymbol"><input type="checkbox" rel="tooltip-left" title="is reloadable" #if(${file.isReloadable()})checked#end disabled></td>
 				<td></td>
+				<td></td>
 			</tr>
 		</tbody>		
 		
 		#if(! ${file.getDependentServices().isEmpty()})
 		<thead>
 			<tr>
-				<th colspan="5">Restarts following services on change</th>
+				<th colspan="6">Restarts following services on change</th>
 			</tr>
 		</thead>
 		<tbody class="small-lines">
 			#foreach($dep in ${file.dependentServices})
 			<tr>
-				<td  colspan="4">$dep.name</td>
+				<td  colspan="5">$dep.name</td>
 				<td class="stateSymbol"><a type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" href="services#$dep.name" rel="tooltip-left" title="" data-original-title="Jump to service"></a></td>
 			</tr>
 			#end
@@ -54,6 +56,7 @@
 		<thead>
 			<tr>
 				<th colspan="5">Used by Templates</th>
+				<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${file.name}/templates/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add template"></button></th>
 			</tr>
 		</thead>
 		<tbody class="small-lines">
@@ -64,6 +67,9 @@
 				<tr>
 					<td  colspan="4">$template.name</td>
 					<td class="stateSymbol"><a type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" href="templates#$template.name" rel="tooltip-left" title="" data-original-title="Jump to template"></a></td>
+					<td class="stateSymbol">
+						<button class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="${template.name}/${file.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET"  rel="tooltip-left" title="Delete template"></button>
+					</td>
 				</tr>
 				#end
 			#end

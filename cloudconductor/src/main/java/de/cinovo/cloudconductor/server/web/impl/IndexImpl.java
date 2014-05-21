@@ -110,7 +110,6 @@ public class IndexImpl extends AWebPage implements IIndex {
 	@Override
 	@Transactional
 	public RenderedView view() {
-		System.out.println(DateTime.now().toDate().getTime());
 		List<EHost> hostList = this.dHost.findList();
 		List<ETemplate> templateList = this.dTemplate.findList();
 		CSViewModel view = this.createView();
