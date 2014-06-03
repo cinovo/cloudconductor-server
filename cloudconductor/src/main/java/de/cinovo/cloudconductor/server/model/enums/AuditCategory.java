@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.model;
+package de.cinovo.cloudconductor.server.model.enums;
 
 /*
  * #%L

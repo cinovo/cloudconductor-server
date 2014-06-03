@@ -88,6 +88,19 @@ footer {
 	margin-top:-2px;
  }
  
+ .tags-footer {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	background-color: #428bca;
+	color: #ffffff;
+	margin-top:-2px;
+	font-size: 12px;
+ }
+ 
+ .tags-footer>button {
+	margin-bottom:1px;
+ }
+ 
  .panel-heading {
 	padding:0;
 }

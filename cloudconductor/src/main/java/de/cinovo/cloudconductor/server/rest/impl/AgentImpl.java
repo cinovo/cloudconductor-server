@@ -60,8 +60,8 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
-import de.cinovo.cloudconductor.server.util.PackageCommand;
 import de.taimos.restutils.RESTAssert;
 
 /**

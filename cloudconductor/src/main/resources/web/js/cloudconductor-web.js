@@ -66,6 +66,7 @@ function ajaxCall(object, target) {
 	if(ref.substring(0, 4) == "/web") {
 		targetUrl=ref;
 	}
+	console.log($('form#'+form).serialize())
 	$.ajax({
         type: type,
         url: targetUrl,

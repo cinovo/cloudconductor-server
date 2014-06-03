@@ -61,6 +61,8 @@ public class EFile implements IEntity<Long>, INamed {
 	private List<EService> dependentServices;
 	private EFileData data;
 	
+	private List<EFileTag> tags;
+	
 	
 	@Override
 	@Id
@@ -237,6 +239,23 @@ public class EFile implements IEntity<Long>, INamed {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * @return the tags
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "taggedfiles", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "tagid"))
+	public List<EFileTag> getTags() {
+		return this.tags;
+	}
+	
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<EFileTag> tags) {
+		this.tags = tags;
 	}
 	
 	@Override

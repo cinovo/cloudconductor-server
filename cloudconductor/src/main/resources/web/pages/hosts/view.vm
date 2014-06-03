@@ -89,7 +89,7 @@
 						#end
 					</thead>
 					<tbody class="table-hover small-lines">
-						#if(${DIFFERENCES.get(${host.name})} || ${DIFFERENCES.get(${host.name}).isEmpty()})
+						#if(!${DIFFERENCES.get(${host.name})} || ${DIFFERENCES.get(${host.name}).isEmpty()})
 						<tr class="success">
 							<td colspan="2" align='center'>All Packages are in sync with the template</td>
 						</tr>

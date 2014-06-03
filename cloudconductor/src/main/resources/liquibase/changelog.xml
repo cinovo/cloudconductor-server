@@ -430,4 +430,26 @@
 		</addColumn>
 		<sql>UPDATE cloudconductor.serveroptions SET needsapproval=false WHERE name='Default'</sql>
 	</changeSet>
+	
+	<changeSet id="12" author="psigloch">
+		<createTable tableName="filetag" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="color" type="integer">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="taggedfiles" schemaName="cloudconductor">
+			<column name="fileid" type="bigint" autoIncrement="true">
+				<constraints references="cloudconductor.file(id)" foreignKeyName="fk_file_tag" deleteCascade="true" nullable="false" />
+			</column>
+			<column name="tagid" type="bigint" autoIncrement="true">
+				<constraints references="cloudconductor.filetag(id)" foreignKeyName="fk_tag_file" deleteCascade="true" nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

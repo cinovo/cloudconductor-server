@@ -19,8 +19,8 @@ package de.cinovo.cloudconductor.server.dao;
 
 import java.util.Collection;
 
-import de.cinovo.cloudconductor.server.model.AuditCategory;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.taimos.dao.IEntityDAO;
 
 /**

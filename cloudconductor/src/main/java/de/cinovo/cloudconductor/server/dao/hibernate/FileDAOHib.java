@@ -17,11 +17,15 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
+import de.cinovo.cloudconductor.server.model.EFileTag;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
@@ -52,6 +56,18 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 	@Override
 	public Long count() {
 		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EFile").getSingleResult();
+	}
+	
+	@Override
+	public List<EFile> findByTag(String... tagnames) {
+		String query = "FROM EFile f WHERE f.tags.name IN ?1";
+		return this.findListByQuery(query, Arrays.asList(tagnames));
+	}
+	
+	@Override
+	public List<EFile> findByTag(EFileTag... tags) {
+		String query = "FROM EFile f WHERE f.tags IN ?1";
+		return this.findListByQuery(query, Arrays.asList(tags));
 	}
 	
 }

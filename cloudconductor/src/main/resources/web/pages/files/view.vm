@@ -82,6 +82,18 @@
 		
 		</table>
 		</div>
+		
+		<div class="panel-footer tags-footer">
+			<strong>Tags:</strong>
+			#foreach($tag in ${file.tags})
+			<span class="label ${tag.type.getCSS()}">${tag.name}</span>
+			#end
+			<span class="label label-success">Success</span>
+			<span class="label label-info">Info</span>
+			<span class="label label-warning">Warning</span>
+			<span class="label label-danger">Danger</span>
+			<button class="btn btn-primary btn-xs glyphicon glyphicon glyphicon-tags" rel="tooltip" title="" data-original-title="manage tags"></button>
+		</div>
 	</div>
 </div>
 #end
