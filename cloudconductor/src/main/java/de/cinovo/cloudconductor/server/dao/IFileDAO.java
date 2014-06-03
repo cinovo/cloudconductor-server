@@ -44,8 +44,16 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	 */
 	public Long count();
 	
+	/**
+	 * @param tagnames the tag names
+	 * @return list of files with these tags
+	 */
 	public List<EFile> findByTag(String... tagnames);
 	
+	/**
+	 * @param tags the file tags
+	 * @return list of files with these tags
+	 */
 	public List<EFile> findByTag(EFileTag... tags);
 	
 }

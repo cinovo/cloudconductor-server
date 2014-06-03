@@ -17,7 +17,9 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -66,8 +68,15 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 	
 	@Override
 	public List<EFile> findByTag(EFileTag... tags) {
-		String query = "FROM EFile f WHERE f.tags IN ?1";
-		return this.findListByQuery(query, Arrays.asList(tags));
+		List<EFile> findList = this.findList();
+		List<EFile> result = new ArrayList<>();
+		List<EFileTag> taged = Arrays.asList(tags);
+		for (EFile f : findList) {
+			if (!Collections.disjoint(f.getTags(), taged)) {
+				result.add(f);
+			}
+		}
+		return result;
 	}
 	
 }
