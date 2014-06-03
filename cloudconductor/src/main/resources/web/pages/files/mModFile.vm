@@ -80,7 +80,7 @@
 			<div class="col-lg-12 formlist">
 				<div class="input-group #if($ERROR.hasError('file_content'))has-error #end">
 					<span class="input-group-addon">Content</span>
-					<textarea class="form-control" rows="20" name="file_content" >#if(${ERROR.getFormParams().get('file_content')})${ERROR.getFormParams().get('file_content')}#elseif(${FILE.data})${FILE.data.data}#end</textarea>
+					<textarea class="form-control" rows="20" name="file_content" >#if(${ERROR.getFormParams().get('file_content')})${ERROR.getFormParams().get('file_content')}#elseif(${FILEDATA})${FILEDATA}#end</textarea>
 				</div>
 			</div>
 			<div class="col-lg-12 formlist">

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,11 +130,11 @@ public class FilesImpl extends AWebPage implements IFiles {
 		this.sortNamedList(templates);
 		CSViewModel modal = this.createModal("mModFile");
 		modal.addModel("FILE", oldFile);
+		modal.addModel("FILEDATA", StringEscapeUtils.escapeHtml(oldFile.getData().getData()));
 		modal.addModel("PACKAGES", packages);
 		modal.addModel("SERVICES", services);
 		modal.addModel("TEMPLATES", templates);
 		return modal.render();
-		
 	}
 	
 	@Override
