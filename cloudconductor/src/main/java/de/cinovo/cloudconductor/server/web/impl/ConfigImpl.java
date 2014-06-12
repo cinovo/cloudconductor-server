@@ -54,13 +54,6 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		this.addBreadCrumb(IWebPath.WEBROOT + IConfig.ROOT, this.getNavElementName());
 		this.addTopAction(IWebPath.WEBROOT + IConfig.ROOT + IWebPath.ACTION_ADD, "Create new Key");
 		this.addTopAction(IWebPath.WEBROOT + IConfig.ROOT + IConfig.BATCH_ACTION, "Batch modify");
-		for (String template : this.dConfig.findTemplates()) {
-			if (template.equals(IConfig.RESERVED_GLOBAL)) {
-				this.addViewType(template, template, true);
-			} else {
-				this.addViewType(this.templateNormer(template), template, false);
-			}
-		}
 	}
 	
 	private String templateNormer(String template) {
@@ -75,6 +68,14 @@ public class ConfigImpl extends AWebPage implements IConfig {
 	@Override
 	@Transactional
 	public RenderedView view(String viewtype) {
+		this.clearViewType();
+		for (String template : this.dConfig.findTemplates()) {
+			if (template.equals(IConfig.RESERVED_GLOBAL)) {
+				this.addViewType(template, template, true);
+			} else {
+				this.addViewType(this.templateNormer(template), template, false);
+			}
+		}
 		String template = viewtype == null ? IConfig.RESERVED_GLOBAL : viewtype;
 		
 		List<EConfigValue> configs = this.dConfig.findAll(template);
@@ -240,7 +241,6 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		for (EConfigValue cv : found) {
 			this.dConfig.delete(cv);
 		}
-		this.removeViewType(template);
 		this.audit("Removed config for template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, IConfig.RESERVED_GLOBAL);
 	}

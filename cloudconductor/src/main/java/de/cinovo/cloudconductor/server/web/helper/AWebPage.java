@@ -27,7 +27,6 @@ import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.util.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.impl.IndexImpl;
-import de.cinovo.cloudconductor.server.web.interfaces.IConfig;
 import de.cinovo.cloudconductor.server.web.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
 
@@ -118,16 +117,8 @@ public abstract class AWebPage implements IContextAware {
 		}
 	}
 	
-	protected void removeViewType(String id) {
-		if (id.equals(IConfig.RESERVED_GLOBAL)) {
-			return;
-		}
-		for (ViewFilter f : this.viewType) {
-			if (f.getId().equals(id)) {
-				this.viewType.remove(f);
-				break;
-			}
-		}
+	protected void clearViewType() {
+		this.viewType.clear();
 	}
 	
 	protected List<ViewFilter> getCurrentFilter() {
@@ -161,15 +152,6 @@ public abstract class AWebPage implements IContextAware {
 	
 	protected void clearFilter() {
 		this.filter.clear();
-	}
-	
-	protected void removeFilter(String id) {
-		for (ViewFilter f : this.filter) {
-			if (f.getId().equals(id)) {
-				this.filter.remove(f);
-				break;
-			}
-		}
 	}
 	
 	protected CSViewModel createView(String viewname) {
