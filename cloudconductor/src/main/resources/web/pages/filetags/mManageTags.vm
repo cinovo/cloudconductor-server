@@ -31,7 +31,7 @@
 </div>
 
 <div class="modal-footer">
-	<button type="button" class="btn btn-info" data-ref="/web/tags/${FILE.id}/new" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Create new service</button>
+	<button type="button" class="btn btn-info" data-ref="/web/tags/${FILE.id}/new" data-call-type="GET" data-toggle="update-modal" data-target="#popModal">Create new tag</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
     #if(!${TAGS.isEmpty()})
    	<button type="button" class="btn btn-primary" data-ref="/web/tags/${FILE.id}" data-call-type="POST" data-toggle="update-modal" data-form="modTags">Apply</button>

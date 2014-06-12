@@ -94,20 +94,42 @@
 			#end
 			
 		#end
-		#if (! $FILTERS.isEmpty())
+		#if ($VIEWTYPE && ! $VIEWTYPE.isEmpty())
+			#set($currentGet = "?viewtype=$CURRENTVIEWTYPE")
 		<li>
 		<div class="btn-group btn-group-xs">
-			 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">$CURRENTFILTER <span class="caret"></span></button>
+			 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">$CURRENTVIEWTYPE <span class="caret"></span></button>
 			 <ul class="dropdown-menu">
-			 	#foreach($f in $FILTERS)
-			 	<li><a href="?filter=$f.id">${f.getName()}</a></li>
+			 	#foreach($f in $VIEWTYPE)
+			 	<li><a href="?viewtype=$f.id">${f.getName()}</a></li>
 			    #end
 			 </ul>
 		</div>
 		</li>
 		#end
+		#if ($FILTER && ! $FILTER.isEmpty())
+		<div class="pull-right">
+			#if(!$currentGet.startsWith("?"))
+			#set($currentGet = "?")
+			#end
+			#foreach($f in $ACTIVEFILTER)
+				#set($currentGet = "${currentGet}&filter=${f.id}") 
+				<span class="label label-primary">${f.getName()}<a class="btn btn-primary btn-xs glyphicon labelclose glyphicon-remove" href="?viewtype=$CURRENTVIEWTYPE#foreach($s in $ACTIVEFILTER)#if($s != $f)&filter=$s.id#end#end"></a></span>
+			#end
+			<div class="btn-group">
+			  	<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">Add filter <span class="caret"></span></button>
+			  	<ul class="dropdown-menu dropdown-menu-right" role="menu">
+				  	<li role="presentation" class="dropdown-header">Choose a filter</li>
+				  	#foreach($f in $FILTER)
+				  		#if(!$ACTIVEFILTER.contains($f))  
+				    		<li><a href="${currentGet}&filter=${f.id}">${f.getName()}</a></li>
+				    	#end
+				    #end
+				</ul>
+			</div>
+		</div>
+		#end
 		</ol>
-		
 	</div>
 </div>
 #end

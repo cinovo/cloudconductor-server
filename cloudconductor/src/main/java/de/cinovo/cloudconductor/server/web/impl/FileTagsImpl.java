@@ -94,7 +94,7 @@ public class FileTagsImpl extends AWebPage implements IFileTags {
 			file.setTags(tag);
 		}
 		this.dFiles.save(file);
-		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, this.getCurrentFilter());
+		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, this.getCurrentViewType());
 	}
 	
 	@Override

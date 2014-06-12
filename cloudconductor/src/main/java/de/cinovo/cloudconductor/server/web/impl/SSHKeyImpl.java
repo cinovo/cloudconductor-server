@@ -45,8 +45,8 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 		this.navRegistry.registerSubMenu(NavbarHardLinks.config, this.getNavElementName(), ISSHKey.ROOT);
 		this.addBreadCrumb(IWebPath.WEBROOT + ISSHKey.ROOT, this.getNavElementName());
 		this.addTopAction(IWebPath.WEBROOT + ISSHKey.ROOT + IWebPath.ACTION_ADD, "Create new Key");
-		this.addFilter("default", "Default", true);
-		this.addFilter("template", "by Template", false);
+		this.addViewType("default", "Default", true);
+		this.addViewType("template", "by Template", false);
 	}
 	
 	@Override
@@ -56,13 +56,13 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String filter) {
+	public RenderedView view(String viewtype) {
 		List<ESSHKey> keys = this.dSSH.findList();
 		List<ETemplate> templates = this.dTemplate.findList();
 		this.sortNamedList(keys);
 		
 		CSViewModel view;
-		if ((filter != null) && filter.equals("template")) {
+		if ((viewtype != null) && viewtype.equals("template")) {
 			view = this.createView("viewTemplate");
 			view.addModel("SIDEBARTYPE", null);
 		} else {

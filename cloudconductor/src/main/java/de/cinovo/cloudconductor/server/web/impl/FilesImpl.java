@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
+import de.cinovo.cloudconductor.server.dao.IFileTagsDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
+import de.cinovo.cloudconductor.server.model.EFileTag;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
@@ -53,6 +56,8 @@ public class FilesImpl extends AWebPage implements IFiles {
 	private IServiceDAO dService;
 	@Autowired
 	private IFileDataDAO dFileData;
+	@Autowired
+	private IFileTagsDAO dFileTags;
 	
 	
 	@Override
@@ -65,8 +70,8 @@ public class FilesImpl extends AWebPage implements IFiles {
 		this.navRegistry.registerSubMenu(NavbarHardLinks.config, this.getNavElementName(), IFiles.ROOT);
 		this.addBreadCrumb(IWebPath.WEBROOT + IFiles.ROOT, this.getNavElementName());
 		this.addTopAction(IWebPath.WEBROOT + IFiles.ROOT + IWebPath.ACTION_ADD, "Create new File");
-		this.addFilter("default", "Default", true);
-		this.addFilter("template", "by Template", false);
+		this.addViewType("default", "Default", true);
+		this.addViewType("template", "by Template", false);
 	}
 	
 	@Override
@@ -81,7 +86,50 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String filter) {
+	public RenderedView view(String viewtype, String[] filter) {
+		this.clearFilter();
+		if ((viewtype != null) && viewtype.equals(IFiles.TEMPLATE_FILTER)) {
+			return this.templateView();
+		}
+		return this.defaultView(filter);
+	}
+	
+	public RenderedView defaultView(String[] filter) {
+		for (EFileTag t : this.dFileTags.findList()) {
+			this.addFilter(String.valueOf(t.getId()), t.getName(), false);
+		}
+		List<EFileTag> tags = new ArrayList<>();
+		for (String f : filter) {
+			EFileTag tag = this.dFileTags.findById(Long.valueOf(f));
+			if (tag != null) {
+				tags.add(tag);
+			}
+		}
+		
+		List<EFile> daofiles = this.dFile.findList();
+		List<EFile> files = new ArrayList<>();
+		for (EFile f : daofiles) {
+			if (!tags.isEmpty()) {
+				if (!Collections.disjoint(f.getTags(), tags)) {
+					this.addSidebarElement(f.getName());
+					files.add(f);
+				}
+			} else {
+				this.addSidebarElement(f.getName());
+				files.add(f);
+			}
+		}
+		this.addSidebarElements(files);
+		List<ETemplate> templates = this.dTemplate.findList();
+		this.sortNamedList(files);
+		
+		CSViewModel view = this.createView();
+		view.addModel("FILES", files);
+		view.addModel("TEMPLATES", templates);
+		return view.render();
+	}
+	
+	public RenderedView templateView() {
 		List<EFile> files = this.dFile.findList();
 		for (EFile f : files) {
 			this.addSidebarElement(f.getName());
@@ -89,13 +137,10 @@ public class FilesImpl extends AWebPage implements IFiles {
 		this.addSidebarElements(files);
 		List<ETemplate> templates = this.dTemplate.findList();
 		this.sortNamedList(files);
+		
 		CSViewModel view;
-		if ((filter != null) && filter.equals(IFiles.TEMPLATE_FILTER)) {
-			view = this.createView("viewTemplate");
-			view.addModel("SIDEBARTYPE", null);
-		} else {
-			view = this.createView();
-		}
+		view = this.createView("viewTemplate");
+		view.addModel("SIDEBARTYPE", null);
 		view.addModel("FILES", files);
 		view.addModel("TEMPLATES", templates);
 		return view.render();
@@ -299,7 +344,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 			}
 		}
 		this.audit("Modified file " + cf.getName());
-		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, this.getCurrentFilter());
+		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, this.getCurrentViewType());
 	}
 	
 	@Override

@@ -50,7 +50,8 @@ public abstract class AWebPage implements IContextAware {
 	
 	private LinkedHashMap<String, String> topActions = new LinkedHashMap<>();
 	private LinkedHashMap<String, String> breadcrumbs = new LinkedHashMap<>();
-	private List<ViewFilter> filters = new ArrayList<>();
+	private List<ViewFilter> viewType = new ArrayList<>();
+	private List<ViewFilter> filter = new ArrayList<>();
 	private Set<String> sidebar = Sets.newTreeSet();
 	
 	protected MessageContext mc;
@@ -84,46 +85,88 @@ public abstract class AWebPage implements IContextAware {
 		return this.createView("view");
 	}
 	
-	protected String getCurrentFilter() {
-		if (this.filters.isEmpty()) {
+	protected String getCurrentViewType() {
+		if (this.viewType.isEmpty()) {
 			return null;
 		}
-		String f = this.mc.getUriInfo().getQueryParameters().getFirst("filter");
+		String f = this.mc.getUriInfo().getQueryParameters().getFirst("viewtype");
 		if (f != null) {
-			for (ViewFilter vf : this.filters) {
+			for (ViewFilter vf : this.viewType) {
 				if (vf.getId().equals(f)) {
 					return vf.getName();
 				}
 			}
 		}
-		for (ViewFilter vf : this.filters) {
+		for (ViewFilter vf : this.viewType) {
 			if (vf.isDefault()) {
 				return vf.getName();
 			}
 		}
-		return this.filters.iterator().next().getName();
+		return this.viewType.iterator().next().getName();
 	}
 	
-	protected void addFilter(String id, String name, boolean isDefault) {
+	protected void addViewType(String id, String name, boolean isDefault) {
 		boolean exists = false;
-		for (ViewFilter f : this.filters) {
+		for (ViewFilter f : this.viewType) {
 			if (f.getName().equals(name) && f.getId().equals(id)) {
 				exists = true;
 			}
 		}
 		if (!exists) {
-			this.filters.add(new ViewFilter(id, name, isDefault));
-			Collections.sort(this.filters);
+			this.viewType.add(new ViewFilter(id, name, isDefault));
+			Collections.sort(this.viewType);
 		}
 	}
 	
-	protected void removeFilter(String id) {
+	protected void removeViewType(String id) {
 		if (id.equals(IConfig.RESERVED_GLOBAL)) {
 			return;
 		}
-		for (ViewFilter f : this.filters) {
+		for (ViewFilter f : this.viewType) {
 			if (f.getId().equals(id)) {
-				this.filters.remove(f);
+				this.viewType.remove(f);
+				break;
+			}
+		}
+	}
+	
+	protected List<ViewFilter> getCurrentFilter() {
+		if (this.filter.isEmpty()) {
+			return null;
+		}
+		List<String> f = this.mc.getUriInfo().getQueryParameters().get("filter");
+		List<ViewFilter> result = new ArrayList<>();
+		if ((f != null) && !f.isEmpty()) {
+			for (ViewFilter vf : this.filter) {
+				if (f.contains(vf.getId())) {
+					result.add(vf);
+				}
+			}
+		}
+		return result;
+	}
+	
+	protected void addFilter(String id, String name, boolean isDefault) {
+		boolean exists = false;
+		for (ViewFilter f : this.filter) {
+			if (f.getName().equals(name) && f.getId().equals(id)) {
+				exists = true;
+			}
+		}
+		if (!exists) {
+			this.filter.add(new ViewFilter(id, name, isDefault));
+			Collections.sort(this.filter);
+		}
+	}
+	
+	protected void clearFilter() {
+		this.filter.clear();
+	}
+	
+	protected void removeFilter(String id) {
+		for (ViewFilter f : this.filter) {
+			if (f.getId().equals(id)) {
+				this.filter.remove(f);
 				break;
 			}
 		}
@@ -137,8 +180,10 @@ public abstract class AWebPage implements IContextAware {
 		view.addModel("NAVELEMENT", this.navRegistry);
 		view.addModel("CURRENTNAVELEMENT", this.getNavElementName());
 		view.addModel("TOPACTIONS", this.topActions.entrySet());
-		view.addModel("FILTERS", this.filters);
-		view.addModel("CURRENTFILTER", this.getCurrentFilter());
+		view.addModel("VIEWTYPE", this.viewType);
+		view.addModel("ACTIVEFILTER", this.getCurrentFilter());
+		view.addModel("FILTER", this.filter);
+		view.addModel("CURRENTVIEWTYPE", this.getCurrentViewType());
 		view.addModel(IndexImpl.AUTOREFRESH, this.mc.getHttpServletRequest().getSession().getAttribute(IndexImpl.AUTOREFRESH));
 		return view;
 	}

@@ -56,9 +56,9 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		this.addTopAction(IWebPath.WEBROOT + IConfig.ROOT + IConfig.BATCH_ACTION, "Batch modify");
 		for (String template : this.dConfig.findTemplates()) {
 			if (template.equals(IConfig.RESERVED_GLOBAL)) {
-				this.addFilter(template, template, true);
+				this.addViewType(template, template, true);
 			} else {
-				this.addFilter(this.templateNormer(template), template, false);
+				this.addViewType(this.templateNormer(template), template, false);
 			}
 		}
 	}
@@ -74,8 +74,8 @@ public class ConfigImpl extends AWebPage implements IConfig {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String filter) {
-		String template = filter == null ? IConfig.RESERVED_GLOBAL : filter;
+	public RenderedView view(String viewtype) {
+		String template = viewtype == null ? IConfig.RESERVED_GLOBAL : viewtype;
 		
 		List<EConfigValue> configs = this.dConfig.findAll(template);
 		Map<String, List<EConfigValue>> conf = new HashMap<String, List<EConfigValue>>();
@@ -219,7 +219,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		config.setConfigkey(key);
 		config.setValue(value);
 		this.dConfig.save(config);
-		this.addFilter(template, template, false);
+		this.addViewType(template, template, false);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, template);
 	}
 	
@@ -240,7 +240,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		for (EConfigValue cv : found) {
 			this.dConfig.delete(cv);
 		}
-		this.removeFilter(template);
+		this.removeViewType(template);
 		this.audit("Removed config for template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, IConfig.RESERVED_GLOBAL);
 	}

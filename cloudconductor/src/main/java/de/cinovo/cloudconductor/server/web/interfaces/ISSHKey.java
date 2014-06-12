@@ -61,13 +61,13 @@ public interface ISSHKey {
 	
 	
 	/**
-	 * @param filter the filter
+	 * @param viewtype the viewtype
 	 * @return the view
 	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view(@QueryParam("filter") String filter);
+	public abstract RenderedView view(@QueryParam("viewtype") String viewtype);
 	
 	/**
 	 * @return the modal content

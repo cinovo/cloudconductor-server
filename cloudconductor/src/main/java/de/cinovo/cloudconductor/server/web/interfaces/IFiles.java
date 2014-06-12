@@ -23,7 +23,7 @@ import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 @Path(IFiles.ROOT)
 public interface IFiles {
 	
-	/** a filter for template view */
+	/** a viewtype for template view */
 	public static final String TEMPLATE_FILTER = "template";
 	
 	/** the root */
@@ -44,13 +44,14 @@ public interface IFiles {
 	
 	
 	/**
+	 * @param viewtype the viewtype
 	 * @param filter the filter
 	 * @return the view
 	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView view(@QueryParam("filter") String filter);
+	public RenderedView view(@QueryParam("viewtype") String viewtype, @QueryParam("filter") String[] filter);
 	
 	/**
 	 * @return the modal content

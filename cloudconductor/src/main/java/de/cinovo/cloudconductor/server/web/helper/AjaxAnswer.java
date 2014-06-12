@@ -41,11 +41,11 @@ public class AjaxAnswer {
 	
 	/**
 	 * @param path the redirect path
-	 * @param filter the filter
+	 * @param viewType the viewType
 	 */
-	public AjaxAnswer(String path, String filter) {
+	public AjaxAnswer(String path, String viewType) {
 		this.type = AjaxAnswerType.REFRESH;
-		this.path = path + "?filter=" + filter;
+		this.path = path + "?viewtype=" + viewType;
 	}
 	
 	/**
@@ -59,12 +59,12 @@ public class AjaxAnswer {
 	
 	/**
 	 * @param path the redirect path
-	 * @param filter the filter
+	 * @param viewtype the viewtype
 	 * @param type {@link AjaxAnswerType}
 	 */
-	public AjaxAnswer(String path, String filter, AjaxAnswerType type) {
+	public AjaxAnswer(String path, String viewtype, AjaxAnswerType type) {
 		this.type = type;
-		this.path = path + "?filter=" + filter;
+		this.path = path + "?viewtype=" + viewtype;
 	}
 	
 	/**
