@@ -444,10 +444,10 @@
 			</column>
 		</createTable>
 		<createTable tableName="taggedfiles" schemaName="cloudconductor">
-			<column name="fileid" type="bigint" autoIncrement="true">
+			<column name="fileid" type="bigint">
 				<constraints references="cloudconductor.file(id)" foreignKeyName="fk_file_tag" deleteCascade="true" nullable="false" />
 			</column>
-			<column name="tagid" type="bigint" autoIncrement="true">
+			<column name="tagid" type="bigint">
 				<constraints references="cloudconductor.filetag(id)" foreignKeyName="fk_tag_file" deleteCascade="true" nullable="false" />
 			</column>
 		</createTable>
