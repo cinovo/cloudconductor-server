@@ -452,4 +452,49 @@
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet id="14" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="auditlog">
+			<column name="audittype" type="integer" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addColumn schemaName="cloudconductor" tableName="configvalues">
+			<column name="version" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="deleted" type="boolean" defaultValue="false"></column>
+			<column name="origid" type="bigint">
+				<constraints references="cloudconductor.configvalues(id)" foreignKeyName="fk_cv_versionized" deleteCascade="true"/>
+			</column>
+		</addColumn>
+		<sql>UPDATE cloudconductor.configvalues as c SET origid=c.id;</sql>
+	</changeSet>
+	<changeSet id="15" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="auditlog">
+			<column name="elementid" type="integer" />
+			<column name="origrev" type="integer" />
+			<column name="newrev" type="integer" />
+		</addColumn>
+		
+		<addColumn schemaName="cloudconductor" tableName="filedata">
+			<column name="version" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="deleted" type="boolean" defaultValue="false"></column>
+			<column name="origid" type="bigint">
+				<constraints references="cloudconductor.filedata(id)" foreignKeyName="fk_filedata_versionized" deleteCascade="true"/>
+			</column>
+		</addColumn>
+		<sql>UPDATE cloudconductor.filedata as f SET origid=f.id;</sql>
+		<addColumn schemaName="cloudconductor" tableName="file">
+			<column name="version" type="bigint" defaultValue="0">
+				<constraints nullable="false"/>
+			</column>
+			<column name="deleted" type="boolean" defaultValue="false"></column>
+			<column name="origid" type="bigint">
+				<constraints references="cloudconductor.file(id)" foreignKeyName="fk_file_versionized" deleteCascade="true"/>
+			</column>
+		</addColumn>
+		<sql>UPDATE cloudconductor.file as f SET origid=f.id;</sql>
+	</changeSet>	
 </databaseChangeLog>

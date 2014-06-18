@@ -20,9 +20,7 @@ package de.cinovo.cloudconductor.server.dao;
 import java.util.List;
 
 import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.EFileTag;
-import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,13 +29,7 @@ import de.taimos.dao.IEntityDAO;
  * @author psigloch
  * 
  */
-public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
-	
-	/**
-	 * @param configFileId the configFileId
-	 * @return the config data
-	 */
-	public EFileData findDataByFile(long configFileId);
+public interface IFileDAO extends IAuditedEntity<EFile, Long>, IFindNamed<EFile> {
 	
 	/**
 	 * @return the row count

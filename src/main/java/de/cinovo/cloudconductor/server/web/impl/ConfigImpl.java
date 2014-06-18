@@ -229,8 +229,8 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		RESTAssert.assertNotEmpty(id);
 		EConfigValue config = this.dConfig.findById(Long.valueOf(id));
 		RESTAssert.assertNotNull(config);
-		this.dConfig.delete(config);
-		this.audit("Removed config " + config.getConfigkey() + " from template " + config.getTemplate() + " and service " + config.getService());
+		String auditMessage = "Removed config " + config.getConfigkey() + " from template " + config.getTemplate() + " and service " + config.getService();
+		this.dConfig.delete(config, auditMessage);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, config.getTemplate());
 	}
 	
@@ -239,9 +239,8 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		RESTAssert.assertNotEmpty(template);
 		List<EConfigValue> found = this.dConfig.findAll(template);
 		for (EConfigValue cv : found) {
-			this.dConfig.delete(cv);
+			this.dConfig.delete(cv, "Removed template " + template);
 		}
-		this.audit("Removed config for template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, IConfig.RESERVED_GLOBAL);
 	}
 	
@@ -251,9 +250,8 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		RESTAssert.assertNotEmpty(service);
 		List<EConfigValue> found = this.dConfig.findBy(template, service);
 		for (EConfigValue cv : found) {
-			this.dConfig.delete(cv);
+			this.dConfig.delete(cv, "Removed service " + service + " of template " + template);
 		}
-		this.audit("Removed config for service " + service + " of template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT);
 	}
 	

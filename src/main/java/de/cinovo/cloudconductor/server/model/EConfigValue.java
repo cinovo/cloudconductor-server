@@ -34,7 +34,7 @@ import de.taimos.dao.IEntity;
  */
 @Entity
 @Table(name = "configvalues", schema = "cloudconductor")
-public class EConfigValue implements IEntity<Long> {
+public class EConfigValue implements IVersionized<Long> {
 	
 	/**	 */
 	private static final long serialVersionUID = 1L;
@@ -43,6 +43,9 @@ public class EConfigValue implements IEntity<Long> {
 	private String service;
 	private String configkey;
 	private String value;
+	private Long version;
+	private boolean deleted = false;
+	private Long origId;
 	
 	
 	@Override
@@ -55,8 +58,22 @@ public class EConfigValue implements IEntity<Long> {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	@Override
+	public Long getVersion() {
+		return this.version;
+	}
+	
+	/**
+	 * @param version the version to set
+	 */
+	@Override
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	
 	/**
@@ -113,6 +130,42 @@ public class EConfigValue implements IEntity<Long> {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	@Override
+	public boolean isDeleted() {
+		return this.deleted;
+	}
+	
+	/**
+	 * @param deleted the deleted to set
+	 */
+	@Override
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	@Override
+	public void setOrigId(Long id) {
+		this.origId = id;
+	}
+	
+	@Override
+	public Long getOrigId() {
+		return this.origId;
+	}
+	
+	@Override
+	public IEntity<Long> cloneNew() {
+		EConfigValue r = new EConfigValue();
+		r.setConfigkey(this.configkey);
+		r.setDeleted(this.deleted);
+		r.setOrigId(this.origId);
+		r.setService(this.service);
+		r.setTemplate(this.template);
+		r.setValue(this.value);
+		r.setVersion(this.version);
+		return r;
 	}
 	
 }

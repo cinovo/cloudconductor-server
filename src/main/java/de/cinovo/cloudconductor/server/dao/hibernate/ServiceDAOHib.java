@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -35,7 +35,7 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * 
  */
 @Repository("ServiceDAOHib")
-public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements IServiceDAO {
+public class ServiceDAOHib extends AAuditedEntityHib<EService, Long> implements IServiceDAO {
 	
 	@Override
 	public Class<EService> getEntityClass() {
@@ -66,6 +66,11 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	@Override
 	public Long count() {
 		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EService").getSingleResult();
+	}
+	
+	@Override
+	protected AuditCategory getAuditCategory() {
+		return AuditCategory.SERVICE;
 	}
 	
 }

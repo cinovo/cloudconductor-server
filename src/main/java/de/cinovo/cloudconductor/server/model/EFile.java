@@ -30,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.cinovo.cloudconductor.api.model.INamed;
@@ -45,7 +44,7 @@ import de.taimos.dao.IEntity;
  */
 @Entity
 @Table(name = "file", schema = "cloudconductor")
-public class EFile implements IEntity<Long>, INamed {
+public class EFile implements IVersionized<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -59,9 +58,12 @@ public class EFile implements IEntity<Long>, INamed {
 	private boolean isReloadable;
 	private String checksum;
 	private List<EService> dependentServices;
-	private EFileData data;
 	
 	private List<EFileTag> tags;
+	
+	private Long version;
+	private boolean deleted = false;
+	private Long origId;
 	
 	
 	@Override
@@ -74,7 +76,8 @@ public class EFile implements IEntity<Long>, INamed {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
 	}
 	
@@ -211,21 +214,6 @@ public class EFile implements IEntity<Long>, INamed {
 	}
 	
 	/**
-	 * @return the data
-	 */
-	@OneToOne(optional = true, fetch = FetchType.LAZY, mappedBy = "parent", cascade = {CascadeType.ALL})
-	public EFileData getData() {
-		return this.data;
-	}
-	
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(EFileData data) {
-		this.data = data;
-	}
-	
-	/**
 	 * @return the name
 	 */
 	@Override
@@ -259,6 +247,42 @@ public class EFile implements IEntity<Long>, INamed {
 	}
 	
 	@Override
+	public boolean isDeleted() {
+		return this.deleted;
+	}
+	
+	/**
+	 * @param deleted the deleted to set
+	 */
+	@Override
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	@Override
+	public void setOrigId(Long id) {
+		this.origId = id;
+	}
+	
+	@Override
+	public Long getOrigId() {
+		return this.origId;
+	}
+	
+	@Override
+	public Long getVersion() {
+		return this.version;
+	}
+	
+	/**
+	 * @param version the version to set
+	 */
+	@Override
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof EFile)) {
 			return false;
@@ -274,4 +298,25 @@ public class EFile implements IEntity<Long>, INamed {
 	public int hashCode() {
 		return (this.getName() == null) ? 0 : this.getName().hashCode();
 	}
+	
+	@Override
+	public IEntity<Long> cloneNew() {
+		EFile r = new EFile();
+		r.setChecksum(this.checksum);
+		r.setDeleted(this.deleted);
+		r.setDependentServices(this.dependentServices);
+		r.setFileMode(this.fileMode);
+		r.setGroup(this.group);
+		r.setName(this.name);
+		r.setOrigId(this.origId);
+		r.setOwner(this.owner);
+		r.setPkg(this.pkg);
+		r.setReloadable(this.isReloadable);
+		r.setTags(this.tags);
+		r.setTargetPath(this.targetPath);
+		r.setTemplate(this.isTemplate);
+		r.setVersion(this.version);
+		return r;
+	}
+	
 }

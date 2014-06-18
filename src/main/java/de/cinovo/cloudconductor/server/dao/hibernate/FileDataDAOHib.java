@@ -20,8 +20,9 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
+import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,11 +32,21 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * 
  */
 @Repository("FileDataDAOHib")
-public class FileDataDAOHib extends EntityDAOHibernate<EFileData, Long> implements IFileDataDAO {
+public class FileDataDAOHib extends AVersionedEntityHib<EFileData> implements IFileDataDAO {
 	
 	@Override
 	public Class<EFileData> getEntityClass() {
 		return EFileData.class;
 	}
 	
+	@Override
+	protected AuditCategory getAuditCategory() {
+		return AuditCategory.FILE_DATA;
+	}
+	
+	@Override
+	public EFileData findDataByFile(EFile file) {
+		String query = "FROM EFileData f WHERE f.parent.id = ?1";
+		return this.findByQuery(this.getVersionizedQuerry(query, "f"), file.getId());
+	}
 }

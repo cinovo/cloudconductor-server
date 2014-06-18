@@ -94,7 +94,8 @@ public class FilesImpl extends AWebPage implements IFiles {
 		return this.defaultView(filter);
 	}
 	
-	public RenderedView defaultView(String[] filter) {
+	@Transactional
+	private RenderedView defaultView(String[] filter) {
 		for (EFileTag t : this.dFileTags.findList()) {
 			this.addFilter(String.valueOf(t.getId()), t.getName(), false);
 		}
@@ -122,14 +123,14 @@ public class FilesImpl extends AWebPage implements IFiles {
 		this.addSidebarElements(files);
 		List<ETemplate> templates = this.dTemplate.findList();
 		this.sortNamedList(files);
-		
 		CSViewModel view = this.createView();
 		view.addModel("FILES", files);
 		view.addModel("TEMPLATES", templates);
 		return view.render();
 	}
 	
-	public RenderedView templateView() {
+	@Transactional
+	private RenderedView templateView() {
 		List<EFile> files = this.dFile.findList();
 		for (EFile f : files) {
 			this.addSidebarElement(f.getName());
@@ -167,6 +168,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	public RenderedView editFileView(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile oldFile = this.dFile.findByName(name);
+		EFileData fileData = this.dFileData.findDataByFile(oldFile);
 		List<EPackage> packages = this.dPackage.findList();
 		List<EService> services = this.dService.findList();
 		this.sortNamedList(services);
@@ -175,7 +177,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 		this.sortNamedList(templates);
 		CSViewModel modal = this.createModal("mModFile");
 		modal.addModel("FILE", oldFile);
-		modal.addModel("FILEDATA", StringEscapeUtils.escapeHtml(oldFile.getData().getData()));
+		modal.addModel("FILEDATA", StringEscapeUtils.escapeHtml(fileData.getData()));
 		modal.addModel("PACKAGES", packages);
 		modal.addModel("SERVICES", services);
 		modal.addModel("TEMPLATES", templates);
@@ -304,16 +306,6 @@ public class FilesImpl extends AWebPage implements IFiles {
 			cf.setReloadable(false);
 			cf.getDependentServices().clear();
 		}
-		cf = this.dFile.save(cf);
-		EFileData data = cf.getData();
-		if (data == null) {
-			data = new EFileData();
-			data.setParent(cf);
-		}
-		data.setData(content);
-		data = this.dFileData.save(data);
-		cf.setData(data);
-		
 		try {
 			byte[] array = MessageDigest.getInstance("MD5").digest(content.getBytes("UTF-8"));
 			StringBuilder sb = new StringBuilder();
@@ -326,6 +318,14 @@ public class FilesImpl extends AWebPage implements IFiles {
 		}
 		
 		cf = this.dFile.save(cf);
+		
+		EFileData data = this.dFileData.findDataByFile(cf);
+		if (data == null) {
+			data = new EFileData();
+			data.setParent(cf);
+		}
+		data.setData(content);
+		data = this.dFileData.save(data);
 		
 		List<ETemplate> notfound = this.dTemplate.findList();
 		for (String template : templates) {
@@ -343,7 +343,6 @@ public class FilesImpl extends AWebPage implements IFiles {
 				this.dTemplate.save(template);
 			}
 		}
-		this.audit("Modified file " + cf.getName());
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, this.getCurrentViewType());
 	}
 	
@@ -355,9 +354,10 @@ public class FilesImpl extends AWebPage implements IFiles {
 		if (cf == null) {
 			return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT);
 		}
+		EFileData data = this.dFileData.findDataByFile(cf);
 		this.dFile.delete(cf);
+		this.dFileData.delete(data);
 		this.removeSidebarElement(name);
-		this.audit("Deleted file " + name);
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT);
 	}
 	
@@ -373,7 +373,6 @@ public class FilesImpl extends AWebPage implements IFiles {
 			this.dTemplate.save(t);
 		}
 		// Fill template with models and return.
-		this.audit("Removed file " + name + " from template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, IFiles.TEMPLATE_FILTER + "#" + template);
 	}
 	
@@ -387,7 +386,6 @@ public class FilesImpl extends AWebPage implements IFiles {
 			t.getConfigFiles().add(f);
 			this.dTemplate.save(t);
 		}
-		this.audit("Added files " + this.auditFormat(name) + " to template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, IFiles.TEMPLATE_FILTER + "#" + template);
 	}
 	
@@ -401,7 +399,6 @@ public class FilesImpl extends AWebPage implements IFiles {
 			t.getConfigFiles().add(f);
 			this.dTemplate.save(t);
 		}
-		this.audit("Added templates " + this.auditFormat(template) + " to file " + name);
 		return new AjaxAnswer(IWebPath.WEBROOT + IFiles.ROOT, IFiles.TEMPLATE_FILTER + "#" + template);
 	}
 	

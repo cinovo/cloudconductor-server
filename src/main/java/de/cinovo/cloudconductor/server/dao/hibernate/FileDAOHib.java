@@ -26,9 +26,8 @@ import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.EFileTag;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -38,7 +37,7 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * 
  */
 @Repository("FileDAOHib")
-public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFileDAO {
+public class FileDAOHib extends AVersionedEntityHib<EFile> implements IFileDAO {
 	
 	@Override
 	public Class<EFile> getEntityClass() {
@@ -46,24 +45,19 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 	}
 	
 	@Override
-	public EFileData findDataByFile(long configFileId) {
-		return this.findById(configFileId).getData();
-	}
-	
-	@Override
 	public EFile findByName(String name) {
-		return this.findByQuery("FROM EFile c WHERE c.name = ?1", name);
+		return this.findVersionedByQuery("FROM EFile c WHERE c.name = ?1", "c", name);
 	}
 	
 	@Override
 	public Long count() {
-		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EFile").getSingleResult();
+		return (Long) this.entityManager.createQuery(this.getVersionizedQuerry("SELECT COUNT(*) FROM EFile", "f")).getSingleResult();
 	}
 	
 	@Override
 	public List<EFile> findByTag(String... tagnames) {
 		String query = "FROM EFile f WHERE f.tags.name IN ?1";
-		return this.findListByQuery(query, Arrays.asList(tagnames));
+		return this.findVersionedListByQuery(query, "f", Arrays.asList(tagnames));
 	}
 	
 	@Override
@@ -77,6 +71,11 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 			}
 		}
 		return result;
+	}
+	
+	@Override
+	protected AuditCategory getAuditCategory() {
+		return AuditCategory.FILE;
 	}
 	
 }

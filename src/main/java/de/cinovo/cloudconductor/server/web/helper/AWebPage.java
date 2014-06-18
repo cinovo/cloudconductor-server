@@ -12,17 +12,13 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.server.comparators.INamedComparator;
-import de.cinovo.cloudconductor.server.dao.IAuditLogDAO;
 import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
-import de.cinovo.cloudconductor.server.model.EAuditLog;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.util.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
@@ -42,8 +38,6 @@ public abstract class AWebPage implements IContextAware {
 	@Autowired
 	protected NavbarRegistry navRegistry;
 	
-	@Autowired
-	private IAuditLogDAO dAudit;
 	@Autowired
 	protected IServerOptionsDAO dServerOptions;
 	
@@ -70,14 +64,6 @@ public abstract class AWebPage implements IContextAware {
 	
 	protected SidebarType getSidebarType() {
 		return SidebarType.SIMPLE;
-	}
-	
-	protected String getUser() {
-		return this.mc.getSecurityContext().getUserPrincipal().getName();
-	}
-	
-	protected AuditCategory getAuditCategory() {
-		return AuditCategory.UNDEFINED;
 	}
 	
 	protected CSViewModel createView() {
@@ -270,18 +256,6 @@ public abstract class AWebPage implements IContextAware {
 			return anError;
 		}
 		return error;
-	}
-	
-	/**
-	 * @param entry the entry
-	 */
-	protected void audit(String entry) {
-		EAuditLog log = new EAuditLog();
-		log.setTimestamp(DateTime.now().getMillis());
-		log.setUsername(this.getUser());
-		log.setCategory(this.getAuditCategory());
-		log.setEntry(entry);
-		this.dAudit.save(log);
 	}
 	
 	protected String auditFormat(String[] str) {

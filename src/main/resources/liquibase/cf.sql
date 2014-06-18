@@ -26,24 +26,24 @@ INSERT INTO cloudconductor.package VALUES (4, 'jdk', 'Auto-generated from reposi
 INSERT INTO cloudconductor.package VALUES (5, 'postgresql92-server', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
 INSERT INTO cloudconductor.package VALUES (6, 'nodejs', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
 
-INSERT INTO cloudconductor.auditlog VALUES (1, 1385544948453, 'Admin', 'Added template dev', 1);
-INSERT INTO cloudconductor.auditlog VALUES (2, 1390125583142, 'Admin', 'Added service service1', 6);
-INSERT INTO cloudconductor.auditlog VALUES (3, 1390125802050, 'Admin', 'Modified file file1', 5);
-INSERT INTO cloudconductor.auditlog VALUES (4, 1390125817657, 'Admin', 'Modified key null', 3);
+INSERT INTO cloudconductor.auditlog VALUES (1, 1385544948453, 'Admin', 'Added template dev', 1, 0, null, null, null);
+INSERT INTO cloudconductor.auditlog VALUES (2, 1390125583142, 'Admin', 'Added service service1', 6, 0, null, null, null);
+INSERT INTO cloudconductor.auditlog VALUES (3, 1390125802050, 'Admin', 'Modified file file1', 5, 0, null, null, null);
+INSERT INTO cloudconductor.auditlog VALUES (4, 1390125817657, 'Admin', 'Modified key null', 3, 0, null, null, null);
 
-INSERT INTO cloudconductor.configvalues VALUES (4, 'GLOBAL', '', 'cloudconductor.username', 'admin');
-INSERT INTO cloudconductor.configvalues VALUES (14, 'GLOBAL', '', 'syslog.host', 'localhost');
-INSERT INTO cloudconductor.configvalues VALUES (17, 'GLOBAL', '', 'syslog.port', '514');
-INSERT INTO cloudconductor.configvalues VALUES (18, 'GLOBAL', '', 'syslog.level', 'INFO');
-INSERT INTO cloudconductor.configvalues VALUES (26, 'GLOBAL', '', 'syslog.facility', 'LOCAL1');
-INSERT INTO cloudconductor.configvalues VALUES (19, 'GLOBAL', NULL, 'logger.loggly', 'false');
-INSERT INTO cloudconductor.configvalues VALUES (13, 'GLOBAL', NULL, 'cloudconductor.password', 'password');
-INSERT INTO cloudconductor.configvalues VALUES (67, 'GLOBAL', 'service1', 'logger.loggly', 'true');
-INSERT INTO cloudconductor.configvalues VALUES (68, 'GLOBAL', 'service1', 'loggly.tags', 'foo');
+INSERT INTO cloudconductor.configvalues VALUES (4, 'GLOBAL', '', 'cloudconductor.username', 'admin', 0, false, 4);
+INSERT INTO cloudconductor.configvalues VALUES (14, 'GLOBAL', '', 'syslog.host', 'localhost', 0, false, 14);
+INSERT INTO cloudconductor.configvalues VALUES (17, 'GLOBAL', '', 'syslog.port', '514', 0, false, 17);
+INSERT INTO cloudconductor.configvalues VALUES (18, 'GLOBAL', '', 'syslog.level', 'INFO', 0, false, 18);
+INSERT INTO cloudconductor.configvalues VALUES (26, 'GLOBAL', '', 'syslog.facility', 'LOCAL1', 0, false, 26);
+INSERT INTO cloudconductor.configvalues VALUES (19, 'GLOBAL', NULL, 'logger.loggly', 'false', 0, false, 19);
+INSERT INTO cloudconductor.configvalues VALUES (13, 'GLOBAL', NULL, 'cloudconductor.password', 'password', 0, false, 13);
+INSERT INTO cloudconductor.configvalues VALUES (67, 'GLOBAL', 'service1', 'logger.loggly', 'true', 0, false, 67);
+INSERT INTO cloudconductor.configvalues VALUES (68, 'GLOBAL', 'service1', 'loggly.tags', 'foo', 0, false, 68);
 
-INSERT INTO cloudconductor.file VALUES (1, 'file1', '/root/foo', 'root', 'root', '755', false, false, '59cc417c3e8e463d2d2bdac8743ac04c', NULL);
+INSERT INTO cloudconductor.file VALUES (1, 'file1', '/root/foo', 'root', 'root', '755', false, false, '59cc417c3e8e463d2d2bdac8743ac04c', NULL, 0, false, 1);
 
-INSERT INTO cloudconductor.filedata VALUES (1, 1, 'Testfile for root');
+INSERT INTO cloudconductor.filedata VALUES (1, 1, 'Testfile for root',0, false, 1);
 
 INSERT INTO cloudconductor.mappingfiletemplate VALUES (1, 1, 1);
 

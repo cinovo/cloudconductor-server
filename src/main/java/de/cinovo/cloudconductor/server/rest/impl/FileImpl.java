@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import de.cinovo.cloudconductor.api.interfaces.IFile;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
+import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
@@ -57,6 +58,8 @@ public class FileImpl extends ImplHelper implements IFile {
 	private IServiceDAO dservice;
 	@Autowired
 	private AMConverter amc;
+	@Autowired
+	private IFileDataDAO dcfd;
 	
 	
 	@Override
@@ -105,7 +108,8 @@ public class FileImpl extends ImplHelper implements IFile {
 	public String getData(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile model = this.findByName(this.dcf, name);
-		return model.getData().getData();
+		EFileData data = this.dcfd.findDataByFile(model);
+		return data.getData();
 	}
 	
 	@Override
@@ -114,12 +118,6 @@ public class FileImpl extends ImplHelper implements IFile {
 		RESTAssert.assertNotEmpty(name);
 		RESTAssert.assertNotEmpty(data);
 		EFile model = this.findByName(this.dcf, name);
-		if (model.getData() == null) {
-			EFileData edata = new EFileData();
-			edata.setParent(model);
-			model.setData(edata);
-		}
-		model.getData().setData(data);
 		try {
 			byte[] array = MessageDigest.getInstance("MD5").digest(data.getBytes("UTF-8"));
 			StringBuilder sb = new StringBuilder();
@@ -130,7 +128,14 @@ public class FileImpl extends ImplHelper implements IFile {
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			// should never happen, if it does-> leave checksum empty
 		}
-		this.dcf.save(model);
+		model = this.dcf.save(model);
+		EFileData edata = this.dcfd.findDataByFile(model);
+		if (edata == null) {
+			edata = new EFileData();
+		}
+		edata.setData(data);
+		edata.setParent(model);
+		this.dcfd.save(edata);
 	}
 	
 	@Override

@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.server.dao;
 import java.util.List;
 
 import de.cinovo.cloudconductor.server.model.EConfigValue;
-import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -29,7 +28,7 @@ import de.taimos.dao.IEntityDAO;
  * @author psigloch
  * 
  */
-public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
+public interface IConfigValueDAO extends IAuditedEntity<EConfigValue, Long> {
 	
 	/**
 	 * @return the global configuration
