@@ -1,0 +1,81 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:cxf="http://cxf.apache.org/core" xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<import resource="classpath:spring/hazelcast.xml" />
+
+
+	<bean id="ccHazelcastConfig" parent="defaultHazelcastConfig">
+<!-- 		<property name="mapConfigs"> -->
+<!-- 			<map> -->
+<!-- 				<entry key="apiClients"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="readBackupData" value="true" /> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 				<entry key="instrumentTypes"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="readBackupData" value="true" /> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 				<entry key="accessTokens"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="readBackupData" value="true" /> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 				<entry key="userSession"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="readBackupData" value="true" /> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 				<entry key="priceCache"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="evictionPolicy" value="LRU" /> -->
+<!-- 						<property name="maxSizeConfig"> -->
+<!-- 							<bean class="com.hazelcast.config.MaxSizeConfig"> -->
+<!-- 								<property name="size" value="500" /> -->
+<!-- 							</bean> -->
+<!-- 						</property> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 				<entry key="yieldCache"> -->
+<!-- 					<bean class="com.hazelcast.config.MapConfig"> -->
+<!-- 						<property name="evictionPolicy" value="LRU" /> -->
+<!-- 						<property name="maxSizeConfig"> -->
+<!-- 							<bean class="com.hazelcast.config.MaxSizeConfig"> -->
+<!-- 								<property name="size" value="500" /> -->
+<!-- 							</bean> -->
+<!-- 						</property> -->
+<!-- 					</bean> -->
+<!-- 				</entry> -->
+<!-- 			</map> -->
+<!-- 		</property> -->
+	</bean>
+
+	<!-- Hazelcast instance; override if necessary -->
+	<bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+		<constructor-arg ref="ccHazelcastConfig" />
+	</bean>
+
+<!-- 	<bean id="clusterTopic" factory-bean="hazelcast" factory-method="getTopic"> -->
+<!-- 		<constructor-arg value="crest.cluster" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="apiClients" factory-bean="hazelcast" factory-method="getMap"> -->
+<!-- 		<constructor-arg value="apiClients" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="priceCache" factory-bean="hazelcast" factory-method="getMap"> -->
+<!-- 		<constructor-arg value="priceCache" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="yieldCache" factory-bean="hazelcast" factory-method="getMap"> -->
+<!-- 		<constructor-arg value="yieldCache" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="userSession" factory-bean="hazelcast" factory-method="getMap"> -->
+<!-- 		<constructor-arg value="userSession" /> -->
+<!-- 	</bean> -->
+
+</beans>
