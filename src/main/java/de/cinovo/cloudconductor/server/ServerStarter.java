@@ -25,6 +25,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
+import de.cinovo.cloudconductor.client.ICCClientConstants;
+import de.cinovo.cloudconductor.server.util.AdditionalJavaPropsStore;
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
@@ -52,6 +54,10 @@ public class ServerStarter extends SpringDaemonAdapter {
 	/** scheduler service */
 	public static final ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
 	
+	/** some cloud conductor properties */
+	private static final String CLOUDCONDUCTOR_URL = "cloudconductor.url";
+	private static final String HAZELCAST_MEMBERS = "hazelcast.members";
+	
 	private static final int CLEANUP_TIMER = 30;
 	
 	
@@ -66,6 +72,9 @@ public class ServerStarter extends SpringDaemonAdapter {
 	
 	@Override
 	protected void doBeforeSpringStart() {
+		// adding hazelcast properties to the client properties
+		AdditionalJavaPropsStore.addProperty(ICCClientConstants.HZ_GROUP_NAME, DaemonStarter.getDaemonProperties().getProperty(ServerStarter.CLOUDCONDUCTOR_URL));
+		AdditionalJavaPropsStore.addProperty(ICCClientConstants.HZ_HOST, DaemonStarter.getDaemonProperties().getProperty(ServerStarter.HAZELCAST_MEMBERS));
 		// In dev mode all classes related to the config server should log on the level DEBUG.
 		if (DaemonStarter.isDevelopmentMode()) {
 			Logger.getLogger("de.cinovo.cloudconductor.server").setLevel(Level.DEBUG);
