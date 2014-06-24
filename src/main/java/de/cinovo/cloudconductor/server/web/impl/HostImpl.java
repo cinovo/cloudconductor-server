@@ -150,7 +150,6 @@ public class HostImpl extends AWebPage implements IHost {
 		if ((host != null)) {
 			this.dHost.delete(host);
 		}
-		this.audit("Manually deleted host " + hname);
 		return new AjaxAnswer(IWebPath.WEBROOT + IHost.ROOT);
 	}
 	

@@ -22,7 +22,6 @@ import java.util.Set;
 
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
-import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,7 +30,7 @@ import de.taimos.dao.IEntityDAO;
  * @author psigloch
  * 
  */
-public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<EService> {
+public interface IServiceDAO extends IAuditedEntity<EService, Long>, IFindNamed<EService> {
 	
 	/**
 	 * @param names list of names

@@ -188,7 +188,6 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 				this.dTemplate.save(template);
 			}
 		}
-		this.audit("Modified key " + owner);
 		return new AjaxAnswer(IWebPath.WEBROOT + ISSHKey.ROOT);
 	}
 	
@@ -203,7 +202,6 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 			t.getSshkeys().add(key);
 			this.dTemplate.save(t);
 		}
-		this.audit("Added templates " + this.auditFormat(templates) + " to key " + owner);
 		return new AjaxAnswer(IWebPath.WEBROOT + ISSHKey.ROOT, "default");
 	}
 	
@@ -217,7 +215,6 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 			t.getSshkeys().add(ssh);
 			this.dTemplate.save(t);
 		}
-		this.audit("Added keys " + this.auditFormat(keys) + " to template " + template);
 		return new AjaxAnswer(IWebPath.WEBROOT + ISSHKey.ROOT, "template");
 	}
 	
@@ -240,7 +237,6 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		this.dSSH.delete(key);
-		this.audit("Deleted key " + owner);
 		return new AjaxAnswer(IWebPath.WEBROOT + ISSHKey.ROOT);
 	}
 	

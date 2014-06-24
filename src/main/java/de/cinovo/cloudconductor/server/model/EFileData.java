@@ -37,13 +37,17 @@ import de.taimos.dao.IEntity;
  */
 @Entity
 @Table(name = "filedata", schema = "cloudconductor")
-public class EFileData implements IEntity<Long> {
+public class EFileData implements IVersionized<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
 	private EFile parent;
 	private String data;
+	
+	private Long version;
+	private boolean deleted = false;
+	private Long origId;
 	
 	
 	@Override
@@ -56,7 +60,8 @@ public class EFileData implements IEntity<Long> {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
 	}
 	
@@ -90,4 +95,50 @@ public class EFileData implements IEntity<Long> {
 		this.data = data;
 	}
 	
+	@Override
+	public boolean isDeleted() {
+		return this.deleted;
+	}
+	
+	/**
+	 * @param deleted the deleted to set
+	 */
+	@Override
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	@Override
+	public void setOrigId(Long id) {
+		this.origId = id;
+	}
+	
+	@Override
+	public Long getOrigId() {
+		return this.origId;
+	}
+	
+	@Override
+	public Long getVersion() {
+		return this.version;
+	}
+	
+	/**
+	 * @param version the version to set
+	 */
+	@Override
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+	
+	@Override
+	public IEntity<Long> cloneNew() {
+		EFileData r = new EFileData();
+		r.setData(this.data);
+		r.setDeleted(this.deleted);
+		r.setOrigId(this.origId);
+		r.setParent(this.parent);
+		r.setVersion(this.version);
+		return r;
+	}
 }

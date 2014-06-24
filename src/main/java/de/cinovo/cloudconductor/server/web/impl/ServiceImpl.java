@@ -131,7 +131,6 @@ public class ServiceImpl extends AWebPage implements IServices {
 		RESTAssert.assertNotEmpty(service);
 		EService svc = this.dService.findByName(service);
 		this.dService.delete(svc);
-		this.audit("Deleted service " + service);
 		return new AjaxAnswer(IWebPath.WEBROOT + IServices.ROOT);
 	}
 	
@@ -140,8 +139,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 		EPackage pkgVersion = this.dPackage.findByName(pkg);
 		EService svc = this.dService.findByName(service);
 		svc.getPackages().remove(pkgVersion);
-		this.dService.save(svc);
-		this.audit("Removed package " + pkg + " from service " + svc.getName());
+		this.dService.save(svc, "Removed package " + pkg + " from service " + svc.getName());
 		return new AjaxAnswer(IWebPath.WEBROOT + IServices.ROOT);
 	}
 	
@@ -159,7 +157,6 @@ public class ServiceImpl extends AWebPage implements IServices {
 				this.dService.save(svc);
 			}
 		}
-		this.audit("Added packages " + this.auditFormat(pkgs) + " to service " + service);
 		return new AjaxAnswer(IWebPath.WEBROOT + IServices.ROOT);
 	}
 	
@@ -209,7 +206,6 @@ public class ServiceImpl extends AWebPage implements IServices {
 			}
 		}
 		svc = this.dService.save(svc);
-		this.audit("Modified service " + svc.getName());
 		return new AjaxAnswer(IWebPath.WEBROOT + IServices.ROOT);
 	}
 }

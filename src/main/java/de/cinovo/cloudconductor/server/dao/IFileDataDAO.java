@@ -17,8 +17,8 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
-import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -27,6 +27,11 @@ import de.taimos.dao.IEntityDAO;
  * @author psigloch
  * 
  */
-public interface IFileDataDAO extends IEntityDAO<EFileData, Long> {
-	// nothing to do
+public interface IFileDataDAO extends IAuditedEntity<EFileData, Long> {
+	
+	/**
+	 * @param file the file
+	 * @return the config data
+	 */
+	public EFileData findDataByFile(EFile file);
 }

@@ -38,5 +38,7 @@ public enum AuditCategory {
 	/** file */
 	FILE,
 	/** service */
-	SERVICE
+	SERVICE,
+	/** file data */
+	FILE_DATA
 }

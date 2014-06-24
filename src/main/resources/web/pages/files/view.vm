@@ -75,7 +75,7 @@
 			#end
 			#if(!$found)
 				<tr>
-					<td  colspan="5">none</td>
+					<td  colspan="6">none</td>
 				</tr>
 			#end
 		</tbody>

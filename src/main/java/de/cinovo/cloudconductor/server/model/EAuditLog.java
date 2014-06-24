@@ -24,6 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
+import de.cinovo.cloudconductor.server.model.enums.AuditType;
 import de.taimos.dao.IEntity;
 
 /**
@@ -48,6 +49,14 @@ public class EAuditLog implements IEntity<Long> {
 	private String entry;
 	
 	private AuditCategory category;
+	
+	private AuditType auditType;
+	
+	private Long elementId;
+	
+	private Long origRev;
+	
+	private Long newRev;
 	
 	
 	@Override
@@ -118,6 +127,62 @@ public class EAuditLog implements IEntity<Long> {
 	 */
 	public void setCategory(AuditCategory category) {
 		this.category = category;
+	}
+	
+	/**
+	 * @return the auditType
+	 */
+	public AuditType getAuditType() {
+		return this.auditType;
+	}
+	
+	/**
+	 * @param auditType the auditType to set
+	 */
+	public void setAuditType(AuditType auditType) {
+		this.auditType = auditType;
+	}
+	
+	/**
+	 * @return the elementId
+	 */
+	public Long getElementId() {
+		return this.elementId;
+	}
+	
+	/**
+	 * @param elementId the elementId to set
+	 */
+	public void setElementId(Long elementId) {
+		this.elementId = elementId;
+	}
+	
+	/**
+	 * @return the origRev
+	 */
+	public Long getOrigRev() {
+		return this.origRev;
+	}
+	
+	/**
+	 * @param origRev the origRev to set
+	 */
+	public void setOrigRev(Long origRev) {
+		this.origRev = origRev;
+	}
+	
+	/**
+	 * @return the newRev
+	 */
+	public Long getNewRev() {
+		return this.newRev;
+	}
+	
+	/**
+	 * @param newRev the newRev to set
+	 */
+	public void setNewRev(Long newRev) {
+		this.newRev = newRev;
 	}
 	
 }

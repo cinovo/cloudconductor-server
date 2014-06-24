@@ -208,7 +208,6 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
 		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
-		this.audit("Modified template " + tname);
 		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	
@@ -256,8 +255,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 				break;
 			}
 		}
-		this.dTemplate.save(template);
-		this.audit("Added packages " + this.auditFormat(pkgs) + " to template " + tname);
+		this.dTemplate.save(template, "Added packages " + this.auditFormat(pkgs) + " to template " + tname);
 		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	
@@ -281,7 +279,6 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			throw this.createError("The template <b>" + tname + "</b> can't be removed. There are still hosts alive using this Template");
 		}
 		this.dTemplate.delete(template);
-		this.audit("Deleted template " + tname);
 		this.removeSidebarElement(tname);
 		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
@@ -361,7 +358,6 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		template.setAutoUpdate(Boolean.valueOf(autoupdate));
 		template.setSmoothUpdate(Boolean.valueOf(smoothupdate));
 		this.dTemplate.save(template);
-		this.audit("Created new template " + template.getName());
 		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	

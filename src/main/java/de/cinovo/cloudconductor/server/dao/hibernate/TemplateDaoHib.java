@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -33,7 +33,7 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * 
  */
 @Repository("TemplateDaoHib")
-public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implements ITemplateDAO {
+public class TemplateDaoHib extends AAuditedEntityHib<ETemplate, Long> implements ITemplateDAO {
 	
 	@Override
 	public Class<ETemplate> getEntityClass() {
@@ -48,6 +48,11 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	@Override
 	public List<ETemplate> findByPackageServer(Long packageServer) {
 		return this.findListByQuery("FROM ETemplate t WHERE t.yum.id = ?1", packageServer);
+	}
+	
+	@Override
+	protected AuditCategory getAuditCategory() {
+		return AuditCategory.TEMPLATE;
 	}
 	
 }
