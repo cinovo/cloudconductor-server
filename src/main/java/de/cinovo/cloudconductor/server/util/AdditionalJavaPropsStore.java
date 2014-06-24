@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
@@ -14,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  */
 public class AdditionalJavaPropsStore {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalJavaPropsStore.class);
 	
 	private static final Map<String, String> propertyMap = new ConcurrentHashMap<>();
 	
@@ -37,10 +42,17 @@ public class AdditionalJavaPropsStore {
 		Map<String, String> result = new HashMap<>(sourceMap);
 		for (Map.Entry<String, String> entry : AdditionalJavaPropsStore.propertyMap.entrySet()) {
 			if (result.put(entry.getKey(), entry.getValue()) != null) {
-				throw new RuntimeException("Trying to merge existing properties: " + entry.getKey());
+				AdditionalJavaPropsStore.LOGGER.warn("Found conflicting property in PropStore: " + entry.getKey());
 			}
-			result.put(entry.getKey(), entry.getValue());
 		}
 		return result;
+	}
+	
+	/**
+	 * @param key the key
+	 * @return the value of the key, null if key does not exist
+	 */
+	public static synchronized String getValue(String key) {
+		return AdditionalJavaPropsStore.propertyMap.get(key);
 	}
 }

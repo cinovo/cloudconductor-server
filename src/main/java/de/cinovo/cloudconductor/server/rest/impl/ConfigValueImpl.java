@@ -29,6 +29,7 @@ import de.cinovo.cloudconductor.api.interfaces.IConfigValue;
 import de.cinovo.cloudconductor.api.model.KeyValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
+import de.cinovo.cloudconductor.server.util.AdditionalJavaPropsStore;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -59,7 +60,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
-		return result;
+		return AdditionalJavaPropsStore.merge(result);
 	}
 	
 	@Override
@@ -76,7 +77,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
-		return result;
+		return AdditionalJavaPropsStore.merge(result);
 	}
 	
 	@Override
@@ -85,6 +86,12 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(service);
 		RESTAssert.assertNotEmpty(key);
+		
+		// reserved keywords first
+		if (AdditionalJavaPropsStore.getValue(key) != null) {
+			return AdditionalJavaPropsStore.getValue(key);
+		}
+		
 		EConfigValue result = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			result = this.dcv.findBy(template, service, key);
@@ -101,7 +108,6 @@ public class ConfigValueImpl implements IConfigValue {
 		if (result == null) {
 			throw new NotFoundException();
 		}
-		
 		return result.getValue();
 	}
 	
