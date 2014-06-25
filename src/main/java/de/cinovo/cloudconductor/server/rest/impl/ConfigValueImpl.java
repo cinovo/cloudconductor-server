@@ -87,11 +87,6 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(service);
 		RESTAssert.assertNotEmpty(key);
 		
-		// reserved keywords first
-		if (AdditionalJavaPropsStore.getValue(key) != null) {
-			return AdditionalJavaPropsStore.getValue(key);
-		}
-		
 		EConfigValue result = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			result = this.dcv.findBy(template, service, key);
@@ -105,6 +100,10 @@ public class ConfigValueImpl implements IConfigValue {
 		if (result == null) {
 			result = this.dcv.findKey(key);
 		}
+		if ((result == null) && (AdditionalJavaPropsStore.getValue(key) != null)) {
+			return AdditionalJavaPropsStore.getValue(key);
+		}
+		
 		if (result == null) {
 			throw new NotFoundException();
 		}
