@@ -39,6 +39,8 @@ public class TestConfig extends RunnerConfig {
 		this.addProperty("svc.port", String.valueOf(RunnerConfig.randomPort()));
 		this.addProperty("cloudconductor.username", "admin");
 		this.addProperty("cloudconductor.password", "password");
+		this.addProperty("cloudconductor.url", "localhost:8098");
+		this.addProperty("hazelcast.members", "localhost");
 	}
 	
 	@Override
