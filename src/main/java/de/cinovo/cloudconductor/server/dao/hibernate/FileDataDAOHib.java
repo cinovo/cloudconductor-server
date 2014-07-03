@@ -46,7 +46,7 @@ public class FileDataDAOHib extends AVersionedEntityHib<EFileData> implements IF
 	
 	@Override
 	public EFileData findDataByFile(EFile file) {
-		String query = "FROM EFileData f WHERE f.parent.id = ?1";
-		return this.findByQuery(this.getVersionizedQuerry(query, "f"), file.getId());
+		String query = "FROM EFileData f WHERE f.parent.id = ?1 OR f.origId = ?2 ";
+		return this.findVersionedByQuery(query, "f", file.getId(), file.getOrigId());
 	}
 }

@@ -34,6 +34,7 @@ public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends 
 	@Override
 	@Transactional
 	public E save(E element) {
+		this.entityManager.detach(element);
 		return this.save(element, null);
 	}
 	
