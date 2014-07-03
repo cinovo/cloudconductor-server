@@ -22,6 +22,8 @@
 		</property>
 		<property name="networkConfig">
 			<bean class="com.hazelcast.config.NetworkConfig">
+				<property name="port" value="${hazelcast.port:8091}"/>
+				<property name="portAutoIncrement" value="false"/>
 				<property name="join">
 					<bean class="com.hazelcast.config.JoinConfig">
 						<property name="multicastConfig">
