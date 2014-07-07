@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.web.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import com.google.common.collect.Lists;
 
 import de.cinovo.cloudconductor.server.dao.IAuditLogDAO;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
+import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
+import de.cinovo.cloudconductor.server.model.enums.AuditType;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
@@ -63,14 +66,39 @@ public class AuditImpl extends AWebPage implements IAudit {
 	public RenderedView view(String range) {
 		// Build audits model
 		List<EAuditLog> audits = this.dAuditLog.findList();
+		List<String> auditTypes = new ArrayList<String>();
+		List<String> auditCategory = new ArrayList<String>();
+		List<String> usernames = new ArrayList<String>();
 		
-		final CSViewModel vm = this.createView();
+		// reverse audits for date sort
 		audits = Lists.reverse(audits);
-		vm.addModel("audits", audits);
-		System.out.println(range);
+		
+		// add all usernames
+		for (EAuditLog audit : audits) {
+			if (!usernames.contains(audit.getUsername())) {
+				usernames.add(audit.getUsername());
+			}
+			
+		}
+		
+		// Add enums
+		for (AuditType str : AuditType.values()) {
+			auditTypes.add(str.name());
+		}
+		
+		for (AuditCategory str : AuditCategory.values()) {
+			auditCategory.add(str.name());
+		}
+		
+		// create views
+		final CSViewModel vm = this.createView();
+		
 		// Fill template with models and return
+		vm.addModel("audits", audits);
+		vm.addModel("audittypes", auditTypes);
+		vm.addModel("auditcategory", auditCategory);
+		vm.addModel("users", usernames);
 		
 		return vm.render();
 	}
-	
 }
