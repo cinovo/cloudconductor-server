@@ -212,9 +212,6 @@ $(document).ready(
 
 			});
 			
-			// Add event listeners to the two range filtering inputs
-		     $('#daterange').keyup( function() { dataTable.draw(); } );
-
 			// init date-range-picker for audit-table
 			$('#daterange').daterangepicker(
 
@@ -238,9 +235,11 @@ $(document).ready(
 						startDate : moment().subtract('days', 29),
 						endDate : moment()
 					}, function(start, end) {
-						
+						// draw audit-table with date-range
+						dataTable.draw(); 
 });
-//costum datarange table filter
+			
+//costum datarange table filter			
 $.fn.dataTableExt.afnFiltering.push(
 function( oSettings, aData, iDataIndex ) {
 	
@@ -252,6 +251,10 @@ function( oSettings, aData, iDataIndex ) {
 					      
 		var objectDate = aData[iStartDateCol].substring(6,10) + aData[iStartDateCol].substring(3,5)+ aData[iStartDateCol].substring(0,2);     
 					      
+		if (minDate == "" && maxDate == "") {
+			return true;
+		}
+		
 		if( objectDate == minDate || objectDate == maxDate){
 			return true;
 		}else if(objectDate < maxDate && objectDate > minDate){
@@ -260,5 +263,5 @@ function( oSettings, aData, iDataIndex ) {
 			return false;
 	  
 		}
-	);
+	);  
 });
