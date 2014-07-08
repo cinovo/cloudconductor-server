@@ -158,56 +158,107 @@ $.fn.openmodal = function() {
 			});
 }
 
-$(document).ready(function() {
-	// init tooltips
-	initTooltips();
-	// init checkbox toggles
-	enableCheckboxToggle();
-	// do smth on click of button
-	initButtons();
+$(document).ready(
+		function() {
+			// init tooltips
+			initTooltips();
+			// init checkbox toggles
+			enableCheckboxToggle();
+			// do smth on click of button
+			initButtons();
 
-	$('#sidenav').on('activate.bs.scrollspy', function() {
-		var data = $('body').data('bs.scrollspy');
-		if (data) {
-			var target = data.activeTarget.charAt(1).toUpperCase();
-			$('span[id^="collapse"]').each(function() {
-				if ($(this).attr('id') == 'collapse' + target) {
-					$(this).collapse('show');
-				} else {
-					$(this).collapse('hide');
+			$('#sidenav').on('activate.bs.scrollspy', function() {
+				var data = $('body').data('bs.scrollspy');
+				if (data) {
+					var target = data.activeTarget.charAt(1).toUpperCase();
+					$('span[id^="collapse"]').each(function() {
+						if ($(this).attr('id') == 'collapse' + target) {
+							$(this).collapse('show');
+						} else {
+							$(this).collapse('hide');
+						}
+					});
 				}
+			})
+
+			// init reloadContent
+			window.setInterval(reloadContent, 15000);
+
+			// init audit-table
+			var dataTable = $('#audit-table').DataTable({
+				"pagingType" : "simple_numbers",
+				"pageLength" : 25,
+				"order" : [ [ 0, "desc" ] ],
+				"dom" : '<tip>',
+
 			});
-		}
-	})
+			// init custom searchbox
+			$('#searchbox').on('keyup', function() {
+				dataTable.search(this.value).draw();
+			});
 
-	// init reloadContent
-	window.setInterval(reloadContent, 15000);
+			// init custom Category-filter
+			$('#inputCategory').on('change', function() {
+				dataTable.columns(3).search(this.value).draw();
+			});
+			// init custom Audittype-filter
+			$('#inputAudittype').on('change', function() {
+				dataTable.columns(4).search(this.value).draw();
+			});
 
-	// init audit-table
-	var dataTable = $('#audit-table').DataTable({
-		"pagingType" : "simple_numbers",
-		"pageLength" : 25,
-		"order" : [ [ 0, "desc" ] ],
-		"dom" : '<tip>',
+			// init custom username-filter
+			$('#inputUsername').on('change', function() {
+				dataTable.columns(2).search(this.value).draw();
 
-	});
-	// init custom searchbox
-	$('#searchbox').on( 'keyup', function () {
-		dataTable.search( this.value ).draw();
-	} );
+			});
+			
+			// Add event listeners to the two range filtering inputs
+		     $('#daterange').keyup( function() { dataTable.draw(); } );
 
-	// init custom Category-filter
-	$('#inputCategory').on('change', function() {
-		dataTable.columns(3).search(this.value).draw();
-	});
-	// init custom Audittype-filter 
-	$('#inputAudittype').on('change', function() {
-		dataTable.columns(4).search(this.value).draw();
-	});
-	
-	//init custom username-filter
-	$('#inputUsername').on('change', function() {
-	dataTable.columns(2).search(this.value).draw();
+			// init date-range-picker for audit-table
+			$('#daterange').daterangepicker(
+
+					{
+						ranges : {
+							'Today' : [ moment(), moment() ],
+							'Yesterday' : [ moment().subtract('days', 1),
+									moment().subtract('days', 1) ],
+							'Last 7 Days' : [ moment().subtract('days', 6),
+									moment() ],
+							'Last 30 Days' : [ moment().subtract('days', 29),
+									moment() ],
+							'This Month' : [ moment().startOf('month'),
+									moment().endOf('month') ],
+							'Last Month' : [
+									moment().subtract('month', 1).startOf(
+											'month'),
+									moment().subtract('month', 1)
+											.endOf('month') ]
+						},
+						startDate : moment().subtract('days', 29),
+						endDate : moment()
+					}, function(start, end) {
+						
 });
-
+//costum datarange table filter
+$.fn.dataTableExt.afnFiltering.push(
+function( oSettings, aData, iDataIndex ) {
+	
+		var daterange = document.getElementById('daterange').value;
+		var iStartDateCol = 0;
+					        
+		var minDate = daterange.substring(6,10) +   daterange.substring(0,2) + daterange.substring(3,5);
+		var maxDate = daterange.substring(19,23)  + daterange.substring(13,15) + daterange.substring(16,18);
+					      
+		var objectDate = aData[iStartDateCol].substring(6,10) + aData[iStartDateCol].substring(3,5)+ aData[iStartDateCol].substring(0,2);     
+					      
+		if( objectDate == minDate || objectDate == maxDate){
+			return true;
+		}else if(objectDate < maxDate && objectDate > minDate){
+			return true;
+		}   
+			return false;
+	  
+		}
+	);
 });

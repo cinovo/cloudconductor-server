@@ -16,8 +16,11 @@
     <link href="/web/css/cloudconductor.css" rel="stylesheet"/>
     
     <!-- Custom styles for DataTables table -->
-     <link href="/web/css/dataTables.bootstrap.css" rel="stylesheet"/>
-
+    <link href="/web/css/dataTables.bootstrap.css" rel="stylesheet"/>
+    <!-- Daterangepicker CSS -->
+    <link rel="stylesheet" type="text/css" href="/web/css/daterangepicker-bs3.css" />
+    <link rel="stylesheet" type="text/css" href="/web/css/font-awesome.min.css">
+	
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -186,5 +189,8 @@
 <!-- dataTables JavaScript -->
 <script src="/web/js/jquery.dataTables.min.js"></script>
 <script src="/web/js/dataTables.bootstrap.js"></script>
+<!-- DateRangePicker -->
+<script type="text/javascript" src="/web/js/moment.js"></script>
+<script type="text/javascript" src="/web/js/daterangepicker.js"></script>
 </body>
 </html>

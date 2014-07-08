@@ -45,11 +45,10 @@
 		<div class="form-group">
 			<label class="control-label col-xs-2">Date Range:</label>
 			<div class="col-xs-8 input-append">
-				<input type="text" class="form-control" id="searchbox">
+				<input type="text" class="form-control" id="daterange">
 			</div>
 		</div>
 
-	
 	</form>
 
 	<div class="panel panel-primary">
@@ -75,7 +74,7 @@
 				<tbody class="small-lines">
 					#foreach($audit in $audits)
 					<tr>
-						<td>${dateTool.format('MM.dd.yyyy', $audit.timestamp)}</td>
+						<td>${dateTool.format('dd.MM.yyyy', $audit.timestamp)}</td>
 						<td>${audit.entry}</td>
 						<td>${audit.username}</td>
 						<td>${audit.category}</td>
