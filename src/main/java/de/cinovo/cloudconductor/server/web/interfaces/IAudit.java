@@ -3,7 +3,6 @@ package de.cinovo.cloudconductor.server.web.interfaces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.web.RenderedView;
@@ -42,12 +41,11 @@ public interface IAudit {
 	
 	
 	/**
-	 * @param range the audit-date-range
 	 * @return the view
 	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view(@QueryParam("daterange") String range);
+	public abstract RenderedView view();
 	
 }

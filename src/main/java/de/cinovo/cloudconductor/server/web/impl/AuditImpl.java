@@ -63,7 +63,7 @@ public class AuditImpl extends AWebPage implements IAudit {
 	}
 	
 	@Override
-	public RenderedView view(String range) {
+	public RenderedView view() {
 		// Build audits model
 		List<EAuditLog> audits = this.dAuditLog.findList();
 		List<String> auditTypes = new ArrayList<String>();
