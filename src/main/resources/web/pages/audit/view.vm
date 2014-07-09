@@ -1,0 +1,111 @@
+<div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">
+
+
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse"
+			data-target="#audit-filter-hide">
+			<h3 class="panel-title">
+				Auditfilter <span class="pull-right"><span class="caret"></span></span>
+			</h3>
+
+		</div>
+		<div id="audit-filter-hide" class="collapse out">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<label class="control-label col-xs-2" for="searchbox">Search:</label>
+					<div class="col-xs-8">
+						<input type="text" class="form-control" id="searchbox"
+							placeholder="Search">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-xs-2" for="inputUsername">Username:</label>
+					<div class="col-xs-8">
+						<select id="inputUsername" class="form-control">
+							<option value=""></option> #foreach($user in $users)
+							<option value="${user}">${user}</option> #end
+						</select>
+					</div>
+				</div>
+
+
+				<div class="form-group">
+					<label class="control-label col-xs-2" for="inputCategory">Category:</label>
+					<div class="col-xs-8">
+						<select id="inputCategory" class="form-control">
+							<option value=""></option> #foreach($category in $auditcategory)
+							<option value="${category}">${category}</option> #end
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-xs-2" for="inputAudittype">Audittype:</label>
+					<div class="col-xs-8">
+						<select id="inputAudittype" class="form-control">
+							<option value=""></option> #foreach($audittype in $audittypes)
+							<option value="${audittype}">${audittype}</option> #end
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-xs-2">Date Range:</label>
+					<div class="col-xs-8">
+						<input type="text" class="form-control" id="daterange">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label col-xs-2">Clear:</label>
+					<div class="col-xs-8">
+						<button onClick="this.form.reset()" class="btn btn-primary">Clear</button>
+					</div>
+				</div>
+
+
+			</form>
+		</div>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse"
+			data-target="#AUDIT-hide">
+			<h3 class="panel-title">
+				AUDIT <span class="pull-right"><span class="caret"></span></span>
+			</h3>
+
+		</div>
+		<div id="AUDIT-hide" class="collapse in">
+			<table id="audit-table" class="table table-striped table-bordered"
+				width="100%">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Entry</th>
+						<th>Username</th>
+						<th>Category</th>
+						<th>Audittype</th>
+					</tr>
+				</thead>
+				<tbody class="small-lines">
+					#foreach($audit in $audits)
+					<tr>
+						<td>${dateTool.format('dd.MM.yyyy', $audit.timestamp)}</td>
+						<td>${audit.entry}</td>
+						<td>${audit.username}</td>
+						<td>${audit.category}</td>
+						<td>${audit.auditType}</td>
+					</tr>
+					#end
+				</tbody>
+
+			</table>
+
+		</div>
+	</div>
+</div>
+
+
