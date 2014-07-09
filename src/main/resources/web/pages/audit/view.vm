@@ -10,7 +10,7 @@
 			</h3>
 
 		</div>
-		<div id="audit-filter-hide" class="collapse in">
+		<div id="audit-filter-hide" class="collapse out">
 			<form class="form-horizontal">
 				<div class="form-group">
 					<label class="control-label col-xs-2" for="searchbox">Search:</label>
