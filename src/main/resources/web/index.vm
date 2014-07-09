@@ -19,7 +19,6 @@
     <link href="/web/css/dataTables.bootstrap.css" rel="stylesheet"/>
     <!-- Daterangepicker CSS -->
     <link rel="stylesheet" type="text/css" href="/web/css/daterangepicker-bs3.css" />
-    <link rel="stylesheet" type="text/css" href="/web/css/font-awesome.min.css">
 	
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
