@@ -11,14 +11,10 @@
 
 	<!-- Bootstrap core CSS -->
     <link href="/web/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-
     <!-- Custom styles for this template -->
     <link href="/web/css/cloudconductor.css" rel="stylesheet"/>
-    
-    <!-- Custom styles for DataTables table -->
-    <link href="/web/css/dataTables.bootstrap.css" rel="stylesheet"/>
     <!-- Daterangepicker CSS -->
-    <link rel="stylesheet" type="text/css" href="/web/css/daterangepicker-bs3.css" />
+    <link rel="stylesheet" type="text/css" href="/web/css/daterangepicker-bs3.min.css" />
 	
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -66,7 +62,8 @@
 								#end
 								#end
 							#end
-							#if(${mapEntry.getViewName()} == "Options" ) 
+							#if(${mapEntry.getViewName()} == "Options" )
+								 <li role="presentation" class="divider"></li> 
 								 <li><a href="" data-ref="/web/pkgsrv" data-call-type="GET" data-toggle='modal' data-target="#popModal">Package Servers</a></li>
 								 <li><a href="" data-ref="/web/options" data-call-type="GET" data-toggle='modal' data-target="#popModal">Options</a></li>
 								 <li role="presentation" class="divider"></li>
@@ -187,9 +184,9 @@
 <script src="/web/js/cloudconductor-web.js"></script>
 <!-- dataTables JavaScript -->
 <script src="/web/js/jquery.dataTables.min.js"></script>
-<script src="/web/js/dataTables.bootstrap.js"></script>
+<script src="/web/js/dataTables.bootstrap.min.js"></script>
 <!-- DateRangePicker -->
-<script type="text/javascript" src="/web/js/moment.js"></script>
-<script type="text/javascript" src="/web/js/daterangepicker.js"></script>
+<script type="text/javascript" src="/web/js/moment.min.js"></script>
+<script type="text/javascript" src="/web/js/daterangepicker.min.js"></script>
 </body>
 </html>

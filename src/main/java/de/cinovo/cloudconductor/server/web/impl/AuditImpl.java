@@ -54,7 +54,7 @@ public class AuditImpl extends AWebPage implements IAudit {
 	
 	@Override
 	protected void init() {
-		this.navRegistry.registerSubMenu(NavbarHardLinks.config, this.getNavElementName(), IAudit.ROOT);
+		this.navRegistry.registerSubMenu(NavbarHardLinks.options, this.getNavElementName(), IAudit.ROOT, 100);
 	}
 	
 	@Override
