@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 
@@ -48,6 +49,7 @@ public class ReportImpl extends ImplHelper implements IReport {
 	
 	
 	@Override
+	@Transactional
 	public List<ReportPackage> getReportInformation() {
 		// Build hosts model.
 		List<ETemplate> templates = this.dTemplate.findList();
