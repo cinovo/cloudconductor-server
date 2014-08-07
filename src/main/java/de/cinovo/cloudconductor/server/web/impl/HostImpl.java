@@ -122,7 +122,7 @@ public class HostImpl extends AWebPage implements IHost {
 		for (String service : restart) {
 			for (EServiceState eservice : host.getServices()) {
 				if (eservice.getService().getName().equals(service)) {
-					eservice.setState(ServiceState.RESTARTING);
+					eservice.setState(ServiceState.RESTARTING_STOPPING);
 					break;
 				}
 			}

@@ -23,13 +23,18 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IService;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
+import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
+import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.rest.helper.AMConverter;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
 import de.taimos.restutils.RESTAssert;
@@ -49,6 +54,10 @@ public class ServiceImpl extends ImplHelper implements IService {
 	private IPackageDAO dpkg;
 	@Autowired
 	private AMConverter amc;
+	@Autowired
+	private IHostDAO dhost;
+	@Autowired
+	private IServiceStateDAO dSvcState;
 	
 	
 	@Override
@@ -123,6 +132,24 @@ public class ServiceImpl extends ImplHelper implements IService {
 		EPackage p = this.findByName(this.dpkg, pkg);
 		service.getPackages().remove(p);
 		this.dservice.save(service);
+	}
+	
+	@Override
+	public void approveServiceStarted(String serviceName, String host) {
+		RESTAssert.assertNotEmpty(serviceName);
+		RESTAssert.assertNotEmpty(host);
+		EHost mHost = this.dhost.findByName(host);
+		RESTAssert.assertNotNull(mHost);
+		for (EServiceState service : mHost.getServices()) {
+			if (!service.getService().getName().equals(serviceName)) {
+				continue;
+			}
+			if (service.getState().equals(ServiceState.STARTED)) {
+				service.setState(ServiceState.IN_SERVICE);
+				this.dSvcState.save(service);
+			}
+			break;
+		}
 	}
 	
 }

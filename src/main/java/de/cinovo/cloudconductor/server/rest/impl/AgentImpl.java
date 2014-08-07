@@ -287,12 +287,12 @@ public class AgentImpl implements IAgent {
 			EServiceState state = new EServiceState();
 			state.setService(service);
 			state.setHost(host);
+			
 			EServiceDefaultState dss = this.ddefss.findByName(service.getName(), template.getName());
-			if ((dss == null) || dss.getState().equals(ServiceState.STOPPED)) {
-				state.setState(ServiceState.STOPPING);
-			} else {
+			if ((dss != null)) {
 				state.setState(dss.getState());
 			}
+			
 			this.dsvcstate.save(state);
 			changes = true;
 		}
@@ -324,40 +324,51 @@ public class AgentImpl implements IAgent {
 			for (EServiceState state : host.getServices()) {
 				if (state.getService().getName().equals(sname)) {
 					stateList.remove(state);
-					if (state.getState().equals(ServiceState.STARTING)) {
-						state.setState(ServiceState.RUNNING);
+					switch (state.getState()) {
+					case RESTARTING_STARTING:
+					case STARTING:
+						state.nextState();
 						this.dsvcstate.save(state);
-					} else if (state.getState().equals(ServiceState.STOPPING)) {
+						break;
+					case STOPPING:
 						toStop.add(state.getService().getInitScript());
-					} else if (state.getState().equals(ServiceState.STOPPED)) {
-						toStop.add(state.getService().getInitScript());
-						state.setState(ServiceState.STOPPING);
-						this.dsvcstate.save(state);
-					} else if (state.getState().equals(ServiceState.RESTARTING)) {
+						break;
+					case RESTARTING_STOPPING:
 						toRestart.add(state.getService().getInitScript());
-						state.setState(ServiceState.RESTARTED);
+						state.nextState();
 						this.dsvcstate.save(state);
-					} else if (state.getState().equals(ServiceState.RESTARTED)) {
-						state.setState(ServiceState.RUNNING);
+						break;
+					case STOPPED:
+						state.nextState();
+						toStop.add(state.getService().getInitScript());
 						this.dsvcstate.save(state);
+						break;
+					default:
+						break;
 					}
-					break;
 				}
 			}
 		}
 		
 		// agent sends stopped services
 		for (EServiceState state : stateList) {
-			if (state.getState().equals(ServiceState.STARTING)) {
+			
+			switch (state.getState()) {
+			case STARTING:
 				toStart.add(state.getService().getInitScript());
+				break;
+			case STOPPING:
+				state.nextState();
 				this.dsvcstate.save(state);
-			} else if (state.getState().equals(ServiceState.STOPPING)) {
-				state.setState(ServiceState.STOPPED);
-				this.dsvcstate.save(state);
-			} else if (state.getState().equals(ServiceState.RUNNING)) {
+				break;
+			case STARTED:
 				toStart.add(state.getService().getInitScript());
 				state.setState(ServiceState.STARTING);
 				this.dsvcstate.save(state);
+				break;
+			default:
+				break;
+			
 			}
 			
 		}

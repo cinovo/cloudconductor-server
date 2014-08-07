@@ -93,7 +93,7 @@ public class HostTest extends APITest {
 		{
 			ServiceHandler sh = new ServiceHandler(this.getCSApi());
 			h.setService(HostTest.HOST1, sh.get(HostTest.TEST_SERVICE));
-			this.assertState(h, ServiceState.UNKNOWN);
+			this.assertState(h, ServiceState.STOPPED);
 		}
 		{
 			h.startService(HostTest.HOST1, HostTest.TEST_SERVICE);
@@ -105,7 +105,7 @@ public class HostTest extends APITest {
 		}
 		{
 			h.restartService(HostTest.HOST1, HostTest.TEST_SERVICE);
-			this.assertState(h, ServiceState.RESTARTING);
+			this.assertState(h, ServiceState.RESTARTING_STOPPING);
 		}
 		{
 			h.removeService(HostTest.HOST1, HostTest.TEST_SERVICE);

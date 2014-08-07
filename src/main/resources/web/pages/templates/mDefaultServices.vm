@@ -19,11 +19,11 @@
 			</thead>
 			<tbody class="table-hover small-lines">
 			#foreach($state in ${defaultStates})
-				<tr #if(${state.getState()} == 'RUNNING')class="success"#else class="danger"#end>
+				<tr #if(${state.getState()} == 'STARTED')class="success"#else class="danger"#end>
 					<td>${state.getService().getName()}</td>
 					<td>${state.getState()}</td>
 					<td class="actionButton">
-						<input type="checkbox" name="startService" value="${state.getService().getName()}" rel="tooltip-left" title="Start the service at startup" #if(${state.getState()} == 'RUNNING')disabled #end>
+						<input type="checkbox" name="startService" value="${state.getService().getName()}" rel="tooltip-left" title="Start the service at startup" #if(${state.getState()} == 'STARTED')disabled #end>
 					</td>
 					<td class="actionButton">
 						<input type="checkbox" name="stopService" value="${state.getService().getName()}" rel="tooltip-left" title="Stop the service at startup"#if(${state.getState()} == 'STOPPED') disabled #end>

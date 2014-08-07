@@ -182,31 +182,22 @@ public class IndexImpl extends AWebPage implements IIndex {
 		HashMap<String, ServiceState> result = new HashMap<>();
 		for (EServiceState ss : this.dSvcState.findList()) {
 			switch (ss.getState()) {
-			case RESTARTED:
+			case RESTARTING_STARTING:
+			case RESTARTING_STOPPING:
 			case STARTING:
-			case RESTARTING:
 				if (result.get(ss.getService().getName()) == ServiceState.STOPPED) {
 					result.put(ss.getService().getName(), ServiceState.STARTING);
 				}
 				break;
 			
-			case RUNNING:
-				result.put(ss.getService().getName(), ServiceState.RUNNING);
-				break;
-			
 			case STOPPED:
 			case STOPPING:
-			case UNKNOWN:
 				if (result.get(ss.getService().getName()) == null) {
 					result.put(ss.getService().getName(), ServiceState.STOPPED);
 				}
 				break;
-			}
-		}
-		HashMap<String, ServiceState> temp = (HashMap<String, ServiceState>) result.clone();
-		for (Entry<String, ServiceState> val : temp.entrySet()) {
-			if (val.getValue() == ServiceState.RUNNING) {
-				result.remove(val.getKey());
+			default:
+				break;
 			}
 		}
 		return this.sortMap(result);

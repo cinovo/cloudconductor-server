@@ -46,7 +46,7 @@ public class EServiceDefaultState implements IEntity<Long> {
 	private EService service;
 	
 	private ETemplate template;
-	private ServiceState state;
+	private ServiceState state = ServiceState.STOPPED;
 	
 	
 	@Override

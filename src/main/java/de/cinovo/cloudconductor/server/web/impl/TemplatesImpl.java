@@ -249,7 +249,6 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 					sds = new EServiceDefaultState();
 					sds.setService(s);
 					sds.setTemplate(template);
-					sds.setState(ServiceState.STOPPED);
 					this.dSvcDefState.save(sds);
 				}
 				break;
@@ -308,7 +307,6 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			sds = new EServiceDefaultState();
 			sds.setService(service);
 			sds.setTemplate(template);
-			sds.setState(ServiceState.STOPPED);
 			this.dSvcDefState.save(sds);
 		}
 	}
@@ -323,7 +321,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		List<EServiceDefaultState> services = this.dSvcDefState.findByTemplate(tname);
 		for (EServiceDefaultState eservice : services) {
 			if (startService.contains(eservice.getService().getName())) {
-				eservice.setState(ServiceState.RUNNING);
+				eservice.setState(ServiceState.STARTED);
 				this.dSvcDefState.save(eservice);
 			}
 		}
