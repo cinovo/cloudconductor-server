@@ -111,7 +111,8 @@ public class JMXResourceProvider implements DynamicMBean {
 			switch (ss.getState()) {
 			
 			case STARTING:
-			case RUNNING:
+			case STARTED:
+			case IN_SERVICE:
 				count++;
 				break;
 			
@@ -128,7 +129,6 @@ public class JMXResourceProvider implements DynamicMBean {
 			switch (ss.getState()) {
 			case STOPPED:
 			case STOPPING:
-			case UNKNOWN:
 				count++;
 				break;
 			

@@ -98,7 +98,7 @@ public class MAConverter {
 	 * @return the api obejct
 	 */
 	public static Service fromModel(EService model) {
-		return new Service(model.getName(), model.getDescription(), model.getInitScript(), ServiceState.UNKNOWN, MAConverter.fromModel(model.getPackages()));
+		return new Service(model.getName(), model.getDescription(), model.getInitScript(), ServiceState.STOPPED, MAConverter.fromModel(model.getPackages()));
 	}
 	
 	/**
