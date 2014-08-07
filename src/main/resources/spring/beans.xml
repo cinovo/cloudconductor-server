@@ -29,6 +29,7 @@
 			<bean class="de.cinovo.cloudconductor.server.rest.impl.ConfigValueImpl" />
 			<bean class="de.cinovo.cloudconductor.server.rest.impl.IOModuleImpl" />
 			<bean class="de.cinovo.cloudconductor.server.rest.impl.AgentImpl" />
+			<bean class="de.cinovo.cloudconductor.server.rest.impl.ReportImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:features>
 			<bean class="de.cinovo.cloudconductor.server.rest.filter.RestDocFilter" />
@@ -53,7 +54,7 @@
 			<bean class="de.cinovo.cloudconductor.server.web.impl.FilesImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.ConfigImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.SSHKeyImpl" />
-			<bean class="de.cinovo.cloudconductor.server.web.impl.ReportImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.WebReportImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.FileTagsImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.AuditImpl" />
 			
