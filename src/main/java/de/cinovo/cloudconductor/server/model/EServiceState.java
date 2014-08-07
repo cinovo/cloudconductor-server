@@ -46,7 +46,7 @@ public class EServiceState implements IEntity<Long> {
 	private EService service;
 	
 	private EHost host;
-	private ServiceState state;
+	private ServiceState state = ServiceState.STOPPED;
 	
 	
 	@Override
@@ -109,4 +109,10 @@ public class EServiceState implements IEntity<Long> {
 		this.state = state;
 	}
 	
+	/**
+	 * apply the next state in the chain
+	 */
+	public void nextState() {
+		this.state = this.state.next();
+	}
 }

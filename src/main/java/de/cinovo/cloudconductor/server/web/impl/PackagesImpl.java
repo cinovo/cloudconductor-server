@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.server.comparators.PackageComparator;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
@@ -168,7 +167,6 @@ public class PackagesImpl extends AWebPage implements IPackages {
 			sds = new EServiceDefaultState();
 			sds.setService(service);
 			sds.setTemplate(template);
-			sds.setState(ServiceState.STOPPED);
 			this.dSvcDefState.save(sds);
 		}
 	}

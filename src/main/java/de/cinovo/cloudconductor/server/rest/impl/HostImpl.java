@@ -239,7 +239,7 @@ public class HostImpl extends ImplHelper implements IHost {
 		EHost eHost = this.dhost.findByName(host);
 		for (EServiceState s : eHost.getServices()) {
 			if (s.getService().getName().equals(service)) {
-				s.setState(ServiceState.RESTARTING);
+				s.setState(ServiceState.RESTARTING_STOPPING);
 				this.dss.save(s);
 				return Response.ok().build();
 			}
