@@ -488,6 +488,13 @@
 		</addColumn>
 		<sql>UPDATE cloudconductor.file as f SET origid=f.id;</sql>
 	</changeSet>
+	
+	<changeSet id="16" author="psigloch">
+		 <addUniqueConstraint schemaName="cloudconductor" tableName="mappingrpmtemplate" columnNames="templateid, rpmid" constraintName="mappingrpmtemplate_constraint" />
+		 <addUniqueConstraint schemaName="cloudconductor" tableName="mappinghostsvcst" columnNames="hostid, svcstid" constraintName="mappinghostsvcst_constraint" />
+		 <addUniqueConstraint schemaName="cloudconductor" tableName="mappingtemplatehost" columnNames="templateid, hostid" constraintName="mappingtemplatehost_constraint" />
+		 <addUniqueConstraint schemaName="cloudconductor" tableName="servicedefaultstate" columnNames="templateid, serviceid" constraintName="servicedefaultstate_constraint" />
+	</changeSet>
 	<changeSet id="17" author="psigloch">
 		<addColumn schemaName="cloudconductor" tableName="servicedefaultstate">
 			<column name="newstate" type="bigint" defaultValue="4">
@@ -533,5 +540,5 @@
 		
 		<renameColumn schemaName="cloudconductor" tableName="servicedefaultstate" oldColumnName="newstate" newColumnName="state"/>
 		<renameColumn schemaName="cloudconductor" tableName="servicestate" oldColumnName="newstate" newColumnName="state"/>
-	</changeSet>
+	</changeSet>	
 </databaseChangeLog>
