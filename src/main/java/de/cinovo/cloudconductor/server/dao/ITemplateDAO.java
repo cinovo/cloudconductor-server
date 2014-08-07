@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.dao;
 import java.util.List;
 
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -28,7 +29,7 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
  * @author psigloch
  * 
  */
-public interface ITemplateDAO extends IAuditedEntity<ETemplate, Long>, IFindNamed<ETemplate> {
+public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ETemplate> {
 	
 	/**
 	 * @param packageServer the package server id

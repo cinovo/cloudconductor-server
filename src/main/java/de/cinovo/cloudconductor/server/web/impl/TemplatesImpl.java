@@ -255,7 +255,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 				break;
 			}
 		}
-		this.dTemplate.save(template, "Added packages " + this.auditFormat(pkgs) + " to template " + tname);
+		this.dTemplate.save(template);// , "Added packages " + this.auditFormat(pkgs) + " to template " + tname);
 		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 	

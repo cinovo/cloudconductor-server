@@ -151,6 +151,9 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 			return false;
 		}
 		EPackageVersion other = (EPackageVersion) obj;
+		if ((this.getId() != null) && (other.getId() != null)) {
+			return this.getId().equals(other.getId());
+		}
 		if (this.getVersion() == null) {
 			return false;
 		}
