@@ -17,15 +17,23 @@ package de.cinovo.cloudconductor.server;
  * #L%
  */
 
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
+import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.properties.FilePropertyProvider;
@@ -78,6 +86,14 @@ public class ServerStarter extends SpringDaemonAdapter {
 	protected void doAfterSpringStart() {
 		CleanUpTask cleanup = this.getContext().getBean("cleanuptask", CleanUpTask.class);
 		ServerStarter.ses.scheduleAtFixedRate(cleanup, 0, ServerStarter.CLEANUP_TIMER, TimeUnit.MINUTES);
+		
+		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
+		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
+		try {
+			ManagementFactory.getPlatformMBeanServer().registerMBean(prov, new ObjectName(name));
+		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
+			ServerStarter.log.warn("Failed to init JMX", e);
+		}
 		super.doAfterSpringStart();
 	}
 	
