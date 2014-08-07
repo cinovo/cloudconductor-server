@@ -17,23 +17,16 @@ package de.cinovo.cloudconductor.server.web.impl;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
-
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.api.model.ReportPackage;
+import de.cinovo.cloudconductor.server.rest.impl.ReportImpl;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
-import de.cinovo.cloudconductor.server.web.helper.ReportPackage;
 import de.cinovo.cloudconductor.server.web.interfaces.IReport;
 
 /**
@@ -43,10 +36,10 @@ import de.cinovo.cloudconductor.server.web.interfaces.IReport;
  * @author psigloch
  * 
  */
-public class ReportImpl extends AWebPage implements IReport {
+public class WebReportImpl extends AWebPage implements IReport {
 	
 	@Autowired
-	private ITemplateDAO dTemplate;
+	private ReportImpl restImpl;
 	
 	
 	@Override
@@ -67,24 +60,7 @@ public class ReportImpl extends AWebPage implements IReport {
 	@Override
 	@Transactional
 	public RenderedView view() {
-		// Build hosts model.
-		List<ETemplate> templates = this.dTemplate.findList();
-		
-		Set<EPackageVersion> installedPackages = Sets.newHashSet();
-		
-		for (ETemplate temp : templates) {
-			for (EPackageVersion rpm : temp.getPackageVersions()) {
-				installedPackages.add(rpm);
-			}
-		}
-		
-		List<ReportPackage> packagesModel = new ArrayList<>();
-		for (EPackageVersion pkg : installedPackages) {
-			// Add package model to packages model.
-			ReportPackage packageModel = new ReportPackage(pkg.getPkg().getName(), pkg.getVersion());
-			packagesModel.add(packageModel);
-		}
-		Collections.sort(packagesModel);
+		List<ReportPackage> packagesModel = this.restImpl.getReportInformation();
 		
 		// Fill template with models and return.
 		final CSViewModel vm = this.createView();
