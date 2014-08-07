@@ -29,7 +29,6 @@ import de.cinovo.cloudconductor.api.interfaces.IConfigValue;
 import de.cinovo.cloudconductor.api.model.KeyValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
-import de.cinovo.cloudconductor.server.util.AdditionalJavaPropsStore;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -60,7 +59,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
-		return AdditionalJavaPropsStore.merge(result);
+		return result;
 	}
 	
 	@Override
@@ -77,7 +76,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
-		return AdditionalJavaPropsStore.merge(result);
+		return result;
 	}
 	
 	@Override
@@ -99,9 +98,6 @@ public class ConfigValueImpl implements IConfigValue {
 		}
 		if (result == null) {
 			result = this.dcv.findKey(key);
-		}
-		if ((result == null) && (AdditionalJavaPropsStore.getValue(key) != null)) {
-			return AdditionalJavaPropsStore.getValue(key);
 		}
 		
 		if (result == null) {

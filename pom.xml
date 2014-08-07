@@ -82,11 +82,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>de.cinovo.cloudconductor</groupId>
-			<artifactId>cloudconductor-client</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
 			<groupId>de.taimos</groupId>
 			<artifactId>spring-cxf-daemon</artifactId>
 			<version>1.5</version>

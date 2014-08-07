@@ -15,7 +15,6 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<import resource="classpath:spring/daemon.xml" />
-	<import resource="hazelcast-cc.xml" />
 	<import resource="dao.xml" />
 	<import resource="jettyOverwrite.xml" />
 
