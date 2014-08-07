@@ -17,13 +17,20 @@ package de.cinovo.cloudconductor.server.web.impl;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Sets;
+
 import de.cinovo.cloudconductor.api.model.ReportPackage;
-import de.cinovo.cloudconductor.server.rest.impl.ReportImpl;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
@@ -39,7 +46,7 @@ import de.cinovo.cloudconductor.server.web.interfaces.IReport;
 public class WebReportImpl extends AWebPage implements IReport {
 	
 	@Autowired
-	private ReportImpl restImpl;
+	private ITemplateDAO dTemplate;
 	
 	
 	@Override
@@ -60,7 +67,24 @@ public class WebReportImpl extends AWebPage implements IReport {
 	@Override
 	@Transactional
 	public RenderedView view() {
-		List<ReportPackage> packagesModel = this.restImpl.getReportInformation();
+		// Build hosts model.
+		List<ETemplate> templates = this.dTemplate.findList();
+		
+		Set<EPackageVersion> installedPackages = Sets.newHashSet();
+		
+		for (ETemplate temp : templates) {
+			for (EPackageVersion rpm : temp.getPackageVersions()) {
+				installedPackages.add(rpm);
+			}
+		}
+		
+		List<ReportPackage> packagesModel = new ArrayList<>();
+		for (EPackageVersion pkg : installedPackages) {
+			// Add package model to packages model.
+			ReportPackage packageModel = new ReportPackage(pkg.getPkg().getName(), pkg.getVersion());
+			packagesModel.add(packageModel);
+		}
+		Collections.sort(packagesModel);
 		
 		// Fill template with models and return.
 		final CSViewModel vm = this.createView();
