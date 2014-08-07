@@ -135,7 +135,7 @@ public class MAConverter {
 	public static Host fromModel(EHost model) {
 		Set<String> services = new HashSet<>();
 		for (EServiceState ss : model.getServices()) {
-			if (!model.getName().isEmpty()) {
+			if (!ss.getService().getName().isEmpty()) {
 				services.add(ss.getService().getName());
 			}
 		}
