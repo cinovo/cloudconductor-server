@@ -109,4 +109,28 @@ public class EServiceDefaultState implements IEntity<Long> {
 		this.state = state;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof EServiceDefaultState)) {
+			return false;
+		}
+		EServiceDefaultState other = (EServiceDefaultState) obj;
+		if ((this.getId() != null) && (other.getId() != null)) {
+			return this.getId().equals(other.getId());
+		}
+		boolean result = this.service.getId().equals(other.service.getId());
+		if (result) {
+			result = this.template.getId().equals(other.template.getId());
+		}
+		return result;
+	}
+	
+	@Override
+	public int hashCode() {
+		int val = (this.getId() == null) ? 0 : this.getId().hashCode();
+		int parent = (this.service == null) ? 0 : this.service.hashCode();
+		int parent2 = (this.template == null) ? 0 : this.template.hashCode();
+		return val * (parent + parent2);
+	}
+	
 }
