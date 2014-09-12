@@ -41,6 +41,18 @@
 			<bean class="de.cinovo.cloudconductor.server.util.JavaArgsWriter" />
 		</jaxrs:providers>
 	</jaxrs:server>
+	
+	<jaxrs:server id="serverRepo" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/repo" depends-on="cxf-engine">
+		<jaxrs:serviceBeans>
+			<bean class="de.cinovo.cloudconductor.server.repo.RepoImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+<!-- 			<ref bean="exMapper" /> -->
+			<ref bean="jsonProvider" />
+			<bean class="de.cinovo.cloudconductor.server.web.TemplateWriter" />
+		</jaxrs:providers>
+	</jaxrs:server>
+	<bean id="repoProvider" class="de.cinovo.cloudconductor.server.repo.provider.${repo.provider:FileProvider}"/>
 
 	<jaxrs:server id="serverUI2" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
