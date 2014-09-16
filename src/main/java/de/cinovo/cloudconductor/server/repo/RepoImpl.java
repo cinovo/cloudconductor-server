@@ -20,11 +20,11 @@ import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 
 public class RepoImpl extends AWebPage implements IRepo {
-	
+
 	@Autowired
 	private IRepoProvider provider;
-	
-	
+
+
 	@Override
 	public Response get(String file) {
 		if (file.isEmpty() || file.endsWith("/")) {
@@ -40,40 +40,41 @@ public class RepoImpl extends AWebPage implements IRepo {
 		}
 		throw new NotFoundException();
 	}
-	
+
 	private Response resultList(String folder, List<RepoEntry> entries) {
 		CSViewModel view = this.createView("list");
 		view.addModel("folder", folder);
 		view.addModel("files", entries);
+		view.addModel("byteTool", new ByteTool());
 		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
 	}
-	
+
 	private Response resultStream(final InputStream stream, RepoEntry entry) {
 		StreamingOutput out = new StreamingOutput() {
-
+			
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				StreamUtils.copy(stream, output);
+				output.flush();
+				output.close();
 			}
 		};
-		// TODO Filename
-		// TODO Filesize
-		return Response.ok(out, javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM).build();
+		return Response.ok(out, entry.getContentType()).header("Content-Length", entry.getSize()).build();
 	}
-
+	
 	@Override
 	protected String getTemplateFolder() {
 		return "repo";
 	}
-
+	
 	@Override
 	protected void init() {
 		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo");
 	}
-
+	
 	@Override
 	protected String getNavElementName() {
 		return "Repository";
 	}
-	
+
 }

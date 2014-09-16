@@ -3,21 +3,30 @@ package de.cinovo.cloudconductor.server.repo.provider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StreamUtils;
 
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 
 public class FileProvider implements IRepoProvider {
 	
-	private static final String BASE_PATH = "static/yum/";
+	@Value("${repo.basedir:static/yum/}")
+	private String basedir;
+	
+	private long indexModification;
+	private long indexSize;
 
 
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
-		File dir = new File(FileProvider.BASE_PATH + folder);
+		File dir = new File(this.basedir + folder);
 		if (!dir.isDirectory()) {
 			return null;
 		}
@@ -30,7 +39,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public RepoEntry getEntry(String key) {
-		File file = new File(FileProvider.BASE_PATH + key);
+		File file = new File(this.basedir + key);
 		if (file.exists()) {
 			return this.createEntry(file);
 		}
@@ -48,7 +57,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public InputStream getEntryStream(String key) {
-		File file = new File(FileProvider.BASE_PATH + key);
+		File file = new File(this.basedir + key);
 		if (file.exists()) {
 			try {
 				return new FileInputStream(file);
@@ -59,4 +68,21 @@ public class FileProvider implements IRepoProvider {
 		return null;
 	}
 	
+	@Override
+	public String getLatestIndex() {
+		File file = new File(this.basedir + IRepoProvider.INDEX_FILE);
+		if (!file.exists()) {
+			return null;
+		}
+		if ((file.lastModified() == this.indexModification) && (file.length() == this.indexSize)) {
+			return null;
+		}
+		this.indexModification = file.lastModified();
+		this.indexSize = file.length();
+		try {
+			return StreamUtils.copyToString(new FileInputStream(file), Charset.forName("UTF-8"));
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to read index", e);
+		}
+	}
 }

@@ -53,6 +53,9 @@
 		</jaxrs:providers>
 	</jaxrs:server>
 	<bean id="repoProvider" class="de.cinovo.cloudconductor.server.repo.provider.${repo.provider:FileProvider}"/>
+	<bean name="awsS3Client" class="de.cinovo.cloudconductor.server.util.AWSClientFactory" factory-method="createClient" lazy-init="true">
+		<constructor-arg value="com.amazonaws.services.s3.AmazonS3Client" />
+	</bean>
 
 	<jaxrs:server id="serverUI2" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/web" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>

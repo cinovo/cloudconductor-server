@@ -32,6 +32,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
+import de.cinovo.cloudconductor.server.repo.IndexTask;
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
 import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
@@ -44,7 +45,7 @@ import de.taimos.springcxfdaemon.SpringDaemonAdapter;
  * Copyright 2012 Cinovo AG<br>
  * <br>
  * Starter program for the Config Server.
- * 
+ *
  * @author mhilbert
  */
 public class ServerStarter extends SpringDaemonAdapter {
@@ -61,11 +62,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 	public static final ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
 	
 	private static final int CLEANUP_TIMER = 30;
+	private static final int INDEX_TIMER = 10;
 	
 	
 	/**
 	 * Main method.
-	 * 
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
@@ -86,6 +88,11 @@ public class ServerStarter extends SpringDaemonAdapter {
 	protected void doAfterSpringStart() {
 		CleanUpTask cleanup = this.getContext().getBean("cleanuptask", CleanUpTask.class);
 		ServerStarter.ses.scheduleAtFixedRate(cleanup, 0, ServerStarter.CLEANUP_TIMER, TimeUnit.MINUTES);
+		
+		if (System.getProperty("repo.indexscan", "false").equals("true")) {
+			IndexTask index = this.getContext().getBean("indextask", IndexTask.class);
+			ServerStarter.ses.scheduleAtFixedRate(index, 0, ServerStarter.INDEX_TIMER, TimeUnit.SECONDS);
+		}
 		
 		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
