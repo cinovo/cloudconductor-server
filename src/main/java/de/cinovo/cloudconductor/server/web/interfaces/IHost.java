@@ -95,7 +95,7 @@ public interface IHost {
 	 */
 	@POST
 	@Path(IHost.DELETE_ACTION)
-	@Produces(MediaType.TEXT_HTML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public AjaxAnswer deleteHost(@PathParam(IWebPath.VAR_NAME) String hname) throws FormErrorException;
 	
 }
