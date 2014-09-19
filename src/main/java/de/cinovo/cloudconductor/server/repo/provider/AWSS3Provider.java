@@ -1,8 +1,6 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StreamUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -32,8 +29,6 @@ public class AWSS3Provider implements IRepoProvider {
 	
 	@Value("${repo.bucket}")
 	private String bucketName;
-	
-	private String indexETag;
 	
 	
 	@Override
@@ -60,6 +55,7 @@ public class AWSS3Provider implements IRepoProvider {
 				fil.setDirectory(false);
 				fil.setModified(objectSummary.getLastModified());
 				fil.setSize(objectSummary.getSize());
+				fil.setChecksum(objectSummary.getETag());
 				res.add(fil);
 			}
 		}
@@ -78,6 +74,7 @@ public class AWSS3Provider implements IRepoProvider {
 		fil.setModified(obj.getLastModified());
 		fil.setSize(obj.getContentLength());
 		fil.setContentType(obj.getContentType());
+		fil.setChecksum(obj.getETag());
 		return fil;
 	}
 	
@@ -85,22 +82,6 @@ public class AWSS3Provider implements IRepoProvider {
 	public InputStream getEntryStream(String key) {
 		S3Object s3Object = this.s3Client.getObject(this.bucketName, key);
 		return s3Object.getObjectContent();
-	}
-	
-	@Override
-	public String getLatestIndex() {
-		final ObjectMetadata obj = this.s3Client.getObjectMetadata(this.bucketName, IRepoProvider.INDEX_FILE);
-		String eTag = obj.getETag();
-		if ((this.indexETag != null) && this.indexETag.equals(eTag)) {
-			return null;
-		}
-		this.indexETag = eTag;
-		S3Object s3Object = this.s3Client.getObject(this.bucketName, IRepoProvider.INDEX_FILE);
-		try {
-			return StreamUtils.copyToString(s3Object.getObjectContent(), Charset.forName("UTF-8"));
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to read index", e);
-		}
 	}
 
 }
