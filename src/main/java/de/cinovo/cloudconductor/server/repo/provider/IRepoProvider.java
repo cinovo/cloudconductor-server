@@ -24,5 +24,10 @@ public interface IRepoProvider {
 	 * @return the stream of the content of the given file
 	 */
 	InputStream getEntryStream(String key);
+	
+	/**
+	 * @return <code>true</code> if listings are possible; <code>false</code> otherwise
+	 */
+	boolean isListable();
 
 }

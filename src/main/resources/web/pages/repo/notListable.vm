@@ -1,0 +1,18 @@
+<div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">
+
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle" data-toggle="collapse"
+			data-target="#REPO-hide">
+			<h3 class="panel-title">
+				Package Repository: ${folder} <span class="pull-right"><span class="caret"></span></span>
+			</h3>
+
+		</div>
+		<div id="REPO-hide" class="collapse in">
+			<h4>The currently selected repository provider does not support file listing.</h4>
+		</div>
+	</div>
+</div>
+
+

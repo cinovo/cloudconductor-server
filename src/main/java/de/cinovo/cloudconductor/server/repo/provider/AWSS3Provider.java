@@ -23,19 +23,24 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
  * @author Thorsten Hoeger
  */
 public class AWSS3Provider implements IRepoProvider {
-	
+
 	@Autowired
 	private AmazonS3 s3Client;
-	
+
 	@Value("${repo.bucket}")
 	private String bucketName;
-	
-	
+
+
+	@Override
+	public boolean isListable() {
+		return true;
+	}
+
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
 		List<RepoEntry> res = new ArrayList<>();
 		Set<String> folderNames = new HashSet<>();
-		
+
 		ObjectListing objects = this.s3Client.listObjects(this.bucketName, folder);
 		List<S3ObjectSummary> summaries = objects.getObjectSummaries();
 		for (S3ObjectSummary objectSummary : summaries) {
@@ -64,7 +69,7 @@ public class AWSS3Provider implements IRepoProvider {
 		}
 		return res;
 	}
-	
+
 	@Override
 	public RepoEntry getEntry(String key) {
 		final ObjectMetadata obj = this.s3Client.getObjectMetadata(this.bucketName, key);
@@ -77,11 +82,11 @@ public class AWSS3Provider implements IRepoProvider {
 		fil.setChecksum(obj.getETag());
 		return fil;
 	}
-	
+
 	@Override
 	public InputStream getEntryStream(String key) {
 		S3Object s3Object = this.s3Client.getObject(this.bucketName, key);
 		return s3Object.getObjectContent();
 	}
-
+	
 }

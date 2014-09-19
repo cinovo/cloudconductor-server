@@ -28,6 +28,9 @@ public class RepoImpl extends AWebPage implements IRepo {
 	@Override
 	public Response get(String file) {
 		if (file.isEmpty() || file.endsWith("/")) {
+			if (!this.provider.isListable()) {
+				return this.resultNoList(file);
+			}
 			List<RepoEntry> list = this.provider.getEntries(file);
 			if (list != null) {
 				return this.resultList(file, list);
@@ -41,6 +44,12 @@ public class RepoImpl extends AWebPage implements IRepo {
 		throw new NotFoundException();
 	}
 
+	private Response resultNoList(String folder) {
+		CSViewModel view = this.createView("notListable");
+		view.addModel("folder", folder);
+		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
+	}
+	
 	private Response resultList(String folder, List<RepoEntry> entries) {
 		CSViewModel view = this.createView("list");
 		view.addModel("folder", folder);

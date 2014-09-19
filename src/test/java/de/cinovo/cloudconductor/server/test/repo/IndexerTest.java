@@ -42,6 +42,11 @@ public class IndexerTest {
 			return this.getClass().getClassLoader().getResourceAsStream(key);
 		}
 
+		@Override
+		public boolean isListable() {
+			return false;
+		}
+		
 	}
 
 
