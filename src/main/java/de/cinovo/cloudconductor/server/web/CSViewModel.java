@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.web;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -39,12 +39,12 @@ import de.taimos.cxf_renderer.model.ViewModel;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class CSViewModel extends ViewModel {
-	
+
 	static {
 		try {
 			// Use ClasspathLoader
@@ -61,18 +61,18 @@ public class CSViewModel extends ViewModel {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	private static String evaluateVM(final String name, final Map<String, Object> variables) {
 		try {
 			/* lets make a Context and put data into it */
 			final VelocityContext context = new VelocityContext();
-			
+
 			final Set<Entry<String, Object>> entrySet = variables.entrySet();
 			for (final Entry<String, Object> entry : entrySet) {
 				context.put(entry.getKey(), entry.getValue());
 			}
-			
+
 			final Template template = Velocity.getTemplate(name);
 			final StringWriter w = new StringWriter();
 			template.merge(context, w);
@@ -81,12 +81,13 @@ public class CSViewModel extends ViewModel {
 			throw new InternalServerErrorException(e);
 		}
 	}
-	
-	
+
+
 	/**
 	 * modal identifier
 	 */
-	public static final String MODAL_IDENTIFIER = "_MODAL_";
+	private boolean isSimpleView = true;
+	private boolean isModal = false;
 	
 	
 	/**
@@ -96,28 +97,40 @@ public class CSViewModel extends ViewModel {
 	 */
 	public CSViewModel(String viewName, boolean isModal, EServerOptions options) {
 		super(viewName);
+		this.isSimpleView = false;
+		this.isModal = isModal;
 		this.addModel("C2InstanceOptions", options);
 		String implementationVersion = this.getClass().getPackage().getImplementationVersion();
 		this.addModel("C2InstanceVersion", implementationVersion != null ? implementationVersion : "DEV-SNAPSHOT");
-		if (isModal) {
-			this.addModel("VIEWNAME", CSViewModel.MODAL_IDENTIFIER + viewName);
-		} else {
-			this.addModel("VIEWNAME", viewName);
-		}
-		
+		this.addModel("VIEWNAME", viewName);
+
 		this.addModel("dateTool", new DateTool());
 		this.addModel("sorterTool", new SortTool());
 		this.addModel("NOW", DateTime.now());
 	}
-	
+
+	/**
+	 * @param viewName the view name
+	 */
+	public CSViewModel(String viewName) {
+		super(viewName);
+		String implementationVersion = this.getClass().getPackage().getImplementationVersion();
+		this.addModel("C2InstanceVersion", implementationVersion != null ? implementationVersion : "DEV-SNAPSHOT");
+		this.addModel("dateTool", new DateTool());
+		this.addModel("sorterTool", new SortTool());
+		this.addModel("NOW", DateTime.now());
+	}
+
 	protected String generateTemplateName() {
-		if (this.getViewName().startsWith(CSViewModel.MODAL_IDENTIFIER)) {
-			String view = this.getViewName().substring(CSViewModel.MODAL_IDENTIFIER.length(), this.getViewName().length());
-			return "/web/pages/" + view + ".vm";
+		if (this.isModal) {
+			return "/web/pages/" + this.getViewName() + ".vm";
+		}
+		if (this.isSimpleView) {
+			return "/web/pages/" + this.getViewName() + ".vm";
 		}
 		return "/web/index.vm";
 	}
-	
+
 	/**
 	 * @return the rendered view
 	 */
