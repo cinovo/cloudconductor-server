@@ -8,15 +8,16 @@ package de.cinovo.cloudconductor.server;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  * #L%
  */
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,6 +33,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
+import de.cinovo.cloudconductor.server.installer.InstallationAdapter;
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
 import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
@@ -44,32 +46,44 @@ import de.taimos.springcxfdaemon.SpringDaemonAdapter;
  * Copyright 2012 Cinovo AG<br>
  * <br>
  * Starter program for the Config Server.
- * 
+ *
  * @author mhilbert
  */
 public class ServerStarter extends SpringDaemonAdapter {
-	
-	private static final String CLOUDCONDUCTOR_PROPERTIES = "cloudconductor.properties";
+
+	/** C2 properties file name */
+	public static final String CLOUDCONDUCTOR_PROPERTIES = "cloudconductor.properties";
 	// Exception messages.
 	private static final String EXCEPTION_IN_PHASE = "Exception in phase %s.";
 	/** the name of the server daemon */
 	public static final String DAEMON_NAME = "cloudconductor";
+	/** the name of the server daemon */
+	public static final String INSTALLING_DAEMON_NAME = "cloudconductor_INSTALLING";
 	/** the logger */
 	private static final Logger log = Logger.getLogger(ServerStarter.class);
-	
+
 	/** scheduler service */
 	public static final ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
-	
+
 	private static final int CLEANUP_TIMER = 30;
-	
-	
+
+
 	/**
 	 * Main method.
-	 * 
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
+		if (ServerStarter.checkInstalled()) {
+			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
+		} else {
+			DaemonStarter.startDaemon(ServerStarter.INSTALLING_DAEMON_NAME, new InstallationAdapter());
+		}
+	}
+
+	private static boolean checkInstalled() {
+		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
+		return f.exists();
 	}
 	
 	@Override
@@ -81,12 +95,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
 		super.doBeforeSpringStart();
 	}
-	
+
 	@Override
 	protected void doAfterSpringStart() {
 		CleanUpTask cleanup = this.getContext().getBean("cleanuptask", CleanUpTask.class);
 		ServerStarter.ses.scheduleAtFixedRate(cleanup, 0, ServerStarter.CLEANUP_TIMER, TimeUnit.MINUTES);
-		
+
 		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
 		try {
@@ -96,12 +110,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 		}
 		super.doAfterSpringStart();
 	}
-	
+
 	@Override
 	public void exception(LifecyclePhase phase, Throwable exception) {
 		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
 	}
-	
+
 	@Override
 	public IPropertyProvider getPropertyProvider() {
 		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
