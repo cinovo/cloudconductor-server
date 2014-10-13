@@ -13,8 +13,7 @@ package de.cinovo.cloudconductor.server;
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
- * #L%
+ * and limitations under the License. #L%
  */
 
 import java.io.File;
@@ -34,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
 import de.cinovo.cloudconductor.server.installer.InstallationAdapter;
+import de.cinovo.cloudconductor.server.repo.IndexTask;
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
 import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
@@ -61,13 +61,14 @@ public class ServerStarter extends SpringDaemonAdapter {
 	public static final String INSTALLING_DAEMON_NAME = "cloudconductor_INSTALLING";
 	/** the logger */
 	private static final Logger log = Logger.getLogger(ServerStarter.class);
-
+	
 	/** scheduler service */
 	public static final ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
-
+	
 	private static final int CLEANUP_TIMER = 30;
-
-
+	private static final int INDEX_TIMER = 60;
+	
+	
 	/**
 	 * Main method.
 	 *
@@ -80,7 +81,7 @@ public class ServerStarter extends SpringDaemonAdapter {
 			DaemonStarter.startDaemon(ServerStarter.INSTALLING_DAEMON_NAME, new InstallationAdapter());
 		}
 	}
-
+	
 	private static boolean checkInstalled() {
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		return f.exists();
@@ -95,12 +96,17 @@ public class ServerStarter extends SpringDaemonAdapter {
 		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
 		super.doBeforeSpringStart();
 	}
-
+	
 	@Override
 	protected void doAfterSpringStart() {
 		CleanUpTask cleanup = this.getContext().getBean("cleanuptask", CleanUpTask.class);
 		ServerStarter.ses.scheduleAtFixedRate(cleanup, 0, ServerStarter.CLEANUP_TIMER, TimeUnit.MINUTES);
-
+		
+		if (System.getProperty("repo.indexscan", "false").equals("true")) {
+			IndexTask index = this.getContext().getBean("indextask", IndexTask.class);
+			ServerStarter.ses.scheduleAtFixedRate(index, 0, ServerStarter.INDEX_TIMER, TimeUnit.SECONDS);
+		}
+		
 		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
 		try {
@@ -110,12 +116,12 @@ public class ServerStarter extends SpringDaemonAdapter {
 		}
 		super.doAfterSpringStart();
 	}
-
+	
 	@Override
 	public void exception(LifecyclePhase phase, Throwable exception) {
 		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
 	}
-
+	
 	@Override
 	public IPropertyProvider getPropertyProvider() {
 		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
