@@ -24,27 +24,34 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class RPMIndexer implements IRepoIndexer {
-
+	
 	private static enum RPMPrimaryState {
 		Repo, Package, Requires, Provides, Conflicts;
-
+		
 		public static EnumSet<RPMPrimaryState> depStates = EnumSet.of(Requires, Provides, Conflicts);
 	}
-
+	
 	private static class RPMPrimaryParser extends DefaultHandler {
-
-		private Set<PackageVersion> versions = new HashSet<PackageVersion>();
 		
+		private Set<PackageVersion> versions = new HashSet<PackageVersion>();
+
 		private String name;
 		private String version;
 		private Set<Dependency> dependencies;
-
+		
 		private String tmpValue;
-		
+
 		private RPMPrimaryState state = RPMPrimaryState.Repo;
-		
-		
+
+
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			if ((this.state == RPMPrimaryState.Repo) && qName.equals("package") && attributes.getValue("type").equals("rpm")) {
@@ -73,7 +80,7 @@ public class RPMIndexer implements IRepoIndexer {
 				this.dependencies.add(dep);
 			}
 		}
-
+		
 		private String parseOperator(String flag) {
 			if (flag == null) {
 				return "";
@@ -89,7 +96,7 @@ public class RPMIndexer implements IRepoIndexer {
 				return "";
 			}
 		}
-		
+
 		private String convertDepType(RPMPrimaryState depState) {
 			switch (depState) {
 			case Conflicts:
@@ -102,7 +109,7 @@ public class RPMIndexer implements IRepoIndexer {
 				return "";
 			}
 		}
-
+		
 		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			if ((this.state == RPMPrimaryState.Package) && qName.equals("name")) {
@@ -119,27 +126,27 @@ public class RPMIndexer implements IRepoIndexer {
 				this.state = RPMPrimaryState.Package;
 			}
 		}
-
+		
 		@Override
 		public void endDocument() throws SAXException {
 			if (this.state != RPMPrimaryState.Repo) {
 				throw new SAXException("Invalid end state: " + this.state);
 			}
 		}
-		
+
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			this.tmpValue = new String(ch, start, length);
 		}
-		
+
 	}
-
-
+	
+	
 	private static final String REPO_INDEX = "repodata/repomd.xml";
-	
+
 	private RepoEntry latest;
-	
-	
+
+
 	@Override
 	public Set<PackageVersion> getRepoIndex(IRepoProvider provider) {
 		RepoEntry entry = provider.getEntry(RPMIndexer.REPO_INDEX);
@@ -164,7 +171,7 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 		throw new RuntimeException("Didn't find index file");
 	}
-	
+
 	private Document xmlDOM(InputStream xmlStream) {
 		try {
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlStream);
@@ -172,7 +179,7 @@ public class RPMIndexer implements IRepoIndexer {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private void xmlSAX(InputStream xmlStream, DefaultHandler handler) {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();

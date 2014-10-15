@@ -3,10 +3,13 @@
 <div id="$package.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${package.name}-hide">
-			<h3 class="panel-title">$package.name<span class="pull-right"><span class="caret"></span></span></h3>
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$package.name" rel="tooltip-down" title="Click to copy to clipboard">$package.name</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${package.name.replace(".", "-")}-hide"></span>
+			</h3>
 		</div>
-		<div id="${package.name}-hide" class="collapse in">
+		<div id="${package.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
 		<table class="table table-striped">
 		<thead>
 			<tr>

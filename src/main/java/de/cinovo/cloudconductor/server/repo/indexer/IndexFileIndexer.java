@@ -16,8 +16,18 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class IndexFileIndexer implements IRepoIndexer {
 
+	/**
+	 * Cloudconductor Index file
+	 */
 	public static final String INDEX_FILE = "index.c2";
 	
 	private RepoEntry latest;

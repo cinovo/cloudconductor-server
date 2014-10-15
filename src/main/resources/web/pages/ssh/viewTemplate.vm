@@ -2,15 +2,18 @@
 <div id="$key.owner" class="col-xs-12 col-sm-10 rel-anchor"></div>
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${key.owner}-hide">
-			<h3 class="panel-title">$template.name <span class="pull-right"><span class="caret"></span></span></h3>
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$template.name" rel="tooltip-down" title="Click to copy to clipboard">$template.name</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${template.name.replace(".", "-").replace("@", "-")}-hide"></span>
+			</h3>
 			<span class="pull-right">
 				<span class="btn-group">
 					<a type="button" class="btn btn-default glyphicon glyphicon-folder-open" href="templates#${template.name}" rel="tooltip-down" title="Goto template ${template.name}"></a>
 				</span>
 			</span>
 		</div>
-		<div id="${key.owner}-hide" class="collapse in">
+		<div id="${template.name.replace(".", "-").replace("@", "-")}-hide" class="collapse in">
 			
 		<table class="table table-striped">
 			<thead>

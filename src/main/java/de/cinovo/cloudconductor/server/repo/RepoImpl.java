@@ -19,12 +19,19 @@ import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class RepoImpl extends AWebPage implements IRepo {
-
+	
 	@Autowired
 	private IRepoProvider provider;
-
-
+	
+	
 	@Override
 	public Response get(String file) {
 		if (file.isEmpty() || file.endsWith("/")) {
@@ -43,13 +50,13 @@ public class RepoImpl extends AWebPage implements IRepo {
 		}
 		throw new NotFoundException();
 	}
-
+	
 	private Response resultNoList(String folder) {
 		CSViewModel view = this.createView("notListable");
 		view.addModel("folder", folder);
 		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
 	}
-	
+
 	private Response resultList(String folder, List<RepoEntry> entries) {
 		CSViewModel view = this.createView("list");
 		view.addModel("folder", folder);
@@ -57,10 +64,10 @@ public class RepoImpl extends AWebPage implements IRepo {
 		view.addModel("byteTool", new ByteTool());
 		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
 	}
-
+	
 	private Response resultStream(final InputStream stream, RepoEntry entry) {
 		StreamingOutput out = new StreamingOutput() {
-			
+
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				StreamUtils.copy(stream, output);
@@ -70,20 +77,20 @@ public class RepoImpl extends AWebPage implements IRepo {
 		};
 		return Response.ok(out, entry.getContentType()).header("Content-Length", entry.getSize()).build();
 	}
-	
+
 	@Override
 	protected String getTemplateFolder() {
 		return "repo";
 	}
-	
+
 	@Override
 	protected void init() {
 		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo");
 	}
-	
+
 	@Override
 	protected String getNavElementName() {
 		return "Repository";
 	}
-
+	
 }

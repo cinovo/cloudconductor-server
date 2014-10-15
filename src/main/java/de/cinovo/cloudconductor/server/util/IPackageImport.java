@@ -13,6 +13,9 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
  */
 public interface IPackageImport {
 
-	void importVersions(Set<PackageVersion> rpms);
+	/**
+	 * @param packageVersions the package versions
+	 */
+	void importVersions(Set<PackageVersion> packageVersions);
 
 }
