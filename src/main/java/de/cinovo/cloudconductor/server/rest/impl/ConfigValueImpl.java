@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -34,9 +34,9 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class ConfigValueImpl implements IConfigValue {
 	
@@ -83,21 +83,25 @@ public class ConfigValueImpl implements IConfigValue {
 	@Transactional
 	public String get(String template, String service, String key) {
 		RESTAssert.assertNotEmpty(template);
-		RESTAssert.assertNotEmpty(service);
-		RESTAssert.assertNotEmpty(key);
+		String lService = service;
+		String lKey = key;
+		if ((key == null) && (service != null)) {
+			lKey = service;
+			lService = null;
+		}
 		
 		EConfigValue result = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
-			result = this.dcv.findBy(template, service, key);
+			result = this.dcv.findBy(template, lService, lKey);
+			if (result == null) {
+				result = this.dcv.findKey(template, lKey);
+			}
 		}
 		if (result == null) {
-			result = this.dcv.findKey(template, key);
+			result = this.dcv.findGlobal(lService, lKey);
 		}
 		if (result == null) {
-			result = this.dcv.findGlobal(service, key);
-		}
-		if (result == null) {
-			result = this.dcv.findKey(key);
+			result = this.dcv.findKey(lKey);
 		}
 		
 		if (result == null) {
