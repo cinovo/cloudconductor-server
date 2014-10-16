@@ -541,4 +541,32 @@
 		<renameColumn schemaName="cloudconductor" tableName="servicedefaultstate" oldColumnName="newstate" newColumnName="state"/>
 		<renameColumn schemaName="cloudconductor" tableName="servicestate" oldColumnName="newstate" newColumnName="state"/>
 	</changeSet>	
+	<changeSet id="18" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="serveroptions">
+			<column name="hostcleanuptimer" defaultValueNumeric="30"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="hostcleanuptimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="indexscantimer" defaultValueNumeric="60"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="indexscantimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="pagerefreshtimer" defaultValueNumeric="15"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="pagerefreshtimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<createTable schemaName="cloudconductor" tableName="serveroptions_disallowuninstall">
+			<column name="id" type="bigint">
+				<constraints references="cloudconductor.serveroptions(id)" foreignKeyName="fk_serveroptions_uninstall" deleteCascade="true" nullable="false"/>
+			</column>
+			<column name="disallowuninstall" type="text" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

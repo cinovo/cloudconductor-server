@@ -3,6 +3,7 @@ package de.cinovo.cloudconductor.server.web.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.cinovo.cloudconductor.server.ServerTaskHelper;
 import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
@@ -23,35 +24,37 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class ServerOptionsImpl extends AWebPage implements IServerOptions {
-	
+
 	@Autowired
 	protected IAdditionalLinksDAO dLinks;
 	@Autowired
 	protected ITemplateDAO dTemplate;
 	@Autowired
 	protected NavbarRegistry navReg;
-	
-	
+	@Autowired
+	protected ServerTaskHelper taskHelper;
+
+
 	@Override
 	protected String getTemplateFolder() {
 		return "options";
 	}
-	
+
 	@Override
 	protected void init() {
 		// nothing to do
 	}
-	
+
 	@Override
 	protected String getNavElementName() {
 		return "Options";
 	}
-	
+
 	@Override
 	@Transactional
 	public RenderedView view() {
@@ -59,14 +62,14 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		modal.addModel("options", this.dServerOptions.get());
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView viewLinks() {
 		final CSViewModel modal = this.createModal("mLinks");
 		modal.addModel("links", this.dLinks.findList());
 		return modal.render();
 	}
-	
+
 	@Override
 	@Transactional
 	public AjaxAnswer saveOptions(String name, String bgcolor, String autoUpdate, String descr, String needsapproval) throws FormErrorException {
@@ -83,15 +86,25 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 			error.setParentUrl(IServerOptions.ROOT);
 			throw error;
 		}
-		
+
 		EServerOptions options = this.dServerOptions.get();
+		EServerOptions oldOptions = options;
 		options.setName(name);
 		options.setBgcolor(bgcolor);
 		options.setAllowautoupdate(autoUpdate == null ? false : true);
 		options.setNeedsApproval(needsapproval == null ? false : true);
 		options.setDescription(descr);
-		this.dServerOptions.save(options);
+		options = this.dServerOptions.save(options);
 		
+		this.handleGlobalDisableAutoUpdate(options);
+		this.taskHelper.updateTasks(oldOptions);
+		
+		AjaxAnswer ajaxRedirect = new AjaxAnswer(IWebPath.WEBROOT + IServerOptions.ROOT, AjaxAnswerType.GET);
+		ajaxRedirect.setInfo("Successfully saved");
+		return ajaxRedirect;
+	}
+
+	private void handleGlobalDisableAutoUpdate(EServerOptions options) {
 		if (!options.isAllowautoupdate()) {
 			for (ETemplate t : this.dTemplate.findList()) {
 				if (t.getAutoUpdate()) {
@@ -100,17 +113,14 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 				}
 			}
 		}
-		AjaxAnswer ajaxRedirect = new AjaxAnswer(IWebPath.WEBROOT + IServerOptions.ROOT, AjaxAnswerType.GET);
-		ajaxRedirect.setInfo("Successfully saved");
-		return ajaxRedirect;
 	}
-	
+
 	@Override
 	public RenderedView addLinkView() {
 		final CSViewModel modal = this.createModal("mAddLink");
 		return modal.render();
 	}
-	
+
 	@Override
 	public AjaxAnswer addLink(String label, String link) throws FormErrorException {
 		FormErrorException error = null;
@@ -127,14 +137,14 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		add.setLabel(label);
 		add.setUrl(link);
 		add = this.dLinks.save(add);
-		
+
 		this.navReg.registerSubMenu(NavbarHardLinks.links, add.getLabel(), add.getUrl());
-		
+
 		AjaxAnswer ajaxRedirect = new AjaxAnswer(IWebPath.WEBROOT + IServerOptions.ROOT + IServerOptions.LINKS_ROOT, AjaxAnswerType.GET);
 		ajaxRedirect.setInfo("Successfully saved");
 		return ajaxRedirect;
 	}
-	
+
 	@Override
 	public RenderedView deleteLinkView(String label) {
 		EAdditionalLinks link = this.dLinks.findByLabel(label);
@@ -143,7 +153,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		modal.addModel("link", link);
 		return modal.render();
 	}
-	
+
 	@Override
 	public AjaxAnswer deleteLink(String label) {
 		EAdditionalLinks link = this.dLinks.findByLabel(label);
@@ -154,5 +164,5 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		ajaxRedirect.setInfo("The link " + label + " has been deleted.");
 		return ajaxRedirect;
 	}
-	
+
 }
