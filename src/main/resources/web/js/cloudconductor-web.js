@@ -197,7 +197,7 @@ $(document)
 									})
 
 					// init reloadContent
-					window.setInterval(reloadContent, 15000);
+					window.setInterval(reloadContent, $('meta[name=reloadTimer]').attr("content"));
 
 					// init audit-table
 					var dataTable = $('#audit-table').DataTable({

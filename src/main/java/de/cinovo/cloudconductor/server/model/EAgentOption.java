@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import de.cinovo.cloudconductor.api.model.TaskState;
 import de.taimos.dao.IEntity;
 
 /**
@@ -23,43 +24,43 @@ import de.taimos.dao.IEntity;
 @Entity
 @Table(name = "agentoptions", schema = "cloudconductor")
 public class EAgentOption implements IEntity<Long> {
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	private Long id;
-
+	
 	private ETemplate template;
-
-	private int aliveTimer = 2;
+	
+	private int aliveTimer = 1;
 	private TimeUnit aliveTimerUnit = TimeUnit.MINUTES;
-	
-	private boolean doSshKeys = true;
-	private int sshKeysTimer = 15;
+
+	private TaskState doSshKeys = TaskState.REPEAT;
+	private int sshKeysTimer = 5;
 	private TimeUnit sshKeysTimerUnit = TimeUnit.MINUTES;
-	
-	private boolean doPackageManagement = true;
-	private int packageManagementTimer = 15;
+
+	private TaskState doPackageManagement = TaskState.REPEAT;
+	private int packageManagementTimer = 2;
 	private TimeUnit packageManagementTimerUnit = TimeUnit.MINUTES;
-	
-	private boolean doFileManagement = true;
-	private int fileManagementTimer = 15;
+
+	private TaskState doFileManagement = TaskState.REPEAT;
+	private int fileManagementTimer = 2;
 	private TimeUnit fileManagementTimerUnit = TimeUnit.MINUTES;
-	
-	
+
+
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-
+	
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	
 	/**
 	 * @return the template
 	 */
@@ -68,161 +69,161 @@ public class EAgentOption implements IEntity<Long> {
 	public ETemplate getTemplate() {
 		return this.template;
 	}
-
+	
 	/**
 	 * @param template the template to set
 	 */
 	public void setTemplate(ETemplate template) {
 		this.template = template;
 	}
-
+	
 	/**
 	 * @return the aliveTimer
 	 */
 	public int getAliveTimer() {
 		return this.aliveTimer;
 	}
-
+	
 	/**
 	 * @param aliveTimer the aliveTimer to set
 	 */
 	public void setAliveTimer(int aliveTimer) {
 		this.aliveTimer = aliveTimer;
 	}
-
+	
 	/**
 	 * @return the aliveTimerUnit
 	 */
 	public TimeUnit getAliveTimerUnit() {
 		return this.aliveTimerUnit;
 	}
-
+	
 	/**
 	 * @param aliveTimerUnit the aliveTimerUnit to set
 	 */
 	public void setAliveTimerUnit(TimeUnit aliveTimerUnit) {
 		this.aliveTimerUnit = aliveTimerUnit;
 	}
-
+	
 	/**
 	 * @return the doSshKeys
 	 */
-	public boolean isDoSshKeys() {
+	public TaskState getDoSshKeys() {
 		return this.doSshKeys;
 	}
-
+	
 	/**
 	 * @param doSshKeys the doSshKeys to set
 	 */
-	public void setDoSshKeys(boolean doSshKeys) {
+	public void setDoSshKeys(TaskState doSshKeys) {
 		this.doSshKeys = doSshKeys;
 	}
-
+	
 	/**
 	 * @return the sshKeysTimer
 	 */
 	public int getSshKeysTimer() {
 		return this.sshKeysTimer;
 	}
-
+	
 	/**
 	 * @param sshKeysTimer the sshKeysTimer to set
 	 */
 	public void setSshKeysTimer(int sshKeysTimer) {
 		this.sshKeysTimer = sshKeysTimer;
 	}
-
+	
 	/**
 	 * @return the sshKeysTimerUnit
 	 */
 	public TimeUnit getSshKeysTimerUnit() {
 		return this.sshKeysTimerUnit;
 	}
-
+	
 	/**
 	 * @param sshKeysTimerUnit the sshKeysTimerUnit to set
 	 */
 	public void setSshKeysTimerUnit(TimeUnit sshKeysTimerUnit) {
 		this.sshKeysTimerUnit = sshKeysTimerUnit;
 	}
-
+	
 	/**
 	 * @return the doPackageManagement
 	 */
-	public boolean isDoPackageManagement() {
+	public TaskState getDoPackageManagement() {
 		return this.doPackageManagement;
 	}
-
+	
 	/**
 	 * @param doPackageManagement the doPackageManagement to set
 	 */
-	public void setDoPackageManagement(boolean doPackageManagement) {
+	public void setDoPackageManagement(TaskState doPackageManagement) {
 		this.doPackageManagement = doPackageManagement;
 	}
-
+	
 	/**
 	 * @return the packageManagementTimer
 	 */
 	public int getPackageManagementTimer() {
 		return this.packageManagementTimer;
 	}
-
+	
 	/**
 	 * @param packageManagementTimer the packageManagementTimer to set
 	 */
 	public void setPackageManagementTimer(int packageManagementTimer) {
 		this.packageManagementTimer = packageManagementTimer;
 	}
-
+	
 	/**
 	 * @return the packageManagementTimerUnit
 	 */
 	public TimeUnit getPackageManagementTimerUnit() {
 		return this.packageManagementTimerUnit;
 	}
-
+	
 	/**
 	 * @param packageManagementTimerUnit the packageManagementTimerUnit to set
 	 */
 	public void setPackageManagementTimerUnit(TimeUnit packageManagementTimerUnit) {
 		this.packageManagementTimerUnit = packageManagementTimerUnit;
 	}
-
+	
 	/**
 	 * @return the doFileManagement
 	 */
-	public boolean isDoFileManagement() {
+	public TaskState getDoFileManagement() {
 		return this.doFileManagement;
 	}
-
+	
 	/**
 	 * @param doFileManagement the doFileManagement to set
 	 */
-	public void setDoFileManagement(boolean doFileManagement) {
+	public void setDoFileManagement(TaskState doFileManagement) {
 		this.doFileManagement = doFileManagement;
 	}
-
+	
 	/**
 	 * @return the fileManagementTimer
 	 */
 	public int getFileManagementTimer() {
 		return this.fileManagementTimer;
 	}
-
+	
 	/**
 	 * @param fileManagementTimer the fileManagementTimer to set
 	 */
 	public void setFileManagementTimer(int fileManagementTimer) {
 		this.fileManagementTimer = fileManagementTimer;
 	}
-
+	
 	/**
 	 * @return the fileManagementTimerUnit
 	 */
 	public TimeUnit getFileManagementTimerUnit() {
 		return this.fileManagementTimerUnit;
 	}
-
+	
 	/**
 	 * @param fileManagementTimerUnit the fileManagementTimerUnit to set
 	 */

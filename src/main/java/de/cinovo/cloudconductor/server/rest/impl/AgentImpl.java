@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -33,6 +33,7 @@ import com.google.common.collect.ArrayListMultimap;
 
 import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IAgent;
+import de.cinovo.cloudconductor.api.model.AgentOptions;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageState;
@@ -42,20 +43,24 @@ import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
+import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageStateDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
@@ -67,16 +72,16 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class AgentImpl implements IAgent {
-	
+
 	private static final int MAX_TIMEOUT_HOST = 30;
-	
+
 	private static final int MAX_UPDATE_THRESHOLD = 15;
-	
+
 	@Autowired
 	private IHostDAO dhost;
 	@Autowired
@@ -93,8 +98,12 @@ public class AgentImpl implements IAgent {
 	private IPackageStateDAO dpkgstate;
 	@Autowired
 	private IServiceDefaultStateDAO ddefss;
-	
-	
+	@Autowired
+	private IAgentOptionsDAO dagentoptions;
+	@Autowired
+	private IServerOptionsDAO dserveroptions;
+
+
 	@Override
 	@Transactional
 	public Set<String> getAliveAgents() {
@@ -104,14 +113,14 @@ public class AgentImpl implements IAgent {
 		for (EHost host : hosts) {
 			DateTime dt = new DateTime(host.getLastSeen());
 			int diff = Minutes.minutesBetween(dt, now).getMinutes();
-			
+
 			if (diff < AgentImpl.MAX_TIMEOUT_HOST) {
 				result.add(host.getName());
 			}
 		}
 		return result;
 	}
-	
+
 	@Override
 	@Transactional
 	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState) {
@@ -120,7 +129,7 @@ public class AgentImpl implements IAgent {
 		EHost host = this.dhost.findByName(hname);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		
+
 		if (host == null) {
 			host = this.createNewHost(hname, template);
 		}
@@ -144,7 +153,7 @@ public class AgentImpl implements IAgent {
 				state = this.createMissingState(host, irpm, pkg);
 				host.getPackages().add(state);
 			}
-			
+
 		}
 		for (EPackageState pkg : leftPackages) {
 			if (host.getPackages().contains(pkg)) {
@@ -153,10 +162,10 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		host = this.dhost.save(host);
-		
+
 		// check whether the host may update or has to wait for another host to finish updateing
 		if (this.sendPackageChanges(template, host)) {
-			
+
 			// Compute instruction lists (install/update/erase) from difference between packages actually installed packages that should be
 			// installed.
 			Set<EPackageVersion> actual = new HashSet<>();
@@ -171,7 +180,7 @@ public class AgentImpl implements IAgent {
 		}
 		return new PackageStateChanges(new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>());
 	}
-	
+
 	private EHost createNewHost(String hname, ETemplate template) {
 		EHost host;
 		host = new EHost();
@@ -180,7 +189,7 @@ public class AgentImpl implements IAgent {
 		host = this.dhost.save(host);
 		return host;
 	}
-	
+
 	/**
 	 * @param template
 	 * @param host
@@ -210,7 +219,7 @@ public class AgentImpl implements IAgent {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param host
 	 * @param irpm
@@ -233,7 +242,7 @@ public class AgentImpl implements IAgent {
 		state = this.dpkgstate.save(state);
 		return state;
 	}
-	
+
 	/**
 	 * @param host
 	 * @param irpm
@@ -263,7 +272,7 @@ public class AgentImpl implements IAgent {
 		}
 		return null;
 	}
-	
+
 	private boolean asserHostServices(ETemplate template, EHost host) {
 		List<EService> services = this.dsvc.findList();
 		Set<EService> templateServices = new HashSet<>();
@@ -287,18 +296,18 @@ public class AgentImpl implements IAgent {
 			EServiceState state = new EServiceState();
 			state.setService(service);
 			state.setHost(host);
-			
+
 			EServiceDefaultState dss = this.ddefss.findByName(service.getName(), template.getName());
 			if ((dss != null)) {
 				state.setState(dss.getState());
 			}
-			
+
 			this.dsvcstate.save(state);
 			changes = true;
 		}
 		return changes;
 	}
-	
+
 	@Override
 	@Transactional
 	public ServiceStatesChanges notifyServiceState(String tname, String hname, ServiceStates serviceState) {
@@ -313,11 +322,11 @@ public class AgentImpl implements IAgent {
 		if (this.asserHostServices(template, host)) {
 			host = this.dhost.findByName(hname);
 		}
-		
+
 		Set<String> toStop = new HashSet<>();
 		Set<String> toStart = new HashSet<>();
 		Set<String> toRestart = new HashSet<>();
-		
+
 		Set<EServiceState> stateList = new HashSet<>(host.getServices());
 		// agent sends running services
 		for (String sname : serviceState.getRunningServices()) {
@@ -349,10 +358,10 @@ public class AgentImpl implements IAgent {
 				}
 			}
 		}
-		
+
 		// agent sends stopped services
 		for (EServiceState state : stateList) {
-			
+
 			switch (state.getState()) {
 			case STARTING:
 				toStart.add(state.getService().getInitScript());
@@ -368,20 +377,34 @@ public class AgentImpl implements IAgent {
 				break;
 			default:
 				break;
-			
+
 			}
-			
+
 		}
 		
 		HashSet<ConfigFile> configFiles = new HashSet<>();
 		for (EFile file : template.getConfigFiles()) {
 			configFiles.add(MAConverter.fromModel(file));
 		}
+
 		if (toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {
 			host.setStartedUpdate(null);
 			this.dhost.save(host);
 		}
 		return new ServiceStatesChanges(toStart, toStop, toRestart, configFiles);
+	}
+
+	@Override
+	public AgentOptions heartBeat(String tname, String hname) {
+		RESTAssert.assertNotEmpty(hname);
+		RESTAssert.assertNotEmpty(tname);
+		EHost host = this.dhost.findByName(hname);
+		DateTime now = new DateTime();
+		host.setLastSeen(now.getMillis());
+		this.dhost.save(host);
+		
+		EAgentOption options = this.dagentoptions.findByTemplate(tname);
+		return MAConverter.fromModel(options);
 	}
 	
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
@@ -392,7 +415,7 @@ public class AgentImpl implements IAgent {
 		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		toErase.addAll(actual);
 		toErase.removeAll(nominal);
-		
+
 		// Resolve the removal of an older version and the installation of a newer one to an update instruction.
 		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		for (EPackageVersion i : toInstall) {
@@ -403,7 +426,20 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		toInstall.removeAll(toUpdate);
-		
+
+		// get rid of reserved packages on erase
+		Set<EPackageVersion> keep = new HashSet<>();
+		EServerOptions eServerOptions = this.dserveroptions.get();
+		for (String pkg : eServerOptions.getDisallowUninstall()) {
+			for (EPackageVersion erase : toErase) {
+				if (erase.getPkg().getName().equals(pkg)) {
+					keep.add(erase);
+					break;
+				}
+			}
+		}
+		toErase.removeAll(keep);
+
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
 		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
 		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
@@ -411,7 +447,7 @@ public class AgentImpl implements IAgent {
 		result = this.fillPackageDiff(result, PackageCommand.ERASE, toErase);
 		return result;
 	}
-	
+
 	private ArrayListMultimap<PackageCommand, PackageVersion> fillPackageDiff(ArrayListMultimap<PackageCommand, PackageVersion> map, PackageCommand command, Collection<EPackageVersion> packageVersions) {
 		for (EPackageVersion pv : packageVersions) {
 			String rpmName = pv.getPkg().getName();
@@ -422,5 +458,10 @@ public class AgentImpl implements IAgent {
 			map.put(command, new PackageVersion(rpmName, pv.getVersion(), dep));
 		}
 		return map;
+	}
+
+	@Override
+	public boolean isServerAlive() {
+		return true;
 	}
 }

@@ -568,5 +568,49 @@
 			</column>
 			<column name="disallowuninstall" type="text" />
 		</createTable>
+		
+		<sql>INSERT INTO cloudconductor.serveroptions_disallowuninstall(id, disallowuninstall) VALUES (1, 'jdk');</sql>
+		
+		<createTable schemaName="cloudconductor" tableName="agentoption">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_agent_option" deleteCascade="true" />
+			</column>
+			<column name="alivetimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="alivetimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dosshkeys" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="sshkeystimer" defaultValueNumeric="5"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="sshkeystimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dopackagemanagement" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="packagemanagementtimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="packagetanagementtimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dofilemanagement" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="filemanagementtimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="filemanagementtimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>

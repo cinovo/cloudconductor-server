@@ -8,6 +8,7 @@ import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.repo.IndexTask;
 import de.cinovo.cloudconductor.server.util.CleanUpTask;
+import de.cinovo.cloudconductor.server.util.ICCProperties;
 import de.cinovo.cloudconductor.server.util.IServerTasks;
 
 /**
@@ -19,16 +20,16 @@ import de.cinovo.cloudconductor.server.util.IServerTasks;
  */
 @Component
 public class ServerTaskHelper {
-	
+
 	@Autowired
 	private IServerOptionsDAO optionsDao;
-	
+
 	@Autowired
 	private CleanUpTask cleanupTask;
 	@Autowired
 	private IndexTask indexTask;
-	
-	
+
+
 	/**
 	 *
 	 */
@@ -37,17 +38,17 @@ public class ServerTaskHelper {
 		this.createCleanUpTask(options);
 		this.createIndexTask(options);
 	}
-	
+
 	private void createCleanUpTask(EServerOptions options) {
 		SchedulerService.instance.register(IServerTasks.CLEAN_UP, this.cleanupTask, options.getHostCleanUpTimer(), options.getHostCleanUpTimerUnit());
 	}
-
+	
 	private void createIndexTask(EServerOptions options) {
-		if (System.getProperty("repo.indexscan", "false").equals("true")) {
+		if (System.getProperty(ICCProperties.REPO_SCAN, "false").equals("true")) {
 			SchedulerService.instance.register(IServerTasks.INDEXER, this.indexTask, options.getIndexScanTimer(), options.getIndexScanTimerUnit());
 		}
 	}
-	
+
 	/**
 	 * update the tasks
 	 */
@@ -56,7 +57,7 @@ public class ServerTaskHelper {
 		this.updateCleanUpTask(null, options);
 		this.updateIndexTask(null, options);
 	}
-
+	
 	/**
 	 * @param oldOptions the old options
 	 */
@@ -65,7 +66,7 @@ public class ServerTaskHelper {
 		this.updateCleanUpTask(oldOptions, options);
 		this.updateIndexTask(oldOptions, options);
 	}
-
+	
 	private void updateCleanUpTask(EServerOptions oldOptions, EServerOptions options) {
 		boolean change = false;
 		if (oldOptions == null) {
@@ -82,7 +83,7 @@ public class ServerTaskHelper {
 			SchedulerService.instance.resetTask(IServerTasks.CLEAN_UP, options.getHostCleanUpTimer(), options.getHostCleanUpTimerUnit());
 		}
 	}
-	
+
 	private void updateIndexTask(EServerOptions oldOptions, EServerOptions options) {
 		boolean change = false;
 		if (oldOptions == null) {
@@ -99,5 +100,5 @@ public class ServerTaskHelper {
 			SchedulerService.instance.resetTask(IServerTasks.INDEXER, options.getIndexScanTimer(), options.getIndexScanTimerUnit());
 		}
 	}
-	
+
 }

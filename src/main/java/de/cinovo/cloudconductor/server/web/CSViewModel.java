@@ -44,7 +44,7 @@ import de.taimos.cxf_renderer.model.ViewModel;
  *
  */
 public class CSViewModel extends ViewModel {
-
+	
 	static {
 		try {
 			// Use ClasspathLoader
@@ -61,18 +61,18 @@ public class CSViewModel extends ViewModel {
 			e.printStackTrace();
 		}
 	}
-
-
+	
+	
 	private static String evaluateVM(final String name, final Map<String, Object> variables) {
 		try {
 			/* lets make a Context and put data into it */
 			final VelocityContext context = new VelocityContext();
-
+			
 			final Set<Entry<String, Object>> entrySet = variables.entrySet();
 			for (final Entry<String, Object> entry : entrySet) {
 				context.put(entry.getKey(), entry.getValue());
 			}
-
+			
 			final Template template = Velocity.getTemplate(name);
 			final StringWriter w = new StringWriter();
 			template.merge(context, w);
@@ -81,15 +81,15 @@ public class CSViewModel extends ViewModel {
 			throw new InternalServerErrorException(e);
 		}
 	}
-
-
+	
+	
 	/**
 	 * modal identifier
 	 */
 	private boolean isSimpleView = true;
 	private boolean isModal = false;
-	
-	
+
+
 	/**
 	 * @param viewName the view name
 	 * @param isModal is the view a modal or not
@@ -103,12 +103,12 @@ public class CSViewModel extends ViewModel {
 		String implementationVersion = this.getClass().getPackage().getImplementationVersion();
 		this.addModel("C2InstanceVersion", implementationVersion != null ? implementationVersion : "DEV-SNAPSHOT");
 		this.addModel("VIEWNAME", viewName);
-
+		
 		this.addModel("dateTool", new DateTool());
 		this.addModel("sorterTool", new SortTool());
 		this.addModel("NOW", DateTime.now());
 	}
-
+	
 	/**
 	 * @param viewName the view name
 	 */
@@ -120,7 +120,7 @@ public class CSViewModel extends ViewModel {
 		this.addModel("sorterTool", new SortTool());
 		this.addModel("NOW", DateTime.now());
 	}
-
+	
 	protected String generateTemplateName() {
 		if (this.isModal) {
 			return "/web/pages/" + this.getViewName() + ".vm";
@@ -130,7 +130,7 @@ public class CSViewModel extends ViewModel {
 		}
 		return "/web/index.vm";
 	}
-
+	
 	/**
 	 * @return the rendered view
 	 */
