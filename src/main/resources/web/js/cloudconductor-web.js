@@ -120,12 +120,13 @@ function ajaxCall(object, target) {
 						enableCheckboxToggle();
 					}
 					if ($("#popModal").hasClass('in')) {
-						if (reloaded.info || data.info)
+						if (reloaded && (reloaded.info || data.info)) {
 							$("#popModal")
 									.find('.modal-body')
 									.prepend(
 											'<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
 													+ reloaded.info + '</div>');
+						}
 					}
 					return 0;
 				},

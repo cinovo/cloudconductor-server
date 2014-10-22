@@ -10,6 +10,7 @@ ds.dbname=cloudconductor
 #ds.demofile=foobar.sql
 #svc.ip=0.0.0.0
 #svc.port=8090
+cloudconductor.name=CC-Server
 cloudconductor.username=admin
 cloudconductor.password=password
 #repo.indexscan=true

@@ -77,11 +77,11 @@ import de.taimos.restutils.RESTAssert;
  *
  */
 public class AgentImpl implements IAgent {
-
+	
 	private static final int MAX_TIMEOUT_HOST = 30;
-
+	
 	private static final int MAX_UPDATE_THRESHOLD = 15;
-
+	
 	@Autowired
 	private IHostDAO dhost;
 	@Autowired
@@ -102,8 +102,8 @@ public class AgentImpl implements IAgent {
 	private IAgentOptionsDAO dagentoptions;
 	@Autowired
 	private IServerOptionsDAO dserveroptions;
-
-
+	
+	
 	@Override
 	@Transactional
 	public Set<String> getAliveAgents() {
@@ -113,14 +113,14 @@ public class AgentImpl implements IAgent {
 		for (EHost host : hosts) {
 			DateTime dt = new DateTime(host.getLastSeen());
 			int diff = Minutes.minutesBetween(dt, now).getMinutes();
-
+			
 			if (diff < AgentImpl.MAX_TIMEOUT_HOST) {
 				result.add(host.getName());
 			}
 		}
 		return result;
 	}
-
+	
 	@Override
 	@Transactional
 	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState) {
@@ -129,7 +129,7 @@ public class AgentImpl implements IAgent {
 		EHost host = this.dhost.findByName(hname);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-
+		
 		if (host == null) {
 			host = this.createNewHost(hname, template);
 		}
@@ -153,7 +153,7 @@ public class AgentImpl implements IAgent {
 				state = this.createMissingState(host, irpm, pkg);
 				host.getPackages().add(state);
 			}
-
+			
 		}
 		for (EPackageState pkg : leftPackages) {
 			if (host.getPackages().contains(pkg)) {
@@ -162,10 +162,10 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		host = this.dhost.save(host);
-
+		
 		// check whether the host may update or has to wait for another host to finish updateing
 		if (this.sendPackageChanges(template, host)) {
-
+			
 			// Compute instruction lists (install/update/erase) from difference between packages actually installed packages that should be
 			// installed.
 			Set<EPackageVersion> actual = new HashSet<>();
@@ -180,7 +180,7 @@ public class AgentImpl implements IAgent {
 		}
 		return new PackageStateChanges(new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>(), new ArrayList<PackageVersion>());
 	}
-
+	
 	private EHost createNewHost(String hname, ETemplate template) {
 		EHost host;
 		host = new EHost();
@@ -189,7 +189,7 @@ public class AgentImpl implements IAgent {
 		host = this.dhost.save(host);
 		return host;
 	}
-
+	
 	/**
 	 * @param template
 	 * @param host
@@ -219,7 +219,7 @@ public class AgentImpl implements IAgent {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * @param host
 	 * @param irpm
@@ -242,7 +242,7 @@ public class AgentImpl implements IAgent {
 		state = this.dpkgstate.save(state);
 		return state;
 	}
-
+	
 	/**
 	 * @param host
 	 * @param irpm
@@ -272,7 +272,7 @@ public class AgentImpl implements IAgent {
 		}
 		return null;
 	}
-
+	
 	private boolean asserHostServices(ETemplate template, EHost host) {
 		List<EService> services = this.dsvc.findList();
 		Set<EService> templateServices = new HashSet<>();
@@ -296,18 +296,18 @@ public class AgentImpl implements IAgent {
 			EServiceState state = new EServiceState();
 			state.setService(service);
 			state.setHost(host);
-
+			
 			EServiceDefaultState dss = this.ddefss.findByName(service.getName(), template.getName());
 			if ((dss != null)) {
 				state.setState(dss.getState());
 			}
-
+			
 			this.dsvcstate.save(state);
 			changes = true;
 		}
 		return changes;
 	}
-
+	
 	@Override
 	@Transactional
 	public ServiceStatesChanges notifyServiceState(String tname, String hname, ServiceStates serviceState) {
@@ -322,11 +322,11 @@ public class AgentImpl implements IAgent {
 		if (this.asserHostServices(template, host)) {
 			host = this.dhost.findByName(hname);
 		}
-
+		
 		Set<String> toStop = new HashSet<>();
 		Set<String> toStart = new HashSet<>();
 		Set<String> toRestart = new HashSet<>();
-
+		
 		Set<EServiceState> stateList = new HashSet<>(host.getServices());
 		// agent sends running services
 		for (String sname : serviceState.getRunningServices()) {
@@ -358,10 +358,10 @@ public class AgentImpl implements IAgent {
 				}
 			}
 		}
-
+		
 		// agent sends stopped services
 		for (EServiceState state : stateList) {
-
+			
 			switch (state.getState()) {
 			case STARTING:
 				toStart.add(state.getService().getInitScript());
@@ -377,23 +377,23 @@ public class AgentImpl implements IAgent {
 				break;
 			default:
 				break;
-
+			
 			}
-
+			
 		}
-		
+
 		HashSet<ConfigFile> configFiles = new HashSet<>();
 		for (EFile file : template.getConfigFiles()) {
 			configFiles.add(MAConverter.fromModel(file));
 		}
-
+		
 		if (toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {
 			host.setStartedUpdate(null);
 			this.dhost.save(host);
 		}
 		return new ServiceStatesChanges(toStart, toStop, toRestart, configFiles);
 	}
-
+	
 	@Override
 	public AgentOptions heartBeat(String tname, String hname) {
 		RESTAssert.assertNotEmpty(hname);
@@ -402,11 +402,16 @@ public class AgentImpl implements IAgent {
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
 		this.dhost.save(host);
-		
+
 		EAgentOption options = this.dagentoptions.findByTemplate(tname);
+		if (options == null) {
+			options = new EAgentOption();
+			options.setTemplate(this.dtemplate.findByName(tname));
+			options = this.dagentoptions.save(options);
+		}
 		return MAConverter.fromModel(options);
 	}
-	
+
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
 		// Determine which package versions need to be erased and which are to be installed.
 		TreeSet<EPackageVersion> toInstall = new TreeSet<EPackageVersion>(new PackageVersionComparator());
@@ -415,7 +420,7 @@ public class AgentImpl implements IAgent {
 		TreeSet<EPackageVersion> toErase = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		toErase.addAll(actual);
 		toErase.removeAll(nominal);
-
+		
 		// Resolve the removal of an older version and the installation of a newer one to an update instruction.
 		TreeSet<EPackageVersion> toUpdate = new TreeSet<EPackageVersion>(new PackageVersionComparator());
 		for (EPackageVersion i : toInstall) {
@@ -426,7 +431,7 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		toInstall.removeAll(toUpdate);
-
+		
 		// get rid of reserved packages on erase
 		Set<EPackageVersion> keep = new HashSet<>();
 		EServerOptions eServerOptions = this.dserveroptions.get();
@@ -439,7 +444,7 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		toErase.removeAll(keep);
-
+		
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
 		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
 		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
@@ -447,7 +452,7 @@ public class AgentImpl implements IAgent {
 		result = this.fillPackageDiff(result, PackageCommand.ERASE, toErase);
 		return result;
 	}
-
+	
 	private ArrayListMultimap<PackageCommand, PackageVersion> fillPackageDiff(ArrayListMultimap<PackageCommand, PackageVersion> map, PackageCommand command, Collection<EPackageVersion> packageVersions) {
 		for (EPackageVersion pv : packageVersions) {
 			String rpmName = pv.getPkg().getName();
@@ -459,7 +464,7 @@ public class AgentImpl implements IAgent {
 		}
 		return map;
 	}
-
+	
 	@Override
 	public boolean isServerAlive() {
 		return true;

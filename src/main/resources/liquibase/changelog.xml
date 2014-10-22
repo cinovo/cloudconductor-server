@@ -599,7 +599,7 @@
 			<column name="packagemanagementtimer" defaultValueNumeric="2"  type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="packagetanagementtimerunit" defaultValueNumeric="4"  type="bigint">
+			<column name="packagemanagementtimerunit" defaultValueNumeric="4"  type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="dofilemanagement" defaultValueNumeric="2"  type="bigint">
