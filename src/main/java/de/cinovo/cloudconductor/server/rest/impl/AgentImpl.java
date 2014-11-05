@@ -41,6 +41,7 @@ import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
+import de.cinovo.cloudconductor.api.model.TaskState;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
@@ -395,10 +396,15 @@ public class AgentImpl implements IAgent {
 	}
 	
 	@Override
+	@Transactional
 	public AgentOptions heartBeat(String tname, String hname) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
+		System.out.println(DateTime.now().getMillis() + "heartbeat " + hname);
 		EHost host = this.dhost.findByName(hname);
+		if (host == null) {
+			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
+		}
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
 		this.dhost.save(host);
@@ -409,7 +415,36 @@ public class AgentImpl implements IAgent {
 			options.setTemplate(this.dtemplate.findByName(tname));
 			options = this.dagentoptions.save(options);
 		}
-		return MAConverter.fromModel(options);
+		AgentOptions result = MAConverter.fromModel(options);
+		boolean onceExecuted = false;
+		if (options.getDoSshKeys() == TaskState.ONCE) {
+			if (host.getExecutedSSH()) {
+				result.setDoSshKeys(TaskState.OFF);
+			} else {
+				onceExecuted = true;
+				host.setExecutedSSH(true);
+			}
+		}
+		if (options.getDoPackageManagement() == TaskState.ONCE) {
+			if (host.getExecutedPkg()) {
+				result.setDoPackageManagement(TaskState.OFF);
+			} else {
+				onceExecuted = true;
+				host.setExecutedPkg(true);
+			}
+		}
+		if (options.getDoFileManagement() == TaskState.ONCE) {
+			if (host.getExecutedFiles()) {
+				result.setDoFileManagement(TaskState.OFF);
+			} else {
+				onceExecuted = true;
+				host.setExecutedFiles(true);
+			}
+		}
+		if (onceExecuted) {
+			this.dhost.save(host);
+		}
+		return result;
 	}
 
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
@@ -466,6 +501,7 @@ public class AgentImpl implements IAgent {
 	}
 	
 	@Override
+	@Transactional
 	public boolean isServerAlive() {
 		return true;
 	}

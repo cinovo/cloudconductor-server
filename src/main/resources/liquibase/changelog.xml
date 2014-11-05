@@ -613,4 +613,11 @@
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet id="19" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="host">
+			<column name="executedssh" type="boolean" defaultValueBoolean="false" />
+			<column name="executedfiles" type="boolean" defaultValueBoolean="false" />
+			<column name="executedpkg" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

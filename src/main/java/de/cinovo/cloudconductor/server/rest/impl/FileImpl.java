@@ -51,7 +51,7 @@ import de.taimos.restutils.RESTAssert;
  *
  */
 public class FileImpl extends ImplHelper implements IFile {
-
+	
 	@Autowired
 	private IFileDAO dcf;
 	@Autowired
@@ -64,8 +64,8 @@ public class FileImpl extends ImplHelper implements IFile {
 	private IFileDataDAO dcfd;
 	@Autowired
 	private ITemplateDAO dtemplate;
-	
-	
+
+
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
@@ -75,30 +75,30 @@ public class FileImpl extends ImplHelper implements IFile {
 		}
 		return result.toArray(new ConfigFile[result.size()]);
 	}
-
+	
 	@Override
 	@Transactional
 	public void save(String name, ConfigFile configFile) {
 		this.assertName(name, configFile);
 		EFile cf = this.amc.toModel(configFile);
-
+		
 		if ((configFile.getPkg() != null) && !configFile.getPkg().isEmpty()) {
 			EPackage pkg = this.findByName(this.dpkg, configFile.getPkg());
 			cf.setPkg(pkg);
 		} else {
 			cf.setPkg(null);
 		}
-
+		
 		if ((configFile.getDependentServices() != null) && !configFile.getDependentServices().isEmpty()) {
 			List<EService> services = this.findByName(this.dservice, configFile.getDependentServices());
 			cf.setDependentServices(services);
 		} else {
 			cf.setDependentServices(null);
 		}
-
+		
 		this.dcf.save(cf);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigFile get(String name) {
@@ -106,7 +106,7 @@ public class FileImpl extends ImplHelper implements IFile {
 		EFile model = this.findByName(this.dcf, name);
 		return MAConverter.fromModel(model);
 	}
-
+	
 	@Override
 	@Transactional
 	public String getData(String name) {
@@ -115,7 +115,7 @@ public class FileImpl extends ImplHelper implements IFile {
 		EFileData data = this.dcfd.findDataByFile(model);
 		return data.getData();
 	}
-
+	
 	@Override
 	@Transactional
 	public void saveData(String name, String data) {
@@ -141,7 +141,7 @@ public class FileImpl extends ImplHelper implements IFile {
 		edata.setParent(model);
 		this.dcfd.save(edata);
 	}
-
+	
 	@Override
 	@Transactional
 	public void delete(String name) {
@@ -150,8 +150,9 @@ public class FileImpl extends ImplHelper implements IFile {
 		this.assertModelFound(model);
 		this.dcf.delete(model);
 	}
-	
+
 	@Override
+	@Transactional
 	public ConfigFile[] getConfigFiles(String template) {
 		RESTAssert.assertNotEmpty(template);
 		Set<ConfigFile> result = new HashSet<>();
@@ -163,5 +164,5 @@ public class FileImpl extends ImplHelper implements IFile {
 		}
 		return result.toArray(new ConfigFile[result.size()]);
 	}
-
+	
 }
