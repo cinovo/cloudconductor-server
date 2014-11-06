@@ -354,7 +354,7 @@
 									<directoryIncluded>false</directoryIncluded>
 									<sources>
 										<source>
-											<location>cloudconductor.properties</location>
+											<location>cloudconductor.properties_example</location>
 										</source>
 									</sources>
 								</mapping>
