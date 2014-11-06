@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.rest.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.NotAcceptableException;
 import javax.ws.rs.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import de.cinovo.cloudconductor.api.interfaces.IConfigValue;
 import de.cinovo.cloudconductor.api.model.KeyValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
+import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -59,6 +61,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
+		result.putAll(ReservedConfigKeyStore.instance.getReservedKeysWithValues());
 		return result;
 	}
 	
@@ -76,6 +79,7 @@ public class ConfigValueImpl implements IConfigValue {
 				result.put(ecv.getConfigkey(), ecv.getValue());
 			}
 		}
+		result.putAll(ReservedConfigKeyStore.instance.getReservedKeysWithValues());
 		return result;
 	}
 	
@@ -91,6 +95,9 @@ public class ConfigValueImpl implements IConfigValue {
 		}
 		
 		EConfigValue result = null;
+		if (ReservedConfigKeyStore.instance.isReserved(key)) {
+			return ReservedConfigKeyStore.instance.getValue(key);
+		}
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			result = this.dcv.findBy(template, lService, lKey);
 			if (result == null) {
@@ -103,7 +110,6 @@ public class ConfigValueImpl implements IConfigValue {
 		if (result == null) {
 			result = this.dcv.findKey(lKey);
 		}
-		
 		if (result == null) {
 			throw new NotFoundException();
 		}
@@ -116,6 +122,11 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(service);
 		RESTAssert.assertNotEmpty(apiObject.getKey());
+		
+		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
+			throw new NotAcceptableException();
+		}
+		
 		EConfigValue ecv = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			ecv = this.dcv.findBy(template, service, apiObject.getKey());
@@ -142,6 +153,10 @@ public class ConfigValueImpl implements IConfigValue {
 	public void save(String template, KeyValue apiObject) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(apiObject.getKey());
+		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
+			throw new NotAcceptableException();
+		}
+
 		EConfigValue ecv = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			ecv = this.dcv.findKey(template, apiObject.getKey());

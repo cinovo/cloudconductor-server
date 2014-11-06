@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -33,10 +33,12 @@ import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.rest.helper.AMConverter;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
 import de.taimos.restutils.RESTAssert;
@@ -44,9 +46,9 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class FileImpl extends ImplHelper implements IFile {
 	
@@ -60,8 +62,10 @@ public class FileImpl extends ImplHelper implements IFile {
 	private AMConverter amc;
 	@Autowired
 	private IFileDataDAO dcfd;
-	
-	
+	@Autowired
+	private ITemplateDAO dtemplate;
+
+
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
@@ -145,6 +149,20 @@ public class FileImpl extends ImplHelper implements IFile {
 		EFile model = this.dcf.findByName(name);
 		this.assertModelFound(model);
 		this.dcf.delete(model);
+	}
+
+	@Override
+	@Transactional
+	public ConfigFile[] getConfigFiles(String template) {
+		RESTAssert.assertNotEmpty(template);
+		Set<ConfigFile> result = new HashSet<>();
+		ETemplate eTemplate = this.dtemplate.findByName(template);
+		if ((eTemplate != null) && (eTemplate.getConfigFiles() != null)) {
+			for (EFile m : eTemplate.getConfigFiles()) {
+				result.add(MAConverter.fromModel(m));
+			}
+		}
+		return result.toArray(new ConfigFile[result.size()]);
 	}
 	
 }

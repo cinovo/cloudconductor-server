@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.web.interfaces;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -32,13 +32,13 @@ import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 @Path(IWebPath.DEFAULTVIEW)
 public interface IIndex {
-	
+
 	/**
 	 * @return the main page
 	 */
@@ -46,10 +46,10 @@ public interface IIndex {
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public abstract RenderedView view();
-	
+
 	/**
 	 * Returns the css style used in the web pages.
-	 * 
+	 *
 	 * @param css the file name
 	 * @return the css style used in the web pages
 	 */
@@ -57,7 +57,7 @@ public interface IIndex {
 	@Path("css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getCSS(@PathParam("css") String css);
-	
+
 	/**
 	 * @param css the file name
 	 * @return the bootstrap css style
@@ -66,10 +66,10 @@ public interface IIndex {
 	@Path("bootstrap/css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getBSCSS(@PathParam("css") String css);
-	
+
 	/**
 	 * Returns the CSS style used in the web pages.
-	 * 
+	 *
 	 * @param img the img name
 	 * @return the CSS style used in the web pages
 	 */
@@ -77,18 +77,18 @@ public interface IIndex {
 	@Path("images/{img}")
 	@Produces(MediaType.IMAGE_GIF)
 	public abstract InputStream getImage(@PathParam("img") String img);
-	
+
 	/**
 	 * Returns the java script files
-	 * 
+	 *
 	 * @param js the file name
 	 * @return the java script files
 	 */
 	@GET
 	@Path("js/{js}")
-	@Produces(MediaType.APPLICATION_JAVASCRIPT)
+	@Produces({MediaType.APPLICATION_JAVASCRIPT, MediaType.APPLICATION_FLASH})
 	public abstract InputStream getJS(@PathParam("js") String js);
-	
+
 	/**
 	 * @param js the file name
 	 * @return the bootstrap java script files
@@ -97,7 +97,7 @@ public interface IIndex {
 	@Path("bootstrap/js/{js}")
 	@Produces(MediaType.APPLICATION_JAVASCRIPT)
 	public abstract InputStream getBSJS(@PathParam("js") String js);
-	
+
 	/**
 	 * @param font the file name
 	 * @return the bootstrap font files
@@ -106,7 +106,7 @@ public interface IIndex {
 	@Path("bootstrap/fonts/{font}")
 	@Produces(MediaType.FONT_OPENTYPE)
 	public abstract InputStream getBSFonts(@PathParam("font") String font);
-	
+
 	/**
 	 * @return an ajax answer
 	 */
@@ -114,5 +114,5 @@ public interface IIndex {
 	@Path("autorefresh/toggle")
 	@Produces(MediaType.APPLICATION_JSON)
 	public abstract AjaxAnswer toggleAutoRefresh();
-	
+
 }

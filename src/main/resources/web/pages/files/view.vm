@@ -2,8 +2,12 @@
 <div id="$file.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${file.name}-hide">
-			<h3 class="panel-title">$file.name <small>$file.targetPath</small><span class="pull-right"><span class="caret"></span></span></h3>
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$file.name" rel="tooltip-down" title="Click to copy to clipboard">$file.name</span>		
+			 	<small><span class="copy-button" data-clipboard-text="$file.targetPath" rel="tooltip-down" title="Click to copy to clipboard">$file.targetPath</span></small>
+			 	<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${file.name.replace(".", "-")}-hide"></span>
+			 </h3>
 			<span class="pull-right">
 				<div class="btn-group">
 					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${file.name}/edit" data-toggle="modal" modal-type="big" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit File"></button>
@@ -11,7 +15,7 @@
 				</div>
 			</span>		
 		</div>
-		<div id="${file.name}-hide" class="collapse in">
+		<div id="${file.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
 			
 		<table class="table table-striped">
 		<thead>

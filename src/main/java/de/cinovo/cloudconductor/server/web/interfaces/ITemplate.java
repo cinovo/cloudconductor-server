@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.web.interfaces;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -25,6 +25,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MultivaluedMap;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
@@ -34,9 +35,9 @@ import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 @Path(ITemplate.ROOT)
 public interface ITemplate {
@@ -58,6 +59,9 @@ public interface ITemplate {
 	
 	/** */
 	public static final String DEFAULT_SERVICE_STATE = "/{" + IWebPath.VAR_NAME + "}/services/default";
+
+	/** */
+	public static final String EDIT_TEMPLATE_AGENT_CONFIG_ACTION = "/{" + IWebPath.VAR_NAME + "}/agentconfig" + IWebPath.ACTION_EDIT;
 	
 	
 	/**
@@ -192,4 +196,35 @@ public interface ITemplate {
 	@Path(ITemplate.DEFAULT_SERVICE_STATE)
 	@Produces(MediaType.APPLICATION_JSON)
 	public abstract AjaxAnswer changeDefaultServiceStates(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("startService") List<String> startService, @FormParam("stopService") List<String> stopService);
+	
+	/**
+	 * @param tname the template name
+	 * @return the modal content
+	 */
+	@GET
+	@Path(ITemplate.EDIT_TEMPLATE_AGENT_CONFIG_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public abstract RenderedView editTemplateAgentConfigView(@PathParam(IWebPath.VAR_NAME) String tname);
+	
+	/**
+	 * @param tname the old template name
+	 * @param aliveTimer alive timer
+	 * @param aliveTimerUnit alive timer unit
+	 * @param doSshKeys do ssh keys
+	 * @param sshKeysTimer ssh key timer
+	 * @param sshKeysTimerUnit ssh key timer unit
+	 * @param doPackageManagement do package management
+	 * @param packageManagementTimer package management timer
+	 * @param packageManagementTimerUnit package management timer unit
+	 * @param doFileManagement do file management
+	 * @param fileManagementTimer file management timer
+	 * @param fileManagementTimerUnit file management timer unit
+	 * @return an ajax answer
+	 * @throws FormErrorException on error
+	 */
+	@POST
+	@Path(ITemplate.EDIT_TEMPLATE_AGENT_CONFIG_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public abstract AjaxAnswer editTemplateAgentConfig(@PathParam(IWebPath.VAR_NAME) String tname, MultivaluedMap<String, String> form) throws FormErrorException;
+
 }

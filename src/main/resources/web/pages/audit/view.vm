@@ -3,14 +3,13 @@
 
 
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse"
-			data-target="#audit-filter-hide">
+		<div class="panel-heading panel-toggle">
 			<h3 class="panel-title">
-				Auditfilter <span class="pull-right"><span class="caret"></span></span>
+				Auditfilter
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#audit-filter-hide"></span>
 			</h3>
-
 		</div>
-		<div id="audit-filter-hide" class="collapse out">
+		<div id="audit-filter-hide" class="dropdown-area collapse out">
 			<div class="row">
 			<form class="form-horizontal">
 				<div class=" col-xs-12 col-md-5 col-md-offset-1 formlist">
@@ -64,11 +63,12 @@
 		<div class="panel-heading panel-toggle" data-toggle="collapse"
 			data-target="#AUDIT-hide">
 			<h3 class="panel-title">
-				AUDIT <span class="pull-right"><span class="caret"></span></span>
+				AUDIT 
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#AUDIT-hide"></span>
 			</h3>
 
 		</div>
-		<div id="AUDIT-hide" class="collapse in">
+		<div id="AUDIT-hide" class="dropdown-area collapse in">
 			<table id="audit-table" class="table table-striped table-bordered"
 				width="100%">
 				<thead>

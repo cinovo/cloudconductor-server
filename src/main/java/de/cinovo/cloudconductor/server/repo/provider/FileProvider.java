@@ -12,17 +12,24 @@ import org.springframework.beans.factory.annotation.Value;
 
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class FileProvider implements IRepoProvider {
-
+	
 	@Value("${repo.basedir:static/yum/}")
 	private String basedir;
-	
-	
+
+
 	@Override
 	public boolean isListable() {
 		return true;
 	}
-
+	
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
 		File dir = new File(this.basedir + folder);
@@ -35,7 +42,7 @@ public class FileProvider implements IRepoProvider {
 		}
 		return list;
 	}
-
+	
 	@Override
 	public RepoEntry getEntry(String key) {
 		File file = new File(this.basedir + key);
@@ -44,7 +51,7 @@ public class FileProvider implements IRepoProvider {
 		}
 		return null;
 	}
-	
+
 	private RepoEntry createEntry(File file) {
 		RepoEntry e = new RepoEntry();
 		e.setDirectory(file.isDirectory());
@@ -53,7 +60,7 @@ public class FileProvider implements IRepoProvider {
 		e.setModified(new Date(file.lastModified()));
 		return e;
 	}
-
+	
 	@Override
 	public InputStream getEntryStream(String key) {
 		File file = new File(this.basedir + key);
@@ -66,5 +73,5 @@ public class FileProvider implements IRepoProvider {
 		}
 		return null;
 	}
-
+	
 }

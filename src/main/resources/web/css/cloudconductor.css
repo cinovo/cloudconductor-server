@@ -128,6 +128,11 @@ h3.panel-title>small {
 	margin-right: 35px;
 }
 
+.panel-heading>h3>span.toggle-dropdown {
+	margin-top: 0px;
+	margin-right: -5px;
+}
+
  .alternatebg:nth-child(odd) {
 	/**background-color: #f9f9f9;*/
 	background-color: #f0faff;

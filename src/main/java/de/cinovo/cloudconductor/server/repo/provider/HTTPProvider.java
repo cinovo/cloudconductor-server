@@ -16,22 +16,29 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.WS;
 import de.taimos.httputils.WSConstants;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class HTTPProvider implements IRepoProvider {
-	
+
 	@Value("${repo.baseurl}")
 	private String baseurl;
-	
-	
+
+
 	@Override
 	public boolean isListable() {
 		return false;
 	}
-	
+
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
 		throw new UnsupportedOperationException("This provider does not support listing");
 	}
-	
+
 	@Override
 	public RepoEntry getEntry(String key) {
 		HttpResponse response = WS.url(this.baseurl + key).get();
@@ -44,7 +51,7 @@ public class HTTPProvider implements IRepoProvider {
 		e.setContentType(this.getType(response));
 		return e;
 	}
-	
+
 	private String getType(HttpResponse response) {
 		Header header = response.getFirstHeader(WSConstants.HEADER_CONTENT_TYPE);
 		if (header != null) {
@@ -52,7 +59,7 @@ public class HTTPProvider implements IRepoProvider {
 		}
 		return MediaType.APPLICATION_OCTET_STREAM;
 	}
-	
+
 	private String getChecksum(HttpResponse response) {
 		Header header = response.getFirstHeader(WSConstants.HEADER_CONTENT_MD5);
 		if (header != null) {
@@ -60,7 +67,7 @@ public class HTTPProvider implements IRepoProvider {
 		}
 		return null;
 	}
-	
+
 	private long getSize(HttpResponse response) {
 		Header sizeHeader = response.getFirstHeader(WSConstants.HEADER_CONTENT_LENGTH);
 		if (sizeHeader != null) {
@@ -71,7 +78,7 @@ public class HTTPProvider implements IRepoProvider {
 		}
 		return 0;
 	}
-
+	
 	@Override
 	public InputStream getEntryStream(String key) {
 		HttpResponse response = WS.url(this.baseurl + key).get();

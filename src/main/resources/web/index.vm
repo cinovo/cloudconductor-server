@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
+    <meta name="reloadTimer" content="${C2InstanceOptions.getPageRefreshTimerUnit().toMillis(${C2InstanceOptions.getPageRefreshTimer()})}" />
     <link rel="shortcut icon" href="/web/images/favicon.ico"/>
 
 	<!-- Bootstrap core CSS -->
@@ -181,6 +182,7 @@
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> -->
 <script src="/web/js/jquery-1.11.1.min.js"></script>
 <script src="/web/bootstrap/js/bootstrap.min.js"></script>
+<script src="/web/js/zeroclipboard-2.1.6.js"></script>
 <script src="/web/js/cloudconductor-web.js"></script>
 <!-- dataTables JavaScript -->
 <script src="/web/js/jquery.dataTables.min.js"></script>

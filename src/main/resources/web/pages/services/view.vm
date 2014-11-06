@@ -2,8 +2,11 @@
 <div id="$service.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${service.name}-hide">
-			<h3 class="panel-title">$service.name<span class="pull-right"><span class="caret"></span></span></h3>
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$service.name" rel="tooltip-down" title="Click to copy templatename to clipboard">$service.name</span> 
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${service.name.replace(".", "-")}-hide"></span>
+			</h3>
 			<span class="pull-right">
 				<div class="btn-group">
 					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${service.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Service"></button>
@@ -11,7 +14,7 @@
 				</div>
 			</span>		
 		</div>
-		<div id="${service.name}-hide" class="collapse in">
+		<div id="${service.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
 		<div class="panel-body"><div class="well well-sm">${service.description}</div></div>
 		<table class="table table-striped">
 		<thead>

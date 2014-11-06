@@ -6,9 +6,10 @@
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-$pannelType">
 		<div class="panel-heading panel-toggle" >
-			<h3 class="panel-title" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide">
-				$host.name <small>${host.getTemplate().name}</small>
-				<span class="pull-right"><span class="caret" /></span></span>
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">$host.name</span> 
+				<small><span class="copy-button" data-clipboard-text="${host.getTemplate().name}" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.getTemplate().name}</span></small>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide"></span>
 			</h3>
 			<span class="pull-right">
 				<span class="btn-group">
@@ -17,7 +18,7 @@
 				</span>
 			</span>			
 		</div>
-		<div id="${host.name.replace(".", "-")}-hide" class="collapse in">
+		<div id="${host.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
 		
 			<form id="${host.name.replace(".", "-")}-form">
 				<table class="table table-striped">

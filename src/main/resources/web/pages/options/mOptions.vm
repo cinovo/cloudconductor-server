@@ -37,6 +37,58 @@
 					<textarea class="form-control" rows="3" name="description">#if(${ERROR.getFormParams().get('description')})${ERROR.getFormParams().get('description')}#elseif($options.description)$options.description#end</textarea>
 				</div>
 			</div>
+			
+			
+			<div class="col-lg-8 formlist">	
+				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
+					<span class="input-group-addon">Host Cleanup Timer</span>
+					<input type="text" class="form-control" name="hostCleanUpTimer" style="text-align:right;" type="text" #if(${ERROR.getFormParams().get('hostCleanUpTimer')})value="${ERROR.getFormParams().get('hostCleanUpTimer')}"#else value="$options.hostCleanUpTimer" #end >
+				</div>
+			</div>
+			<div class="col-lg-4 formlist">	
+				<select name="hostCleanUpTimerUnit" class="form-control #if($ERROR.hasError('name'))has-error #end">
+					#foreach($timeUnit in $timeUnits) 		
+						<option value="$timeUnit" #if (${ERROR.getFormParams().get('hostCleanUpTimerUnit')} == "$timeUnit" || $options.hostCleanUpTimerUnit == "$timeUnit") selected="selected" #end>$timeUnit</option>
+					#end
+				</select>
+			</div>
+			
+			#if($indexScanAvailable == "true")
+			<div class="col-lg-8 formlist">	
+				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
+					<span class="input-group-addon">Index-Scan Timer</span>
+					<input type="text" class="form-control" name="indexScanTimer" style="text-align:right;" type="text" #if(${ERROR.getFormParams().get('indexScanTimer')})value="${ERROR.getFormParams().get('indexScanTimer')}"#else value="$options.indexScanTimer" #end >
+				</div>
+			</div>
+			<div class="col-lg-4 formlist">	
+				<select name="indexScanTimerUnit " class="form-control #if($ERROR.hasError('name'))has-error #end">
+					#foreach($timeUnit in $timeUnits) 		
+						<option value="$timeUnit" #if (${ERROR.getFormParams().get('indexScanTimerUnit')} == "$timeUnit" || $options.indexScanTimerUnit == "$timeUnit") selected="selected" #end>$timeUnit</option>
+					#end
+				</select>
+			</div>
+			#end
+			
+			<div class="col-lg-8 formlist">	
+				<div class="input-group #if($ERROR.hasError('name'))has-error #end">
+					<span class="input-group-addon">Page refresh Timer</span>
+					<input type="text" class="form-control" name="pageRefreshTimer" style="text-align:right;" type="text" #if(${ERROR.getFormParams().get('pageRefreshTimer')})value="${ERROR.getFormParams().get('pageRefreshTimer')}"#else value="$options.pageRefreshTimer" #end >
+				</div>
+			</div>
+			<div class="col-lg-4 formlist">	
+				<select name="pageRefreshTimerUnit" class="form-control #if($ERROR.hasError('name'))has-error #end">
+					#foreach($timeUnit in $timeUnits) 		
+						<option value="$timeUnit" #if (${ERROR.getFormParams().get('pageRefreshTimerUnit')} == "$timeUnit" || $options.pageRefreshTimerUnit == "$timeUnit") selected="selected" #end>$timeUnit</option>
+					#end
+				</select>
+			</div>
+			
+			<div class="col-lg-12 formlist">	
+				<div class="input-group">
+					<span class="input-group-addon">Protect from DeInstall</span>
+					<textarea class="form-control" rows="3" name="disallowUninstall">#if(${ERROR.getFormParams().get('disallowUninstall')})${ERROR.getFormParams().get('disallowUninstall')}#elseif($disallowUninstall)$disallowUninstall#end</textarea>
+				</div>
+			</div>
 		</form>
 </div>
 

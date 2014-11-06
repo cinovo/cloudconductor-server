@@ -17,10 +17,9 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
-import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EFileTag;
+import de.cinovo.cloudconductor.server.model.EAgentOption;
+import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.taimos.dao.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -29,23 +28,17 @@ import de.cinovo.cloudconductor.server.model.EFileTag;
  * @author psigloch
  *
  */
-public interface IFileDAO extends IAuditedEntity<EFile, Long>, IFindNamed<EFile> {
-	
+public interface IAgentOptionsDAO extends IEntityDAO<EAgentOption, Long> {
+
 	/**
-	 * @return the row count
+	 * @param template the template name
+	 * @return the option
 	 */
-	public Long count();
-	
+	public EAgentOption findByTemplate(String template);
+
 	/**
-	 * @param tagnames the tag names
-	 * @return list of files with these tags
+	 * @param template the template
+	 * @return the option
 	 */
-	public List<EFile> findByTag(String... tagnames);
-	
-	/**
-	 * @param tags the file tags
-	 * @return list of files with these tags
-	 */
-	public List<EFile> findByTag(EFileTag... tags);
-	
+	public EAgentOption findByTemplate(ETemplate template);
 }

@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.rest.helper;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.cinovo.cloudconductor.api.ServiceState;
+import de.cinovo.cloudconductor.api.model.AgentOptions;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.Host;
@@ -33,6 +34,7 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
@@ -46,9 +48,9 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class MAConverter {
 	
@@ -72,8 +74,8 @@ public class MAConverter {
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Template fromModel(ETemplate model) {
 		Map<String, String> rpms = new HashMap<>();
@@ -86,32 +88,32 @@ public class MAConverter {
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static SSHKey fromModel(ESSHKey model) {
 		return new SSHKey(model.getKeycontent(), model.getOwner());
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Service fromModel(EService model) {
 		return new Service(model.getName(), model.getDescription(), model.getInitScript(), ServiceState.STOPPED, MAConverter.fromModel(model.getPackages()));
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Service fromModel(EServiceState model) {
 		return new Service(model.getService().getName(), model.getService().getDescription(), model.getService().getInitScript(), model.getState(), MAConverter.fromModel(model.getService().getPackages()));
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static ConfigFile fromModel(EFile model) {
 		Set<String> services = MAConverter.fromModel(model.getDependentServices());
@@ -121,16 +123,16 @@ public class MAConverter {
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Dependency fromModel(EDependency model) {
 		return new Dependency(model.getName(), model.getVersion(), model.getOperator(), model.getType().toString());
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Host fromModel(EHost model) {
 		Set<String> services = new HashSet<>();
@@ -143,8 +145,8 @@ public class MAConverter {
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static Package fromModel(EPackage model) {
 		Set<String> rpms = MAConverter.fromModel(model.getRPMs());
@@ -152,8 +154,8 @@ public class MAConverter {
 	}
 	
 	/**
-	 * @param model the model oject
-	 * @return the api obejct
+	 * @param model the model object
+	 * @return the api object
 	 */
 	public static PackageVersion fromModel(EPackageVersion model) {
 		Set<Dependency> deps = new HashSet<>();
@@ -161,5 +163,13 @@ public class MAConverter {
 			deps.add(MAConverter.fromModel(md));
 		}
 		return new PackageVersion(model.getPkg().getName(), model.getVersion(), deps);
+	}
+	
+	/**
+	 * @param model the model object
+	 * @return the api object
+	 */
+	public static AgentOptions fromModel(EAgentOption model) {
+		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit());
 	}
 }
