@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,7 @@ import de.cinovo.cloudconductor.api.lib.helper.SchedulerService;
 import de.cinovo.cloudconductor.server.ServerStarter;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.util.FormErrorExceptionHander;
+import de.cinovo.cloudconductor.server.util.ICCProperties;
 import de.cinovo.cloudconductor.server.util.RestartTask;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
@@ -34,7 +37,7 @@ import de.cinovo.cloudconductor.server.web.interfaces.IInstall;
  *
  */
 public class InstallImpl implements IInstall, IContextAware {
-	
+
 	private static final String DB_TYPE_FORM = "db-type";
 
 	private static final String DB_HOST_FORM = "db-host";
@@ -57,8 +60,8 @@ public class InstallImpl implements IInstall, IContextAware {
 	private static final String REPO_AWS_BUCKET_FORM = "repo-bucket";
 	private static final String REPO_AWS_ACCESS_KEY_FORM = "aws-accessKeyId";
 	private static final String REPO_AWS_SECRET_KEY_FORM = "aws-secretKey";
-	
-	
+
+
 	@Override
 	public RenderedView view() {
 		CSViewModel view = new CSViewModel("install/install");
@@ -72,7 +75,7 @@ public class InstallImpl implements IInstall, IContextAware {
 
 	@Override
 	public Response save(MultivaluedMap<String, String> form) throws FormErrorException {
-		Properties props = new Properties();
+
 		FormValidator validator = FormValidator.create("", form);
 
 		validator.notEmpty(InstallImpl.DB_TYPE_FORM);
@@ -80,9 +83,9 @@ public class InstallImpl implements IInstall, IContextAware {
 			validator.notEquals(InstallImpl.DB_TYPE_FORM, "-1");
 		}
 		validator.notEmpty(InstallImpl.DB_HOST_FORM).notEmpty(InstallImpl.DB_PORT_FORM).notEmpty(InstallImpl.DB_USER_FORM).notEmpty(InstallImpl.DB_PW_FORM).notEmpty(InstallImpl.DB_NAME_FORM);
-		
+
 		validator.notEmpty(InstallImpl.CC_PORT_FORM).notEmpty(InstallImpl.CC_NAME_FORM).notEmpty(InstallImpl.CC_USER_FORM).notEmpty(InstallImpl.CC_PW_FORM);
-		
+
 		validator.notEmpty(InstallImpl.REPO_SCAN_FORM);
 		if (validator.fieldCheck(InstallImpl.REPO_SCAN_FORM)) {
 			if (form.get(InstallImpl.REPO_SCAN_FORM).get(0) == "true") {
@@ -110,7 +113,9 @@ public class InstallImpl implements IInstall, IContextAware {
 			}
 		}
 		validator.validate();
-		
+
+		Properties props = this.generateProps(form);
+
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		try (OutputStream out = new FileOutputStream(f);) {
 			props.store(out, "");
@@ -123,6 +128,77 @@ public class InstallImpl implements IInstall, IContextAware {
 		} catch (URISyntaxException e) {
 			return Response.serverError().build();
 		}
+	}
+
+	private Properties generateProps(MultivaluedMap<String, String> form) {
+		Properties props = new Properties();
+		for (Entry<String, List<String>> entry : form.entrySet()) {
+			String key = null;
+			switch (entry.getKey()) {
+			case DB_TYPE_FORM:
+				key = ICCProperties.DB_TYPE;
+				break;
+			case DB_HOST_FORM:
+				key = ICCProperties.DB_HOST;
+				break;
+			case DB_PORT_FORM:
+				key = ICCProperties.DB_PORT;
+				break;
+			case DB_USER_FORM:
+				key = ICCProperties.DB_USER;
+				break;
+			case DB_PW_FORM:
+				key = ICCProperties.DB_PW;
+				break;
+			case DB_NAME_FORM:
+				key = ICCProperties.DB_NAME;
+				break;
+			
+			case CC_PORT_FORM:
+				key = ICCProperties.CC_PORT;
+				break;
+			case CC_NAME_FORM:
+				key = ICCProperties.CC_NAME;
+				break;
+			case CC_USER_FORM:
+				key = ICCProperties.CC_USER;
+				break;
+			case CC_PW_FORM:
+				key = ICCProperties.CC_PW;
+				break;
+			
+			case REPO_SCAN_FORM:
+				key = ICCProperties.REPO_SCAN;
+				break;
+			case REPO_INDEXER_FORM:
+				key = ICCProperties.REPO_INDEXER;
+				break;
+			
+			case REPO_PROVIDER_FORM:
+				key = ICCProperties.REPO_PROVIDER;
+				break;
+			case REPO_BASEDIR_FORM:
+				key = ICCProperties.REPO_BASEDIR;
+				break;
+			case REPO_BASEURL_FORM:
+				key = ICCProperties.REPO_BASEURL;
+				break;
+			case REPO_AWS_BUCKET_FORM:
+				key = ICCProperties.REPO_AWS_BUCKET;
+				break;
+			case REPO_AWS_ACCESS_KEY_FORM:
+				key = ICCProperties.REPO_AWS_ACCESS_KEY;
+				break;
+			case REPO_AWS_SECRET_KEY_FORM:
+				key = ICCProperties.REPO_AWS_SECRET_KEY;
+				break;
+			}
+			
+			if ((key != null) && (entry.getValue().get(0) != null) && !entry.getValue().get(0).isEmpty()) {
+				props.setProperty(key, entry.getValue().get(0));
+			}
+		}
+		return props;
 	}
 
 	@Override
@@ -160,16 +236,16 @@ public class InstallImpl implements IInstall, IContextAware {
 	public InputStream getBSFonts(String font) {
 		return this.getClass().getResourceAsStream("/web/bootstrap/fonts/" + font);
 	}
-	
-	
+
+
 	protected MessageContext mc;
-	
-	
+
+
 	@Override
 	public void setMessageContext(MessageContext context) {
 		this.mc = context;
 	}
-	
+
 	protected Boolean hasError() {
 		if (this.mc.getHttpServletRequest().getParameter(FormErrorExceptionHander.REQUEST_ERROR_PARAM) != null) {
 			return this.mc.getHttpServletRequest().getParameter(FormErrorExceptionHander.REQUEST_ERROR_PARAM).equals("true");
