@@ -2,8 +2,11 @@
 <div id="$key.owner" class="col-xs-12 col-sm-10 rel-anchor"></div>
 <div class="col-xs-12 col-sm-12">       
 	<div class="panel panel-primary">
-		<div class="panel-heading panel-toggle" data-toggle="collapse" data-target="#${key.owner}-hide">
-			<h3 class="panel-title">$key.owner <span class="pull-right"><span class="caret"></span></span></h3>
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$key.owner" rel="tooltip-down" title="Click to copy to clipboard">$key.owner</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${key.owner.replace(".", "-").replace("@", "-")}-hide"></span>
+			</h3>
 			<span class="pull-right">
 				<div class="btn-group">
 					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${key.owner}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit"></button>
@@ -11,7 +14,7 @@
 				</div>
 			</span>		
 		</div>
-		<div id="${key.owner}-hide" class="collapse in">
+		<div id="${key.owner.replace(".", "-").replace("@", "-")}-hide" class="dropdown-area collapse in">
 			
 		<table class="table table-striped">
 			<thead>

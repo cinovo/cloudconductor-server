@@ -3,20 +3,31 @@ package de.cinovo.cloudconductor.server.repo;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Copyright 2014 Hoegernet<br>
+ * <br>
+ *
+ * @author Thorsten Hoeger
+ *
+ */
 public class ByteTool {
-
+	
+	/**
+	 * @param bytes the bytes
+	 * @return the formated string
+	 */
 	public String format(long bytes) {
 		BigDecimal byteCount = new BigDecimal(bytes).setScale(3, RoundingMode.HALF_UP);
 		int thousandStep = 0;
-
+		
 		while (byteCount.longValue() > 1024) {
 			byteCount = byteCount.divide(new BigDecimal("1024"), 3, RoundingMode.HALF_UP);
 			thousandStep++;
 		}
-
+		
 		return byteCount.toPlainString() + " " + this.getUnit(thousandStep);
 	}
-	
+
 	private String getUnit(int thousandStep) {
 		switch (thousandStep) {
 		case 0:

@@ -23,7 +23,7 @@ import de.cinovo.cloudconductor.server.web.RenderedView;
  */
 @Path(IWebPath.DEFAULTVIEW)
 public interface IInstall {
-
+	
 	/**
 	 * @return the main page
 	 */
@@ -31,17 +31,25 @@ public interface IInstall {
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public abstract RenderedView view();
-
+	
+	/**
+	 * @param form the form data
+	 * @return a response
+	 * @throws FormErrorException on error
+	 */
 	@POST
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public abstract Response save(MultivaluedMap<String, String> form) throws FormErrorException;
-	
+
+	/**
+	 * @return the progress view
+	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW + "finish/")
 	@Produces(MediaType.TEXT_HTML)
 	public abstract RenderedView progressView();
-
+	
 	/**
 	 * Returns the css style used in the web pages.
 	 *
@@ -52,7 +60,7 @@ public interface IInstall {
 	@Path("css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getCSS(@PathParam("css") String css);
-	
+
 	/**
 	 * @param css the file name
 	 * @return the bootstrap css style
@@ -61,7 +69,7 @@ public interface IInstall {
 	@Path("bootstrap/css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getBSCSS(@PathParam("css") String css);
-	
+
 	/**
 	 * Returns the CSS style used in the web pages.
 	 *
@@ -72,7 +80,7 @@ public interface IInstall {
 	@Path("images/{img}")
 	@Produces(MediaType.IMAGE_GIF)
 	public abstract InputStream getImage(@PathParam("img") String img);
-	
+
 	/**
 	 * Returns the java script files
 	 *
@@ -83,7 +91,7 @@ public interface IInstall {
 	@Path("js/{js}")
 	@Produces(MediaType.APPLICATION_JAVASCRIPT)
 	public abstract InputStream getJS(@PathParam("js") String js);
-	
+
 	/**
 	 * @param js the file name
 	 * @return the bootstrap java script files
@@ -92,7 +100,7 @@ public interface IInstall {
 	@Path("bootstrap/js/{js}")
 	@Produces(MediaType.APPLICATION_JAVASCRIPT)
 	public abstract InputStream getBSJS(@PathParam("js") String js);
-	
+
 	/**
 	 * @param font the file name
 	 * @return the bootstrap font files
