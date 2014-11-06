@@ -569,7 +569,7 @@
 			<column name="disallowuninstall" type="text" />
 		</createTable>
 		
-		<sql>INSERT INTO cloudconductor.serveroptions_disallowuninstall(id, disallowuninstall) VALUES (1, 'jdk');</sql>
+		<sql>INSERT INTO cloudconductor.serveroptions_disallowuninstall(id, disallowuninstall) SELECT id, 'jdk' FROM cloudconductor.serveroptions LIMIT 1;</sql>
 		
 		<createTable schemaName="cloudconductor" tableName="agentoption">
 			<column name="id" type="bigint" autoIncrement="true">
