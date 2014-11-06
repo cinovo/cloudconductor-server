@@ -541,4 +541,83 @@
 		<renameColumn schemaName="cloudconductor" tableName="servicedefaultstate" oldColumnName="newstate" newColumnName="state"/>
 		<renameColumn schemaName="cloudconductor" tableName="servicestate" oldColumnName="newstate" newColumnName="state"/>
 	</changeSet>	
+	<changeSet id="18" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="serveroptions">
+			<column name="hostcleanuptimer" defaultValueNumeric="30"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="hostcleanuptimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="indexscantimer" defaultValueNumeric="60"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="indexscantimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="pagerefreshtimer" defaultValueNumeric="15"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="pagerefreshtimerunit" defaultValueNumeric="3"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<createTable schemaName="cloudconductor" tableName="serveroptions_disallowuninstall">
+			<column name="id" type="bigint">
+				<constraints references="cloudconductor.serveroptions(id)" foreignKeyName="fk_serveroptions_uninstall" deleteCascade="true" nullable="false"/>
+			</column>
+			<column name="disallowuninstall" type="text" />
+		</createTable>
+		
+		<sql>INSERT INTO cloudconductor.serveroptions_disallowuninstall(id, disallowuninstall) SELECT id, 'jdk' FROM cloudconductor.serveroptions LIMIT 1;</sql>
+		
+		<createTable schemaName="cloudconductor" tableName="agentoption">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_agent_option" deleteCascade="true" />
+			</column>
+			<column name="alivetimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="alivetimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dosshkeys" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="sshkeystimer" defaultValueNumeric="5"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="sshkeystimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dopackagemanagement" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="packagemanagementtimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="packagemanagementtimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="dofilemanagement" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="filemanagementtimer" defaultValueNumeric="2"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="filemanagementtimerunit" defaultValueNumeric="4"  type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="19" author="psigloch">
+		<addColumn schemaName="cloudconductor" tableName="host">
+			<column name="executedssh" type="boolean" defaultValueBoolean="false" />
+			<column name="executedfiles" type="boolean" defaultValueBoolean="false" />
+			<column name="executedpkg" type="boolean" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

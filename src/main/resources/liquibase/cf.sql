@@ -59,7 +59,7 @@ INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false, true);
 
 INSERT INTO cloudconductor.yumserver VALUES (1, 'localhost', 'http://localhost:8090/static/yum');
 
-INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL);
+INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL, false, false, false);
 
 INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6');

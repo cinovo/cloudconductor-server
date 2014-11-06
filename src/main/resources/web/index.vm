@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
+    <meta name="reloadTimer" content="${C2InstanceOptions.getPageRefreshTimerUnit().toMillis(${C2InstanceOptions.getPageRefreshTimer()})}" />
     <link rel="shortcut icon" href="/web/images/favicon.ico"/>
 
 	<!-- Bootstrap core CSS -->

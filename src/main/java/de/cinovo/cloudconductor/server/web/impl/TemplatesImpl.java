@@ -5,13 +5,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.ServiceState;
+import de.cinovo.cloudconductor.api.model.TaskState;
 import de.cinovo.cloudconductor.server.comparators.DefaultStateComparator;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
+import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
@@ -19,6 +25,7 @@ import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
@@ -31,6 +38,7 @@ import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.cinovo.cloudconductor.server.web.helper.FormValidator;
 import de.cinovo.cloudconductor.server.web.interfaces.ITemplate;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
 import de.taimos.restutils.RESTAssert;
@@ -38,9 +46,9 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class TemplatesImpl extends AWebPage implements ITemplate {
 	
@@ -58,8 +66,12 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	private IServiceDAO dSvc;
 	@Autowired
 	private IPackageVersionDAO dPkgVersion;
-	
-	
+	@Autowired
+	protected IAgentOptionsDAO dAgentOptions;
+	@Autowired
+	protected IHostDAO dHosts;
+
+
 	@Override
 	protected String getTemplateFolder() {
 		return "templates";
@@ -380,5 +392,85 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			error.addFormParam("smoothupdate", smoothupdate);
 			throw error;
 		}
+	}
+
+	@Override
+	@Transactional
+	public RenderedView editTemplateAgentConfigView(String tname) {
+		RESTAssert.assertNotEmpty(tname);
+		ETemplate template = this.dTemplate.findByName(tname);
+		RESTAssert.assertNotNull(template);
+		
+		final CSViewModel vm = this.createModal("mTemplateAgentConfig");
+		vm.addModel("template", template);
+		EAgentOption options = this.dAgentOptions.findByTemplate(tname);
+		if (options == null) {
+			options = new EAgentOption();
+			options.setTemplate(template);
+			options = this.dAgentOptions.save(options);
+		}
+		vm.addModel("options", options);
+		vm.addModel("timeUnits", TimeUnit.values());
+		vm.addModel("taskStates", TaskState.values());
+		return vm.render();
+	}
+
+	@Override
+	@Transactional
+	public AjaxAnswer editTemplateAgentConfig(String tname, MultivaluedMap<String, String> form) throws FormErrorException {
+		RESTAssert.assertNotEmpty(tname);
+		ETemplate template = this.dTemplate.findByName(tname);
+		RESTAssert.assertNotNull(template);
+		
+		FormValidator validator = FormValidator.create(this.getCurrentPath(), form);
+		validator.notEmpty("aliveTimer").notEmpty("aliveTimerUnit");
+		validator.notEmpty("doSshKeys").notEmpty("sshKeysTimer").notEmpty("sshKeysTimerUnit");
+		validator.notEmpty("doPackageManagement").notEmpty("packageManagementTimer").notEmpty("packageManagementTimerUnit");
+		validator.notEmpty("doFileManagement").notEmpty("fileManagementTimer").notEmpty("fileManagementTimerUnit");
+		validator.validate();
+
+		EAgentOption options = this.dAgentOptions.findByTemplate(tname);
+		if (options == null) {
+			options = new EAgentOption();
+			options.setTemplate(template);
+		}
+		options.setAliveTimer(Integer.valueOf(form.get("aliveTimer").get(0)));
+		options.setAliveTimerUnit(TimeUnit.valueOf(form.get("aliveTimerUnit").get(0)));
+		
+		boolean resetSSH = (options.getDoSshKeys() == TaskState.ONCE) && (TaskState.valueOf(form.get("doSshKeys").get(0)) != TaskState.ONCE);
+		options.setDoSshKeys(TaskState.valueOf(form.get("doSshKeys").get(0)));
+		options.setSshKeysTimer(Integer.valueOf(form.get("sshKeysTimer").get(0)));
+		options.setSshKeysTimerUnit(TimeUnit.valueOf(form.get("sshKeysTimerUnit").get(0)));
+
+		boolean resetPkg = (options.getDoPackageManagement() == TaskState.ONCE) && (TaskState.valueOf(form.get("doPackageManagement").get(0)) != TaskState.ONCE);
+		options.setDoPackageManagement(TaskState.valueOf(form.get("doPackageManagement").get(0)));
+		options.setPackageManagementTimer(Integer.valueOf(form.get("packageManagementTimer").get(0)));
+		options.setPackageManagementTimerUnit(TimeUnit.valueOf(form.get("packageManagementTimerUnit").get(0)));
+		
+		boolean resetFile = (options.getDoFileManagement() == TaskState.ONCE) && (TaskState.valueOf(form.get("doFileManagement").get(0)) != TaskState.ONCE);
+		
+		options.setDoFileManagement(TaskState.valueOf(form.get("doFileManagement").get(0)));
+		options.setFileManagementTimer(Integer.valueOf(form.get("fileManagementTimer").get(0)));
+		options.setFileManagementTimerUnit(TimeUnit.valueOf(form.get("fileManagementTimerUnit").get(0)));
+		
+		this.dAgentOptions.save(options);
+
+		if (resetSSH || resetPkg || resetFile) {
+			for (EHost host : this.dHosts.findList()) {
+				if (host.getTemplate().equals(template)) {
+					if (host.getExecutedPkg() && resetPkg) {
+						host.setExecutedPkg(false);
+					}
+					if (host.getExecutedSSH() && resetSSH) {
+						host.setExecutedSSH(false);
+					}
+					if (host.getExecutedFiles() && resetFile) {
+						host.setExecutedFiles(false);
+					}
+					this.dHosts.save(host);
+				}
+			}
+		}
+		return new AjaxAnswer(IWebPath.WEBROOT + ITemplate.ROOT);
 	}
 }
