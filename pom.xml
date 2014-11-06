@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>de.cinovo.cloudconductor</groupId>
 			<artifactId>cloudconductor-api</artifactId>
-			<version>2.9-SNAPSHOT</version>
+			<version>2.11</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>javax.ws.rs-api</artifactId>
@@ -304,9 +304,6 @@
 							<description>A server for managing host configurations in a network.</description>
 							<summary>A server for managing host configurations in a network.</summary>
 							<vendor>Cinovo AG</vendor>
-							<requires>
-								<require>jdk &gt;= 1.7</require>
-							</requires>
 							<packager>Cinovo AG</packager>
 							<copyright>2013, Cinovo AG</copyright>
 							<group>Applications/System</group>

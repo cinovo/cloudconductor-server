@@ -117,17 +117,17 @@
 					<div class="input-group #if($ERROR.hasError('repo-scan'))has-error #end">
 						<span class="input-group-addon">Use Index-Scan</span>
 						<select id="repo-scan" name="repo-scan" class="form-control">
-							<option value="false" #if (${ERROR.getFormParams().get('"repo-scan"')} == "false") selected="selected" #end>false</option>
-							<option value="true" #if (${ERROR.getFormParams().get('"repo-scan"')} == "true") selected="selected" #end>true</option>
+							<option value="false" #if (${ERROR.getFormParams().get('repo-scan')} == "false") selected="selected" #end>false</option>
+							<option value="true" #if (${ERROR.getFormParams().get('repo-scan')} == "true") selected="selected" #end>true</option>
 						</select>
 					</div>
 				</div>
-				<div id="repo-scan-detail" class="col-lg-12 formlist" #if (!${ERROR.getFormParams().get('"repo-scan"')} || ${ERROR.getFormParams().get('"repo-scan"')} == "false")style="display: none;" #end>
+				<div id="repo-scan-detail" class="col-lg-12 formlist" #if (!${ERROR.getFormParams().get('repo-scan')} || ${ERROR.getFormParams().get('repo-scan')} == "false")style="display: none;" #end>
 					<div class="input-group #if($ERROR.hasError('repo-indexer'))has-error #end">
 						<span class="input-group-addon">Index-Scanner</span>
 						<select name="repo-indexer" class="form-control">
-							<option value="IndexFileIndexer" #if (${ERROR.getFormParams().get('"repo-indexer"')} == "IndexFileIndexer") selected="selected" #end>IndexFileIndexer</option>
-							<option value="RPMIndexer" #if (${ERROR.getFormParams().get('"repo-indexer"')} == "RPMIndexer") selected="selected" #end>RPMIndexer</option>
+							<option value="IndexFileIndexer" #if (${ERROR.getFormParams().get('repo-indexer')} == "IndexFileIndexer") selected="selected" #end>IndexFileIndexer</option>
+							<option value="RPMIndexer" #if (${ERROR.getFormParams().get('repo-indexer')} == "RPMIndexer") selected="selected" #end>RPMIndexer</option>
 						</select>
 					</div>
 				</div>
@@ -137,14 +137,14 @@
 						<span class="input-group-addon">Repository Provider</span>
 						<select id="repo-provider" name="repo-provider" class="form-control">
 							<option value="-1" selected="selected">- none -</option>
-							<option value="FileProvider" #if (${ERROR.getFormParams().get('"repo-provider"')} == "FileProvider") selected="selected" #end>FileProvider</option>
-							<option value="HTTPProvider" #if (${ERROR.getFormParams().get('"repo-provider"')} == "HTTPProvider") selected="selected" #end>HTTPProvider</option>
-							<option value="AWSS3Provider" #if (${ERROR.getFormParams().get('"repo-provider"')} == "AWSS3Provider") selected="selected" #end>AWSS3Provider</option>
+							<option value="FileProvider" #if (${ERROR.getFormParams().get('repo-provider')} == "FileProvider") selected="selected" #end>FileProvider</option>
+							<option value="HTTPProvider" #if (${ERROR.getFormParams().get('repo-provider')} == "HTTPProvider") selected="selected" #end>HTTPProvider</option>
+							<option value="AWSS3Provider" #if (${ERROR.getFormParams().get('repo-provider')} == "AWSS3Provider") selected="selected" #end>AWSS3Provider</option>
 						</select>
 					</div>
 				</div>
 				
-				<div id="repo-basedir" style="display: none;">
+				<div id="repo-basedir" #if (${ERROR.getFormParams().get('repo-provider')} != "FileProvider") style="display: none;" #end>
 					<div class="col-lg-12 formlist">
 						<div class="input-group #if($ERROR.hasError('repo-basedir'))has-error #end">
 							<span class="input-group-addon">Repository Base-Dir</span>
@@ -152,7 +152,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="repo-baseurl" style="display: none;">
+				<div id="repo-baseurl" #if (${ERROR.getFormParams().get('repo-provider')} != "HTTPProvider") style="display: none;" #end>
 					<div class="col-lg-12 formlist">
 						<div class="input-group #if($ERROR.hasError('repo-baseurl'))has-error #end">
 							<span class="input-group-addon">Repository Base-URL</span>
@@ -160,7 +160,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="repo-aws" style="display: none;">
+				<div id="repo-aws" #if (${ERROR.getFormParams().get('repo-provider')} != "AWSS3Provider") style="display: none;" #end>
 					<div class="col-lg-12 formlist">
 						<div class="input-group #if($ERROR.hasError('repo-bucket'))has-error #end">
 							<span class="input-group-addon">AWS Bucket name</span>

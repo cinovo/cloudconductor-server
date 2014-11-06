@@ -21,6 +21,7 @@ import de.cinovo.cloudconductor.server.comparators.ConfigComperator;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
@@ -33,21 +34,21 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
+ *
  */
 public class ConfigImpl extends AWebPage implements IConfig {
-	
+
 	@Autowired
 	protected IConfigValueDAO dConfig;
-	
-	
+
+
 	@Override
 	protected String getTemplateFolder() {
 		return "config";
 	}
-	
+
 	@Override
 	protected void init() {
 		this.navRegistry.registerSubMenu(NavbarHardLinks.config, this.getNavElementName(), IConfig.ROOT);
@@ -55,16 +56,16 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		this.addTopAction(IWebPath.WEBROOT + IConfig.ROOT + IWebPath.ACTION_ADD, "Create new Key");
 		this.addTopAction(IWebPath.WEBROOT + IConfig.ROOT + IConfig.BATCH_ACTION, "Batch modify");
 	}
-	
+
 	private String templateNormer(String template) {
 		return template.trim().replace(" ", "_");
 	}
-	
+
 	@Override
 	protected String getNavElementName() {
 		return "Config";
 	}
-	
+
 	@Override
 	@Transactional
 	public RenderedView view(String viewtype) {
@@ -77,7 +78,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 			}
 		}
 		String template = viewtype == null ? IConfig.RESERVED_GLOBAL : viewtype;
-		
+
 		List<EConfigValue> configs = this.dConfig.findAll(template);
 		Map<String, List<EConfigValue>> conf = new HashMap<String, List<EConfigValue>>();
 		for (EConfigValue val : configs) {
@@ -99,7 +100,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		view.addModel("TEMPLATE", template);
 		return view.render();
 	}
-	
+
 	@Override
 	public RenderedView deleteConfigView(String id) {
 		RESTAssert.assertNotEmpty(id);
@@ -109,7 +110,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("CONFIG", config);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView deleteTemplateView(String template) {
 		RESTAssert.assertNotNull(template);
@@ -117,7 +118,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("TEMPLATE", template);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView deleteServiceView(String template, String service) {
 		RESTAssert.assertNotNull(template);
@@ -126,7 +127,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("SERVICE", service);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView editConfigView(String id) {
 		RESTAssert.assertNotEmpty(id);
@@ -136,13 +137,13 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("CONFIG", config);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView addConfigView() {
 		CSViewModel modal = this.createModal("mModConfig");
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView addConfigView(String template) {
 		RESTAssert.assertNotNull(template);
@@ -150,7 +151,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("TEMPLATE", template);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView addConfigView(String template, String service) {
 		RESTAssert.assertNotNull(template);
@@ -160,7 +161,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("SERVICE", service);
 		return modal.render();
 	}
-	
+
 	@Override
 	public RenderedView batchModView() {
 		List<EConfigValue> total = this.dConfig.findList();
@@ -180,13 +181,18 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		modal.addModel("BATCHDEFAULT", buffer.toString());
 		return modal.render();
 	}
-	
+
 	@Override
 	public AjaxAnswer save(String oldId, String template, String service, String key, String value) throws FormErrorException {
 		FormErrorException error = null;
 		error = this.assertNotEmpty(template, error, "template");
 		error = this.assertNotEmpty(key, error, "key");
 		error = this.assertNotEmpty(value, error, "value");
+
+		if (ReservedConfigKeyStore.instance.isReserved(key)) {
+			error = error == null ? this.createError("The key is a reserved by CloudConductor. Please choose another one.") : error;
+		}
+
 		EConfigValue config = (oldId == null) || (Long.valueOf(oldId) < 1) ? null : this.dConfig.findById(Long.valueOf(oldId));
 		if ((config == null) || !config.getConfigkey().equals(key)) {
 			if ((service != null) && !service.isEmpty() && (this.dConfig.findBy(template, service, key) != null)) {
@@ -210,11 +216,11 @@ public class ConfigImpl extends AWebPage implements IConfig {
 			}
 			throw error;
 		}
-		
+
 		if (config == null) {
 			config = new EConfigValue();
 		}
-		
+
 		config.setTemplate(template);
 		config.setService((service == null) || service.isEmpty() ? null : service);
 		config.setConfigkey(key);
@@ -223,7 +229,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		this.addViewType(template, template, false);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, template);
 	}
-	
+
 	@Override
 	public AjaxAnswer deleteConfig(String id) {
 		RESTAssert.assertNotEmpty(id);
@@ -233,7 +239,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		this.dConfig.delete(config, auditMessage);
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, config.getTemplate());
 	}
-	
+
 	@Override
 	public AjaxAnswer deleteTemplate(String template) {
 		RESTAssert.assertNotEmpty(template);
@@ -243,7 +249,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		}
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT, IConfig.RESERVED_GLOBAL);
 	}
-	
+
 	@Override
 	public AjaxAnswer deleteService(String template, String service) {
 		RESTAssert.assertNotEmpty(template);
@@ -254,7 +260,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 		}
 		return new AjaxAnswer(IWebPath.WEBROOT + IConfig.ROOT);
 	}
-	
+
 	@Override
 	public AjaxAnswer batchMod(String batch) {
 		RESTAssert.assertNotEmpty(batch);
@@ -307,13 +313,13 @@ public class ConfigImpl extends AWebPage implements IConfig {
 				}
 			}
 		}
-		
+
 		// drop
 		for (Entry<String, String> entry : drop.entrySet()) {
 			for (EConfigValue ecv : this.dConfig.findBy(entry.getKey(), entry.getValue())) {
 				this.dConfig.delete(ecv);
 			}
-			
+
 		}
 		// delete
 		for (Cell<String, String, Set<String>> entry : remove.cellSet()) {
@@ -322,7 +328,7 @@ public class ConfigImpl extends AWebPage implements IConfig {
 					this.dConfig.delete(ecv);
 				}
 			}
-			
+
 		}
 		// add
 		for (Cell<String, String, Map<String, String>> entry : add.cellSet()) {

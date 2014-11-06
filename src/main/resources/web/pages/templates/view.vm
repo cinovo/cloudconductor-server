@@ -12,6 +12,7 @@
 				<div class="btn-group">
 					<button type="button" class="btn btn-default glyphicon glyphicon-import" data-ref="${template.name}/package/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Install Package"></button>
 					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${template.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Template"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-list-alt" data-ref="${template.name}/agentconfig/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Agent Config"></button>
 					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${template.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete Template"></button>
 				</div>
 			</span>			
