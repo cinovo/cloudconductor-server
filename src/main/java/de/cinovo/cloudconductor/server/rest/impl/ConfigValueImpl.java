@@ -87,24 +87,28 @@ public class ConfigValueImpl implements IConfigValue {
 	@Transactional
 	public String get(String template, String service, String key) {
 		RESTAssert.assertNotEmpty(template);
-		RESTAssert.assertNotEmpty(service);
-		RESTAssert.assertNotEmpty(key);
+		String lService = service;
+		String lKey = key;
+		if ((key == null) && (service != null)) {
+			lKey = service;
+			lService = null;
+		}
 		
 		EConfigValue result = null;
 		if (ReservedConfigKeyStore.instance.isReserved(key)) {
 			return ReservedConfigKeyStore.instance.getValue(key);
 		}
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
-			result = this.dcv.findBy(template, service, key);
+			result = this.dcv.findBy(template, lService, lKey);
+			if (result == null) {
+				result = this.dcv.findKey(template, lKey);
+			}
 		}
 		if (result == null) {
-			result = this.dcv.findKey(template, key);
+			result = this.dcv.findGlobal(lService, lKey);
 		}
 		if (result == null) {
-			result = this.dcv.findGlobal(service, key);
-		}
-		if (result == null) {
-			result = this.dcv.findKey(key);
+			result = this.dcv.findKey(lKey);
 		}
 		if (result == null) {
 			throw new NotFoundException();
