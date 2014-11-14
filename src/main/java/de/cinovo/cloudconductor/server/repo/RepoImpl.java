@@ -85,7 +85,7 @@ public class RepoImpl extends AWebPage implements IRepo {
 
 	@Override
 	protected void init() {
-		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo");
+		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo/");
 	}
 
 	@Override
