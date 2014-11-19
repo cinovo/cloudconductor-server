@@ -103,8 +103,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk</artifactId>
-			<version>1.8.10.1</version>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.9.6</version>
 		</dependency>
 		<!-- JDBC Data Access Library (depends on spring-core, spring-beans, spring-context, spring-tx) Define this if you use Spring's JdbcTemplate 
 			API (org.springframework.jdbc.*) -->

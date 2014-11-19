@@ -9,7 +9,7 @@
 # export C2CONFIG
 # curl https://raw.githubusercontent.com/cinovo/cloudconductor-server/v2.13/cloud-init/full.sh | bash
 
-rpm -ivh http://yum.cloudconductor.net/cloudconductor-2.14-1.noarch.rpm
+rpm -ivh http://yum.cloudconductor.net/cloudconductor-2.15-1.noarch.rpm
 
 echo "$C2CONFIG" > /opt/cloudconductor/cloudconductor.properties
 
