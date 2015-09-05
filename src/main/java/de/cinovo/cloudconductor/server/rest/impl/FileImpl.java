@@ -42,14 +42,16 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.rest.helper.AMConverter;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
 import de.taimos.restutils.RESTAssert;
+import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
+@JaxRsComponent
 public class FileImpl extends ImplHelper implements IFile {
 	
 	@Autowired
@@ -64,8 +66,8 @@ public class FileImpl extends ImplHelper implements IFile {
 	private IFileDataDAO dcfd;
 	@Autowired
 	private ITemplateDAO dtemplate;
-
-
+	
+	
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
@@ -150,7 +152,7 @@ public class FileImpl extends ImplHelper implements IFile {
 		this.assertModelFound(model);
 		this.dcf.delete(model);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigFile[] getConfigFiles(String template) {

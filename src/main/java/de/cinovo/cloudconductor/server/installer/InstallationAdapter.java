@@ -5,14 +5,14 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.app.Velocity;
 
 import de.taimos.daemon.DaemonStarter;
-import de.taimos.springcxfdaemon.SpringDaemonAdapter;
+import de.taimos.daemon.spring.SpringDaemonAdapter;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 public class InstallationAdapter extends SpringDaemonAdapter {
 	
@@ -25,7 +25,7 @@ public class InstallationAdapter extends SpringDaemonAdapter {
 		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
 		super.doBeforeSpringStart();
 	}
-
+	
 	@Override
 	protected String getSpringResource() {
 		return "spring/installation.xml";

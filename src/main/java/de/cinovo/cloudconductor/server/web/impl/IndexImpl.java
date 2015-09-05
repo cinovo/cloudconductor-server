@@ -26,18 +26,18 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.IIndex;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class IndexImpl extends AWebPage implements IIndex {
 	
@@ -109,7 +109,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<EHost> hostList = this.dHost.findList();
 		List<ETemplate> templateList = this.dTemplate.findList();
 		CSViewModel view = this.createView();
@@ -189,7 +189,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 					result.put(ss.getService().getName(), ServiceState.STARTING);
 				}
 				break;
-			
+				
 			case STOPPED:
 			case STOPPING:
 				if (result.get(ss.getService().getName()) == null) {

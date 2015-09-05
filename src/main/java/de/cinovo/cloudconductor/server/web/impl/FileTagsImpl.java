@@ -12,13 +12,13 @@ import de.cinovo.cloudconductor.server.model.EFileTag;
 import de.cinovo.cloudconductor.server.model.enums.TagColor;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer.AjaxAnswerType;
 import de.cinovo.cloudconductor.server.web.interfaces.IFileTags;
 import de.cinovo.cloudconductor.server.web.interfaces.IFiles;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -26,7 +26,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class FileTagsImpl extends AWebPage implements IFileTags {
 	
@@ -53,7 +53,7 @@ public class FileTagsImpl extends AWebPage implements IFileTags {
 	
 	@Override
 	@Transactional
-	public RenderedView viewFilesTags(Long fileid) {
+	public RenderedUI viewFilesTags(Long fileid) {
 		RESTAssert.assertNotNull(fileid);
 		EFile file = this.dFiles.findById(fileid);
 		List<EFileTag> tags = this.dTags.findList();
@@ -65,7 +65,7 @@ public class FileTagsImpl extends AWebPage implements IFileTags {
 	
 	@Override
 	@Transactional
-	public RenderedView newTagView(Long fileid) {
+	public RenderedUI newTagView(Long fileid) {
 		final CSViewModel modal = this.createModal("mNewTags");
 		modal.addModel("TAGTYPES", TagColor.values());
 		modal.addModel("FILEID", fileid);
@@ -74,7 +74,7 @@ public class FileTagsImpl extends AWebPage implements IFileTags {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteTagView(Long fileid, Long tagid) {
+	public RenderedUI deleteTagView(Long fileid, Long tagid) {
 		EFileTag tag = this.dTags.findById(tagid);
 		List<EFile> files = this.dFiles.findByTag(tag);
 		final CSViewModel modal = this.createModal("mDeleteTag");

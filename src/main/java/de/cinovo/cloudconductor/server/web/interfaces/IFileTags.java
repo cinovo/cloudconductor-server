@@ -9,15 +9,15 @@ import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IFileTags.ROOT)
 public interface IFileTags {
@@ -42,7 +42,7 @@ public interface IFileTags {
 	@GET
 	@Path(IFileTags.TAGED_FILE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView viewFilesTags(@PathParam(IWebPath.VAR_ID) Long fileid);
+	public abstract RenderedUI viewFilesTags(@PathParam(IWebPath.VAR_ID) Long fileid);
 	
 	/**
 	 * @param fileid the file id
@@ -51,7 +51,7 @@ public interface IFileTags {
 	@GET
 	@Path(IFileTags.ADD_TAG)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView newTagView(@PathParam(IWebPath.VAR_ID) Long fileid);
+	public abstract RenderedUI newTagView(@PathParam(IWebPath.VAR_ID) Long fileid);
 	
 	/**
 	 * @param fileid the file id
@@ -61,7 +61,7 @@ public interface IFileTags {
 	@GET
 	@Path(IFileTags.DELETE_TAG)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView deleteTagView(@PathParam(IWebPath.VAR_ID) Long fileid, @PathParam("tag" + IWebPath.VAR_ID) Long tagid);
+	public abstract RenderedUI deleteTagView(@PathParam(IWebPath.VAR_ID) Long fileid, @PathParam("tag" + IWebPath.VAR_ID) Long tagid);
 	
 	/**
 	 * @param fileid the file id

@@ -45,14 +45,16 @@ import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.rest.helper.AMConverter;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
 import de.taimos.restutils.RESTAssert;
+import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
+@JaxRsComponent
 public class HostImpl extends ImplHelper implements IHost {
 	
 	@Autowired

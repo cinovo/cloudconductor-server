@@ -28,7 +28,7 @@ import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 /**
  * 

@@ -41,7 +41,7 @@ import de.taimos.cxf_renderer.model.ViewModel;
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 public class CSViewModel extends ViewModel {
 	
@@ -61,7 +61,6 @@ public class CSViewModel extends ViewModel {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	private static String evaluateVM(final String name, final Map<String, Object> variables) {
 		try {
@@ -88,8 +87,8 @@ public class CSViewModel extends ViewModel {
 	 */
 	private boolean isSimpleView = true;
 	private boolean isModal = false;
-
-
+	
+	
 	/**
 	 * @param viewName the view name
 	 * @param isModal is the view a modal or not
@@ -121,6 +120,7 @@ public class CSViewModel extends ViewModel {
 		this.addModel("NOW", DateTime.now());
 	}
 	
+	@Override
 	protected String generateTemplateName() {
 		if (this.isModal) {
 			return "/web/pages/" + this.getViewName() + ".vm";
@@ -131,13 +131,4 @@ public class CSViewModel extends ViewModel {
 		return "/web/index.vm";
 	}
 	
-	/**
-	 * @return the rendered view
-	 */
-	public RenderedView render() {
-		RenderedView view = new RenderedView();
-		String evaluateVM = CSViewModel.evaluateVM(this.generateTemplateName(), this.getModel());
-		view.setContent(evaluateVM);
-		return view;
-	}
 }

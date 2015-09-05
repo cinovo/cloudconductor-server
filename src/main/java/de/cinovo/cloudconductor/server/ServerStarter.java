@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.util.Map;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
@@ -33,9 +34,10 @@ import de.cinovo.cloudconductor.server.installer.InstallationAdapter;
 import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
+import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
-import de.taimos.springcxfdaemon.SpringDaemonAdapter;
+import de.taimos.daemon.spring.SpringDaemonAdapter;
 
 /**
  * Copyright 2012 Cinovo AG<br>
@@ -45,7 +47,7 @@ import de.taimos.springcxfdaemon.SpringDaemonAdapter;
  * @author mhilbert
  */
 public class ServerStarter extends SpringDaemonAdapter {
-
+	
 	/** C2 properties file name */
 	public static final String CLOUDCONDUCTOR_PROPERTIES = "cloudconductor.properties";
 	// Exception messages.
@@ -56,14 +58,15 @@ public class ServerStarter extends SpringDaemonAdapter {
 	public static final String INSTALLING_DAEMON_NAME = "cloudconductor_INSTALLING";
 	/** the logger */
 	private static final Logger log = Logger.getLogger(ServerStarter.class);
-
-
+	
+	
 	/**
 	 * Main method.
 	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
+		Log4jLoggingConfigurer.setup();
 		if (ServerStarter.checkInstalled()) {
 			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
 		} else {
@@ -92,10 +95,11 @@ public class ServerStarter extends SpringDaemonAdapter {
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
 		try {
 			ManagementFactory.getPlatformMBeanServer().registerMBean(prov, new ObjectName(name));
-		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
+		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException
+				| MalformedObjectNameException e) {
 			ServerStarter.log.warn("Failed to init JMX", e);
 		}
-
+		
 		ServerTaskHelper initializer = this.getContext().getBean(ServerTaskHelper.class);
 		initializer.init();
 		super.doAfterSpringStart();
@@ -109,5 +113,13 @@ public class ServerStarter extends SpringDaemonAdapter {
 	@Override
 	public IPropertyProvider getPropertyProvider() {
 		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
+	}
+	
+	@Override
+	protected void loadBasicProperties(Map<String, String> map) {
+		super.loadBasicProperties(map);
+		map.put("ds.package", "de/cinovo/cloudconductor/server/model");
+		map.put("jaxrs.path", "/api");
+		map.put("jetty.sessions", "true");
 	}
 }

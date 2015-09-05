@@ -12,13 +12,13 @@ import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IServices;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -26,7 +26,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class ServiceImpl extends AWebPage implements IServices {
 	
@@ -60,7 +60,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<EService> services = this.dService.findList();
 		for (EService svc : services) {
 			this.addSidebarElement(svc.getName());
@@ -73,7 +73,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	}
 	
 	@Override
-	public RenderedView newServiceView() {
+	public RenderedUI newServiceView() {
 		CSViewModel modal = this.createModal("mModService");
 		List<EPackage> packages = this.dPackage.findList();
 		this.sortNamedList(packages);
@@ -83,7 +83,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	
 	@Override
 	@Transactional
-	public RenderedView editServiceView(String service) {
+	public RenderedUI editServiceView(String service) {
 		RESTAssert.assertNotEmpty(service);
 		CSViewModel modal = this.createModal("mModService");
 		EService svc = this.dService.findByName(service);
@@ -97,7 +97,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	}
 	
 	@Override
-	public RenderedView deleteServiceView(String service) {
+	public RenderedUI deleteServiceView(String service) {
 		RESTAssert.assertNotEmpty(service);
 		CSViewModel modal = this.createModal("mDeleteService");
 		modal.addModel("SERVICE", this.dService.findByName(service));
@@ -105,7 +105,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	}
 	
 	@Override
-	public RenderedView deletePackageView(String service, String pkg) {
+	public RenderedUI deletePackageView(String service, String pkg) {
 		RESTAssert.assertNotEmpty(service);
 		RESTAssert.assertNotEmpty(pkg);
 		CSViewModel modal = this.createModal("mDeletePackage");
@@ -115,7 +115,7 @@ public class ServiceImpl extends AWebPage implements IServices {
 	}
 	
 	@Override
-	public RenderedView addPackageView(String service) {
+	public RenderedUI addPackageView(String service) {
 		RESTAssert.assertNotEmpty(service);
 		EService svc = this.dService.findByName(service);
 		List<EPackage> pkgs = this.dPackage.findNotUsedPackage(svc);

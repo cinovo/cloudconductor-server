@@ -30,7 +30,7 @@ import de.cinovo.cloudconductor.api.lib.manager.ServiceHandler;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 /**
  * 

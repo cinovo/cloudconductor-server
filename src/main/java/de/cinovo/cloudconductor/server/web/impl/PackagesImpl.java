@@ -23,13 +23,13 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackages;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -37,7 +37,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class PackagesImpl extends AWebPage implements IPackages {
 	
@@ -76,7 +76,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<EPackage> packageList = this.dPkg.findList();
 		
 		List<EService> serviceList = this.dSvc.findList();
@@ -104,7 +104,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public RenderedView addPackageView(String pname, Long versionid) {
+	public RenderedUI addPackageView(String pname, Long versionid) {
 		RESTAssert.assertNotEmpty(pname);
 		RESTAssert.assertNotNull(versionid);
 		EPackageVersion version = this.dVersion.findById(versionid);
@@ -173,7 +173,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public RenderedView addServiceView(String pname) {
+	public RenderedUI addServiceView(String pname) {
 		RESTAssert.assertNotEmpty(pname);
 		EPackage pkg = this.dPkg.findByName(pname);
 		List<EService> serviceList = new ArrayList<>();
@@ -208,7 +208,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public RenderedView newServiceView(String pname) {
+	public RenderedUI newServiceView(String pname) {
 		CSViewModel modal = this.createModal("mNewService");
 		modal.addModel("packageName", pname);
 		return modal.render();
@@ -246,7 +246,7 @@ public class PackagesImpl extends AWebPage implements IPackages {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteServiceView(String pname, String sname) {
+	public RenderedUI deleteServiceView(String pname, String sname) {
 		CSViewModel modal = this.createModal("mDeleteService");
 		modal.addModel("packageName", pname);
 		modal.addModel("serviceName", sname);

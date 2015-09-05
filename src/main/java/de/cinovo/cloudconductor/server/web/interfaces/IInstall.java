@@ -12,14 +12,14 @@ import javax.ws.rs.core.Response;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 @Path(IWebPath.DEFAULTVIEW)
 public interface IInstall {
@@ -30,7 +30,7 @@ public interface IInstall {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view();
+	public abstract RenderedUI view();
 	
 	/**
 	 * @param form the form data
@@ -41,14 +41,14 @@ public interface IInstall {
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	public abstract Response save(MultivaluedMap<String, String> form) throws FormErrorException;
-
+	
 	/**
 	 * @return the progress view
 	 */
 	@GET
 	@Path(IWebPath.DEFAULTVIEW + "finish/")
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView progressView();
+	public abstract RenderedUI progressView();
 	
 	/**
 	 * Returns the css style used in the web pages.
@@ -60,7 +60,7 @@ public interface IInstall {
 	@Path("css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getCSS(@PathParam("css") String css);
-
+	
 	/**
 	 * @param css the file name
 	 * @return the bootstrap css style
@@ -69,7 +69,7 @@ public interface IInstall {
 	@Path("bootstrap/css/{css}")
 	@Produces(MediaType.TEXT_CSS)
 	public abstract InputStream getBSCSS(@PathParam("css") String css);
-
+	
 	/**
 	 * Returns the CSS style used in the web pages.
 	 *
@@ -80,7 +80,7 @@ public interface IInstall {
 	@Path("images/{img}")
 	@Produces(MediaType.IMAGE_GIF)
 	public abstract InputStream getImage(@PathParam("img") String img);
-
+	
 	/**
 	 * Returns the java script files
 	 *
@@ -91,7 +91,7 @@ public interface IInstall {
 	@Path("js/{js}")
 	@Produces(MediaType.APPLICATION_JAVASCRIPT)
 	public abstract InputStream getJS(@PathParam("js") String js);
-
+	
 	/**
 	 * @param js the file name
 	 * @return the bootstrap java script files
@@ -100,7 +100,7 @@ public interface IInstall {
 	@Path("bootstrap/js/{js}")
 	@Produces(MediaType.APPLICATION_JAVASCRIPT)
 	public abstract InputStream getBSJS(@PathParam("js") String js);
-
+	
 	/**
 	 * @param font the file name
 	 * @return the bootstrap font files

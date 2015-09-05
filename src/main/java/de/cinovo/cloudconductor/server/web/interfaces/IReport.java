@@ -22,14 +22,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.server.web.RenderedView;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IReport.ROOT)
 public interface IReport {
@@ -44,6 +44,6 @@ public interface IReport {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view();
+	public abstract RenderedUI view();
 	
 }

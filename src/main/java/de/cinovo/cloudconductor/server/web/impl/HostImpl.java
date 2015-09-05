@@ -25,11 +25,11 @@ import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.IHost;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -37,7 +37,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class HostImpl extends AWebPage implements IHost {
 	
@@ -64,7 +64,7 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<EHost> eHosts = this.dHost.findList();
 		Map<String, String[]> reporttimes = new HashMap<>();
 		Map<String, List<?>> thDiff = new HashMap<>();
@@ -86,7 +86,7 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String hname) {
+	public RenderedUI view(String hname) {
 		EHost eHosts = this.dHost.findByName(hname);
 		Collections.sort(eHosts.getServices(), new StateComparator());
 		CSViewModel modal = this.createModal("mSingleView");
@@ -133,7 +133,7 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteHostView(String hname) {
+	public RenderedUI deleteHostView(String hname) {
 		RESTAssert.assertNotEmpty(hname);
 		EHost host = this.dHost.findByName(hname);
 		RESTAssert.assertNotNull(host);

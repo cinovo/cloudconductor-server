@@ -12,12 +12,12 @@ import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.interfaces.ISSHKey;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -25,7 +25,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
@@ -56,7 +56,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String viewtype) {
+	public RenderedUI view(String viewtype) {
 		List<ESSHKey> keys = this.dSSH.findList();
 		List<ETemplate> templates = this.dTemplate.findList();
 		this.sortNamedList(keys);
@@ -75,7 +75,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView addTemplateView(String owner) {
+	public RenderedUI addTemplateView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
@@ -88,7 +88,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView addKeyView(String template) {
+	public RenderedUI addKeyView(String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
 		RESTAssert.assertNotNull(t);
@@ -100,7 +100,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteTemplateView(String owner, String tname) {
+	public RenderedUI deleteTemplateView(String owner, String tname) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
@@ -114,7 +114,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteView(String owner) {
+	public RenderedUI deleteView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
@@ -125,7 +125,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView editView(String owner) {
+	public RenderedUI editView(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey key = this.dSSH.findByOwner(owner);
 		RESTAssert.assertNotNull(key);
@@ -143,7 +143,7 @@ public class SSHKeyImpl extends AWebPage implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public RenderedView addView() {
+	public RenderedUI addView() {
 		CSViewModel modal = this.prepareView();
 		return modal.render();
 	}

@@ -21,9 +21,10 @@ import org.apache.http.HttpResponse;
 import org.junit.Assert;
 
 import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
+import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
+import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfiguration;
 import de.taimos.httputils.HTTPRequest;
 import de.taimos.httputils.WS;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner.RunnerConfiguration;
 
 /**
  * 
@@ -31,9 +32,9 @@ import de.taimos.springcxfdaemon.SpringDaemonTestRunner.RunnerConfiguration;
  * <br>
  * 
  * @author hoegertn
- * 
+ * 		
  */
-@RunnerConfiguration(config = TestConfig.class, svc = "cloudconductor")
+@RunnerConfiguration(config = TestConfig.class, svc = "cloudconductor", loggingConfigurer = Log4jLoggingConfigurer.class)
 public abstract class APITest {
 	
 	/**

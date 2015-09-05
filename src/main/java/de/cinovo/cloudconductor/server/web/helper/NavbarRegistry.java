@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +19,7 @@ import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Component
 public class NavbarRegistry {
@@ -36,7 +34,7 @@ public class NavbarRegistry {
 	/**
 	 * Initialization for spring
 	 */
-	@PostConstruct
+	// @PostConstruct
 	public void init() {
 		List<EAdditionalLinks> links = this.dLinks.findList();
 		int counter = 0;

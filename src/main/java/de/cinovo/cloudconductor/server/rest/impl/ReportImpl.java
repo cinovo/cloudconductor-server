@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
@@ -33,15 +32,16 @@ import de.cinovo.cloudconductor.api.model.ReportPackage;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
-@Component
+@JaxRsComponent
 public class ReportImpl extends ImplHelper implements IReport {
 	
 	@Autowired

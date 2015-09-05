@@ -11,15 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IServices.ROOT)
 public interface IServices {
@@ -47,7 +47,7 @@ public interface IServices {
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView view();
+	public abstract RenderedUI view();
 	
 	/**
 	 * @return the modal content
@@ -56,7 +56,7 @@ public interface IServices {
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView newServiceView();
+	public abstract RenderedUI newServiceView();
 	
 	/**
 	 * @param service the service name
@@ -66,7 +66,7 @@ public interface IServices {
 	@Path(IServices.EDIT_SERVICE)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView editServiceView(@PathParam(IWebPath.VAR_NAME) String service);
+	public abstract RenderedUI editServiceView(@PathParam(IWebPath.VAR_NAME) String service);
 	
 	/**
 	 * @param service the service name
@@ -76,7 +76,7 @@ public interface IServices {
 	@Path(IServices.DELETE_SERVICE)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView deleteServiceView(@PathParam(IWebPath.VAR_NAME) String service);
+	public abstract RenderedUI deleteServiceView(@PathParam(IWebPath.VAR_NAME) String service);
 	
 	/**
 	 * @param service the service name
@@ -87,7 +87,7 @@ public interface IServices {
 	@Path(IServices.DELETE_PACKAGE)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView deletePackageView(@PathParam(IWebPath.VAR_NAME) String service, @PathParam(IWebPath.VAR_PKG) String pkg);
+	public abstract RenderedUI deletePackageView(@PathParam(IWebPath.VAR_NAME) String service, @PathParam(IWebPath.VAR_PKG) String pkg);
 	
 	/**
 	 * @param service the service name
@@ -97,7 +97,7 @@ public interface IServices {
 	@Path(IServices.ADD_PACKAGE)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView addPackageView(@PathParam(IWebPath.VAR_NAME) String service);
+	public abstract RenderedUI addPackageView(@PathParam(IWebPath.VAR_NAME) String service);
 	
 	/**
 	 * @param service the service name
