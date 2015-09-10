@@ -74,32 +74,32 @@ public class IndexImpl extends AWebPage implements IIndex {
 	
 	@Override
 	public InputStream getCSS(String css) {
-		return this.getClass().getResourceAsStream("/web/css/" + css);
+		return this.getClass().getResourceAsStream("/webres/css/" + css);
 	}
 	
 	@Override
 	public InputStream getBSCSS(String css) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/css/" + css);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/css/" + css);
 	}
 	
 	@Override
 	public InputStream getImage(String img) {
-		return this.getClass().getResourceAsStream("/web/images/" + img);
+		return this.getClass().getResourceAsStream("/webres/images/" + img);
 	}
 	
 	@Override
 	public InputStream getJS(String js) {
-		return this.getClass().getResourceAsStream("/web/js/" + js);
+		return this.getClass().getResourceAsStream("/webres/js/" + js);
 	}
 	
 	@Override
 	public InputStream getBSJS(String js) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/js/" + js);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/js/" + js);
 	}
 	
 	@Override
 	public InputStream getBSFonts(String font) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/fonts/" + font);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/fonts/" + font);
 	}
 	
 	@Override

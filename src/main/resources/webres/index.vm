@@ -145,13 +145,13 @@
 		#else
 		<div class="col-xs-12 col-sm-12">
 		#end
-		#parse("/web/pages/${VIEWNAME}.vm")
+		#parse("/webres/pages/${VIEWNAME}.vm")
 		</div>
 				
 		#if( $SIDEBARTYPE == "SIMPLE") 
-			#parse("/web/sidebar/simple.vm")
+			#parse("/webres/sidebar/simple.vm")
 		#elseif($SIDEBARTYPE == "ALPHABETICAL")
-			#parse("/web/sidebar/alphabetical.vm")
+			#parse("/webres/sidebar/alphabetical.vm")
 		#end
 		
 		

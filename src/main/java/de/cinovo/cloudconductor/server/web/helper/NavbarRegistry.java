@@ -34,6 +34,7 @@ public class NavbarRegistry {
 	/**
 	 * Initialization for spring
 	 */
+	// FIXME disabled for race conditions with demodata creation
 	// @PostConstruct
 	public void init() {
 		List<EAdditionalLinks> links = this.dLinks.findList();
