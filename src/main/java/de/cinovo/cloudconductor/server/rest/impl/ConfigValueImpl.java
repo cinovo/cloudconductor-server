@@ -32,14 +32,16 @@ import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
 import de.taimos.restutils.RESTAssert;
+import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
+@JaxRsComponent
 public class ConfigValueImpl implements IConfigValue {
 	
 	private static final String RESERVED_GLOBAL = "GLOBAL";
@@ -156,7 +158,7 @@ public class ConfigValueImpl implements IConfigValue {
 		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
 			throw new NotAcceptableException();
 		}
-
+		
 		EConfigValue ecv = null;
 		if (!template.equalsIgnoreCase(ConfigValueImpl.RESERVED_GLOBAL)) {
 			ecv = this.dcv.findKey(template, apiObject.getKey());

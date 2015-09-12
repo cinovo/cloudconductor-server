@@ -16,7 +16,6 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.util.ICCProperties;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer.AjaxAnswerType;
@@ -24,6 +23,7 @@ import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.NavbarRegistry;
 import de.cinovo.cloudconductor.server.web.interfaces.IServerOptions;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -31,7 +31,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
@@ -62,7 +62,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		final CSViewModel modal = this.createModal("mOptions");
 		EServerOptions options = this.dServerOptions.get();
 		modal.addModel("options", options);
@@ -78,7 +78,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	}
 	
 	@Override
-	public RenderedView viewLinks() {
+	public RenderedUI viewLinks() {
 		final CSViewModel modal = this.createModal("mLinks");
 		modal.addModel("links", this.dLinks.findList());
 		return modal.render();
@@ -131,7 +131,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 		}
 		options.setPageRefreshTimer(Integer.valueOf(pageRefreshTimer));
 		options.setPageRefreshTimerUnit(TimeUnit.valueOf(pageRefreshTimerUnit));
-
+		
 		Set<String> disallowed = new HashSet<>();
 		for (String string : disallowUninstall.split(System.lineSeparator())) {
 			if (!string.trim().isEmpty()) {
@@ -139,12 +139,12 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 			}
 		}
 		options.setDisallowUninstall(disallowed);
-
+		
 		options = this.dServerOptions.save(options);
-
+		
 		this.handleGlobalDisableAutoUpdate(options);
 		this.taskHelper.updateTasks(oldOptions);
-
+		
 		AjaxAnswer ajaxRedirect = new AjaxAnswer(IWebPath.WEBROOT + IServerOptions.ROOT, AjaxAnswerType.GET);
 		ajaxRedirect.setInfo("Successfully saved");
 		return ajaxRedirect;
@@ -162,7 +162,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	}
 	
 	@Override
-	public RenderedView addLinkView() {
+	public RenderedUI addLinkView() {
 		final CSViewModel modal = this.createModal("mAddLink");
 		return modal.render();
 	}
@@ -192,7 +192,7 @@ public class ServerOptionsImpl extends AWebPage implements IServerOptions {
 	}
 	
 	@Override
-	public RenderedView deleteLinkView(String label) {
+	public RenderedUI deleteLinkView(String label) {
 		EAdditionalLinks link = this.dLinks.findByLabel(label);
 		RESTAssert.assertNotNull(link);
 		final CSViewModel modal = this.createModal("mDeleteLink");

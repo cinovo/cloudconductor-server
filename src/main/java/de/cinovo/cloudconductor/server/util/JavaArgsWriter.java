@@ -32,15 +32,18 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
+import de.taimos.springcxfdaemon.JaxRsComponent;
+
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Provider
 @Produces(de.cinovo.cloudconductor.api.MediaType.APPLICATION_JAVAARGS)
+@JaxRsComponent
 public class JavaArgsWriter implements MessageBodyWriter<Map<String, String>> {
 	
 	@Override

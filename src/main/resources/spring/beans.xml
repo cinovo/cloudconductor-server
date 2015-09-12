@@ -14,42 +14,17 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<import resource="classpath:spring/daemon.xml" />
-	<import resource="dao.xml" />
-	<import resource="jettyOverwrite.xml" />
+	<import resource="classpath:spring/cxfdaemon.xml" />
+	<import resource="classpath:spring/dao.xml" />
 
-	<jaxrs:server id="serverREST" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/api" depends-on="cxf-engine">
-		<jaxrs:serviceBeans>
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.FileImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.HostImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.PackageImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.ServiceImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.SSHKeyImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.TemplateImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.ConfigValueImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.IOModuleImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.AgentImpl" />
-			<bean class="de.cinovo.cloudconductor.server.rest.impl.ReportImpl" />
-		</jaxrs:serviceBeans>
-		<jaxrs:features>
-			<bean class="de.cinovo.cloudconductor.server.rest.filter.RestDocFilter" />
-		</jaxrs:features>
-		<jaxrs:providers>
-			<ref bean="exMapper" />
-			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
-			<bean class="de.cinovo.cloudconductor.server.util.JavaPropsWriter" />
-			<bean class="de.cinovo.cloudconductor.server.util.JavaArgsWriter" />
-		</jaxrs:providers>
-	</jaxrs:server>
-	
 	<jaxrs:server id="serverRepo" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/repo" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
 			<bean class="de.cinovo.cloudconductor.server.repo.RepoImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 <!-- 			<ref bean="exMapper" /> -->
-			<ref bean="jsonProvider" />
-			<bean class="de.cinovo.cloudconductor.server.web.TemplateWriter" />
+			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
+			<bean class="de.taimos.cxf_renderer.model.UIWriter" />
 		</jaxrs:providers>
 	</jaxrs:server>
 	<bean id="repoProvider" class="de.cinovo.cloudconductor.server.repo.provider.${repo.provider:FileProvider}"/>
@@ -76,11 +51,11 @@
 			
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<ref bean="exMapper" />
+<!-- 			<ref bean="exMapper" /> -->
 			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
 			<bean class="de.cinovo.cloudconductor.server.util.FormErrorExceptionHander" />
 			<bean id="authTokenProvider2" class="de.cinovo.cloudconductor.server.security.AuthProvider" />
-			<bean class="de.cinovo.cloudconductor.server.web.TemplateWriter" />
+			<bean class="de.taimos.cxf_renderer.model.UIWriter" />
 		</jaxrs:providers>
 	</jaxrs:server>
 </beans>

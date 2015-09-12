@@ -10,12 +10,12 @@ import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer.AjaxAnswerType;
 import de.cinovo.cloudconductor.server.web.interfaces.IPackageServer;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -23,7 +23,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class PackageServerImpl extends AWebPage implements IPackageServer {
 	
@@ -49,20 +49,20 @@ public class PackageServerImpl extends AWebPage implements IPackageServer {
 	}
 	
 	@Override
-	public RenderedView view() {
+	public RenderedUI view() {
 		final CSViewModel modal = this.createModal("mServers");
 		modal.addModel("servers", this.dPckSrv.findList());
 		return modal.render();
 	}
 	
 	@Override
-	public RenderedView addServerView() {
+	public RenderedUI addServerView() {
 		final CSViewModel modal = this.createModal("mModServer");
 		return modal.render();
 	}
 	
 	@Override
-	public RenderedView editServerView(Long serverid) {
+	public RenderedUI editServerView(Long serverid) {
 		EPackageServer server = this.dPckSrv.findById(serverid);
 		RESTAssert.assertNotNull(server);
 		final CSViewModel modal = this.createModal("mModServer");
@@ -71,7 +71,7 @@ public class PackageServerImpl extends AWebPage implements IPackageServer {
 	}
 	
 	@Override
-	public RenderedView deleteServerView(Long serverid) {
+	public RenderedUI deleteServerView(Long serverid) {
 		EPackageServer server = this.dPckSrv.findById(serverid);
 		RESTAssert.assertNotNull(server);
 		final CSViewModel modal = this.createModal("mDeleteServer");

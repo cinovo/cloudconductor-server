@@ -14,7 +14,7 @@ import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")

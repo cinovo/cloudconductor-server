@@ -28,13 +28,13 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IFiles;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -42,7 +42,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class FilesImpl extends AWebPage implements IFiles {
 	
@@ -86,7 +86,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView view(String viewtype, String[] filter) {
+	public RenderedUI view(String viewtype, String[] filter) {
 		this.clearFilter();
 		if ((viewtype != null) && viewtype.equals(IFiles.TEMPLATE_FILTER)) {
 			return this.templateView();
@@ -95,7 +95,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Transactional
-	private RenderedView defaultView(String[] filter) {
+	private RenderedUI defaultView(String[] filter) {
 		for (EFileTag t : this.dFileTags.findList()) {
 			this.addFilter(String.valueOf(t.getId()), t.getName(), false);
 		}
@@ -130,7 +130,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Transactional
-	private RenderedView templateView() {
+	private RenderedUI templateView() {
 		List<EFile> files = this.dFile.findList();
 		for (EFile f : files) {
 			this.addSidebarElement(f.getName());
@@ -149,7 +149,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView newFileView() {
+	public RenderedUI newFileView() {
 		List<EPackage> packages = this.dPackage.findList();
 		this.sortNamedList(packages);
 		List<EService> services = this.dService.findList();
@@ -165,7 +165,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView editFileView(String name) {
+	public RenderedUI editFileView(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile oldFile = this.dFile.findByName(name);
 		EFileData fileData = this.dFileData.findDataByFile(oldFile);
@@ -185,7 +185,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	}
 	
 	@Override
-	public RenderedView deleteFileView(String name) {
+	public RenderedUI deleteFileView(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile file = this.dFile.findByName(name);
 		CSViewModel modal = this.createModal("mDeleteFile");
@@ -195,7 +195,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteFileFromTemplateView(String name, String template) {
+	public RenderedUI deleteFileFromTemplateView(String name, String template) {
 		RESTAssert.assertNotEmpty(name);
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
@@ -210,7 +210,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView addFileToTemplateView(String template) {
+	public RenderedUI addFileToTemplateView(String template) {
 		RESTAssert.assertNotEmpty(template);
 		ETemplate t = this.dTemplate.findByName(template);
 		RESTAssert.assertNotNull(t);
@@ -223,7 +223,7 @@ public class FilesImpl extends AWebPage implements IFiles {
 	
 	@Override
 	@Transactional
-	public RenderedView addTemplateToFileView(String file) {
+	public RenderedUI addTemplateToFileView(String file) {
 		RESTAssert.assertNotEmpty(file);
 		EFile f = this.dFile.findByName(file);
 		RESTAssert.assertNotNull(f);

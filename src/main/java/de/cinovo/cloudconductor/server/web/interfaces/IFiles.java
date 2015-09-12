@@ -10,15 +10,15 @@ import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IFiles.ROOT)
 public interface IFiles {
@@ -51,7 +51,7 @@ public interface IFiles {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView view(@QueryParam("viewtype") String viewtype, @QueryParam("filter") String[] filter);
+	public RenderedUI view(@QueryParam("viewtype") String viewtype, @QueryParam("filter") String[] filter);
 	
 	/**
 	 * @return the modal content
@@ -59,7 +59,7 @@ public interface IFiles {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView newFileView();
+	public RenderedUI newFileView();
 	
 	/**
 	 * @param name the file name
@@ -68,7 +68,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.EDIT_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView editFileView(@PathParam(IWebPath.VAR_NAME) String name);
+	public RenderedUI editFileView(@PathParam(IWebPath.VAR_NAME) String name);
 	
 	/**
 	 * @param name the file name
@@ -77,7 +77,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView deleteFileView(@PathParam(IWebPath.VAR_NAME) String name);
+	public RenderedUI deleteFileView(@PathParam(IWebPath.VAR_NAME) String name);
 	
 	/**
 	 * @param name the file name
@@ -87,7 +87,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.REMOVE_FROM_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView deleteFileFromTemplateView(@PathParam(IWebPath.VAR_NAME) String name, @PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public RenderedUI deleteFileFromTemplateView(@PathParam(IWebPath.VAR_NAME) String name, @PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param template the template name
@@ -96,7 +96,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.ADD_TO_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView addFileToTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public RenderedUI addFileToTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param file the file name
@@ -105,7 +105,7 @@ public interface IFiles {
 	@GET
 	@Path(IFiles.ADD_TO_FILE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView addTemplateToFileView(@PathParam(IWebPath.VAR_NAME) String file);
+	public RenderedUI addTemplateToFileView(@PathParam(IWebPath.VAR_NAME) String file);
 	
 	/**
 	 * @param oldname the old file name

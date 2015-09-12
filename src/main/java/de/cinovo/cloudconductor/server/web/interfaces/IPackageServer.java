@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * 
@@ -20,7 +20,7 @@ import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IPackageServer.ROOT)
 public interface IPackageServer {
@@ -43,7 +43,7 @@ public interface IPackageServer {
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView view();
+	public abstract RenderedUI view();
 	
 	/**
 	 * @return the modal content
@@ -52,7 +52,7 @@ public interface IPackageServer {
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView addServerView();
+	public abstract RenderedUI addServerView();
 	
 	/**
 	 * @param serverid the package server id
@@ -62,7 +62,7 @@ public interface IPackageServer {
 	@Path(IPackageServer.EDIT_ACTION)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView editServerView(@PathParam(IWebPath.VAR_ID) Long serverid);
+	public abstract RenderedUI editServerView(@PathParam(IWebPath.VAR_ID) Long serverid);
 	
 	/**
 	 * @param serverid the package server id
@@ -72,7 +72,7 @@ public interface IPackageServer {
 	@Path(IPackageServer.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedView deleteServerView(@PathParam(IWebPath.VAR_ID) Long serverid);
+	public abstract RenderedUI deleteServerView(@PathParam(IWebPath.VAR_ID) Long serverid);
 	
 	/**
 	 * @param serverid the package server id

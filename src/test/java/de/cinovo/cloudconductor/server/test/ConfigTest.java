@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ConfigValueHandler;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 /**
  * 

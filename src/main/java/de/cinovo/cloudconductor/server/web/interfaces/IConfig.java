@@ -10,15 +10,15 @@ import javax.ws.rs.QueryParam;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IConfig.ROOT)
 public interface IConfig {
@@ -55,7 +55,7 @@ public interface IConfig {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view(@QueryParam("viewtype") String viewtype);
+	public abstract RenderedUI view(@QueryParam("viewtype") String viewtype);
 	
 	/**
 	 * @param id the config id
@@ -64,7 +64,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.DELETE_KV_PAIR)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView deleteConfigView(@PathParam(IWebPath.VAR_ID) String id);
+	public abstract RenderedUI deleteConfigView(@PathParam(IWebPath.VAR_ID) String id);
 	
 	/**
 	 * @param template the template name
@@ -73,7 +73,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.DELETE_TEMPLATE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView deleteTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public abstract RenderedUI deleteTemplateView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param template the template name
@@ -83,7 +83,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.DELETE_SERVICE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView deleteServiceView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
+	public abstract RenderedUI deleteServiceView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
 	
 	/**
 	 * @param id the config id
@@ -92,7 +92,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.EDIT_KV_PAIR)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView editConfigView(@PathParam(IWebPath.VAR_ID) String id);
+	public abstract RenderedUI editConfigView(@PathParam(IWebPath.VAR_ID) String id);
 	
 	/**
 	 * @return the modal content
@@ -100,7 +100,7 @@ public interface IConfig {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView addConfigView();
+	public abstract RenderedUI addConfigView();
 	
 	/**
 	 * @param template the template name
@@ -109,7 +109,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.ADD_KV_TEMPLATE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
+	public abstract RenderedUI addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template);
 	
 	/**
 	 * @param template the template name
@@ -119,7 +119,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.ADD_KV_SERVICE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
+	public abstract RenderedUI addConfigView(@PathParam(IWebPath.VAR_TEMPLATE) String template, @PathParam(IWebPath.VAR_SERVICE) String service);
 	
 	/**
 	 * @return the modal content
@@ -127,7 +127,7 @@ public interface IConfig {
 	@GET
 	@Path(IConfig.BATCH_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView batchModView();
+	public abstract RenderedUI batchModView();
 	
 	/**
 	 * @param oldId the id of the old config, may be 0 if a new config is created

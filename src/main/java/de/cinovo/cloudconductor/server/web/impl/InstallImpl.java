@@ -24,46 +24,46 @@ import de.cinovo.cloudconductor.server.util.FormErrorExceptionHander;
 import de.cinovo.cloudconductor.server.util.ICCProperties;
 import de.cinovo.cloudconductor.server.util.RestartTask;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.FormValidator;
 import de.cinovo.cloudconductor.server.web.interfaces.IContextAware;
 import de.cinovo.cloudconductor.server.web.interfaces.IInstall;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 public class InstallImpl implements IInstall, IContextAware {
-
+	
 	private static final String DB_TYPE_FORM = "db-type";
-
+	
 	private static final String DB_HOST_FORM = "db-host";
 	private static final String DB_PORT_FORM = "db-port";
 	private static final String DB_USER_FORM = "db-user";
 	private static final String DB_PW_FORM = "db-pw";
 	private static final String DB_NAME_FORM = "db-name";
-
+	
 	private static final String CC_PORT_FORM = "cc-port";
 	private static final String CC_NAME_FORM = "cc-name";
 	private static final String CC_USER_FORM = "cc-user";
 	private static final String CC_PW_FORM = "cc-pw";
-
+	
 	private static final String REPO_SCAN_FORM = "repo-scan";
 	private static final String REPO_INDEXER_FORM = "repo-indexer";
-
+	
 	private static final String REPO_PROVIDER_FORM = "repo-provider";
 	private static final String REPO_BASEDIR_FORM = "repo-basedir";
 	private static final String REPO_BASEURL_FORM = "repo-baseurl";
 	private static final String REPO_AWS_BUCKET_FORM = "repo-bucket";
 	private static final String REPO_AWS_ACCESS_KEY_FORM = "aws-accessKeyId";
 	private static final String REPO_AWS_SECRET_KEY_FORM = "aws-secretKey";
-
-
+	
+	
 	@Override
-	public RenderedView view() {
+	public RenderedUI view() {
 		CSViewModel view = new CSViewModel("install/install");
 		if (this.hasError()) {
 			FormErrorException error = (FormErrorException) this.mc.getHttpServletRequest().getSession(true).getAttribute(FormErrorExceptionHander.FORM_ERROR_DATA);
@@ -72,27 +72,27 @@ public class InstallImpl implements IInstall, IContextAware {
 		}
 		return view.render();
 	}
-
+	
 	@Override
 	public Response save(MultivaluedMap<String, String> form) throws FormErrorException {
-
+		
 		FormValidator validator = FormValidator.create("", form);
-
+		
 		validator.notEmpty(InstallImpl.DB_TYPE_FORM);
 		if (validator.fieldCheck(InstallImpl.DB_TYPE_FORM)) {
 			validator.notEquals(InstallImpl.DB_TYPE_FORM, "-1");
 		}
 		validator.notEmpty(InstallImpl.DB_HOST_FORM).notEmpty(InstallImpl.DB_PORT_FORM).notEmpty(InstallImpl.DB_USER_FORM).notEmpty(InstallImpl.DB_PW_FORM).notEmpty(InstallImpl.DB_NAME_FORM);
-
+		
 		validator.notEmpty(InstallImpl.CC_PORT_FORM).notEmpty(InstallImpl.CC_NAME_FORM).notEmpty(InstallImpl.CC_USER_FORM).notEmpty(InstallImpl.CC_PW_FORM);
-
+		
 		validator.notEmpty(InstallImpl.REPO_SCAN_FORM);
 		if (validator.fieldCheck(InstallImpl.REPO_SCAN_FORM)) {
 			if (form.get(InstallImpl.REPO_SCAN_FORM).get(0) == "true") {
 				validator.notEmpty(InstallImpl.REPO_INDEXER_FORM);
 			}
 		}
-
+		
 		validator.notEmpty(InstallImpl.REPO_PROVIDER_FORM);
 		if (validator.fieldCheck(InstallImpl.REPO_PROVIDER_FORM)) {
 			validator.notEquals(InstallImpl.REPO_PROVIDER_FORM, "-1");
@@ -113,9 +113,9 @@ public class InstallImpl implements IInstall, IContextAware {
 			}
 		}
 		validator.validate();
-
+		
 		Properties props = this.generateProps(form);
-
+		
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		try (OutputStream out = new FileOutputStream(f);) {
 			props.store(out, "");
@@ -129,7 +129,7 @@ public class InstallImpl implements IInstall, IContextAware {
 			return Response.serverError().build();
 		}
 	}
-
+	
 	private Properties generateProps(MultivaluedMap<String, String> form) {
 		Properties props = new Properties();
 		for (Entry<String, List<String>> entry : form.entrySet()) {
@@ -153,7 +153,7 @@ public class InstallImpl implements IInstall, IContextAware {
 			case DB_NAME_FORM:
 				key = ICCProperties.DB_NAME;
 				break;
-			
+				
 			case CC_PORT_FORM:
 				key = ICCProperties.CC_PORT;
 				break;
@@ -166,14 +166,14 @@ public class InstallImpl implements IInstall, IContextAware {
 			case CC_PW_FORM:
 				key = ICCProperties.CC_PW;
 				break;
-			
+				
 			case REPO_SCAN_FORM:
 				key = ICCProperties.REPO_SCAN;
 				break;
 			case REPO_INDEXER_FORM:
 				key = ICCProperties.REPO_INDEXER;
 				break;
-			
+				
 			case REPO_PROVIDER_FORM:
 				key = ICCProperties.REPO_PROVIDER;
 				break;
@@ -200,52 +200,52 @@ public class InstallImpl implements IInstall, IContextAware {
 		}
 		return props;
 	}
-
+	
 	@Override
-	public RenderedView progressView() {
+	public RenderedUI progressView() {
 		CSViewModel view = new CSViewModel("install/progress");
 		return view.render();
 	}
-
+	
 	@Override
 	public InputStream getCSS(String css) {
 		return this.getClass().getResourceAsStream("/web/css/" + css);
 	}
-
+	
 	@Override
 	public InputStream getBSCSS(String css) {
 		return this.getClass().getResourceAsStream("/web/bootstrap/css/" + css);
 	}
-
+	
 	@Override
 	public InputStream getImage(String img) {
 		return this.getClass().getResourceAsStream("/web/images/" + img);
 	}
-
+	
 	@Override
 	public InputStream getJS(String js) {
 		return this.getClass().getResourceAsStream("/web/js/" + js);
 	}
-
+	
 	@Override
 	public InputStream getBSJS(String js) {
 		return this.getClass().getResourceAsStream("/web/bootstrap/js/" + js);
 	}
-
+	
 	@Override
 	public InputStream getBSFonts(String font) {
 		return this.getClass().getResourceAsStream("/web/bootstrap/fonts/" + font);
 	}
-
-
+	
+	
 	protected MessageContext mc;
-
-
+	
+	
 	@Override
 	public void setMessageContext(MessageContext context) {
 		this.mc = context;
 	}
-
+	
 	protected Boolean hasError() {
 		if (this.mc.getHttpServletRequest().getParameter(FormErrorExceptionHander.REQUEST_ERROR_PARAM) != null) {
 			return this.mc.getHttpServletRequest().getParameter(FormErrorExceptionHander.REQUEST_ERROR_PARAM).equals("true");

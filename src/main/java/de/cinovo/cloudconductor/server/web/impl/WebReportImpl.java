@@ -32,16 +32,16 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.interfaces.IReport;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class WebReportImpl extends AWebPage implements IReport {
 	
@@ -66,7 +66,7 @@ public class WebReportImpl extends AWebPage implements IReport {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		// Build hosts model.
 		List<ETemplate> templates = this.dTemplate.findList();
 		

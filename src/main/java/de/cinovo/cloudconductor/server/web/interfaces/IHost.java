@@ -26,15 +26,15 @@ import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 @Path(IHost.ROOT)
 public interface IHost {
@@ -56,7 +56,7 @@ public interface IHost {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView view();
+	public RenderedUI view();
 	
 	/**
 	 * @param hname the host name
@@ -65,7 +65,7 @@ public interface IHost {
 	@GET
 	@Path(IHost.SINGLE_HOST)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView view(@PathParam(IWebPath.VAR_NAME) String hname);
+	public RenderedUI view(@PathParam(IWebPath.VAR_NAME) String hname);
 	
 	/**
 	 * @param hname the host name
@@ -86,7 +86,7 @@ public interface IHost {
 	@GET
 	@Path(IHost.DELETE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public RenderedView deleteHostView(@PathParam(IWebPath.VAR_NAME) String hname);
+	public RenderedUI deleteHostView(@PathParam(IWebPath.VAR_NAME) String hname);
 	
 	/**
 	 * @param hname the host name

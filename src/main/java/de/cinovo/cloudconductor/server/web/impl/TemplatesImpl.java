@@ -35,12 +35,12 @@ import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.FormValidator;
 import de.cinovo.cloudconductor.server.web.interfaces.ITemplate;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -48,7 +48,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  *
  * @author psigloch
- *
+ *		
  */
 public class TemplatesImpl extends AWebPage implements ITemplate {
 	
@@ -70,8 +70,8 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	protected IAgentOptionsDAO dAgentOptions;
 	@Autowired
 	protected IHostDAO dHosts;
-
-
+	
+	
 	@Override
 	protected String getTemplateFolder() {
 		return "templates";
@@ -91,7 +91,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<ETemplate> etemplates = this.dTemplate.findList();
 		List<String> updates = new ArrayList<>();
 		for (ETemplate t : etemplates) {
@@ -193,7 +193,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView editTemplateView(String tname) {
+	public RenderedUI editTemplateView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
@@ -225,7 +225,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView addPackageView(String tname) {
+	public RenderedUI addPackageView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		List<EPackage> pkgList = this.dPkg.findList();
@@ -272,7 +272,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView deleteTemplateView(String tname) {
+	public RenderedUI deleteTemplateView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
@@ -296,7 +296,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView defaultServiceStatesView(String tname) {
+	public RenderedUI defaultServiceStatesView(String tname) {
 		ETemplate template = this.dTemplate.findByName(tname);
 		for (EService svc : this.dSvc.findList()) {
 			for (EPackageVersion pkv : template.getPackageVersions()) {
@@ -348,7 +348,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 	
 	@Override
 	@Transactional
-	public RenderedView addTemplateView() {
+	public RenderedUI addTemplateView() {
 		CSViewModel modal = this.createModal("mAddTemplate");
 		modal.addModel("availablePM", this.dPackageServer.findList());
 		return modal.render();
@@ -393,10 +393,10 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 			throw error;
 		}
 	}
-
+	
 	@Override
 	@Transactional
-	public RenderedView editTemplateAgentConfigView(String tname) {
+	public RenderedUI editTemplateAgentConfigView(String tname) {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dTemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
@@ -414,7 +414,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		vm.addModel("taskStates", TaskState.values());
 		return vm.render();
 	}
-
+	
 	@Override
 	@Transactional
 	public AjaxAnswer editTemplateAgentConfig(String tname, MultivaluedMap<String, String> form) throws FormErrorException {
@@ -428,7 +428,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		validator.notEmpty("doPackageManagement").notEmpty("packageManagementTimer").notEmpty("packageManagementTimerUnit");
 		validator.notEmpty("doFileManagement").notEmpty("fileManagementTimer").notEmpty("fileManagementTimerUnit");
 		validator.validate();
-
+		
 		EAgentOption options = this.dAgentOptions.findByTemplate(tname);
 		if (options == null) {
 			options = new EAgentOption();
@@ -441,7 +441,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		options.setDoSshKeys(TaskState.valueOf(form.get("doSshKeys").get(0)));
 		options.setSshKeysTimer(Integer.valueOf(form.get("sshKeysTimer").get(0)));
 		options.setSshKeysTimerUnit(TimeUnit.valueOf(form.get("sshKeysTimerUnit").get(0)));
-
+		
 		boolean resetPkg = (options.getDoPackageManagement() == TaskState.ONCE) && (TaskState.valueOf(form.get("doPackageManagement").get(0)) != TaskState.ONCE);
 		options.setDoPackageManagement(TaskState.valueOf(form.get("doPackageManagement").get(0)));
 		options.setPackageManagementTimer(Integer.valueOf(form.get("packageManagementTimer").get(0)));
@@ -454,7 +454,7 @@ public class TemplatesImpl extends AWebPage implements ITemplate {
 		options.setFileManagementTimerUnit(TimeUnit.valueOf(form.get("fileManagementTimerUnit").get(0)));
 		
 		this.dAgentOptions.save(options);
-
+		
 		if (resetSSH || resetPkg || resetFile) {
 			for (EHost host : this.dHosts.findList()) {
 				if (host.getTemplate().equals(template)) {

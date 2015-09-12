@@ -32,7 +32,7 @@ import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.springcxfdaemon.SpringDaemonTestRunner;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 /**
  * 

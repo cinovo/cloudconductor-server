@@ -12,10 +12,10 @@ import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.cinovo.cloudconductor.server.model.enums.AuditType;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.interfaces.IAudit;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /*
  * #%L
@@ -39,7 +39,7 @@ import de.cinovo.cloudconductor.server.web.interfaces.IAudit;
  * <br>
  * 
  * @author astifel
- * 
+ * 		
  */
 public class AuditImpl extends AWebPage implements IAudit {
 	
@@ -63,7 +63,7 @@ public class AuditImpl extends AWebPage implements IAudit {
 	}
 	
 	@Override
-	public RenderedView view() {
+	public RenderedUI view() {
 		// Build audits model
 		List<EAuditLog> audits = this.dAuditLog.findList();
 		List<String> auditTypes = new ArrayList<String>();

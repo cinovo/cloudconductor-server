@@ -5,7 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.server.web.RenderedView;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /*
  * #%L
@@ -29,7 +29,7 @@ import de.cinovo.cloudconductor.server.web.RenderedView;
  * <br>
  * 
  * @author astifel
- * 
+ * 		
  */
 @Path(IAudit.ROOT)
 public interface IAudit {
@@ -46,6 +46,6 @@ public interface IAudit {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedView view();
+	public abstract RenderedUI view();
 	
 }

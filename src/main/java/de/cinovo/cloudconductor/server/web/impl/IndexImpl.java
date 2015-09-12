@@ -26,18 +26,18 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.RenderedView;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.interfaces.IIndex;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
+import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public class IndexImpl extends AWebPage implements IIndex {
 	
@@ -74,32 +74,32 @@ public class IndexImpl extends AWebPage implements IIndex {
 	
 	@Override
 	public InputStream getCSS(String css) {
-		return this.getClass().getResourceAsStream("/web/css/" + css);
+		return this.getClass().getResourceAsStream("/webres/css/" + css);
 	}
 	
 	@Override
 	public InputStream getBSCSS(String css) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/css/" + css);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/css/" + css);
 	}
 	
 	@Override
 	public InputStream getImage(String img) {
-		return this.getClass().getResourceAsStream("/web/images/" + img);
+		return this.getClass().getResourceAsStream("/webres/images/" + img);
 	}
 	
 	@Override
 	public InputStream getJS(String js) {
-		return this.getClass().getResourceAsStream("/web/js/" + js);
+		return this.getClass().getResourceAsStream("/webres/js/" + js);
 	}
 	
 	@Override
 	public InputStream getBSJS(String js) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/js/" + js);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/js/" + js);
 	}
 	
 	@Override
 	public InputStream getBSFonts(String font) {
-		return this.getClass().getResourceAsStream("/web/bootstrap/fonts/" + font);
+		return this.getClass().getResourceAsStream("/webres/bootstrap/fonts/" + font);
 	}
 	
 	@Override
@@ -109,7 +109,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 	
 	@Override
 	@Transactional
-	public RenderedView view() {
+	public RenderedUI view() {
 		List<EHost> hostList = this.dHost.findList();
 		List<ETemplate> templateList = this.dTemplate.findList();
 		CSViewModel view = this.createView();
@@ -189,7 +189,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 					result.put(ss.getService().getName(), ServiceState.STARTING);
 				}
 				break;
-			
+				
 			case STOPPED:
 			case STOPPING:
 				if (result.get(ss.getService().getName()) == null) {
