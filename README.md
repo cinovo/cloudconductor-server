@@ -2,6 +2,8 @@
 
 
 # Why use CloudConductor
+
+[![Join the chat at https://gitter.im/cinovo/cloudconductor-server](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cinovo/cloudconductor-server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 We needed some tooling which would allow easy and fast deployment of multiple services and configurations to a vast bulk of machines while keeping the installation and maintenance time as low as possible.
 
 Since already existing solutions like *Puppet* or *Chef* didn't work in our environment and were a pure nightmare to install within it, we decided to build our own deployment system based on the following few points:
