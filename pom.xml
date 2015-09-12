@@ -77,7 +77,7 @@
 		<dependency>
 			<groupId>de.taimos</groupId>
 			<artifactId>spring-cxf-daemon</artifactId>
-			<version>2.7-SNAPSHOT</version>
+			<version>2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>de.taimos</groupId>
