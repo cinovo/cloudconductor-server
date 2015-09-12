@@ -26,14 +26,8 @@ function browserSyncInit(baseDir, browser) {
     routes: routes
   };
 
-  /*
-   * You can add a proxy to your backend by uncommenting the line bellow.
-   * You just have to configure a context which will we redirected and the target url.
-   * Example: $http.get('/users') requests will be automatically proxified.
-   *
-   * For more details and option, https://github.com/chimurai/http-proxy-middleware/blob/v0.0.5/README.md
-   */
-  // server.middleware = proxyMiddleware('/users', {target: 'http://jsonplaceholder.typicode.com', proxyHost: 'jsonplaceholder.typicode.com'});
+  // Proxy calls to /api to the local cloudconductor server
+  server.middleware = proxyMiddleware('/api', {target: 'http://localhost:8090'});
 
   browserSync.instance = browserSync.init({
     startPath: '/',
@@ -54,10 +48,3 @@ gulp.task('serve:dist', ['build'], function () {
   browserSyncInit(conf.paths.dist);
 });
 
-gulp.task('serve:e2e', ['inject'], function () {
-  browserSyncInit([conf.paths.tmp + '/serve', conf.paths.src], []);
-});
-
-gulp.task('serve:e2e-dist', ['build'], function () {
-  browserSyncInit(conf.paths.dist, []);
-});
