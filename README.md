@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/cinovo/cloudconductor-server.png?branch=master)](https://travis-ci.org/cinovo/cloudconductor-server)
-
+[![Join the chat at https://gitter.im/cinovo/cloudconductor-server](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cinovo/cloudconductor-server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Why use CloudConductor
 We needed some tooling which would allow easy and fast deployment of multiple services and configurations to a vast bulk of machines while keeping the installation and maintenance time as low as possible.
