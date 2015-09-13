@@ -1,46 +1,154 @@
-<!doctype html>
-<html ng-app="webapp">
-  <head>
-    <meta charset="utf-8">
-    <title>webapp</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<!DOCTYPE html>
+<html lang="en" ng-app="cloudconductor">
 
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>CloudConductor - {{cc.name}} - {{siteTitle}}</title>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
     <!-- bower:css -->
     <!-- run `gulp inject` to automatically populate bower styles dependencies -->
     <!-- endbower -->
     <!-- endbuild -->
-
     <!-- build:css({.tmp/serve,src}) styles/app.css -->
     <!-- inject:css -->
     <!-- css files will be automatically insert here -->
     <!-- endinject -->
     <!-- endbuild -->
-  </head>
-  <body>
+</head>
+
+<body ng-controller="AppCtrl">
     <!--[if lt IE 10]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
-    <div ng-view></div>
-
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+            </div>
+            <!-- /.navbar-header -->
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User
+								Profile</a></li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i>
+								Logout</a></li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li ng-class="{active:activeNav=='home'}"><a ng-class="{active:activeNav=='home'}" href="#"><i class="fa fa-dashboard fa-fw"></i>
+								Dashboard</a></li>
+                        <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>
+								Charts<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="#">Flot Charts</a></li>
+                                <li><a href="#">Morris.js Charts</a></li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li><a href="#"><i class="fa fa-table fa-fw"></i>
+								Tables</a></li>
+                        <li><a href="#"><i class="fa fa-edit fa-fw"></i>
+								Forms</a></li>
+                        <li><a href="#"><i class="fa fa-wrench fa-fw"></i> UI
+								Elements<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="#">Panels and Wells</a></li>
+                                <li><a href="#">Buttons</a></li>
+                                <li><a href="#">Notifications</a></li>
+                                <li><a href="#">Typography</a></li>
+                                <li><a href="#"> Icons</a></li>
+                                <li><a href="#">Grid</a></li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li><a href="#"><i class="fa fa-sitemap fa-fw"></i>
+								Multi-Level Dropdown<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="#">Second Level Item</a></li>
+                                <li><a href="#">Second Level Item</a></li>
+                                <li><a href="#">Third Level <span class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li><a href="#">Third Level Item</a></li>
+                                        <li><a href="#">Third Level Item</a></li>
+                                        <li><a href="#">Third Level Item</a></li>
+                                        <li><a href="#">Third Level Item</a></li>
+                                    </ul>
+                                    <!-- /.nav-third-level -->
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li><a href="#"><i
+								class="fa fa-files-o fa-fw"></i> Sample Pages<span
+								class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li><a href="#">Blank Page</a></li>
+                                <li><a href="#">Login Page</a></li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">{{siteTitle}}</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                    <!-- Angular views are injected here -->
+                    <div ng-view></div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
     <!-- build:js(src) scripts/vendor.js -->
     <!-- bower:js -->
     <!-- run `gulp inject` to automatically populate bower script dependencies -->
     <!-- endbower -->
     <!-- endbuild -->
-
     <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
     <!-- inject:js -->
     <!-- js files will be automatically insert here -->
     <!-- endinject -->
-
     <!-- inject:partials -->
     <!-- angular templates will be automatically converted in js and inserted here -->
     <!-- endinject -->
     <!-- endbuild -->
+</body>
 
-  </body>
 </html>
