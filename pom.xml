@@ -193,50 +193,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>installAndBuild</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<exec dir="src/main/webapp" executable="npm">
-									<arg value="install" />
-								</exec>
-								<exec dir="src/main/webapp" executable="bower">
-									<arg value="install" />
-								</exec>
-								<exec dir="src/main/webapp" executable="gulp" />
-								<copy todir="target/classes/web">
-									<fileset dir="src/main/webapp/dist" />
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>cleanup</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<exec dir="src/main/webapp" executable="gulp">
-									<arg value="clean" />
-								</exec>
-								<delete dir="src/main/webapp/dist" />
-								<delete dir="src/main/webapp/bower_components" />
-								<delete dir="src/main/webapp/node_modules" />
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
@@ -310,6 +266,62 @@
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>webapp</id>
+			<activation>
+				<os>
+					<family>unix</family>
+				</os>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>installAndBuild</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<exec dir="src/main/webapp" executable="npm">
+											<arg value="install" />
+										</exec>
+										<exec dir="src/main/webapp" executable="bower">
+											<arg value="install" />
+										</exec>
+										<exec dir="src/main/webapp" executable="gulp" />
+										<copy todir="target/classes/web">
+											<fileset dir="src/main/webapp/dist" />
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>cleanup</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<exec dir="src/main/webapp" executable="gulp">
+											<arg value="clean" />
+										</exec>
+										<delete dir="src/main/webapp/dist" />
+										<delete dir="src/main/webapp/bower_components" />
+										<delete dir="src/main/webapp/node_modules" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>sonatype-oss-release</id>
 			<build>
