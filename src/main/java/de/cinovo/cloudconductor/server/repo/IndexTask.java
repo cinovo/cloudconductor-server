@@ -31,22 +31,23 @@ import de.cinovo.cloudconductor.server.util.IPackageImport;
  * <br>
  *
  * @author Thorsten Hoeger
- *
+ * 		
  */
 @Service("indextask")
 public class IndexTask implements Runnable {
-
+	
 	private static final Logger logger = LoggerFactory.getLogger(IndexTask.class);
 	
 	@Autowired
 	private IRepoProvider repo;
-
+	
 	@Autowired
 	private IRepoIndexer indexer;
-
+	
 	@Autowired
 	private IPackageImport packageImport;
-
+	
+	// FIXME initialize OR autowire but not both
 	@Autowired
 	private ObjectMapper mapper = MapperFactory.createDefault();
 	
