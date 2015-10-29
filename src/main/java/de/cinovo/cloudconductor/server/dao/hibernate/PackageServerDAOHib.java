@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.web.interfaces;
+package de.cinovo.cloudconductor.server.dao.hibernate;
 
 /*
  * #%L
@@ -17,9 +17,11 @@ package de.cinovo.cloudconductor.server.web.interfaces;
  * #L%
  */
 
-import javax.ws.rs.core.Context;
+import org.springframework.stereotype.Repository;
 
-import org.apache.cxf.jaxrs.ext.MessageContext;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -28,12 +30,12 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
  * @author psigloch
  * 
  */
-public interface IContextAware {
+@Repository("PackageServerDAOHib")
+public class PackageServerDAOHib extends EntityDAOHibernate<EPackageServer, Long> implements IPackageServerDAO {
 	
-	/**
-	 * @param ctx
-	 */
-	@Context
-	void setMessageContext(MessageContext ctx);
+	@Override
+	public Class<EPackageServer> getEntityClass() {
+		return EPackageServer.class;
+	}
 	
 }

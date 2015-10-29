@@ -13,11 +13,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
-import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
-import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.helper.AWebPage;
-import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -26,7 +22,8 @@ import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
  * @author Thorsten Hoeger
  *
  */
-public class RepoImpl extends AWebPage implements IRepo {
+// TODO add angularjs view
+public class RepoImpl implements IRepo {
 	
 	@Autowired
 	private IRepoProvider provider;
@@ -36,11 +33,11 @@ public class RepoImpl extends AWebPage implements IRepo {
 	public Response get(String file) {
 		if (file.isEmpty() || file.endsWith("/")) {
 			if (!this.provider.isListable()) {
-				return this.resultNoList(file);
+				// return this.resultNoList(file);
 			}
 			List<RepoEntry> list = this.provider.getEntries(file);
 			if (list != null) {
-				return this.resultList(file, list);
+				// return this.resultList(file, list);
 			}
 			throw new NotFoundException();
 		}
@@ -51,23 +48,9 @@ public class RepoImpl extends AWebPage implements IRepo {
 		throw new NotFoundException();
 	}
 	
-	private Response resultNoList(String folder) {
-		CSViewModel view = this.createView("notListable");
-		view.addModel("folder", folder);
-		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
-	}
-
-	private Response resultList(String folder, List<RepoEntry> entries) {
-		CSViewModel view = this.createView("list");
-		view.addModel("folder", folder);
-		view.addModel("files", entries);
-		view.addModel("byteTool", new ByteTool());
-		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
-	}
-	
 	private Response resultStream(final InputStream stream, RepoEntry entry) {
 		StreamingOutput out = new StreamingOutput() {
-
+			
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				StreamUtils.copy(stream, output);
@@ -76,21 +59,6 @@ public class RepoImpl extends AWebPage implements IRepo {
 			}
 		};
 		return Response.ok(out, entry.getContentType()).header("Content-Length", entry.getSize()).build();
-	}
-
-	@Override
-	protected String getTemplateFolder() {
-		return "repo";
-	}
-
-	@Override
-	protected void init() {
-		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo/");
-	}
-
-	@Override
-	protected String getNavElementName() {
-		return "Repository";
 	}
 	
 }
