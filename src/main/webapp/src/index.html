@@ -32,7 +32,7 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">SB Admin v2.0</a>
+                <a class="navbar-brand" href="#/">CloudConductor</a>
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
@@ -57,57 +57,96 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li ng-class="{active:activeNav=='home'}"><a ng-class="{active:activeNav=='home'}" href="#"><i class="fa fa-dashboard fa-fw"></i>
-								Dashboard</a></li>
-                        <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>
-								Charts<span class="fa arrow"></span></a>
+                        <li ng-class="{active:activeNav=='home'}">
+                        	<a ng-class="{active:activeNav=='home'}" href="#/">
+                        		<i class="fa fa-dashboard fa-fw"></i>
+								Dashboard
+							</a>
+						</li>
+						
+						<li ng-class="{active:activeNav=='hosts'}">
+                        	<a ng-class="{active:activeNav=='hosts'}" href="#/hosts">
+                        		<i class="fa fa-laptop fa-fw"></i>
+								Hosts
+							</a>
+						</li>
+						
+						<li ng-class="{active:activeNav=='templates'}">
+                        	<a ng-class="{active:activeNav=='templates'}" href="#/templates">
+                        		<i class="fa fa-institution fa-fw"></i>
+								Templates
+							</a>
+						</li>
+						
+						<li role="presentation" class="divider"></li>
+					    <li>
+						  	<a href="#">
+						  		<i class="fa fa-code-fork fa-fw"></i>
+								Config<span class="fa arrow"></span>
+							</a>
                             <ul class="nav nav-second-level">
-                                <li><a href="#">Flot Charts</a></li>
-                                <li><a href="#">Morris.js Charts</a></li>
+                                <li><a href="#/config/global">GLOBAL</a></li>
+                                <li><a href="#/config/template1">TEMPLATE1</a></li>
                             </ul>
-                            <!-- /.nav-second-level -->
                         </li>
-                        <li><a href="#"><i class="fa fa-table fa-fw"></i>
-								Tables</a></li>
-                        <li><a href="#"><i class="fa fa-edit fa-fw"></i>
-								Forms</a></li>
-                        <li><a href="#"><i class="fa fa-wrench fa-fw"></i> UI
-								Elements<span class="fa arrow"></span></a>
+						
+						<li ng-class="{active:activeNav=='files'}">
+                        	<a ng-class="{active:activeNav=='files'}" href="#/files">
+                        		<i class="fa fa-file-text fa-fw"></i>
+								Files
+							</a>
+						</li>
+						
+						<li ng-class="{active:activeNav=='sshkeys'}">
+                        	<a ng-class="{active:activeNav=='services'}" href="#/sshkeys">
+                        		<i class="fa fa-key fa-fw"></i>
+								SSHKeys
+							</a>
+						</li>
+						
+						<li ng-class="{active:activeNav=='services'}">
+                        	<a ng-class="{active:activeNav=='services'}" href="#/services">
+                        		<i class="fa fa-flask fa-fw"></i>
+								Services
+							</a>
+						</li>
+						
+						<li ng-class="{active:activeNav=='packages'}">
+                        	<a ng-class="{active:activeNav=='packages'}" href="#/packages">
+                        		<i class="fa fa-book fa-fw"></i>
+								Packages
+							</a>
+						</li>
+						
+						<li role="presentation" class="divider"></li>
+						
+						<li ng-class="{active:activeNav=='packageservers'}">
+                        	<a ng-class="{active:activeNav=='packages'}" href="#/packageservers">
+                        		<i class="fa fa-qrcode fa-fw"></i>
+								Package-Servers
+							</a>
+						</li>
+						
+						<li role="presentation" class="divider"></li>
+						
+						<li ng-class="{active:activeNav=='settings'}">
+                        	<a ng-class="{active:activeNav=='packages'}" href="#/settings">
+                        		<i class="fa fa-gear fa-fw"></i>
+								Settings
+							</a>
+						</li>
+						
+						<li role="presentation" class="divider"></li>
+						
+						<li>
+						  	<a href="#">
+						  		<i class="fa fa-external-link fa-fw"></i>
+								External Links<span class="fa arrow"></span>
+							</a>
                             <ul class="nav nav-second-level">
-                                <li><a href="#">Panels and Wells</a></li>
-                                <li><a href="#">Buttons</a></li>
-                                <li><a href="#">Notifications</a></li>
-                                <li><a href="#">Typography</a></li>
-                                <li><a href="#"> Icons</a></li>
-                                <li><a href="#">Grid</a></li>
+                                <li><a href="#/links/repos">Repos</a></li>
+                                <li><a href="#/links/linkid2">Link 2</a></li>
                             </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li><a href="#"><i class="fa fa-sitemap fa-fw"></i>
-								Multi-Level Dropdown<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="#">Second Level Item</a></li>
-                                <li><a href="#">Second Level Item</a></li>
-                                <li><a href="#">Third Level <span class="fa arrow"></span></a>
-                                    <ul class="nav nav-third-level">
-                                        <li><a href="#">Third Level Item</a></li>
-                                        <li><a href="#">Third Level Item</a></li>
-                                        <li><a href="#">Third Level Item</a></li>
-                                        <li><a href="#">Third Level Item</a></li>
-                                    </ul>
-                                    <!-- /.nav-third-level -->
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li><a href="#"><i
-								class="fa fa-files-o fa-fw"></i> Sample Pages<span
-								class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="#">Blank Page</a></li>
-                                <li><a href="#">Login Page</a></li>
-                            </ul>
-                            <!-- /.nav-second-level -->
                         </li>
                     </ul>
                 </div>
