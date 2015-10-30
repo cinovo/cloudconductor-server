@@ -12,10 +12,16 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
  *
  */
 public interface IPackageImport {
-
+	
 	/**
 	 * @param packageVersions the package versions
 	 */
 	void importVersions(Set<PackageVersion> packageVersions);
-
+	
+	/**
+	 * @param packageVersions the package versions
+	 * @param packageServerGroupName the group name
+	 */
+	void importVersions(Set<PackageVersion> packageVersions, String packageServerGroupName);
+	
 }

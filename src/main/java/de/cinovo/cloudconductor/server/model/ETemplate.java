@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -28,10 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dao.IEntity;
@@ -60,7 +59,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 	
 	private List<EFile> configFiles;
 	
-	private EPackageServer yum;
+	private List<EPackageServer> packageServers = new ArrayList<>();
 	
 	private Boolean autoUpdate;
 	
@@ -177,30 +176,6 @@ public class ETemplate implements IEntity<Long>, INamed {
 	}
 	
 	/**
-	 * @return the yum server
-	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "yum")
-	public EPackageServer getYum() {
-		return this.yum;
-	}
-	
-	/**
-	 * @return the yum
-	 */
-	@Transient
-	public String getYumPath() {
-		return this.yum.getPath();
-	}
-	
-	/**
-	 * @param yum the yum to set
-	 */
-	public void setYum(EPackageServer yum) {
-		this.yum = yum;
-	}
-	
-	/**
 	 * @return the autoUpdate
 	 */
 	public Boolean getAutoUpdate() {
@@ -243,5 +218,22 @@ public class ETemplate implements IEntity<Long>, INamed {
 	@Override
 	public int hashCode() {
 		return (this.getName() == null) ? 0 : this.getName().hashCode();
+	}
+	
+	/**
+	 * @return the packageServers
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "mappingpackageservertemplate", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "serverid"))
+	public List<EPackageServer> getPackageServers() {
+		return this.packageServers;
+	}
+	
+	/**
+	 * @param packageServers the packageServers to set
+	 */
+	public void setPackageServers(List<EPackageServer> packageServers) {
+		this.packageServers = packageServers;
 	}
 }

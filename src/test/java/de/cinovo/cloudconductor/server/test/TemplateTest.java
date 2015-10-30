@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -63,7 +64,9 @@ public class TemplateTest extends APITest {
 			Assert.assertEquals(TemplateTest.TEMPLATE, template.getName());
 		}
 		{
-			Template t = new Template("template2", "new template", "localhost", null, null, null, null);
+			Set<String> servers = new HashSet<>();
+			servers.add("localhost");
+			Template t = new Template("template2", "new template", servers, null, null, null, null);
 			h.save(t);
 			Set<Template> set = h.get();
 			Assert.assertEquals(2, set.size());
@@ -123,7 +126,7 @@ public class TemplateTest extends APITest {
 			// Assert.assertEquals(4, versions.size());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.3-1", null);
+			PackageVersion pv = new PackageVersion("nginx", "1.5.3-1", null, "TESTREPO");
 			h.addVersion(TemplateTest.TEMPLATE, pv);
 			Set<PackageVersion> versions = h.getVersions(TemplateTest.TEMPLATE);
 			Assert.assertEquals(5, versions.size());
@@ -138,7 +141,7 @@ public class TemplateTest extends APITest {
 			Assert.assertEquals(5, versions.size());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null);
+			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null, "TESTREPO");
 			new PackageHandler(this.getCSApi()).addRPM("nginx", pv);
 			
 			h.addVersion(TemplateTest.TEMPLATE, pv);

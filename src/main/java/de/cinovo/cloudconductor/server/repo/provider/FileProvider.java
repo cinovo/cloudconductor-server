@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 
 /**
@@ -21,10 +20,18 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
  */
 public class FileProvider implements IRepoProvider {
 	
-	@Value("${repo.basedir:static/yum/}")
-	private String basedir;
-
-
+	private EPackageServer packageServer;
+	
+	
+	/**
+	 * @param packageServer the package server to contact
+	 */
+	public FileProvider(EPackageServer packageServer) {
+		if (packageServer.getProviderType() == RepoProviderType.AWSS3) {
+			this.packageServer = packageServer;
+		}
+	}
+	
 	@Override
 	public boolean isListable() {
 		return true;
@@ -32,7 +39,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
-		File dir = new File(this.basedir + folder);
+		File dir = new File(this.packageServer.getBasePath() + folder);
 		if (!dir.isDirectory()) {
 			return null;
 		}
@@ -45,13 +52,13 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public RepoEntry getEntry(String key) {
-		File file = new File(this.basedir + key);
+		File file = new File(this.packageServer.getBasePath() + key);
 		if (file.exists()) {
 			return this.createEntry(file);
 		}
 		return null;
 	}
-
+	
 	private RepoEntry createEntry(File file) {
 		RepoEntry e = new RepoEntry();
 		e.setDirectory(file.isDirectory());
@@ -63,7 +70,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public InputStream getEntryStream(String key) {
-		File file = new File(this.basedir + key);
+		File file = new File(this.packageServer.getBasePath() + key);
 		if (file.exists()) {
 			try {
 				return new FileInputStream(file);
@@ -74,4 +81,8 @@ public class FileProvider implements IRepoProvider {
 		return null;
 	}
 	
+	@Override
+	public String getPackageServerGroupName() {
+		return this.packageServer.getServerGroup().getName();
+	}
 }

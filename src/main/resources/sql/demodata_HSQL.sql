@@ -55,9 +55,13 @@ INSERT INTO cloudconductor.service VALUES (3, 'service1', 'service1', 'service1'
 
 INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar');
 
-INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false, true);
+INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
 
-INSERT INTO cloudconductor.yumserver VALUES (1, 'localhost', 'http://localhost:8090/static/yum');
+
+INSERT INTO cloudconductor.packageservergroup VALUES (1, 'TESTREPO', '1');
+INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 0, 2, '/static/yum');
+
+INSERT INTO cloudconductor.mappingpackageservertemplate VALUES (1, 1);
 
 INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL, false, false, false);
 
@@ -67,6 +71,13 @@ INSERT INTO cloudconductor.packageversion VALUES (3, 5, NULL, '9.2.4-1PGDG.rhel6
 INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1');
 INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs');
 INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1');
+
+INSERT INTO cloudconductor.mappingversiongroup VALUES (1,1)
+INSERT INTO cloudconductor.mappingversiongroup VALUES (2,1)
+INSERT INTO cloudconductor.mappingversiongroup VALUES (3,1)
+INSERT INTO cloudconductor.mappingversiongroup VALUES (4,1)
+INSERT INTO cloudconductor.mappingversiongroup VALUES (5,1)
+INSERT INTO cloudconductor.mappingversiongroup VALUES (6,1) 
 
 
 INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1, 1);

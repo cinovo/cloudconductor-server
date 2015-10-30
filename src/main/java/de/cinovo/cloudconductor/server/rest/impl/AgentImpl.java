@@ -47,6 +47,7 @@ import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageStateDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
@@ -76,7 +77,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  *
  * @author psigloch
- *		
+ *
  */
 @JaxRsComponent
 public class AgentImpl implements IAgent {
@@ -105,6 +106,8 @@ public class AgentImpl implements IAgent {
 	private IAgentOptionsDAO dagentoptions;
 	@Autowired
 	private IServerOptionsDAO dserveroptions;
+	@Autowired
+	private IPackageServerGroupDAO dpsg;
 	
 	
 	@Override
@@ -237,6 +240,7 @@ public class AgentImpl implements IAgent {
 			rpm.setPkg(pkg);
 			rpm.setVersion(irpm.getVersion());
 			rpm.setDeprecated(true);
+			rpm.getServerGroups().add(this.dpsg.findByName(irpm.getPackageServerGroup()));
 			rpm = this.drpm.save(rpm);
 		}
 		state = new EPackageState();
@@ -380,7 +384,7 @@ public class AgentImpl implements IAgent {
 				break;
 			default:
 				break;
-				
+			
 			}
 			
 		}
@@ -499,7 +503,7 @@ public class AgentImpl implements IAgent {
 			for (EDependency edep : pv.getDependencies()) {
 				dep.add(MAConverter.fromModel(edep));
 			}
-			map.put(command, new PackageVersion(rpmName, pv.getVersion(), dep));
+			map.put(command, new PackageVersion(rpmName, pv.getVersion(), dep, null));
 		}
 		return map;
 	}

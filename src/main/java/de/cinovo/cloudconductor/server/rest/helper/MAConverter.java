@@ -39,6 +39,7 @@ import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -82,7 +83,13 @@ public class MAConverter {
 		for (EPackageVersion rpm : model.getPackageVersions()) {
 			rpms.put(rpm.getPkg().getName(), rpm.getVersion());
 		}
-		return new Template(model.getName(), model.getDescription(), model.getYumPath(), rpms, //
+		
+		Set<String> servers = new HashSet<>();
+		for (EPackageServer ps : model.getPackageServers()) {
+			servers.add(ps.getPath());
+		}
+		
+		return new Template(model.getName(), model.getDescription(), servers, rpms, //
 		MAConverter.fromModel(model.getHosts()), MAConverter.fromModel(model.getSshkeys()), //
 		MAConverter.fromModel(model.getConfigFiles()));
 	}
@@ -162,7 +169,7 @@ public class MAConverter {
 		for (EDependency md : model.getDependencies()) {
 			deps.add(MAConverter.fromModel(md));
 		}
-		return new PackageVersion(model.getPkg().getName(), model.getVersion(), deps);
+		return new PackageVersion(model.getPkg().getName(), model.getVersion(), deps, model.getServerGroups().iterator().next().getName());
 	}
 	
 	/**

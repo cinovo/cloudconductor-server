@@ -16,14 +16,15 @@ import de.cinovo.cloudconductor.api.MediaType;
  *
  */
 public interface IRepo {
-
+	
 	/**
+	 * @param repo the repo name
 	 * @param file the filename
 	 * @return the response
 	 */
-	@Path("/{file:.*}")
+	@Path("/{repo}/{file:.*}")
 	@GET
 	@Produces({MediaType.TEXT_HTML, javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM})
-	Response get(@PathParam("file") String file);
+	Response get(@PathParam("file") String repo, @PathParam("file") String file);
 	
 }

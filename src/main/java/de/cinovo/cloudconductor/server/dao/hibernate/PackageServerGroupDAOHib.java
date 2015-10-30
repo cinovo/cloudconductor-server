@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.dao;
+package de.cinovo.cloudconductor.server.dao.hibernate;
 
 /*
  * #%L
@@ -17,11 +17,11 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
-import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
-import de.taimos.dao.IEntityDAO;
+import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -30,17 +30,17 @@ import de.taimos.dao.IEntityDAO;
  * @author psigloch
  * 
  */
-public interface IPackageServerDAO extends IEntityDAO<EPackageServer, Long> {
+@Repository("PackageServerGroupDAOHib")
+public class PackageServerGroupDAOHib extends EntityDAOHibernate<EPackageServerGroup, Long> implements IPackageServerGroupDAO {
 	
-	/**
-	 * @param group the {@link EPackageServerGroup}
-	 * @return all package servers aligned with the group
-	 */
-	public List<EPackageServer> findForGroup(EPackageServerGroup group);
+	@Override
+	public Class<EPackageServerGroup> getEntityClass() {
+		return EPackageServerGroup.class;
+	}
 	
-	/**
-	 * @return one package server per group, primary used first
-	 */
-	public List<EPackageServer> findOnePerGroup();
+	@Override
+	public EPackageServerGroup findByName(String name) {
+		return this.findByQuery("FROM EPackageServerGroup psg WHERE psg.name = ?1", name);
+	}
 	
 }

@@ -6,16 +6,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
+import de.cinovo.cloudconductor.server.util.AWSClientFactory;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -23,25 +23,35 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
  * @author Thorsten Hoeger
  */
 public class AWSS3Provider implements IRepoProvider {
-
-	@Autowired
+	
+	private EPackageServer packageServer;
 	private AmazonS3 s3Client;
-
-	@Value("${repo.bucket}")
-	private String bucketName;
-
-
+	
+	
+	/**
+	 * @param packageServer the package server to contact
+	 */
+	public AWSS3Provider(EPackageServer packageServer) {
+		if (packageServer.getProviderType() == RepoProviderType.AWSS3) {
+			this.packageServer = packageServer;
+			this.s3Client = AWSClientFactory.createClient(AmazonS3Client.class, packageServer);
+		}
+	}
+	
 	@Override
 	public boolean isListable() {
 		return true;
 	}
-
+	
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
 		List<RepoEntry> res = new ArrayList<>();
+		if ((this.packageServer == null) || (this.s3Client == null)) {
+			return res;
+		}
 		Set<String> folderNames = new HashSet<>();
-
-		ObjectListing objects = this.s3Client.listObjects(this.bucketName, folder);
+		
+		ObjectListing objects = this.s3Client.listObjects(this.packageServer.getBucketName(), folder);
 		List<S3ObjectSummary> summaries = objects.getObjectSummaries();
 		for (S3ObjectSummary objectSummary : summaries) {
 			String file = objectSummary.getKey().substring(folder.length());
@@ -69,10 +79,13 @@ public class AWSS3Provider implements IRepoProvider {
 		}
 		return res;
 	}
-
+	
 	@Override
 	public RepoEntry getEntry(String key) {
-		final ObjectMetadata obj = this.s3Client.getObjectMetadata(this.bucketName, key);
+		if ((this.packageServer == null) || (this.s3Client == null)) {
+			return null;
+		}
+		final ObjectMetadata obj = this.s3Client.getObjectMetadata(this.packageServer.getBucketName(), key);
 		RepoEntry fil = new RepoEntry();
 		fil.setName(key);
 		fil.setDirectory(false);
@@ -82,11 +95,22 @@ public class AWSS3Provider implements IRepoProvider {
 		fil.setChecksum(obj.getETag());
 		return fil;
 	}
-
+	
 	@Override
 	public InputStream getEntryStream(String key) {
-		S3Object s3Object = this.s3Client.getObject(this.bucketName, key);
+		if ((this.packageServer == null) || (this.s3Client == null)) {
+			return null;
+		}
+		S3Object s3Object = this.s3Client.getObject(this.packageServer.getBucketName(), key);
 		return s3Object.getObjectContent();
+	}
+	
+	@Override
+	public String getPackageServerGroupName() {
+		if ((this.packageServer == null)) {
+			return null;
+		}
+		return this.packageServer.getServerGroup().getName();
 	}
 	
 }

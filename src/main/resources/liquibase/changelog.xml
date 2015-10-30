@@ -620,4 +620,60 @@
 			<column name="executedpkg" type="boolean" defaultValueBoolean="false" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="20" author="psigloch">
+		<renameTable schemaName="cloudconductor" newTableName="packageserver" oldTableName="yumserver"/>
+		<createTable schemaName="cloudconductor" tableName="packageservergroup">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="primaryserverid" type="bigint">
+				<constraints nullable="true" references="cloudconductor.packageserver(id)" foreignKeyName="fk_psg_ps_primaryserver" deleteCascade="true" />
+			</column>
+		</createTable>
+		
+		<addColumn schemaName="cloudconductor" tableName="packageserver">
+			<column name="servergroupid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.packageservergroup(id)" foreignKeyName="fk_psg_ps" deleteCascade="true" />
+			</column>
+			<column name="indexerType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="providerType" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="basePath" type="varchar(255)" />
+			<column name="bucketName" type="varchar(255)" />
+			<column name="awsRegion" type="varchar(255)" />
+			<column name="accessKeyId" type="varchar(255)" />
+			<column name="secretKey" type="varchar(255)" />
+		</addColumn>
+		
+		<createTable schemaName="cloudconductor" tableName="mappingversiongroup">
+			<column name="versionid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.packageversion(id)" foreignKeyName="fk_version_psg" deleteCascade="true" />
+			</column>
+			<column name="groupid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.packageservergroup(id)" foreignKeyName="fk_psg_version" deleteCascade="true" />
+			</column>
+		</createTable>
+		
+		<renameColumn schemaName="cloudconductor" tableName="template" oldColumnName="yum" newColumnName="packageserver"/>
+		<renameColumn schemaName="cloudconductor" tableName="packageserver" oldColumnName="yumpath" newColumnName="path"/>
+		
+		<createTable schemaName="cloudconductor" tableName="mappingpackageservertemplate">
+			<column name="templateid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_version_template" deleteCascade="true" />
+			</column>
+			<column name="serverid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.packageserver(id)" foreignKeyName="fk_template_version" deleteCascade="true" />
+			</column>
+		</createTable>
+		
+		<sql>INSERT INTO cloudconductor.mappingpackageservertemplate (templateid, serverid) SELECT id, packageserver FROM cloudconductor.template;</sql>
+		
+		<dropColumn schemaName="cloudconductor" tableName="template" columnName="packageserver"/>
+	</changeSet>
 </databaseChangeLog>

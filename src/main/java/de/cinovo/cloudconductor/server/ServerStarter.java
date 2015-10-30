@@ -66,6 +66,7 @@ public class ServerStarter extends SpringDaemonAdapter {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
+		System.getProperties().put("jaxrs.path", "/api");
 		Log4jLoggingConfigurer.setup();
 		if (ServerStarter.checkInstalled()) {
 			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
@@ -95,8 +96,7 @@ public class ServerStarter extends SpringDaemonAdapter {
 		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
 		try {
 			ManagementFactory.getPlatformMBeanServer().registerMBean(prov, new ObjectName(name));
-		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException
-				| MalformedObjectNameException e) {
+		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
 			ServerStarter.log.warn("Failed to init JMX", e);
 		}
 		

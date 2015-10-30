@@ -17,10 +17,17 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
 /**
@@ -36,6 +43,20 @@ public class PackageServerDAOHib extends EntityDAOHibernate<EPackageServer, Long
 	@Override
 	public Class<EPackageServer> getEntityClass() {
 		return EPackageServer.class;
+	}
+	
+	@Override
+	public List<EPackageServer> findForGroup(EPackageServerGroup group) {
+		return this.findListByQuery("FROM EPackageServer ps WHERE ps.serverGroup = ?1", group.getId());
+	}
+	
+	@Override
+	public List<EPackageServer> findOnePerGroup() {
+		Session session = (Session) this.entityManager.getDelegate();
+		Criteria criteria = session.createCriteria(EPackageServer.class);
+		criteria.setProjection(Projections.distinct(Projections.property("id")));
+		criteria.setResultTransformer(Transformers.aliasToBean(EPackageServer.class));
+		return criteria.list();
 	}
 	
 }
