@@ -26,13 +26,6 @@
 			activeNav: 'templates',
 			siteTitle: 'Templates'
 		})
-		.when('/config/:templateid', {
-			templateUrl : 'app/config/config.html',
-			controller : 'ConfigController',
-			controllerAs : 'Config',
-			activeNav: 'config',
-			siteTitle: 'Config'
-		})
 		.when('/files', {
 			templateUrl : 'app/files/files.html',
 			controller : 'FilesController',
