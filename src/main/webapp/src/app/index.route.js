@@ -25,13 +25,6 @@ function routeConfig($routeProvider) {
 		activeNav: 'files',
 		siteTitle: 'Files'
 	})
-	.when('/packageservers', {
-		templateUrl : 'app/sshkeys/packageservers.html',
-		controller : 'PackageserversController',
-		controllerAs : 'packageservers',
-		activeNav: 'packageservers',
-		siteTitle: 'Packageservers'
-	})
 	.when('/settings', {
 		templateUrl : 'app/settings/settings.html',
 		controller : 'SettingsController',

@@ -31,6 +31,7 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.api.model.PackageServerGroup;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
@@ -42,6 +43,7 @@ import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -53,7 +55,7 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
  * <br>
  *
  * @author psigloch
- *		
+ * 		
  */
 public class MAConverter {
 	
@@ -192,5 +194,17 @@ public class MAConverter {
 		link.setLabel(model.getLabel());
 		link.setUrl(model.getUrl());
 		return link;
+	}
+	
+	/**
+	 * @param model the model object
+	 * @return the api object
+	 */
+	public static PackageServerGroup fromModel(EPackageServerGroup model) {
+		Set<Long> ids = new HashSet<>();
+		for (EPackageServer ps : model.getPackageServers()) {
+			ids.add(ps.getId());
+		}
+		return new PackageServerGroup(model.getName(), ids, model.getPrimaryServer().getId());
 	}
 }

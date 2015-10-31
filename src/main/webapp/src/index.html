@@ -156,6 +156,14 @@
         <!-- Page Content -->
         <div id="page-wrapper">
             <div class="container-fluid">
+            	<div class="space-50"></div>
+            	 <div class="row">
+                    <div class="col-lg-12">
+                        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)" dismiss-on-timeout="10000">{{alert.msg}}</alert>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">{{siteTitle}}</h1>
