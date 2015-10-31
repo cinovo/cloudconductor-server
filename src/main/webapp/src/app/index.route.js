@@ -54,13 +54,6 @@
 			activeNav: 'services',
 			siteTitle: 'Services'
 		})
-		.when('/packages', {
-			templateUrl : 'app/packages/packages.html',
-			controller : 'PackagesController',
-			controllerAs : 'packages',
-			activeNav: 'packages',
-			siteTitle: 'Packages'
-		})
 		.when('/packageservers', {
 			templateUrl : 'app/sshkeys/packageservers.html',
 			controller : 'PackageserversController',
