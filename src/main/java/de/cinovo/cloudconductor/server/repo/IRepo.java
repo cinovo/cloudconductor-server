@@ -25,6 +25,6 @@ public interface IRepo {
 	@Path("/{repo}/{file:.*}")
 	@GET
 	@Produces({MediaType.TEXT_HTML, javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM})
-	Response get(@PathParam("file") String repo, @PathParam("file") String file);
+	Response get(@PathParam("repo") String repo, @PathParam("file") String file);
 	
 }
