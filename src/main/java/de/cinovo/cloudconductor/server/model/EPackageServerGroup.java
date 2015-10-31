@@ -9,8 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.taimos.dao.IEntity;
@@ -65,8 +65,7 @@ public class EPackageServerGroup implements IEntity<Long> {
 	/**
 	 * @return the packageServers
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinColumn(name = "servergroupid")
+	@OneToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER, mappedBy = "serverGroup")
 	public List<EPackageServer> getPackageServers() {
 		return this.packageServers;
 	}
@@ -81,8 +80,8 @@ public class EPackageServerGroup implements IEntity<Long> {
 	/**
 	 * @return the primaryServer
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "primaryserverid")
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "id")
 	public EPackageServer getPrimaryServer() {
 		return this.primaryServer;
 	}

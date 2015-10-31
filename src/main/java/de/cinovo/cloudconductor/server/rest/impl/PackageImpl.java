@@ -43,7 +43,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class PackageImpl extends ImplHelper implements IPackage {
