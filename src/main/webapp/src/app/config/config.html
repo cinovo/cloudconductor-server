@@ -1,3 +1,15 @@
+{{config.list | json}}
+
 <div class="col-lg-12">
 	<h3>{{templateid}}</h3>
+</div>	
+
+<div ng-repeat="item in config.list">
+'configstuff' - {{item}}
 </div>
+
+<!-- <div ng-controller="Hello"> -->
+<!-- <div class="col-lg-13"> -->
+<!-- 	<p>The ID is {{config.level}}</p> -->
+<!-- 	<p>The content is {{config.content}}</p> -->
+<!-- </div> -->

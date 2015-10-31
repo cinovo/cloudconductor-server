@@ -18,13 +18,6 @@ function routeConfig($routeProvider) {
 		activeNav: 'hosts',
 		siteTitle: 'Hosts'
 	})
-	.when('/config/:templateid', {
-		templateUrl : 'app/config/config.html',
-		controller : 'ConfigController',
-		controllerAs : 'Config',
-		activeNav: 'config',
-		siteTitle: 'Config'
-	})
 	.when('/files', {
 		templateUrl : 'app/files/files.html',
 		controller : 'FilesController',
