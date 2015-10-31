@@ -1,8 +1,6 @@
 'use strict';
 
-angular.module('cloudconductor').config(routeConfig);
-
-function routeConfig($routeProvider) {
+angular.module('cloudconductor').config(function ($routeProvider) {
 	$routeProvider
 	.when('/sshkeys', {
 		templateUrl : 'app/sshkeys/sshkeys.html',
@@ -11,4 +9,4 @@ function routeConfig($routeProvider) {
 		activeNav: 'sshkeys',
 		siteTitle: 'SSHKeys'
 	});
-}
+});

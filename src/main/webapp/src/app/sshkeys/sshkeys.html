@@ -1,0 +1,33 @@
+<!-- <div class="panel panel-default">
+                        <div class="panel-heading"> -->
+	                        <select ng-options="template.name for template in sshkeys.templates" ng-model="selectedTemplate">
+    	                    <option value="">All Keys</option>
+    	                    </select>
+                        <!-- </div>
+                        
+                        /.panel-heading -->
+                        <div class="panel-heading"> 
+                            <div class="dataTable_wrapper">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="20%">Owner</th>
+                                            <th colspan="70%">Key</th>
+                                            <th colspan="20%">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="odd gradeX" ng-repeat="keys in sshkeys.list">
+                                            <td colspan="20%">{{keys.owner}}</td>
+                                            <td colspan="70%" style="word-break:break-all;word-wrap:break-word" >{{keys.key}}</td>
+                                            <td colspan="20%">
+                                            	<a href="#/sshkeys/{{keys.owner}}/edit" ><i class="fa fa-edit fa-fw"></i></a>
+                                            	<a href="#/sshkeys/{{keys.owner}}/deletet" ><i class="fa fa-trash-o fa-fw"></i></a> 
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                             </div><!--
+</div> -->
