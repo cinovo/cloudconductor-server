@@ -144,8 +144,7 @@
 								External Links<span class="fa arrow"></span>
 							</a>
                             <ul class="nav nav-second-level">
-                                <li><a href="#/links/repos">Repos</a></li>
-                                <li><a href="#/links/linkid2">Link 2</a></li>
+                            	<li ng-repeat="link in links | orderBy:'label'"><a href="{{link.url}}" target="_blank">{{link.label}}</a></li>
                             </ul>
                         </li>
                     </ul>
