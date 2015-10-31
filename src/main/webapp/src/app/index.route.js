@@ -40,13 +40,6 @@
 			activeNav: 'files',
 			siteTitle: 'Files'
 		})
-		.when('/sshkeys', {
-			templateUrl : 'app/sshkeys/sshkeys.html',
-			controller : 'SSHKeysController',
-			controllerAs : 'sshkeys',
-			activeNav: 'sshkeys',
-			siteTitle: 'SSHKeys'
-		})
 		.when('/services', {
 			templateUrl : 'app/services/services.html',
 			controller : 'ServicesController',
