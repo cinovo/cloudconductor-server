@@ -13,25 +13,13 @@
 	<div class="col-md-12">
 		<div class="panel panel-default"
 			ng-repeat="pack in packageservers.list | filter:query | orderBy:'name'">
-			<div class="panel-heading">
-				<i class="fa fa-list-alt fa-fw"></i> {{pack.name}}
-				<div class="pull-right">
-					<div class="btn-group">
-						<button type="button"
-							class="btn btn-default btn-xs dropdown-toggle"
-							data-toggle="dropdown">
-							Actions <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu pull-right" role="menu">
-							<li><a href="#">Add new Server</a></li>
-							<li class="divider" />
-							<li><a href="#">Edit</a></li>
-							<li><a href="#">Delete</a></li>
-
-						</ul>
-					</div>
-				</div>
-			</div>
+			<cc-panelhead icon="fa-list-alt" title="{{pack.name}}">
+				<li><a href="#">Add new Server</a></li>
+				<li class="divider" />
+				<li><a href="#">Edit</a></li>
+				<li><a href="#">Delete</a></li>
+			</cc-panelhead>
+			
 			<div class="panel-body">
 
 				<div class="table-responsive">
@@ -46,7 +34,7 @@
 								<td><a href="#/packageservers/server/{{server.id}}/edit"><i
 										class="fa fa-edit fa-fw" /></a></td>
 								<td><a ng-click="packageservers.deleteServer(server.id)"><i
-										class="fa fa-bitbucket fa-fw" /></a></td>
+										class="fa fa-trash fa-fw" /></a></td>
 							</tr>
 						</tbody>
 					</table>
