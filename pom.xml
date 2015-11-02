@@ -311,9 +311,13 @@
 										<exec dir="src/main/webapp" executable="gulp">
 											<arg value="clean" />
 										</exec>
+										<exec dir="src/main/webapp" executable="npm">
+											<arg value="prune" />
+										</exec>
+										<exec dir="src/main/webapp" executable="bower">
+											<arg value="prune" />
+										</exec>
 										<delete dir="src/main/webapp/dist" />
-										<delete dir="src/main/webapp/bower_components" />
-										<delete dir="src/main/webapp/node_modules" />
 									</tasks>
 								</configuration>
 							</execution>
