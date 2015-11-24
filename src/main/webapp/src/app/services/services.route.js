@@ -14,8 +14,7 @@
 			templateUrl : 'app/services/service.detail.html',
 			controller : 'ServiceDetailController',
 			controllerAs : 'serviceDetail',
-			activeNav : 'services',
-			siteTitle : 'Service Detail'
+			activeNav : 'services'
 		})
 	}
 })();
