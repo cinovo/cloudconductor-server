@@ -33,6 +33,7 @@ import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
@@ -42,6 +43,7 @@ import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -81,13 +83,17 @@ public class AMConverter {
 	
 	@Autowired
 	private IDependencyDAO ddependendy;
+	
 	@Autowired
 	private IPackageServerDAO packageServer;
+	
+	@Autowired
+	private IPackageServerGroupDAO pvg;
 	
 	
 	/**	 */
 	public AMConverter() {
-		// nothing to do, but prevent init;
+		// nothing to do
 	}
 	
 	/**
@@ -99,8 +105,8 @@ public class AMConverter {
 		model.setName(api.getName());
 		model.setDescription(api.getDescription());
 		for (EPackageServer serv : this.packageServer.findList()) {
-			if (serv.getPath().equals(api.getYum()) || serv.getPath().equals("http://" + api.getYum())) {
-				model.setYum(serv);
+			if (api.getPackageServers().contains(serv.getPath()) || api.getPackageServers().contains(serv.getPath().substring(6))) {
+				model.getPackageServers().add(serv);
 				break;
 			}
 		}
@@ -186,6 +192,8 @@ public class AMConverter {
 			model = new EPackageVersion();
 			model.setVersion(api.getVersion());
 		}
+		EPackageServerGroup epsg = this.pvg.findByName(api.getPackageServerGroup());
+		model.getServerGroups().add(epsg);
 		return model;
 	}
 	

@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +32,13 @@ import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.rest.helper.AMConverter;
@@ -49,7 +53,7 @@ import de.taimos.restutils.RESTAssert;
  */
 @Service
 public class PackageImport implements IPackageImport {
-
+	
 	@Autowired
 	private IPackageDAO dpkg;
 	@Autowired
@@ -61,46 +65,63 @@ public class PackageImport implements IPackageImport {
 	@Autowired
 	private IDependencyDAO ddep;
 	@Autowired
+	private IPackageServerGroupDAO dpsg;
+	@Autowired
 	private AMConverter amc;
-
-
+	
+	
+	/**
+	 * @param packageVersions
+	 */
+	@Override
+	public void importVersions(Set<PackageVersion> packageVersions) {
+		Map<String, Set<PackageVersion>> groupMap = new HashMap<>();
+		for (PackageVersion packageVersion : packageVersions) {
+			if (!groupMap.containsKey(packageVersion.getPackageServerGroup())) {
+				groupMap.put(packageVersion.getPackageServerGroup(), new HashSet<PackageVersion>());
+			}
+			groupMap.get(packageVersion.getPackageServerGroup()).add(packageVersion);
+		}
+		
+		for (Entry<String, Set<PackageVersion>> entry : groupMap.entrySet()) {
+			this.importVersions(entry.getValue(), entry.getKey());
+		}
+	}
+	
 	@Override
 	@Transactional
-	public void importVersions(Set<PackageVersion> rpms) {
-		RESTAssert.assertNotEmpty(rpms);
+	public void importVersions(Set<PackageVersion> packageVersions, String packageServerGroupName) {
+		RESTAssert.assertNotEmpty(packageVersions);
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		HashMap<String, Set<String>> provided = new HashMap<>();
-
-		for (PackageVersion rpm : rpms) {
+		HashMap<String, PackageVersion> provided = new HashMap<>();
+		
+		for (PackageVersion rpm : packageVersions) {
 			// Retrieve the package for the given RPM. Create it if it doesn't exist.
 			EPackage mpkg = this.dpkg.findByName(rpm.getName());
-
+			
 			if (mpkg == null) { // there is no package for this RPM yet
 				mpkg = new EPackage();
 				mpkg.setName(rpm.getName());
 				mpkg.setDescription("Auto-generated from repository update on " + sdf.format(Calendar.getInstance().getTime()) + ".");
 				mpkg = this.dpkg.save(mpkg);
 			}
-
-			if (!provided.containsKey(mpkg.getName())) {
-				provided.put(mpkg.getName(), new HashSet<String>());
-			}
-
+			
 			// Check if we have this particular RPM version on record.
 			EPackageVersion mrpm = this.drpm.find(rpm.getName(), rpm.getVersion());
-			provided.get(mpkg.getName()).add(rpm.getVersion());
-
+			provided.put(mpkg.getName(), rpm);
+			
 			// We already have this package version. Move on.
 			if (mrpm != null) {
 				mrpm.setDeprecated(false);
+				mrpm.getServerGroups().add(this.dpsg.findByName(rpm.getPackageServerGroup()));
 				this.drpm.save(mrpm);
 				continue;
 			}
-
+			
 			// Create a new version for the package.
 			mrpm = this.amc.toModel(rpm);
 			mrpm.setPkg(mpkg);
-
+			
 			// Convert API dependency object to entities, add them to the package version, and save.
 			Set<EDependency> result = new HashSet<>();
 			if (rpm.getDependencies() != null) {
@@ -112,7 +133,7 @@ public class PackageImport implements IPackageImport {
 			mrpm.setDependencies(result);
 			this.drpm.save(mrpm);
 		}
-
+		
 		// perform db clean up
 		List<EPackage> inDB = this.dpkg.findList();
 		List<ETemplate> templates = this.dtemplate.findList();
@@ -131,44 +152,58 @@ public class PackageImport implements IPackageImport {
 				}
 			}
 			// clean up rpm list
-			boolean inUse = this.handleRPMUsage(null, pkg.getRPMs(), templates);
+			boolean inUse = this.handleRPMUsage(new PackageVersion(null, null, null, packageServerGroupName), pkg.getRPMs(), templates);
 			if (!inUse) {
 				this.dpkg.deleteById(pkg.getId());
 			}
 		}
 		this.autoUpdate(templates);
 	}
-
-	private boolean handleRPMUsage(Set<String> provided, Set<EPackageVersion> existing, List<ETemplate> templates) {
+	
+	private boolean handleRPMUsage(PackageVersion packageVersion, Set<EPackageVersion> existing, List<ETemplate> templates) {
 		boolean deprecated = false;
 		if (existing == null) {
 			return deprecated;
 		}
 		for (EPackageVersion dbrpm : existing) {
-			if ((provided != null) && provided.contains(dbrpm.getName())) {
+			if ((packageVersion != null) && (packageVersion.getName() != null) && packageVersion.getName().equals(dbrpm.getName())) {
 				continue;
 			}
 			boolean found = false;
+			// check if other mirrors are still out there
+			for (EPackageServerGroup svg : dbrpm.getServerGroups()) {
+				if ((packageVersion != null) && svg.getName().equals(packageVersion.getPackageServerGroup())) {
+					dbrpm.getServerGroups().remove(svg);
+					break;
+				}
+			}
+			
 			// check if it's used somewhere
 			for (ETemplate t : templates) {
 				if (t.getPackageVersions().contains(dbrpm)) {
-					// mark deprecated
-					dbrpm.setDeprecated(true);
 					found = true;
 					break;
 				}
 			}
-			if (found) {
+			
+			if (dbrpm.getServerGroups().size() > 0) {
+				// keep it since other mirrors still reference it
+				dbrpm.setDeprecated(false);
 				this.drpm.save(dbrpm);
-				deprecated = true;
+				return true;
+			} else if (found) {
+				dbrpm.setDeprecated(true);
+				this.drpm.save(dbrpm);
+				return true;
 			} else {
 				// delete it
 				this.drpm.deleteById(dbrpm.getId());
+				return false;
 			}
 		}
 		return deprecated;
 	}
-
+	
 	private void autoUpdate(List<ETemplate> templates) {
 		PackageVersionComparator rpmComp = new PackageVersionComparator();
 		for (ETemplate t : templates) {
@@ -189,5 +224,5 @@ public class PackageImport implements IPackageImport {
 			this.dtemplate.save(t);
 		}
 	}
-
+	
 }

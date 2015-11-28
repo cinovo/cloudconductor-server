@@ -32,7 +32,7 @@ import de.taimos.httputils.WS;
  * <br>
  * 
  * @author hoegertn
- * 		
+ * 
  */
 @RunnerConfiguration(config = TestConfig.class, svc = "cloudconductor", loggingConfigurer = Log4jLoggingConfigurer.class)
 public abstract class APITest {

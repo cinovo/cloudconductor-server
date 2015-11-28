@@ -80,7 +80,7 @@ public class PackageTest extends APITest {
 			Assert.assertEquals("1.5.3-1", pv.getVersion());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null);
+			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null, "TESTREPO");
 			h.addRPM("nginx", pv);
 			Set<PackageVersion> rpms = h.getRPMS("nginx");
 			Assert.assertEquals(2, rpms.size());

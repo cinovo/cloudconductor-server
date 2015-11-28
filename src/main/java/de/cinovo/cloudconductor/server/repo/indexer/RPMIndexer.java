@@ -42,16 +42,22 @@ public class RPMIndexer implements IRepoIndexer {
 	private static class RPMPrimaryParser extends DefaultHandler {
 		
 		private Set<PackageVersion> versions = new HashSet<PackageVersion>();
-
+		
 		private String name;
 		private String version;
 		private Set<Dependency> dependencies;
 		
 		private String tmpValue;
-
+		
 		private RPMPrimaryState state = RPMPrimaryState.Repo;
-
-
+		
+		private String packageServerGroupName;
+		
+		
+		public RPMPrimaryParser(String packageServerGroupName) {
+			this.packageServerGroupName = packageServerGroupName;
+		}
+		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			if ((this.state == RPMPrimaryState.Repo) && qName.equals("package") && attributes.getValue("type").equals("rpm")) {
@@ -96,7 +102,7 @@ public class RPMIndexer implements IRepoIndexer {
 				return "";
 			}
 		}
-
+		
 		private String convertDepType(RPMPrimaryState depState) {
 			switch (depState) {
 			case Conflicts:
@@ -115,7 +121,7 @@ public class RPMIndexer implements IRepoIndexer {
 			if ((this.state == RPMPrimaryState.Package) && qName.equals("name")) {
 				this.name = this.tmpValue;
 			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("package")) {
-				PackageVersion pv = new PackageVersion(this.name, this.version, this.dependencies);
+				PackageVersion pv = new PackageVersion(this.name, this.version, this.dependencies, this.packageServerGroupName);
 				this.versions.add(pv);
 				this.state = RPMPrimaryState.Repo;
 			} else if ((this.state == RPMPrimaryState.Requires) && qName.equals("rpm:requires")) {
@@ -133,20 +139,20 @@ public class RPMIndexer implements IRepoIndexer {
 				throw new SAXException("Invalid end state: " + this.state);
 			}
 		}
-
+		
 		@Override
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			this.tmpValue = new String(ch, start, length);
 		}
-
+		
 	}
 	
 	
 	private static final String REPO_INDEX = "repodata/repomd.xml";
-
+	
 	private RepoEntry latest;
-
-
+	
+	
 	@Override
 	public Set<PackageVersion> getRepoIndex(IRepoProvider provider) {
 		RepoEntry entry = provider.getEntry(RPMIndexer.REPO_INDEX);
@@ -160,7 +166,7 @@ public class RPMIndexer implements IRepoIndexer {
 			try {
 				String primaryHREF = xpath.evaluate("/repomd/data[@type='primary']/location/@href", repoXML);
 				GZIPInputStream gzipInputStream = new GZIPInputStream(provider.getEntryStream(primaryHREF));
-				RPMPrimaryParser handler = new RPMPrimaryParser();
+				RPMPrimaryParser handler = new RPMPrimaryParser(provider.getPackageServerGroupName());
 				this.xmlSAX(gzipInputStream, handler);
 				return handler.versions;
 			} catch (XPathExpressionException e) {
@@ -171,7 +177,7 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 		throw new RuntimeException("Didn't find index file");
 	}
-
+	
 	private Document xmlDOM(InputStream xmlStream) {
 		try {
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlStream);
@@ -179,7 +185,7 @@ public class RPMIndexer implements IRepoIndexer {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private void xmlSAX(InputStream xmlStream, DefaultHandler handler) {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();

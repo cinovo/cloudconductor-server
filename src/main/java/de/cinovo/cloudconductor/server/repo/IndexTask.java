@@ -11,6 +11,7 @@ package de.cinovo.cloudconductor.server.repo;
  * and limitations under the License. #L%
  */
 
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,7 +23,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
+import de.cinovo.cloudconductor.server.repo.indexer.IndexFileIndexer;
+import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
+import de.cinovo.cloudconductor.server.repo.provider.AWSS3Provider;
+import de.cinovo.cloudconductor.server.repo.provider.FileProvider;
+import de.cinovo.cloudconductor.server.repo.provider.HTTPProvider;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import de.cinovo.cloudconductor.server.util.IPackageImport;
 
@@ -31,35 +39,75 @@ import de.cinovo.cloudconductor.server.util.IPackageImport;
  * <br>
  *
  * @author Thorsten Hoeger
- *
+ * 
  */
 @Service("indextask")
 public class IndexTask implements Runnable {
-
+	
 	private static final Logger logger = LoggerFactory.getLogger(IndexTask.class);
 	
 	@Autowired
-	private IRepoProvider repo;
-
-	@Autowired
-	private IRepoIndexer indexer;
-
-	@Autowired
 	private IPackageImport packageImport;
-
+	
+	// FIXME initialize OR autowire but not both
 	@Autowired
 	private ObjectMapper mapper = MapperFactory.createDefault();
+	
+	@Autowired
+	private IPackageServerDAO psdao;
 	
 	
 	@Override
 	public void run() {
-		try {
-			Set<PackageVersion> latestIndex = this.indexer.getRepoIndex(this.repo);
-			if (latestIndex != null) {
-				this.packageImport.importVersions(latestIndex);
+		List<EPackageServer> packageservers = this.psdao.findOnePerGroup();
+		for (EPackageServer server : packageservers) {
+			try {
+				IRepoProvider repo = this.findProvider(server);
+				if (repo == null) {
+					IndexTask.logger.error("Error indexing repo " + server.getPath() + ", repo provider was not set");
+					continue;
+				}
+				
+				IRepoIndexer indexer = this.findIndexer(server);
+				
+				if (indexer == null) {
+					IndexTask.logger.error("Error indexing repo " + server.getPath() + ", indexer was not set");
+					continue;
+				}
+				
+				Set<PackageVersion> latestIndex = indexer.getRepoIndex(repo);
+				if (latestIndex != null) {
+					this.packageImport.importVersions(latestIndex);
+				}
+			} catch (Exception e) {
+				IndexTask.logger.error("Error indexing repo " + server.getPath(), e);
 			}
-		} catch (Exception e) {
-			IndexTask.logger.error("Error indexing repo", e);
 		}
+	}
+	
+	private IRepoIndexer findIndexer(EPackageServer server) {
+		switch (server.getIndexerType()) {
+		case FILE:
+			return new IndexFileIndexer();
+		case RPM:
+			return new RPMIndexer();
+		default:
+			break;
+		}
+		return null;
+	}
+	
+	private IRepoProvider findProvider(EPackageServer server) {
+		switch (server.getProviderType()) {
+		case AWSS3:
+			return new AWSS3Provider(server);
+		case FILE:
+			return new FileProvider(server);
+		case HTTP:
+			return new HTTPProvider(server);
+		default:
+			break;
+		}
+		return null;
 	}
 }

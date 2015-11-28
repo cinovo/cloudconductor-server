@@ -13,11 +13,13 @@ import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
-import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
+import de.cinovo.cloudconductor.server.repo.provider.AWSS3Provider;
+import de.cinovo.cloudconductor.server.repo.provider.FileProvider;
+import de.cinovo.cloudconductor.server.repo.provider.HTTPProvider;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
-import de.cinovo.cloudconductor.server.web.CSViewModel;
-import de.cinovo.cloudconductor.server.web.helper.AWebPage;
-import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -26,48 +28,69 @@ import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
  * @author Thorsten Hoeger
  *
  */
-public class RepoImpl extends AWebPage implements IRepo {
+// TODO add angularjs view
+public class RepoImpl implements IRepo {
 	
 	@Autowired
-	private IRepoProvider provider;
+	private IPackageServerGroupDAO psgDAO;
 	
 	
 	@Override
-	public Response get(String file) {
+	public Response get(String repo, String file) {
+		if ((repo == null) || repo.isEmpty()) {
+			throw new NotFoundException();
+		}
+		IRepoProvider provider = this.findProvider(repo);
+		if (provider == null) {
+			throw new NotFoundException();
+		}
+		
 		if (file.isEmpty() || file.endsWith("/")) {
-			if (!this.provider.isListable()) {
-				return this.resultNoList(file);
+			if (!provider.isListable()) {
+				// return this.resultNoList(file);
 			}
-			List<RepoEntry> list = this.provider.getEntries(file);
+			List<RepoEntry> list = provider.getEntries(file);
 			if (list != null) {
-				return this.resultList(file, list);
+				// return this.resultList(file, list);
 			}
 			throw new NotFoundException();
 		}
-		RepoEntry entry = this.provider.getEntry(file);
+		
+		RepoEntry entry = provider.getEntry(file);
 		if (entry != null) {
-			return this.resultStream(this.provider.getEntryStream(file), entry);
+			return this.resultStream(provider.getEntryStream(file), entry);
 		}
 		throw new NotFoundException();
 	}
 	
-	private Response resultNoList(String folder) {
-		CSViewModel view = this.createView("notListable");
-		view.addModel("folder", folder);
-		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
-	}
-
-	private Response resultList(String folder, List<RepoEntry> entries) {
-		CSViewModel view = this.createView("list");
-		view.addModel("folder", folder);
-		view.addModel("files", entries);
-		view.addModel("byteTool", new ByteTool());
-		return Response.ok(view.render(), MediaType.TEXT_HTML).build();
+	private IRepoProvider findProvider(String repo) {
+		EPackageServerGroup group = this.psgDAO.findByName(repo);
+		if (group != null) {
+			EPackageServer server;
+			if (group.getPrimaryServer() != null) {
+				server = group.getPrimaryServer();
+			} else {
+				server = group.getPackageServers().iterator().next();
+			}
+			if (server != null) {
+				switch (server.getProviderType()) {
+				case AWSS3:
+					return new AWSS3Provider(server);
+				case FILE:
+					return new FileProvider(server);
+				case HTTP:
+					return new HTTPProvider(server);
+				default:
+					break;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private Response resultStream(final InputStream stream, RepoEntry entry) {
 		StreamingOutput out = new StreamingOutput() {
-
+			
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
 				StreamUtils.copy(stream, output);
@@ -76,21 +99,6 @@ public class RepoImpl extends AWebPage implements IRepo {
 			}
 		};
 		return Response.ok(out, entry.getContentType()).header("Content-Length", entry.getSize()).build();
-	}
-
-	@Override
-	protected String getTemplateFolder() {
-		return "repo";
-	}
-
-	@Override
-	protected void init() {
-		this.navRegistry.registerSubMenu(NavbarHardLinks.links, "Package Repository", "/../repo/");
-	}
-
-	@Override
-	protected String getNavElementName() {
-		return "Repository";
 	}
 	
 }

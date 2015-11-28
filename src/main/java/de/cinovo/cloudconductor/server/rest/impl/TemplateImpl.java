@@ -58,7 +58,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class TemplateImpl extends ImplHelper implements ITemplate {
@@ -101,9 +101,9 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 		this.assertName(name, apiObject);
 		ETemplate model = this.amc.toModel(apiObject);
 		
-		if ((apiObject.getRpms() != null) && !apiObject.getRpms().isEmpty()) {
+		if ((apiObject.getPackages() != null) && !apiObject.getPackages().isEmpty()) {
 			List<EPackageVersion> found = new ArrayList<>();
-			for (Entry<String, String> s : apiObject.getRpms().entrySet()) {
+			for (Entry<String, String> s : apiObject.getPackages().entrySet()) {
 				EPackageVersion rpm = this.drpm.find(s.getKey(), s.getValue());
 				this.assertModelFound(rpm);
 				found.add(rpm);

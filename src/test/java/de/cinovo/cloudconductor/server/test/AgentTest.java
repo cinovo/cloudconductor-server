@@ -75,18 +75,18 @@ public class AgentTest extends APITest {
 	
 	private PackageState getAllInstalled() {
 		List<PackageVersion> pkgs = new ArrayList<>();
-		pkgs.add(new PackageVersion("nginx", "1.5.3-1", null));
-		pkgs.add(new PackageVersion("postgresql92", "9.2.4-1PGDG.rhel6", null));
-		pkgs.add(new PackageVersion("postgresql92-libs", "9.2.4-1PGDG.rhel6", null));
-		pkgs.add(new PackageVersion("postgresql92-server", "9.2.4-1PGDG.rhel6", null));
-		pkgs.add(new PackageVersion("jdk", "1.7.0_45-fcs", null));
+		pkgs.add(new PackageVersion("nginx", "1.5.3-1", null, "TESTREPO"));
+		pkgs.add(new PackageVersion("postgresql92", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(new PackageVersion("postgresql92-libs", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(new PackageVersion("postgresql92-server", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(new PackageVersion("jdk", "1.7.0_45-fcs", null, "TESTREPO"));
 		return new PackageState(pkgs);
 	}
 	
 	private PackageState getPartiallyInstalled() {
 		List<PackageVersion> pkgs = new ArrayList<>();
-		pkgs.add(new PackageVersion("nginx", "1.5.2-1", null));
-		pkgs.add(new PackageVersion("nodejs", "0.10.12-1", null));
+		pkgs.add(new PackageVersion("nginx", "1.5.2-1", null, "TESTREPO"));
+		pkgs.add(new PackageVersion("nodejs", "0.10.12-1", null, "TESTREPO"));
 		return new PackageState(pkgs);
 	}
 }

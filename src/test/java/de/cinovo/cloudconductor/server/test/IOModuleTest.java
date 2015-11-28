@@ -59,8 +59,8 @@ public class IOModuleTest extends APITest {
 			HashSet<Dependency> test = new HashSet<Dependency>();
 			test.add(new Dependency("asd", "4.1.1", "", DependencyType.REQUIRES.toString()));
 			Set<PackageVersion> set = new HashSet<PackageVersion>();
-			set.add(new PackageVersion("package1", "1.0.0", null));
-			set.add(new PackageVersion("package2", "1.2.0", test));
+			set.add(new PackageVersion("package1", "1.0.0", null, "TESTREPO"));
+			set.add(new PackageVersion("package2", "1.2.0", test, "TESTREPO"));
 			ioH.importPackages(set);
 		}
 		

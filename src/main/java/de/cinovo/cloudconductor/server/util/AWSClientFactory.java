@@ -1,8 +1,11 @@
 package de.cinovo.cloudconductor.server.util;
 
 import com.amazonaws.AmazonWebServiceClient;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -23,11 +26,11 @@ import com.amazonaws.regions.Regions;
  *
  */
 public final class AWSClientFactory {
-
+	
 	private AWSClientFactory() {
 		// private utility class constructor
 	}
-
+	
 	/**
 	 * see factory comment
 	 *
@@ -38,7 +41,25 @@ public final class AWSClientFactory {
 	public static <T extends AmazonWebServiceClient> T createClient(Class<T> clientClass) {
 		String regionName = System.getProperty("aws.region", "eu-west-1");
 		Region region = Region.getRegion(Regions.fromName(regionName));
-
+		
 		return region.createClient(clientClass, null, null);
 	}
+	
+	/**
+	 * @param <T> the class of the client to create
+	 * @param clientClass the class of the client to create
+	 * @param ps the package server information to use
+	 * @return the created client
+	 */
+	public static <T extends AmazonWebServiceClient> T createClient(Class<T> clientClass, EPackageServer ps) {
+		String regionName = "eu-west-1";
+		if ((ps.getAwsRegion() != null) && !ps.getAwsRegion().isEmpty()) {
+			regionName = ps.getAwsRegion();
+		}
+		Region region = Region.getRegion(Regions.fromName(regionName));
+		
+		AWSCredentialsProvider credentialProvider = new PackageCredentialProvider(ps);
+		return region.createClient(clientClass, credentialProvider, null);
+	}
+	
 }

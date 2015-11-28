@@ -11,6 +11,10 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * and limitations under the License. #L%
  */
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ws.rs.core.Response;
@@ -27,7 +31,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  *
  * @author psigloch
- *		
+ *
  */
 @JaxRsComponent
 public class IOModuleImpl extends ImplHelper implements IIOModule {
@@ -38,7 +42,17 @@ public class IOModuleImpl extends ImplHelper implements IIOModule {
 	
 	@Override
 	public Response importVersions(Set<PackageVersion> versions) {
-		this.importer.importVersions(versions);
+		Map<String, Set<PackageVersion>> groupMap = new HashMap<>();
+		for (PackageVersion packageVersion : versions) {
+			if (!groupMap.containsKey(packageVersion.getPackageServerGroup())) {
+				groupMap.put(packageVersion.getPackageServerGroup(), new HashSet<PackageVersion>());
+			}
+			groupMap.get(packageVersion.getPackageServerGroup()).add(packageVersion);
+		}
+		
+		for (Entry<String, Set<PackageVersion>> entry : groupMap.entrySet()) {
+			this.importer.importVersions(entry.getValue(), entry.getKey());
+		}
 		return Response.ok().build();
 	}
 	

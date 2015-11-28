@@ -19,11 +19,16 @@ package de.cinovo.cloudconductor.server.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import de.cinovo.cloudconductor.server.repo.indexer.RepoIndexerType;
+import de.cinovo.cloudconductor.server.repo.provider.RepoProviderType;
 import de.taimos.dao.IEntity;
 
 /**
@@ -34,13 +39,26 @@ import de.taimos.dao.IEntity;
  * 
  */
 @Entity
-@Table(name = "yumserver", schema = "cloudconductor")
+@Table(name = "packageserver", schema = "cloudconductor")
 public class EPackageServer implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
+	private EPackageServerGroup serverGroup;
 	private String path;
 	private String description;
+	
+	private RepoIndexerType indexerType;
+	private RepoProviderType providerType;
+	
+	// file provider & http provider infos
+	private String basePath;
+	
+	// aws provider infos
+	private String bucketName;
+	private String awsRegion;
+	private String accessKeyId;
+	private String secretKey;
 	
 	
 	@Override
@@ -60,7 +78,7 @@ public class EPackageServer implements IEntity<Long> {
 	/**
 	 * @return the path
 	 */
-	@Column(name = "yumPath")
+	@Column(name = "path")
 	public String getPath() {
 		return this.path;
 	}
@@ -106,4 +124,117 @@ public class EPackageServer implements IEntity<Long> {
 		return val * idVal;
 	}
 	
+	/**
+	 * @return the serverGroup
+	 */
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "servergroupid")
+	public EPackageServerGroup getServerGroup() {
+		return this.serverGroup;
+	}
+	
+	/**
+	 * @param serverGroup the serverGroup to set
+	 */
+	public void setServerGroup(EPackageServerGroup serverGroup) {
+		this.serverGroup = serverGroup;
+	}
+	
+	/**
+	 * @return the providerType
+	 */
+	public RepoProviderType getProviderType() {
+		return this.providerType;
+	}
+	
+	/**
+	 * @param providerType the providerType to set
+	 */
+	public void setProviderType(RepoProviderType providerType) {
+		this.providerType = providerType;
+	}
+	
+	/**
+	 * @return the awsRegion
+	 */
+	public String getAwsRegion() {
+		return this.awsRegion;
+	}
+	
+	/**
+	 * @param awsRegion the awsRegion to set
+	 */
+	public void setAwsRegion(String awsRegion) {
+		this.awsRegion = awsRegion;
+	}
+	
+	/**
+	 * @return the bucketName
+	 */
+	public String getBucketName() {
+		return this.bucketName;
+	}
+	
+	/**
+	 * @param bucketName the bucketName to set
+	 */
+	public void setBucketName(String bucketName) {
+		this.bucketName = bucketName;
+	}
+	
+	/**
+	 * @return the accessKeyId
+	 */
+	public String getAccessKeyId() {
+		return this.accessKeyId;
+	}
+	
+	/**
+	 * @param accessKeyId the accessKeyId to set
+	 */
+	public void setAccessKeyId(String accessKeyId) {
+		this.accessKeyId = accessKeyId;
+	}
+	
+	/**
+	 * @return the secretKey
+	 */
+	public String getSecretKey() {
+		return this.secretKey;
+	}
+	
+	/**
+	 * @param secretKey the secretKey to set
+	 */
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+	
+	/**
+	 * @return the basePath
+	 */
+	public String getBasePath() {
+		return this.basePath;
+	}
+	
+	/**
+	 * @param basePath the basePath to set
+	 */
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
+	
+	/**
+	 * @return the indexerType
+	 */
+	public RepoIndexerType getIndexerType() {
+		return this.indexerType;
+	}
+	
+	/**
+	 * @param indexerType the indexerType to set
+	 */
+	public void setIndexerType(RepoIndexerType indexerType) {
+		this.indexerType = indexerType;
+	}
 }

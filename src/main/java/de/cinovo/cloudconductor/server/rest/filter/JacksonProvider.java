@@ -8,7 +8,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  * 
  * @author hoegertn
- * 		
+ * 
  */
 @JaxRsComponent
 public class JacksonProvider extends de.taimos.springcxfdaemon.providers.JacksonProvider {

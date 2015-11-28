@@ -54,6 +54,7 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 	private String version;
 	private Set<EDependency> dependencies = new HashSet<>();
 	private Boolean deprecated;
+	private Set<EPackageServerGroup> serverGroups = new HashSet<>();
 	
 	
 	@Override
@@ -169,4 +170,22 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 		int parent = (this.getPkg() == null) ? 0 : this.getPkg().hashCode();
 		return val * parent;
 	}
+	
+	/**
+	 * @return the serverGroups
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "mappingversiongroup", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "versionid"), inverseJoinColumns = @JoinColumn(name = "groupid"))
+	public Set<EPackageServerGroup> getServerGroups() {
+		return this.serverGroups;
+	}
+	
+	/**
+	 * @param serverGroups the serverGroups to set
+	 */
+	public void setServerGroups(Set<EPackageServerGroup> serverGroups) {
+		this.serverGroups = serverGroups;
+	}
+	
 }

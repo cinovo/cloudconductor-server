@@ -1,9 +1,0 @@
-#if(! $SIDEBAR.isEmpty()) 
-	<div class="col-xs-2 col-sm-2 sidebar-offcanvas list-group navbar" id="sidebar" >
-        <ul class="nav sidebar" id="sidenav" data-spy="affix" data-offset-top="50">
-		#foreach( $element in $SIDEBAR)
-            <li class="list-group-item"><a href="#${element}">$element</a></li>
-		#end
-        </ul>
-	</div>
-#end

@@ -16,6 +16,13 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 
+/**
+ * Copyright 2015 Cinovo AG<br>
+ * <br>
+ * 
+ * @author psigloch
+ *
+ */
 public class IndexerTest {
 	
 	private static class ClasspathProvider implements IRepoProvider {
@@ -41,19 +48,27 @@ public class IndexerTest {
 			System.out.println("Loading..." + key);
 			return this.getClass().getClassLoader().getResourceAsStream(key);
 		}
-
+		
 		@Override
 		public boolean isListable() {
 			return false;
 		}
 		
+		@Override
+		public String getPackageServerGroupName() {
+			return "TESTREPO";
+		}
+		
 	}
-
-
+	
+	
+	/**
+	 * @throws Exception on error
+	 */
 	@Test
 	public void testRPM1() throws Exception {
 		RPMIndexer indexer = new RPMIndexer();
-
+		
 		Set<PackageVersion> repoIndex = indexer.getRepoIndex(new ClasspathProvider());
 		ObjectMapper om = MapperFactory.createDefault();
 		for (PackageVersion pv : repoIndex) {

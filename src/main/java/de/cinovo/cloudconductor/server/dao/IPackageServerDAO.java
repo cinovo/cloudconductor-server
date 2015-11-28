@@ -17,7 +17,10 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import java.util.List;
+
 import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.taimos.dao.IEntityDAO;
 
 /**
@@ -28,5 +31,16 @@ import de.taimos.dao.IEntityDAO;
  * 
  */
 public interface IPackageServerDAO extends IEntityDAO<EPackageServer, Long> {
-	// nothing else to add
+	
+	/**
+	 * @param group the {@link EPackageServerGroup}
+	 * @return all package servers aligned with the group
+	 */
+	public List<EPackageServer> findForGroup(EPackageServerGroup group);
+	
+	/**
+	 * @return one package server per group, primary used first
+	 */
+	public List<EPackageServer> findOnePerGroup();
+	
 }
