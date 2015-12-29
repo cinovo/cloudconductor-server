@@ -1,5 +1,7 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
+import java.util.ArrayList;
+
 /*
  * #%L
  * cloudconductor-server
@@ -22,6 +24,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
 
@@ -46,8 +49,15 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	}
 	
 	@Override
-	public List<ETemplate> findByPackageServer(Long packageServer) {
-		return this.findListByQuery("FROM ETemplate t WHERE t.yum.id = ?1", packageServer);
+	public List<ETemplate> findByPackageServer(EPackageServer packageServer) {
+		//TODO write hql querry for this, I'm currently to stupid to write a working one (ps)
+		List<ETemplate> result = new ArrayList<>();
+		for (ETemplate t : this.findList()) {
+			if(t.getPackageServers().contains(packageServer)) {
+				result.add(t);
+			}
+		}
+		return result;
 	}
 	
 }

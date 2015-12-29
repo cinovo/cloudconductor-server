@@ -1,5 +1,10 @@
 package de.cinovo.cloudconductor.api.interfaces;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+
 /*
  * #%L
  * cloudconductor-api
@@ -21,7 +26,11 @@ package de.cinovo.cloudconductor.api.interfaces;
  */
 
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
+import de.cinovo.cloudconductor.api.IRestPath;
+import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.PackageServerGroup;
 
 /**
@@ -32,6 +41,29 @@ import de.cinovo.cloudconductor.api.model.PackageServerGroup;
  * 
  */
 @Path("/packageservergroup")
-public interface IPackageServerGroup extends IDefaultApi<PackageServerGroup> {
-	// TODO go on ...
+public interface IPackageServerGroup {
+	/**
+	 * @return set of api objects
+	 */
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PackageServerGroup[] get();
+	
+	@GET
+	@Path("/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PackageServerGroup get(@PathParam("name") String name);
+	
+	@POST
+	@Path("/")
+	public void newGroup(PackageServerGroup group);
+	
+	@PUT
+	@Path("/{id}")
+	public void edit(@PathParam("id") Long id, PackageServerGroup group);
+	
+	@DELETE
+	@Path("/{name}")
+	public void delete(@PathParam("name") String name);
 }

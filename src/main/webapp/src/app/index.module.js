@@ -1,6 +1,6 @@
 'use strict';
 
-var ccModule = angular.module('cloudconductor', ['ngCookies', 'ngRoute', 'ui.bootstrap', 'toggle-switch']);
+var ccModule = angular.module('cloudconductor', ['ngCookies', 'ngRoute', 'ui.bootstrap', 'toggle-switch', 'angular-confirm']);
 
 ccModule.controller('AppCtrl', ['$scope', '$rootScope', '$route', '$http', function(scope, rootScope, route, http) {
 	scope.activeNav = 'home';
@@ -9,7 +9,7 @@ ccModule.controller('AppCtrl', ['$scope', '$rootScope', '$route', '$http', funct
     		scope.activeNav = current.$$route.activeNav;
             if (current.$$route.siteTitle) {
             	rootScope.siteTitle = current.$$route.siteTitle;
-            };
+            }
         } else {
             scope.activeNav = 'home';
         }
