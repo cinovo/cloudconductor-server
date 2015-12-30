@@ -25,7 +25,7 @@ import javax.persistence.Table;
 
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.cinovo.cloudconductor.server.model.enums.AuditType;
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>

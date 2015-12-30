@@ -32,7 +32,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 
-import de.taimos.springcxfdaemon.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>

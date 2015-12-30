@@ -13,7 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2015 Cinovo AG<br>

@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
-import de.taimos.dao.IEntityDAO;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>

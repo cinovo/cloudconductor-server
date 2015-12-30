@@ -31,7 +31,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>

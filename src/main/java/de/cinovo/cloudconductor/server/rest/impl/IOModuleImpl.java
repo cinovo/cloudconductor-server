@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.cinovo.cloudconductor.api.interfaces.IIOModule;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.util.IPackageImport;
-import de.taimos.springcxfdaemon.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>

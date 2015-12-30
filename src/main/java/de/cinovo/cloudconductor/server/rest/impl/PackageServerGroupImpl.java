@@ -21,8 +21,8 @@ import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2015 Cinovo AG<br>

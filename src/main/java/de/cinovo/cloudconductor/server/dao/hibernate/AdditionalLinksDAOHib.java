@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
 import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 
 /**
  * Copyright 2013 Cinovo AG<br>

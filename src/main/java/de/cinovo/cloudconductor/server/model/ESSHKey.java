@@ -26,7 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import de.cinovo.cloudconductor.api.model.INamed;
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>

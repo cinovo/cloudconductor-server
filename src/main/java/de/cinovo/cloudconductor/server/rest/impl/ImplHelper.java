@@ -28,7 +28,7 @@ import javax.ws.rs.NotFoundException;
 
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.server.dao.IFindNamed;
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -36,7 +36,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 
+ * 		
  */
 public abstract class ImplHelper {
 	

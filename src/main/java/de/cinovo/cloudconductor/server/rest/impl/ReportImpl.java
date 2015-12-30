@@ -32,7 +32,7 @@ import de.cinovo.cloudconductor.api.model.ReportPackage;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.taimos.springcxfdaemon.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>

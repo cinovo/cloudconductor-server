@@ -15,8 +15,8 @@ import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.IVersionized;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.cinovo.cloudconductor.server.model.enums.AuditType;
-import de.taimos.dao.IEntity;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2014 Cinovo AG<br>

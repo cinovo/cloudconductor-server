@@ -2,7 +2,7 @@ package de.cinovo.cloudconductor.server.model;
 
 import java.io.Serializable;
 
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2014 Cinovo AG<br>

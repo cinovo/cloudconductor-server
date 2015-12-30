@@ -15,8 +15,8 @@ import de.cinovo.cloudconductor.api.model.AdditionalLink;
 import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
 import de.cinovo.cloudconductor.server.model.EAdditionalLinks;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>

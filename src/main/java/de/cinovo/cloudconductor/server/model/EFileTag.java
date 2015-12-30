@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.server.model.enums.TagColor;
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2014 Cinovo AG<br>

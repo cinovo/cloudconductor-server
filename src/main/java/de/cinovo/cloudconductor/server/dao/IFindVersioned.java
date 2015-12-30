@@ -1,6 +1,6 @@
 package de.cinovo.cloudconductor.server.dao;
 
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2014 Cinovo AG<br>

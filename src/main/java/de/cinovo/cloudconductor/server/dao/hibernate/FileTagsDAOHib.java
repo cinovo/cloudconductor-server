@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import de.cinovo.cloudconductor.server.dao.IFileTagsDAO;
 import de.cinovo.cloudconductor.server.model.EFileTag;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 
 /**
  * Copyright 2014 Cinovo AG<br>

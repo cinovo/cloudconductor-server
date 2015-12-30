@@ -7,7 +7,7 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
 
-import de.taimos.springcxfdaemon.providers.AuthorizationProvider;
+import de.taimos.dvalin.jaxrs.providers.AuthorizationProvider;
 
 /**
  * Copyright 2013 Cinovo AG<br>

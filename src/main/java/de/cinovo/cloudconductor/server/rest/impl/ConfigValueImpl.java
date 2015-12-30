@@ -31,8 +31,8 @@ import de.cinovo.cloudconductor.api.model.KeyValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import de.taimos.springcxfdaemon.JaxRsComponent;
 
 /**
  * Copyright 2013 Cinovo AG<br>

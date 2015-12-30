@@ -22,7 +22,7 @@
 			<bean class="de.cinovo.cloudconductor.server.repo.RepoImpl" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<bean class="de.taimos.springcxfdaemon.providers.JacksonProvider" />
+			<bean class="de.taimos.dvalin.jaxrs.providers.JacksonProvider" />
 			<bean class="de.taimos.cxf_renderer.model.UIWriter" />
 		</jaxrs:providers>
 	</jaxrs:server>

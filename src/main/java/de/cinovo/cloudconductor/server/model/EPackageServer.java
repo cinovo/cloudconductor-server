@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 import de.cinovo.cloudconductor.server.repo.indexer.RepoIndexerType;
 import de.cinovo.cloudconductor.server.repo.provider.RepoProviderType;
-import de.taimos.dao.IEntity;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>

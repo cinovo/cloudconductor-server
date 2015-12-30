@@ -10,7 +10,7 @@ import de.cinovo.cloudconductor.api.model.PackageServer;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
-import de.taimos.springcxfdaemon.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 /**
  * Copyright 2015 Cinovo AG<br>

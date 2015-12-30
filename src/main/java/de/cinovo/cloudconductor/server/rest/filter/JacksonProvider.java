@@ -1,6 +1,6 @@
 package de.cinovo.cloudconductor.server.rest.filter;
 
-import de.taimos.springcxfdaemon.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 /**
  * 
@@ -8,9 +8,9 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  * 
  * @author hoegertn
- * 
+ * 		
  */
 @JaxRsComponent
-public class JacksonProvider extends de.taimos.springcxfdaemon.providers.JacksonProvider {
+public class JacksonProvider extends de.taimos.dvalin.jaxrs.providers.JacksonProvider {
 	//
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
-import de.taimos.dao.IEntityDAO;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>

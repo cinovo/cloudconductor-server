@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 import de.cinovo.cloudconductor.server.dao.IAuditLogDAO;
 import de.cinovo.cloudconductor.server.model.EAuditLog;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 
 /**
  * Copyright 2013 Cinovo AG<br>

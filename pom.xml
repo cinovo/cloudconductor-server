@@ -66,6 +66,7 @@
 	<!-- Shared version number properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<dvalin.version>1.0</dvalin.version>
 	</properties>
 
 	<dependencies>
@@ -76,23 +77,13 @@
 		</dependency>
 		<dependency>
 			<groupId>de.taimos</groupId>
-			<artifactId>spring-cxf-daemon</artifactId>
-			<version>2.8</version>
+			<artifactId>dvalin-jaxrs</artifactId>
+			<version>${dvalin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.taimos</groupId>
-			<artifactId>spring-dao-hibernate</artifactId>
-			<version>1.14</version>
-		</dependency>
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>3.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.mattbertolini</groupId>
-			<artifactId>liquibase-slf4j</artifactId>
-			<version>1.2.1</version>
+			<artifactId>dvalin-jpa</artifactId>
+			<version>${dvalin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
