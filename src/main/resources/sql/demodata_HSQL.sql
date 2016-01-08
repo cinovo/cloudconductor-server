@@ -62,11 +62,11 @@ INSERT INTO cloudconductor.packageservergroup VALUES (1, 'TESTREPO', '1');
 INSERT INTO cloudconductor.packageservergroup VALUES (2, 'Ein etwas anderes REPO', '1');
 INSERT INTO cloudconductor.packageservergroup VALUES (3, 'CloudConductor', '1');
 
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 0, 2, '/static/yum');
+INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 1, 2, '/static/yum');
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (2, 'Ein TestRepo', 'http://irgendwo.com/yum',  2, 0, 2, '/static/yum');
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (3, 'Irgendwo Repo', 'http://irgendwoAnderst.com/yum',  2, 0, 2, '/static/yum');
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (4, 'Yanz weit weg', 'http://yanzweitweg.com/yum',  2, 0, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repo',  3, 0, 2, 'http://yum.cloudconductor.net/cloudconductor.repo');
+INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repo',  3, 1, 2, 'http://yum.cloudconductor.net/cloudconductor.repo');
 
 INSERT INTO cloudconductor.mappingpackageservertemplate VALUES (1, 1);
 

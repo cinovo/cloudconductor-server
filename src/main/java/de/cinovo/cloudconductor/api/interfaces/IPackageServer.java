@@ -23,6 +23,8 @@ package de.cinovo.cloudconductor.api.interfaces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -48,7 +50,7 @@ public interface IPackageServer {
 	 */
 	@GET
 	@Path("/{id}")
-	public PackageServer getSimple(@PathParam("id") Long id);
+	public PackageServer get(@PathParam("id") Long id);
 	
 	/**
 	 * @param id the server id
@@ -56,4 +58,12 @@ public interface IPackageServer {
 	@DELETE
 	@Path("/{id}")
 	public void delete(@PathParam("id") Long id);
+	
+	@POST
+	@Path("/")
+	public Long newServer(PackageServer ps);
+	
+	@PUT
+	@Path("/")
+	public void editServer(PackageServer ps);
 }

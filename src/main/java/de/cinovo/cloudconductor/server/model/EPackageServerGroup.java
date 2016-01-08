@@ -8,9 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.taimos.dvalin.jpa.IEntity;
@@ -31,7 +29,7 @@ public class EPackageServerGroup implements IEntity<Long> {
 	
 	private String name;
 	private List<EPackageServer> packageServers;
-	private EPackageServer primaryServer;
+	private Long primaryServerId;
 	
 	
 	@Override
@@ -76,21 +74,14 @@ public class EPackageServerGroup implements IEntity<Long> {
 	public void setPackageServers(List<EPackageServer> packageServers) {
 		this.packageServers = packageServers;
 	}
-	
-	/**
-	 * @return the primaryServer
-	 */
-	@OneToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "id")
-	public EPackageServer getPrimaryServer() {
-		return this.primaryServer;
+
+	public Long getPrimaryServerId() { 
+		return this.primaryServerId;
+	}
+
+	public void setPrimaryServerId(Long primaryServerId) {
+		this.primaryServerId = primaryServerId;
 	}
 	
-	/**
-	 * @param primaryServer the primaryServer to set
-	 */
-	public void setPrimaryServer(EPackageServer primaryServer) {
-		this.primaryServer = primaryServer;
-	}
 	
 }

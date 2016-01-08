@@ -13,6 +13,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
@@ -33,6 +34,10 @@ public class RepoImpl implements IRepo {
 	
 	@Autowired
 	private IPackageServerGroupDAO psgDAO;
+
+	@Autowired
+	private IPackageServerDAO psDAO;
+	
 	
 	
 	@Override
@@ -66,10 +71,11 @@ public class RepoImpl implements IRepo {
 	private IRepoProvider findProvider(String repo) {
 		EPackageServerGroup group = this.psgDAO.findByName(repo);
 		if (group != null) {
-			EPackageServer server;
-			if (group.getPrimaryServer() != null) {
-				server = group.getPrimaryServer();
-			} else {
+			EPackageServer server = null;
+			if (group.getPrimaryServerId() != null) {
+				server = this.psDAO.findById(group.getPrimaryServerId());
+			}
+			if(server == null) {
 				server = group.getPackageServers().iterator().next();
 			}
 			if (server != null) {

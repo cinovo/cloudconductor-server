@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.interfaces.IPackageServerGroup;
+import de.cinovo.cloudconductor.api.model.PackageServer;
 import de.cinovo.cloudconductor.api.model.PackageServerGroup;
 import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
@@ -54,9 +55,9 @@ public class PackageServerGroupImpl extends ImplHelper implements IPackageServer
 	
 	@Override
 	@Transactional
-	public PackageServerGroup get(String name) {
-		RESTAssert.assertNotEmpty(name);
-		EPackageServerGroup psg = this.dpsg.findByName(name);
+	public PackageServerGroup get(Long id) {
+		RESTAssert.assertNotNull(id);
+		EPackageServerGroup psg = this.dpsg.findById(id);
 		if(psg == null) {
 			throw new NotFoundException();
 		}
@@ -65,7 +66,7 @@ public class PackageServerGroupImpl extends ImplHelper implements IPackageServer
 
 	@Override
 	@Transactional
-	public void newGroup(PackageServerGroup group) {
+	public Long newGroup(PackageServerGroup group) {
 		RESTAssert.assertNotNull(group);
 		RESTAssert.assertNotNull(group.getName());
 
@@ -73,39 +74,40 @@ public class PackageServerGroupImpl extends ImplHelper implements IPackageServer
 		g.setName(group.getName());
 
 		List<EPackageServer> packageServers = new ArrayList<>();
-		for (Long id : group.getPackageServers()) {
-			EPackageServer eps = this.dps.findById(id);
+		for (PackageServer ps : group.getPackageServers()) {
+			EPackageServer eps = this.dps.findById(ps.getId());
 			if (eps != null) {
 				packageServers.add(eps);
 				if (eps.getId() == group.getPrimaryServer()) {
-					g.setPrimaryServer(eps);
+					g.setPrimaryServerId(eps.getId());
 				}
 			}
 		}
 		g.setPackageServers(packageServers);
-
-		this.dpsg.save(g);
+		g = this.dpsg.save(g);
+		return g.getId();
 	}
 
 	@Override
 	@Transactional
-	public void edit(Long id, PackageServerGroup group) {
+	public void edit(PackageServerGroup group) {
 		RESTAssert.assertNotNull(group);
-		RESTAssert.assertNotNull(id);
-		RESTAssert.assertNotNull(group.getName());
+		RESTAssert.assertNotNull(group.getId());
 
-		EPackageServerGroup g = this.dpsg.findById(id);
-		RESTAssert.assertNotNull(g);
+		EPackageServerGroup g = this.dpsg.findById(group.getId());
+		if (g == null) {
+			throw new NotFoundException();
+		}
 
 		g.setName(group.getName());
 
 		List<EPackageServer> packageServers = new ArrayList<>();
-		for (Long psid : group.getPackageServers()) {
-			EPackageServer eps = this.dps.findById(psid);
+		for (PackageServer ps : group.getPackageServers()) {
+			EPackageServer eps = this.dps.findById(ps.getId());
 			if (eps != null) {
 				packageServers.add(eps);
 				if (eps.getId() == group.getPrimaryServer()) {
-					g.setPrimaryServer(eps);
+					g.setPrimaryServerId(eps.getId());
 				}
 			}
 		}
@@ -116,10 +118,12 @@ public class PackageServerGroupImpl extends ImplHelper implements IPackageServer
 
 	@Override
 	@Transactional
-	public void delete(String name) {
-		RESTAssert.assertNotEmpty(name);
-		EPackageServerGroup g = this.dpsg.findByName(name);
-		RESTAssert.assertNotNull(g);
+	public void delete(Long id) {
+		RESTAssert.assertNotNull(id);
+		EPackageServerGroup g = this.dpsg.findById(id);
+		if (g == null) {
+			throw new NotFoundException();
+		}
 		if (g.getPackageServers() != null && !g.getPackageServers().isEmpty()) {
 			for (EPackageServer eps : g.getPackageServers()) {
 				List<ETemplate> templates = this.dtemplate.findByPackageServer(eps);

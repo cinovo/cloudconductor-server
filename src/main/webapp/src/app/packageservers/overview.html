@@ -6,14 +6,14 @@
 		</div>
 	</div>
 	<div class="col-md-8">
-		<a href="#" role="button" class="btn btn-default pull-right">Add a new Group</a>
+		<a href="#/packageservers/new/" role="button" class="btn btn-default pull-right">Add a new Group</a>
 	</div>
 </div>
 <div class="space-20"></div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-default"
-			ng-repeat="pack in packageservers.list | filter:query | orderBy:'name'">
+			ng-repeat="pack in controller.data | filter:query | orderBy:'name'">
 			<div class="panel-heading">
 				<i class="fa fa-list-alt fa-fw"></i>{{pack.name}}
 				<div class="pull-right">
@@ -24,10 +24,10 @@
 							Actions <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu pull-right" role="menu">
-							<li><a href="#/packageservers/new">Add new Server</a></li>
+							<li><a href="#/packageservers/{{pack.id}}/new">Add new Server</a></li>
 							<li class="divider" />
-							<li><a href="#/packageservers/edit/{{pack.name}}">Edit</a></li>
-							<li><a ng-click="packageservers.deleteGroup(pack.name)"
+							<li><a href="#/packageservers/edit/{{pack.id}}">Edit</a></li>
+							<li><a ng-click="controller.deleteGroup(pack.id)"
 									confirm="Are you sure you want to delete the following group: {{pack.name}}?"
 									confirm-title="Please verify!" confirm-ok="Yes"
 									confirm-cancel="No">Delete </a></li>
@@ -41,19 +41,19 @@
 				<div class="table-responsive">
 					<table class="table table-striped table-hover">
 						<tbody>
-							<tr ng-repeat="server in pack.details | orderBy:'id'" info
+							<tr ng-repeat="server in pack.packageServers | orderBy:'id'" info
 								ng-class="{info: server.id == pack.primaryServer}">
 								<td><i class="fa fa-check fa-fw"
 									ng-if="server.id === pack.primaryServer" )/></td>
 								<td>{{server.description}}</td>
 								<td>{{server.path}}</td>
-								<td><a href="#/packageservers/server/{{server.id}}/edit"><i
+								<td><a href="#/packageservers/{{pack.id}}/edit/{{server.id}}"><i
 										class="fa fa-edit fa-fw" /></a></td>
-								<td><a ng-click="packageservers.deleteServer(server.id)"
+								<td><a ng-click="controller.deleteServer(server.id)"
 									confirm="Are you sure you want to delete the following server: {{server.description}}?"
 									confirm-title="Please verify!" confirm-ok="Yes"
-									confirm-cancel="No"> <i
-										class="fa fa-bitbucket fa-fw" /></a></td>
+									confirm-cancel="No"> <i class="fa fa-bitbucket fa-fw" /></a>
+								</td>
 							</tr>
 						</tbody>
 					</table>

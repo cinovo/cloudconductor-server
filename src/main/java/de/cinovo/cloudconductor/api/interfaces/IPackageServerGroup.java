@@ -29,7 +29,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.PackageServerGroup;
 
@@ -51,19 +50,19 @@ public interface IPackageServerGroup {
 	public PackageServerGroup[] get();
 	
 	@GET
-	@Path("/{name}")
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup get(@PathParam("name") String name);
+	public PackageServerGroup get(@PathParam("id") Long id);
 	
 	@POST
 	@Path("/")
-	public void newGroup(PackageServerGroup group);
+	public Long newGroup(PackageServerGroup group);
 	
 	@PUT
-	@Path("/{id}")
-	public void edit(@PathParam("id") Long id, PackageServerGroup group);
+	@Path("/")
+	public void edit(PackageServerGroup group);
 	
 	@DELETE
-	@Path("/{name}")
-	public void delete(@PathParam("name") String name);
+	@Path("/{id}")
+	public void delete(@PathParam("id") Long id);
 }

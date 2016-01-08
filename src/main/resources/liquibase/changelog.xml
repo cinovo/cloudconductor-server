@@ -630,7 +630,7 @@
 				<constraints nullable="false" unique="true" />
 			</column>
 			<column name="primaryserverid" type="bigint">
-				<constraints nullable="true" references="cloudconductor.packageserver(id)" foreignKeyName="fk_psg_ps_primaryserver" deleteCascade="true" />
+				<constraints nullable="true" />
 			</column>
 		</createTable>
 		

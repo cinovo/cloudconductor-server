@@ -1,5 +1,5 @@
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-list-alt fa-fw"></i> Identifier
@@ -10,7 +10,7 @@
 		</div>
 	</div>
 	
-	<div class="col-md-6">
+	<div class="col-md-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-desktop fa-fw"></i> Packageservers
@@ -19,12 +19,14 @@
 				<div class="table-responsive">
 					<table class="table table-striped table-hover">
 						<tbody>
-							<tr ng-repeat="server in controller.data.details | orderBy:'id'" info
-								ng-class="{info: server.id == pack.primaryServer}">
-								<td><i class="fa fa-check fa-fw"
-									ng-if="server.id === pack.primaryServer" )/></td>
-								<td>{{server.description}}</td>
-								<td>{{server.path}}</td>
+							<tr ng-repeat="server in controller.data.packageServers | orderBy:'id'" info
+								ng-class="{info: server.id == controller.data.primaryServer}"
+								ng-dblclick="controller.editServer(server.id)">
+								<td ng-if="server.id === controller.data.primaryServer"><i class="fa fa-check fa-fw" /></td>
+								<td ng-if="server.id !== controller.data.primaryServer" >
+									<input type="radio" name="primaryServer" ng-click="controller.setPrimary(server.id)" ></a>
+								</td>
+								<td>{{server.description}}<br />{{server.path}}</td>
 								<td>
 									<a ng-click="controller.editServer(server.id)"><i class="fa fa-edit fa-fw" /></a>
 								</td>

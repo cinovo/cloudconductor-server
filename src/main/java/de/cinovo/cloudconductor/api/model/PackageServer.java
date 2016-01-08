@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.api.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.cinovo.cloudconductor.server.repo.indexer.RepoIndexerType;
@@ -15,7 +16,7 @@ import de.cinovo.cloudconductor.server.repo.provider.RepoProviderType;
 public class PackageServer {
 	
 	private Long id;
-	private String serverGroup;
+	private Long serverGroup;
 	private String path;
 	private String description;
 	
@@ -40,7 +41,7 @@ public class PackageServer {
 	 * @param indexerType the indexer type
 	 * @param providerType the provider type
 	 */
-	public PackageServer(@JsonProperty("id") Long id, @JsonProperty("serverGroup") String serverGroup, @JsonProperty("path") String path, @JsonProperty("description") String description, @JsonProperty("indexerType") RepoIndexerType indexerType, @JsonProperty("providerType") RepoProviderType providerType) {
+	public PackageServer(@JsonProperty("id") Long id, @JsonProperty("serverGroup") Long serverGroup, @JsonProperty("path") String path, @JsonProperty("description") String description, @JsonProperty("indexerType") RepoIndexerType indexerType, @JsonProperty("providerType") RepoProviderType providerType) {
 		super();
 		this.id = id;
 		this.serverGroup = serverGroup;
@@ -63,7 +64,8 @@ public class PackageServer {
 	 * @param accessKeyId the access key
 	 * @param secretKey the secret key
 	 */
-	public PackageServer(@JsonProperty("id") Long id, @JsonProperty("serverGroup") String serverGroup, @JsonProperty("path") String path, @JsonProperty("description") String description, @JsonProperty("indexerType") RepoIndexerType indexerType, @JsonProperty("providerType") RepoProviderType providerType, @JsonProperty("basePath") String basePath, @JsonProperty("bucketName") String bucketName, @JsonProperty("awsRegion") String awsRegion, @JsonProperty("accessKeyId") String accessKeyId, @JsonProperty("secretKey") String secretKey) {
+	@JsonCreator
+	public PackageServer(@JsonProperty("id") Long id, @JsonProperty("serverGroup") Long serverGroup, @JsonProperty("path") String path, @JsonProperty("description") String description, @JsonProperty("indexerType") RepoIndexerType indexerType, @JsonProperty("providerType") RepoProviderType providerType, @JsonProperty("basePath") String basePath, @JsonProperty("bucketName") String bucketName, @JsonProperty("awsRegion") String awsRegion, @JsonProperty("accessKeyId") String accessKeyId, @JsonProperty("secretKey") String secretKey) {
 		super();
 		this.id = id;
 		this.serverGroup = serverGroup;
@@ -95,14 +97,14 @@ public class PackageServer {
 	/**
 	 * @return the serverGroup
 	 */
-	public String getServerGroup() {
+	public Long getServerGroup() {
 		return this.serverGroup;
 	}
 	
 	/**
 	 * @param serverGroup the serverGroup to set
 	 */
-	public void setServerGroup(String serverGroup) {
+	public void setServerGroup(Long serverGroup) {
 		this.serverGroup = serverGroup;
 	}
 	

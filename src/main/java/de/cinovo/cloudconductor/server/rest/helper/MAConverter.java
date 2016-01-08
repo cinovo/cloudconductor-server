@@ -31,6 +31,7 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.api.model.PackageServer;
 import de.cinovo.cloudconductor.api.model.PackageServerGroup;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SSHKey;
@@ -196,15 +197,19 @@ public class MAConverter {
 		return link;
 	}
 	
+	public static PackageServer fromModel(EPackageServer model) {
+		return new PackageServer(model.getId(), model.getServerGroup().getId(), model.getPath(), model.getDescription(), model.getIndexerType(), model.getProviderType(),
+				model.getBasePath(), model.getBucketName(), model.getAwsRegion(), model.getAccessKeyId(), model.getSecretKey());
+	}
 	/**
 	 * @param model the model object
 	 * @return the api object
 	 */
 	public static PackageServerGroup fromModel(EPackageServerGroup model) {
-		Set<Long> ids = new HashSet<>();
+		Set<PackageServer> packageServers = new HashSet<>();
 		for (EPackageServer ps : model.getPackageServers()) {
-			ids.add(ps.getId());
+			packageServers.add(MAConverter.fromModel(ps));
 		}
-		return new PackageServerGroup(model.getName(), ids, model.getPrimaryServer().getId());
+		return new PackageServerGroup(model.getId(), model.getName(), packageServers, model.getPrimaryServerId());
 	}
 }

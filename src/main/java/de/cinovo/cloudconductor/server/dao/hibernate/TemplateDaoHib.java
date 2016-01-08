@@ -50,14 +50,7 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	
 	@Override
 	public List<ETemplate> findByPackageServer(EPackageServer packageServer) {
-		//TODO write hql querry for this, I'm currently to stupid to write a working one (ps)
-		List<ETemplate> result = new ArrayList<>();
-		for (ETemplate t : this.findList()) {
-			if(t.getPackageServers().contains(packageServer)) {
-				result.add(t);
-			}
-		}
-		return result;
+		return this.findListByQuery("FROM ETemplate t WHERE ? IN elements(t.packageServers)", packageServer);
 	}
 	
 }

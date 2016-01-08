@@ -13,8 +13,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class PackageServerGroup implements INamed {
 	
+	private Long id;
 	private String name;
-	private Set<Long> packageServers;
+	private Set<PackageServer> packageServers;
 	private Long primaryServer;
 	
 	
@@ -23,8 +24,9 @@ public class PackageServerGroup implements INamed {
 	 * @param packageServers the package server ids
 	 * @param primaryServer the primary server id
 	 */
-	public PackageServerGroup(@JsonProperty("name") String name, @JsonProperty("packageServers") Set<Long> packageServers, @JsonProperty("primaryServer") Long primaryServer) {
+	public PackageServerGroup(@JsonProperty("id") Long id, @JsonProperty("name") String name, @JsonProperty("packageServers") Set<PackageServer> packageServers, @JsonProperty("primaryServer") Long primaryServer) {
 		super();
+		this.setId(id);
 		this.name = name;
 		this.packageServers = packageServers;
 		this.primaryServer = primaryServer;
@@ -45,14 +47,14 @@ public class PackageServerGroup implements INamed {
 	/**
 	 * @return the packageServers
 	 */
-	public Set<Long> getPackageServers() {
+	public Set<PackageServer> getPackageServers() {
 		return this.packageServers;
 	}
 	
 	/**
 	 * @param packageServers the packageServers to set
 	 */
-	public void setPackageServers(Set<Long> packageServers) {
+	public void setPackageServers(Set<PackageServer> packageServers) {
 		this.packageServers = packageServers;
 	}
 	
@@ -68,6 +70,14 @@ public class PackageServerGroup implements INamed {
 	 */
 	public void setPrimaryServer(Long primaryServer) {
 		this.primaryServer = primaryServer;
+	}
+
+	public Long getId() {
+		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

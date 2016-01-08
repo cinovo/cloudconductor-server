@@ -5,30 +5,30 @@
 		$routeProvider.when('/packageservers', {
 			templateUrl : 'app/packageservers/overview.html',
 			controller : 'PackageserversController',
-			controllerAs : 'packageservers',
+			controllerAs : 'controller',
 			activeNav : 'packageservers',
 			siteTitle : 'Packageservers'
-		}).when('/packageservers/edit/:name', {
-			templateUrl : 'app/packageservers/edit.html',
+		}).when('/packageservers/edit/:groupId', {
+			templateUrl : 'app/packageservers/psg-mod.html',
 			controller : 'PSGModController',
 			controllerAs : 'controller',
 			activeNav : 'packageservers',
 			siteTitle : 'Packageserver'
 		}).when('/packageservers/new', {
-			templateUrl : 'app/packageservers/edit.html',
-			controller : 'PSGNewController',
+			templateUrl : 'app/packageservers/psg-mod.html',
+			controller : 'PSGModController',
 			controllerAs : 'controller',
 			activeNav : 'packageservers',
 			siteTitle : 'Packageserver'
-		}).when('/packageservers/:name/edit/:server', {
-			templateUrl : 'app/packageservers/edit.html',
+		}).when('/packageservers/:groupId/edit/:serverId', {
+			templateUrl : 'app/packageservers/ps-mod.html',
 			controller : 'PSModController',
 			controllerAs : 'controller',
 			activeNav : 'packageservers',
 			siteTitle : 'Packageservers'
-		}).when('/packageservers/:name/new', {
-			templateUrl : 'app/packageservers/edit.html',
-			controller : 'PSNewController',
+		}).when('/packageservers/:groupId/new', {
+			templateUrl : 'app/packageservers/ps-mod.html',
+			controller : 'PSModController',
 			controllerAs : 'controller',
 			activeNav : 'packageservers',
 			siteTitle : 'Packageserver'

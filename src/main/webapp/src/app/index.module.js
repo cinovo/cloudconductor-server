@@ -1,6 +1,6 @@
 'use strict';
 
-var ccModule = angular.module('cloudconductor', ['ngCookies', 'ngRoute', 'ui.bootstrap', 'toggle-switch', 'angular-confirm']);
+var ccModule = angular.module('cloudconductor', ['ngCookies', 'ngRoute', 'ui.bootstrap', 'toggle-switch', 'angular-confirm', 'cloudconductor-client']);
 
 ccModule.controller('AppCtrl', ['$scope', '$rootScope', '$route', '$http', function(scope, rootScope, route, http) {
 	scope.activeNav = 'home';
