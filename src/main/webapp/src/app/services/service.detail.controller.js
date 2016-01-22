@@ -1,23 +1,26 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('cloudconductor').controller(
-		'ServiceDetailController',
-		[
-				'$scope',
-				'$rootScope',
-				'$http',
-				'$routeParams',
-				function(scope, rootScope, http, routeParams) {
-					var that = this;
-
-					http.get('/api/services/' + routeParams.serviceName).then(
-							function(res) {
-								that.service = res.data;
-								rootScope.siteTitle = 'Service Detail - ' + that.service.name;
-							}, function(err) {
-								console.log(err);
-							});
-					this.save = function() {
-						console.log('Save', that.service);
-					}
-				} ]);
+    angular.module('cloudconductor').controller('ServiceDetailController', ServiceDetailController);
+    
+    /* @ngInject */
+    function ServiceDetailController(serviceClient, $rootScope, $routeParams) {
+    	var vm = this;
+    	vm.load = load;
+    	vm.save = save;
+    	
+    	load();
+    	
+    	function load() {
+    		serviceClient.getServiceDetails($routeParams.serviceName).then(function(res) {
+				vm.service = res.data;
+				$rootScope.siteTitle = 'Service Detail - ' + vm.service.name;
+				console.log(vm.service)
+    		});
+    	}
+    	
+    	function save() {
+			console.log('Save', vm.service);
+    	}
+    }
+})();

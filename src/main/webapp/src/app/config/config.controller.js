@@ -1,43 +1,45 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('cloudconductor')
-.controller('ConfigController', [ '$scope', '$http', '$template', 'alertService', '$log', function(scope, http, template, alert, log) {
-    var ctrl = this;
+	angular.module('cloudconductor').controller('ConfigController', ConfigController);
+	
+	/* @ngInject */
+	function ConfigController($scope, $http, alertService, $routeParams, configClient) {
+	    var vm = this;
+	    vm.load = load;
+	    vm.saveChanges = saveChanges;
+	    vm.addKey = addKey;
+	    vm.deleteKey = deleteKey;
+	    	
+	    load();
+	    	
+	    function load() {
+	    	configClient.getConfig($routeParams.templateid).then(function(res) {
+	    		console.log(res);
+	    		vm.configValues = res.data;
+	        });
+	    }
+	
+	
+	    function saveChanges() {
+	        // format to JSON
+	    	// http.put('/api/config/' + ctrl.templateName, ctrl.configValues).then(function(res) {
+	    	configClient.saveChanges('GLOBAL', vm.configValues).then(function(res) {
+	    		alertService.success('The configuration settings for template '+ $routeParams.templateid +' has been saved successfully.');
+	        }, function(err) {
+	        	alertService.error('Something went wrong when trying to save the configuration for template '+ $routeParams.templateid +'!');
+	        });
+	    }
+	
+	    // add a key to the variable array. Use saveChanges() to save the changes
+	   function addKey(key, value) {
+	    	vm.configValues[key] = value;
+	    }
+	
+	    // delete from settings array; Use saveChanges() to save the changes
+	   function deleteKey( key ) {
+	        delete vm.configValues[key];
+	   }
+	}
 
-    log.info(template.name);
-    ctrl.templateName = template;
-
-    ctrl.load = function() {
-        http.get('/api/config/123').then(function(res) {
-        //  console.log(res);
-            ctrl.configValues = angular.fromJson(res.data);
-        }, function(err) {
-            console.log(err);
-        });
-    };
-
-    ctrl.load();
-
-    ctrl.saveChanges = function () {
-        log.info(ctrl.configValues);
-        // format to JSON
-//      http.put('/api/config/' + ctrl.templateName, ctrl.configValues).then(function(res) {
-        http.put('/api/config/GLOBAL', ctrl.configValues).then(function(res) {
-            alert.success('The configuration settings for template '+ templateId +' has been saved successfully.');
-        }, function(err) {
-            alert.error('Something went wrong when trying to save the configuration for template '+ templateId +'!');
-            console.log(err);
-        });
-    }
-
-    // add a key to the variable array. Use saveChanges() to save the changes
-    ctrl.addKey = function(key, value) {
-        ctrl.configValues[key] = value;
-    }
-
-    // delete from settings array; Use saveChanges() to save the changes
-    ctrl.deleteKey = function ( key ) {
-        log.info(key);
-        delete ctrl.configValues[key]
-    };
-}]);
+})();

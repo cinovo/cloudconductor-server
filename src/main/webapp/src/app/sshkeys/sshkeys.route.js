@@ -1,12 +1,17 @@
-'use strict';
+(function() {
+	'use strict';
 
-angular.module('cloudconductor').config(function ($routeProvider) {
-	$routeProvider
-	.when('/sshkeys', {
-		templateUrl : 'app/sshkeys/sshkeys.html',
-		controller : 'SSHKeysController',
-		controllerAs : 'sshkeys',
-		activeNav: 'sshkeys',
-		siteTitle: 'SSHKeys'
-	});
-});
+	angular.module('cloudconductor').config(SSHKEYRouteConfig);
+			
+	function SSHKEYRouteConfig($routeProvider) {
+		$routeProvider
+		.when('/sshkeys', {
+			templateUrl : 'app/sshkeys/sshkeys.html',
+			controller : 'SSHKeysController',
+			controllerAs : 'sshkeys',
+			activeNav: 'sshkeys',
+			siteTitle: 'SSHKeys'
+		});
+	}
+
+})();

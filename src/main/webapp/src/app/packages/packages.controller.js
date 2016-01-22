@@ -1,11 +1,19 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('cloudconductor')
-.controller('PackagesController', [ '$scope', '$http', function(scope, http) {
-	var ctrl = this;
-	http.get('/api/packages').then(function(res) {
-		ctrl.list = res.data;
-	}, function(err) {
-		console.log(err);
-	});
-}]);
+angular.module('cloudconductor').controller('PackagesController', PackagesController);
+
+	function PackagesController(packageClient) {
+		var vm = this;
+		vm.load = load;
+		
+		load();
+	    
+	    function load() {
+	    	packageClient.getPackages().then(function (res) {
+	    		vm.list = res.data;
+		   });
+	    }
+	}
+
+})();

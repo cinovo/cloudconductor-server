@@ -1,7 +1,9 @@
 (function() {
 	'use strict';
 
-	angular.module('cloudconductor').config(function($routeProvider) {
+	angular.module('cloudconductor').config(PackageServerRouteConfig);
+
+	function PackageServerRouteConfig($routeProvider) {
 		$routeProvider.when('/packageservers', {
 			templateUrl : 'app/packageservers/overview.html',
 			controller : 'PackageserversController',
@@ -33,6 +35,6 @@
 			activeNav : 'packageservers',
 			siteTitle : 'Packageserver'
 		});
-	});
+	}
 
-})()
+})();

@@ -4,7 +4,7 @@
 	angular.module('cloudconductor').controller('PSGModController', PSGModController);
 
 	/* @ngInject */
-	function PSGModController($rootScope, $location, alertService, $routeParams, $http, packageserverService) {
+	function PSGModController($rootScope, $location, alertService, $routeParams, $http, packageserverClient) {
 		// vm stands for ViewModel
 		var vm = this;
 		vm.data = {};
@@ -23,7 +23,7 @@
 		}
 		
 		function load() {
-        	packageserverService.getGroup($routeParams.groupId).then(function (res) {
+			packageserverClient.getGroup($routeParams.groupId).then(function (res) {
         		vm.data = res.data;
         		console.log(res.data)
     	   });
@@ -46,9 +46,9 @@
 			
 			var http;
 			if($routeParams.groupId) {
-				http = packageserverService.editGroup(vm.data);
+				http = packageserverClient.editGroup(vm.data);
 			}else {
-				http = packageserverService.newGroup(vm.data);
+				http = packageserverClient.newGroup(vm.data);
 			}
 			http.then(function (res) {
 				if(modServer && !vm.data.id) {
@@ -74,7 +74,7 @@
 		}
 		
 		function deleteServer(serverId) {
-			packageserverService.deleteServer(serverId).then(function() {
+			packageserverClient.deleteServer(serverId).then(function() {
 				vm.data.packageServers.forEach(function(item, index, object) {
 					if(item.id === serverId) {
 						object.splice(index,1);

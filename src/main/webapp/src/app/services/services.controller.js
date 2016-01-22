@@ -1,11 +1,19 @@
-'use strict';
-
-angular.module('cloudconductor').controller('ServicesController',
-		[ '$scope', '$http', function(scope, http) {
-			var that = this;
-			http.get('/api/services').then(function(res) {
-				that.list = res.data;
-			}, function(err) {
-				console.log(err);
-			});
-		} ]);
+(function() {
+	'use strict';
+    
+    angular.module('cloudconductor').controller('ServicesController',ServicesController);
+    
+    function ServicesController(serviceClient) {
+    	var vm = this;
+    	vm.load = load;
+    	
+    	load();
+    	
+    	function load() {
+    		serviceClient.getServices().then(function(res) {
+				vm.list = res.data;
+    		});
+    	}
+    }
+    
+})();

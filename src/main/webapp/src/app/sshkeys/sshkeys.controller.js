@@ -1,29 +1,38 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('cloudconductor')
-	.controller('SSHKeysController', [ '$scope', '$http', function(scope, http) {
-		var ctrl = this;
-		http.get('/api/templates').then(function(res) {
-			ctrl.templates = res.data;
-		}, function(err) {
-			console.log(err);
-		});
+    angular.module('cloudconductor').controller('SSHKeysController', SSHKeysController);
+
+    /* @ngInject */
+    function SSHKeysController($scope, alertService, sshKeysClient, templateClient) {
+		var vm = this;
+		vm.selectedTemplate = '';
 		
-		scope.selectedTemplate = '';
-		scope.$watch('selectedTemplate', function(){
-			if(scope.selectedTemplate){
-			http.get('/api/templates/'+ scope.selectedTemplate.name +'/sshkeys').then(function(res) {
-				ctrl.list = res.data;
-			}, function(err) {
-				console.log(err);
-			});
+		vm.load = load;
+		vm.loadTemplates = loadTemplates;
+		
+		load();
+		loadTemplates();
+		
+		$scope.$watch(function(){return vm.selectedTemplate}, load);
+		
+		function load() {
+			if(vm.selectedTemplate){
+				sshKeysClient.getKeysTemplate(vm.selectedTemplate.name).then(function(res) {
+					vm.list = res.data;
+				});
 			} else {
-				http.get('/api/sshkeys').then(function(res) {
-					ctrl.list = res.data;
-				}, function(err) {
-					console.log(err);
+				sshKeysClient.getKeys().then(function(res) {
+					vm.list = res.data;
 				});
 			}
-			
-		});
-	}]);
+		}
+		
+		function loadTemplates() {
+			templateClient.getTemplates().then(function(res) {
+				vm.templates = res.data; 
+			});
+		}
+	}
+
+})();

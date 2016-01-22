@@ -4,7 +4,7 @@
 	angular.module('cloudconductor').controller('PSModController', PSModController);
 
 	/* @ngInject */
-	function PSModController($rootScope, $location, alertService, $routeParams, $http, packageserverService) {
+	function PSModController($rootScope, $location, alertService, $routeParams, $http, packageserverClient) {
 		var vm = this;
 		vm.data = {};
 		vm.addData = {};
@@ -22,10 +22,10 @@
 		}
 		
 		function load() {
-        	packageserverService.getServer($routeParams.serverId).then(function (res) {
+			packageserverClient.getServer($routeParams.serverId).then(function (res) {
         		vm.data = res.data;
         	});
-        	packageserverService.getGroup($routeParams.groupId).then(function(res) {
+			packageserverClient.getGroup($routeParams.groupId).then(function(res) {
     			vm.addData.serverGroupName = res.data.name;
     		});
         }
@@ -36,7 +36,7 @@
 				providerType: 'NONE',
 				serverGroup: $routeParams.groupId
 			}
-			packageserverService.getGroup($routeParams.groupId).then(function(res) {
+			packageserverClient.getGroup($routeParams.groupId).then(function(res) {
     			vm.addData.serverGroupName = res.data.name;
     		});
 		}
@@ -46,9 +46,9 @@
 			
 			var http;
 			if($routeParams.serverId) {
-				http = packageserverService.editServer(vm.data);
+				http = packageserverClient.editServer(vm.data);
 			}else {
-				http = packageserverService.newServer(vm.data);
+				http = packageserverClient.newServer(vm.data);
 			}
 			
 			http.then(function (res) {

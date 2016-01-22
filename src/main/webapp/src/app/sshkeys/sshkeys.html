@@ -1,6 +1,7 @@
-<select ng-options="template.name for template in sshkeys.templates" ng-model="selectedTemplate">
+<select ng-options="template.name for template in sshkeys.templates" ng-model="sshkeys.selectedTemplate">
 	<option value="">All Keys</option>
 </select>
+
 <div class="dataTable_wrapper">
 	<table class="table table-striped table-bordered table-hover" id="dataTables-example">
 		<thead>

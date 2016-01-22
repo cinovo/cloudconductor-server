@@ -1,9 +1,9 @@
 (function() {
 	'use strict';
 
-	angular.module('cloudconductor').config(routeConfig);
+	angular.module('cloudconductor').config(ServiceRouteConfig);
 
-	function routeConfig($routeProvider) {
+	function ServiceRouteConfig($routeProvider) {
 		$routeProvider.when('/services', {
 			templateUrl : 'app/services/services.html',
 			controller : 'ServicesController',
