@@ -27,7 +27,7 @@ function browserSyncInit(baseDir, browser) {
   };
 
   // Proxy calls to /api to the local cloudconductor server
-  server.middleware = proxyMiddleware('/api', {target: 'http://localhost:8099'});
+  server.middleware = proxyMiddleware('/api', {target: 'http://localhost:8090'});
 
   browserSync.instance = browserSync.init({
     startPath: '/',
