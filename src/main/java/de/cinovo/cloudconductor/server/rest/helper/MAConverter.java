@@ -56,7 +56,7 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
  * <br>
  *
  * @author psigloch
- * 		
+ * 
  */
 public class MAConverter {
 	
@@ -112,7 +112,7 @@ public class MAConverter {
 	 * @return the api object
 	 */
 	public static Service fromModel(EService model) {
-		return new Service(model.getName(), model.getDescription(), model.getInitScript(), ServiceState.STOPPED, MAConverter.fromModel(model.getPackages()));
+		return new Service(model.getId(), model.getName(), model.getDescription(), model.getInitScript(), ServiceState.STOPPED, MAConverter.fromModel(model.getPackages()));
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class MAConverter {
 	 * @return the api object
 	 */
 	public static Service fromModel(EServiceState model) {
-		return new Service(model.getService().getName(), model.getService().getDescription(), model.getService().getInitScript(), model.getState(), MAConverter.fromModel(model.getService().getPackages()));
+		return new Service(model.getService().getId(), model.getService().getName(), model.getService().getDescription(), model.getService().getInitScript(), model.getState(), MAConverter.fromModel(model.getService().getPackages()));
 	}
 	
 	/**
@@ -197,10 +197,14 @@ public class MAConverter {
 		return link;
 	}
 	
+	/**
+	 * @param model the model object
+	 * @return the api object
+	 */
 	public static PackageServer fromModel(EPackageServer model) {
-		return new PackageServer(model.getId(), model.getServerGroup().getId(), model.getPath(), model.getDescription(), model.getIndexerType(), model.getProviderType(),
-				model.getBasePath(), model.getBucketName(), model.getAwsRegion(), model.getAccessKeyId(), model.getSecretKey());
+		return new PackageServer(model.getId(), model.getServerGroup().getId(), model.getPath(), model.getDescription(), model.getIndexerType(), model.getProviderType(), model.getBasePath(), model.getBucketName(), model.getAwsRegion(), model.getAccessKeyId(), model.getSecretKey());
 	}
+	
 	/**
 	 * @param model the model object
 	 * @return the api object

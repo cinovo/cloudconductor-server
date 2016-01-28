@@ -20,6 +20,7 @@ public class PackageServerGroup implements INamed {
 	
 	
 	/**
+	 * @param id the id
 	 * @param name the name
 	 * @param packageServers the package server ids
 	 * @param primaryServer the primary server id
@@ -71,11 +72,17 @@ public class PackageServerGroup implements INamed {
 	public void setPrimaryServer(Long primaryServer) {
 		this.primaryServer = primaryServer;
 	}
-
+	
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return this.id;
 	}
-
+	
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}

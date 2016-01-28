@@ -45,7 +45,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class ServiceImpl extends ImplHelper implements IService {
@@ -74,8 +74,8 @@ public class ServiceImpl extends ImplHelper implements IService {
 	
 	@Override
 	@Transactional
-	public void save(String name, Service apiObject) {
-		this.assertName(name, apiObject);
+	public void save(Service apiObject) {
+		RESTAssert.assertNotNull(apiObject);
 		EService model = this.amc.toModel(apiObject);
 		if ((apiObject.getPackages() != null) && !apiObject.getPackages().isEmpty()) {
 			model.setPackages(this.findByName(this.dpkg, apiObject.getPackages()));
@@ -112,28 +112,6 @@ public class ServiceImpl extends ImplHelper implements IService {
 			result.add(MAConverter.fromModel(p));
 		}
 		return result.toArray(new Package[result.size()]);
-	}
-	
-	@Override
-	@Transactional
-	public void addPackage(String name, String pkg) {
-		RESTAssert.assertNotEmpty(name);
-		RESTAssert.assertNotEmpty(pkg);
-		EService service = this.findByName(this.dservice, name);
-		EPackage p = this.findByName(this.dpkg, pkg);
-		service.getPackages().add(p);
-		this.dservice.save(service);
-	}
-	
-	@Override
-	@Transactional
-	public void removePackage(String name, String pkg) {
-		RESTAssert.assertNotEmpty(name);
-		RESTAssert.assertNotNull(pkg);
-		EService service = this.findByName(this.dservice, name);
-		EPackage p = this.findByName(this.dpkg, pkg);
-		service.getPackages().remove(p);
-		this.dservice.save(service);
 	}
 	
 	@Override

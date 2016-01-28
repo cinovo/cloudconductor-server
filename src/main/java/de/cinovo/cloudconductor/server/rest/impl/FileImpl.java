@@ -49,7 +49,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  *
  * @author psigloch
- *		
+ *
  */
 @JaxRsComponent
 public class FileImpl extends ImplHelper implements IFile {
@@ -80,8 +80,8 @@ public class FileImpl extends ImplHelper implements IFile {
 	
 	@Override
 	@Transactional
-	public void save(String name, ConfigFile configFile) {
-		this.assertName(name, configFile);
+	public void save(ConfigFile configFile) {
+		RESTAssert.assertNotNull(configFile);
 		EFile cf = this.amc.toModel(configFile);
 		
 		if ((configFile.getPkg() != null) && !configFile.getPkg().isEmpty()) {

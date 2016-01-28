@@ -19,16 +19,17 @@ package de.cinovo.cloudconductor.api.interfaces;
  * limitations under the License.
  * #L%
  */
-import javax.ws.rs.DELETE;
+
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.api.model.PackageServerGroup;
+import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.api.model.Service;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -37,45 +38,25 @@ import de.cinovo.cloudconductor.api.model.PackageServerGroup;
  * @author psigloch
  * 
  */
-@Path("/packageservergroup")
-public interface IPackageServerGroup {
+@Path("services")
+public interface IService extends IDefaultApi<Service> {
 	
 	/**
-	 * @return set of api objects
+	 * Get the packages associated with a service
+	 * 
+	 * @param service the service name
+	 * @return collection of packages associated with the service
 	 */
 	@GET
-	@Path("/")
+	@Path("/{service}/packages")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup[] get();
+	public Package[] getPackages(@PathParam(IRestPath.VAR_SERVICE) String service);
 	
 	/**
-	 * @param id the {@link PackageServerGroup} id
-	 * @return the {@link PackageServerGroup}
-	 */
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup get(@PathParam("id") Long id);
-	
-	/**
-	 * @param group the {@link PackageServerGroup}
-	 * @return the new id
-	 */
-	@POST
-	@Path("/")
-	public Long newGroup(PackageServerGroup group);
-	
-	/**
-	 * @param group the {@link PackageServerGroup}
+	 * @param service the service name
+	 * @param host the host name
 	 */
 	@PUT
-	@Path("/")
-	public void edit(PackageServerGroup group);
-	
-	/**
-	 * @param id the id of the the {@link PackageServerGroup} to delete
-	 */
-	@DELETE
-	@Path("/{id}")
-	public void delete(@PathParam("id") Long id);
+	@Path("/{service}/approvestarted/{host}")
+	public void approveServiceStarted(@PathParam(IRestPath.VAR_SERVICE) String service, @PathParam(IRestPath.VAR_HOST) String host);
 }

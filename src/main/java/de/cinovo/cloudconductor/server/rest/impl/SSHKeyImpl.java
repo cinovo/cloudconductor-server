@@ -37,7 +37,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class SSHKeyImpl extends ImplHelper implements ISSHKey {
@@ -60,8 +60,8 @@ public class SSHKeyImpl extends ImplHelper implements ISSHKey {
 	
 	@Override
 	@Transactional
-	public void save(String name, SSHKey sshKey) {
-		this.assertName(name, sshKey);
+	public void save(SSHKey sshKey) {
+		RESTAssert.assertNotNull(sshKey);
 		ESSHKey key = this.amc.toModel(sshKey);
 		this.dsshkey.save(key);
 	}

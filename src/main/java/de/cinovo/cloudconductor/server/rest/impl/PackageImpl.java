@@ -70,8 +70,8 @@ public class PackageImpl extends ImplHelper implements IPackage {
 	
 	@Override
 	@Transactional
-	public void save(String name, Package apiObject) {
-		this.assertName(name, apiObject);
+	public void save(Package apiObject) {
+		RESTAssert.assertNotNull(apiObject);
 		EPackage m = this.amc.toModel(apiObject);
 		if ((apiObject.getRpms() != null) && !apiObject.getRpms().isEmpty()) {
 			Set<EPackageVersion> found = new HashSet<>();

@@ -19,16 +19,18 @@ package de.cinovo.cloudconductor.api.interfaces;
  * limitations under the License.
  * #L%
  */
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.api.model.PackageServerGroup;
+import de.cinovo.cloudconductor.api.model.INamed;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -36,9 +38,9 @@ import de.cinovo.cloudconductor.api.model.PackageServerGroup;
  * 
  * @author psigloch
  * 
+ * @param <T> the api object
  */
-@Path("/packageservergroup")
-public interface IPackageServerGroup {
+public interface IDefaultApi<T extends INamed> {
 	
 	/**
 	 * @return set of api objects
@@ -46,36 +48,30 @@ public interface IPackageServerGroup {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup[] get();
+	public T[] get();
 	
 	/**
-	 * @param id the {@link PackageServerGroup} id
-	 * @return the {@link PackageServerGroup}
-	 */
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup get(@PathParam("id") Long id);
-	
-	/**
-	 * @param group the {@link PackageServerGroup}
-	 * @return the new id
-	 */
-	@POST
-	@Path("/")
-	public Long newGroup(PackageServerGroup group);
-	
-	/**
-	 * @param group the {@link PackageServerGroup}
+	 * @param apiObject the api object
 	 */
 	@PUT
 	@Path("/")
-	public void edit(PackageServerGroup group);
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public void save(T apiObject);
 	
 	/**
-	 * @param id the id of the the {@link PackageServerGroup} to delete
+	 * @param name the name of the api object
+	 * @return the api object
+	 */
+	@GET
+	@Path("/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public T get(@PathParam(IRestPath.VAR_NAME) String name);
+	
+	/**
+	 * @param name the name of the api object
 	 */
 	@DELETE
-	@Path("/{id}")
-	public void delete(@PathParam("id") Long id);
+	@Path("/{name}")
+	public void delete(@PathParam(IRestPath.VAR_NAME) String name);
 }

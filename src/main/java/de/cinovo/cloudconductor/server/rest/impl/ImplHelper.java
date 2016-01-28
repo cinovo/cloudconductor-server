@@ -26,17 +26,15 @@ import java.util.Set;
 
 import javax.ws.rs.NotFoundException;
 
-import de.cinovo.cloudconductor.api.model.INamed;
 import de.cinovo.cloudconductor.server.dao.IFindNamed;
 import de.taimos.dvalin.jpa.IEntity;
-import de.taimos.restutils.RESTAssert;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 public abstract class ImplHelper {
 	
@@ -48,11 +46,6 @@ public abstract class ImplHelper {
 		if (model == null) {
 			throw new NotFoundException();
 		}
-	}
-	
-	protected final void assertName(String name, INamed object) {
-		RESTAssert.assertNotNull(object);
-		RESTAssert.assertEquals(name, object.getName());
 	}
 	
 	protected final <T extends IEntity<?>> T findByName(IFindNamed<T> dao, String name) {

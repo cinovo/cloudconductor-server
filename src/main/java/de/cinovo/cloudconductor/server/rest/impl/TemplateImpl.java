@@ -97,8 +97,8 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 	
 	@Override
 	@Transactional
-	public void save(String name, Template apiObject) {
-		this.assertName(name, apiObject);
+	public void save(Template apiObject) {
+		RESTAssert.assertNotNull(apiObject);
 		ETemplate model = this.amc.toModel(apiObject);
 		
 		if ((apiObject.getPackages() != null) && !apiObject.getPackages().isEmpty()) {

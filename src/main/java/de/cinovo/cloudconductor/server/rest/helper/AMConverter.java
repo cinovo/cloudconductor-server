@@ -202,11 +202,11 @@ public class AMConverter {
 	 * @return the model object
 	 */
 	public EService toModel(Service api) {
-		EService model = this.dservice.findByName(api.getName());
+		EService model = api.getId() == null ? null : this.dservice.findById(api.getId());
 		if (model == null) {
 			model = new EService();
-			model.setName(api.getName());
 		}
+		model.setName(api.getName());
 		model.setDescription(api.getDescription());
 		model.setInitScript(api.getInitScript());
 		return model;
@@ -225,5 +225,5 @@ public class AMConverter {
 		model.setKeycontent(api.getKey());
 		return model;
 	}
-
+	
 }

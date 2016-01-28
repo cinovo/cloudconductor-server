@@ -52,7 +52,7 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class HostImpl extends ImplHelper implements IHost {
@@ -82,8 +82,8 @@ public class HostImpl extends ImplHelper implements IHost {
 	
 	@Override
 	@Transactional
-	public void save(String name, Host apiObject) {
-		this.assertName(name, apiObject);
+	public void save(Host apiObject) {
+		RESTAssert.assertNotNull(apiObject);
 		EHost model = this.amc.toModel(apiObject);
 		
 		if ((apiObject.getServices() != null) && !apiObject.getServices().isEmpty()) {
@@ -137,7 +137,6 @@ public class HostImpl extends ImplHelper implements IHost {
 	@Transactional
 	public void setService(String host, String name, Service service) {
 		RESTAssert.assertNotEmpty(host);
-		this.assertName(name, service);
 		EHost model = this.findByName(this.dhost, host);
 		this.assertModelFound(model);
 		

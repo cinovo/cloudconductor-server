@@ -59,10 +59,17 @@ public interface IPackageServer {
 	@Path("/{id}")
 	public void delete(@PathParam("id") Long id);
 	
+	/**
+	 * @param ps the package server
+	 * @return the new id
+	 */
 	@POST
 	@Path("/")
 	public Long newServer(PackageServer ps);
 	
+	/**
+	 * @param ps the package server
+	 */
 	@PUT
 	@Path("/")
 	public void editServer(PackageServer ps);

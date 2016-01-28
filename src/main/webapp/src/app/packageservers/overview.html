@@ -31,13 +31,13 @@
 						<tbody>
 							<tr ng-repeat="server in pack.packageServers | orderBy:'id'" info
 								ng-class="{info: server.id == pack.primaryServer}">
-								<td><i class="fa fa-check fa-fw"
+								<td width="30px"><i class="fa fa-check fa-fw"
 									ng-if="server.id === pack.primaryServer" )/></td>
 								<td>{{server.description}}</td>
 								<td>{{server.path}}</td>
-								<td><a href="#/packageservers/{{pack.id}}/edit/{{server.id}}"><i
+								<td width="15px"><a href="#/packageservers/{{pack.id}}/edit/{{server.id}}"><i
 										class="fa fa-edit fa-fw" /></a></td>
-								<td><a ng-click="controller.deleteServer(server.id)"
+								<td width="15px"><a ng-click="controller.deleteServer(server.id)"
 									confirm="Are you sure you want to delete the following server: {{server.description}}?"
 									confirm-title="Please verify!" confirm-ok="Yes"
 									confirm-cancel="No"> <i class="fa fa-bitbucket fa-fw" /></a>

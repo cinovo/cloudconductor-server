@@ -58,7 +58,7 @@ public class ServiceTest extends APITest {
 			Assert.assertEquals("nginx", svc.getDescription());
 		}
 		{
-			Service s = new Service("svc1", "svc1", "svc1", ServiceState.STOPPED, null);
+			Service s = new Service(1L, "svc1", "svc1", "svc1", ServiceState.STOPPED, null);
 			h.save(s);
 			Set<Service> set = h.get();
 			Assert.assertEquals(4, set.size());
@@ -66,7 +66,7 @@ public class ServiceTest extends APITest {
 			Assert.assertEquals("svc1", svc.getName());
 		}
 		{
-			Service s = new Service("svc2", "svc2", "svc2", ServiceState.STOPPED, Sets.newHashSet("jdk"));
+			Service s = new Service(2L, "svc2", "svc2", "svc2", ServiceState.STOPPED, Sets.newHashSet("jdk"));
 			h.save(s);
 			Set<Service> set = h.get();
 			Assert.assertEquals(5, set.size());
