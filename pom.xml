@@ -66,7 +66,7 @@
 	<!-- Shared version number properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dvalin.version>1.0</dvalin.version>
+		<dvalin.version>1.1</dvalin.version>
 	</properties>
 
 	<dependencies>
