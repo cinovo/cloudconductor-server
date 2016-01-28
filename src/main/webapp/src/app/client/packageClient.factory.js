@@ -9,6 +9,12 @@
 		return {
 			getPackages: function() {
 				return $http.get(ccClientConfig.getBaseUrl() + '/api/packages').catch(httpErrors.error);
+			},
+			getPackageDetails: function(packageName) {
+				return $http.get(ccClientConfig.getBaseUrl() + '/api/packages/' + packageName).catch(httpErrors.error);
+			},
+			deletePackage: function(packageName) {
+				return $http.delete(ccClientConfig.getBaseUrl() + '/api/packages/' + packageName).catch(httpErrors.error);
 			}
 		};
 	}

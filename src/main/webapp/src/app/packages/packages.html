@@ -1,3 +1,32 @@
-<div ng-repeat="pack in packages.list">
-{{pack.name}} - {{pack.description}}
+<div class="row">
+	<div class="col-md-4">
+		<div class="form-group input-group">
+			<span class="input-group-addon">Search </span> <input type="text"
+				class="form-control" ng-model="query">
+		</div>
+	</div>
+</div>
+<div class="table-responsive">
+	<table class="table table-striped table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>Package Name</th>
+				<th width="15px"></th>
+				<th width="15px"></th>
+				<th width="15px"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="package in controller.list | filter:query | orderBy:'name'">
+				<td><a href="#/packages/{{package.name}}">{{package.name}}</a></td>
+				<td><a href="#/service/{{package.name}}?modType=1"><i class="fa fa-flask fa-fw" /></a></td>
+				<td><a href="#/packages/{{package.name}}"><i class="fa fa-edit fa-fw" /></a></td>
+				<td><a ng-click="controller.deletePackage(package.name)"
+						confirm="Are you sure you want to delete the following package: {{package.name}}?"
+						confirm-title="Please verify!" confirm-ok="Yes"
+						confirm-cancel="No"><i class="fa fa-bitbucket fa-fw" /></a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

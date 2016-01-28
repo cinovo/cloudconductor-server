@@ -11,6 +11,11 @@
     	vm.deleteService = deleteService;
     	vm.autoFill = autoFill;
     	
+    	if ($routeParams.modType == '1' && $routeParams.detail) { vm.redirectTo = '/packages/'+$routeParams.detail}
+    	else if ($routeParams.modType == '1') {vm.redirectTo = '/packages/'}
+		else  { vm.redirectTo = '/services/' }
+    	
+    	
     	vm.load();
     	
     	function load() {
@@ -79,7 +84,7 @@
     	function deleteService() {
     		serviceClient.deleteService(vm.service.name).then(function(res) {
     			alertService.success("The service has been deleted.");
-    			$location.path("/services");
+    			$location.path(vm.redirectTo);
     		});
     	}
     	
