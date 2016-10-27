@@ -14,22 +14,22 @@ import de.cinovo.cloudconductor.server.util.IServerTasks;
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
- *
+ * 
  */
 @Component
 public class ServerTaskHelper {
-
+	
 	@Autowired
 	private IServerOptionsDAO optionsDao;
-
+	
 	@Autowired
 	private CleanUpTask cleanupTask;
 	@Autowired
 	private IndexTask indexTask;
-
-
+	
+	
 	/**
 	 *
 	 */
@@ -38,7 +38,7 @@ public class ServerTaskHelper {
 		this.createCleanUpTask(options);
 		this.createIndexTask(options);
 	}
-
+	
 	private void createCleanUpTask(EServerOptions options) {
 		SchedulerService.instance.register(IServerTasks.CLEAN_UP, this.cleanupTask, options.getHostCleanUpTimer(), options.getHostCleanUpTimerUnit());
 	}
@@ -48,7 +48,7 @@ public class ServerTaskHelper {
 			SchedulerService.instance.register(IServerTasks.INDEXER, this.indexTask, options.getIndexScanTimer(), options.getIndexScanTimerUnit());
 		}
 	}
-
+	
 	/**
 	 * update the tasks
 	 */
@@ -83,7 +83,7 @@ public class ServerTaskHelper {
 			SchedulerService.instance.resetTask(IServerTasks.CLEAN_UP, options.getHostCleanUpTimer(), options.getHostCleanUpTimerUnit());
 		}
 	}
-
+	
 	private void updateIndexTask(EServerOptions oldOptions, EServerOptions options) {
 		boolean change = false;
 		if (oldOptions == null) {
@@ -100,5 +100,5 @@ public class ServerTaskHelper {
 			SchedulerService.instance.resetTask(IServerTasks.INDEXER, options.getIndexScanTimer(), options.getIndexScanTimerUnit());
 		}
 	}
-
+	
 }
