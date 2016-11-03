@@ -620,4 +620,28 @@
 			<column name="executedpkg" type="boolean" defaultValueBoolean="false" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="20" author="ablehm">
+		<createTable schemaName="cloudconductor" tableName="agentauthtoken">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="token" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="creationdate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable schemaName="cloudconductor" tableName="agent">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="agentauthtokenid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.agentauthtoken(id)" foreignKeyName="fk_agent_auth_token_agent" deleteCascade="false" /> 
+			</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
