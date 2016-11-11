@@ -6,8 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.joda.time.DateTime;
-
 import de.taimos.dao.IEntity;
 
 /**
@@ -27,7 +25,11 @@ public class EAgentAuthToken implements IEntity<Long> {
 	
 	private String token;
 	
-	private DateTime creationDate;
+	private Long creationDate;
+	
+	private Long revoked;
+	
+	private String revokeComment;
 	
 	
 	@Override
@@ -59,17 +61,45 @@ public class EAgentAuthToken implements IEntity<Long> {
 	}
 	
 	/**
-	 * @return gets the Date of creation of this token
+	 * @return gets the timestamp of creation of this token
 	 */
-	public DateTime getCreationDate() {
+	public Long getCreationDate() {
 		return this.creationDate;
 	}
 	
 	/**
-	 * @param creationDate the creation-date of the token to set
+	 * @param creationDate the creation-timestamp of the token to set
 	 */
-	public void setCreationDate(DateTime creationDate) {
+	public void setCreationDate(Long creationDate) {
 		this.creationDate = creationDate;
+	}
+	
+	/**
+	 * @return the revoked the timestamp this token was revoked, null if never revoked
+	 */
+	public Long getRevoked() {
+		return this.revoked;
+	}
+	
+	/**
+	 * @param revoked the revoked to set
+	 */
+	public void setRevoked(Long revoked) {
+		this.revoked = revoked;
+	}
+	
+	/**
+	 * @return the revokeComment optional comment for revoke reason
+	 */
+	public String getRevokeComment() {
+		return this.revokeComment;
+	}
+	
+	/**
+	 * @param revokeComment the revokeComment to set
+	 */
+	public void setRevokeComment(String revokeComment) {
+		this.revokeComment = revokeComment;
 	}
 	
 }

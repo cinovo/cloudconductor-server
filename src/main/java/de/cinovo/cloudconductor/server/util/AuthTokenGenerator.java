@@ -32,6 +32,8 @@ public class AuthTokenGenerator {
 	/**
 	 * Generates a unique AuthToken and saves it in the database.
 	 * 
+	 * @param tokenLength the length of the token to generate
+	 * 
 	 * @return a generated AuthToken if generated successful, or null if something went wrong
 	 */
 	public synchronized String generateAuthToken(int tokenLength) {
@@ -42,7 +44,7 @@ public class AuthTokenGenerator {
 		}
 		EAgentAuthToken token = new EAgentAuthToken();
 		token.setToken(generatedToken);
-		token.setCreationDate(new DateTime());
+		token.setCreationDate(new DateTime().getMillis());
 		this.dauthtoken.save(token);
 		return generatedToken;
 	}

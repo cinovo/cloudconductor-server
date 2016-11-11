@@ -17,4 +17,10 @@ public interface IAgentAuthTokenDAO extends IEntityDAO<EAgentAuthToken, Long> {
 	 * @return true if token is unique in db, false otherwise
 	 */
 	public boolean isTokenUnique(String authToken);
+	
+	/**
+	 * @param authToken the token to find from db
+	 * @return the found token or null if no token was found
+	 */
+	public EAgentAuthToken findByToken(String authToken);
 }

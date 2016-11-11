@@ -36,14 +36,14 @@ import de.taimos.dao.IEntity;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
- *
+ * 
  */
 @Entity
 @Table(name = "host", schema = "cloudconductor")
 public class EHost implements IEntity<Long>, INamed {
-
+	
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
@@ -56,22 +56,23 @@ public class EHost implements IEntity<Long>, INamed {
 	private boolean executedSSH = false;
 	private boolean executedFiles = false;
 	private boolean executedPkg = false;
-
-
+	private EAgent agent;
+	
+	
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-
+	
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	
 	/**
 	 * @return the name
 	 */
@@ -79,28 +80,28 @@ public class EHost implements IEntity<Long>, INamed {
 	public String getName() {
 		return this.name;
 	}
-
+	
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-
+	
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
 	/**
 	 * @return the services
 	 */
@@ -108,14 +109,14 @@ public class EHost implements IEntity<Long>, INamed {
 	public List<EServiceState> getServices() {
 		return this.services;
 	}
-
+	
 	/**
 	 * @param services the services to set
 	 */
 	public void setServices(List<EServiceState> services) {
 		this.services = services;
 	}
-
+	
 	/**
 	 * @return the packages
 	 */
@@ -123,14 +124,14 @@ public class EHost implements IEntity<Long>, INamed {
 	public List<EPackageState> getPackages() {
 		return this.packages;
 	}
-
+	
 	/**
 	 * @param packages the packages to set
 	 */
 	public void setPackages(List<EPackageState> packages) {
 		this.packages = packages;
 	}
-
+	
 	/**
 	 * @return the template
 	 */
@@ -139,42 +140,42 @@ public class EHost implements IEntity<Long>, INamed {
 	public ETemplate getTemplate() {
 		return this.template;
 	}
-
+	
 	/**
 	 * @param template the template to set
 	 */
 	public void setTemplate(ETemplate template) {
 		this.template = template;
 	}
-
+	
 	/**
 	 * @return the lastSeen
 	 */
 	public Long getLastSeen() {
 		return this.lastSeen;
 	}
-
+	
 	/**
 	 * @param lastSeen the lastSeen to set
 	 */
 	public void setLastSeen(Long lastSeen) {
 		this.lastSeen = lastSeen;
 	}
-
+	
 	/**
 	 * @return the onUpdate
 	 */
 	public Long getStartedUpdate() {
 		return this.startedUpdate;
 	}
-
+	
 	/**
 	 * @param onUpdate the onUpdate to set
 	 */
 	public void setStartedUpdate(Long onUpdate) {
 		this.startedUpdate = onUpdate;
 	}
-
+	
 	/**
 	 * @return the executedSSH
 	 */
@@ -215,5 +216,21 @@ public class EHost implements IEntity<Long>, INamed {
 	 */
 	public void setExecutedPkg(boolean executedPkg) {
 		this.executedPkg = executedPkg;
+	}
+	
+	/**
+	 * @return the Agent running on this Host
+	 */
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "agentid")
+	public EAgent getAgent() {
+		return this.agent;
+	}
+	
+	/**
+	 * @param agent the agent running on this host to set
+	 */
+	public void setAgent(EAgent agent) {
+		this.agent = agent;
 	}
 }

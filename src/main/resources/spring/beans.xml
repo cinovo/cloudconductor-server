@@ -48,6 +48,7 @@
 			<bean class="de.cinovo.cloudconductor.server.web.impl.WebReportImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.FileTagsImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.AuditImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.TokensImpl"/>
 			
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>

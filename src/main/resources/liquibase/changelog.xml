@@ -628,8 +628,12 @@
 			<column name="token" type="varchar(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="creationdate" type="datetime">
+			<column name="creationdate" type="bigint">
 				<constraints nullable="false" />
+			</column>
+			<column name="revoked" type="bigint" />
+			<column name="revokecomment" type="varchar(500)">
+				<constraints nullable="true" />
 			</column>
 		</createTable>
 		<createTable schemaName="cloudconductor" tableName="agent">
@@ -642,6 +646,14 @@
 			<column name="agentauthtokenid" type="bigint">
 				<constraints nullable="false" references="cloudconductor.agentauthtoken(id)" foreignKeyName="fk_agent_auth_token_agent" deleteCascade="false" /> 
 			</column>
+			<column name="tokenassociationdate" type="bigint">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
+		<addColumn schemaName="cloudconductor" tableName="host">
+			<column name="agentid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.agent(id)" foreignKeyName="fk_agent_host" deleteCascade="false"/>
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

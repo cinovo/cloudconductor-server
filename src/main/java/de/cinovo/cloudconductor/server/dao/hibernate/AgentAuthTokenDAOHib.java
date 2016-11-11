@@ -2,6 +2,8 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
 import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
 import de.taimos.dao.hibernate.EntityDAOHibernate;
@@ -13,6 +15,7 @@ import de.taimos.dao.hibernate.EntityDAOHibernate;
  * @author ablehm
  * 
  */
+@Repository("AgentAuthTokenDAOHib")
 public class AgentAuthTokenDAOHib extends EntityDAOHibernate<EAgentAuthToken, Long> implements IAgentAuthTokenDAO {
 	
 	@Override
@@ -22,11 +25,17 @@ public class AgentAuthTokenDAOHib extends EntityDAOHibernate<EAgentAuthToken, Lo
 	
 	@Override
 	public boolean isTokenUnique(String authToken) {
-		List<EAgentAuthToken> allTokens = this.findListByQuery("FROM EAuthToken a WHERE a.token = ?1", authToken);
+		List<EAgentAuthToken> allTokens = this.findListByQuery("FROM EAgentAuthToken a WHERE a.token = ?1", authToken);
 		if (allTokens.size() > 0) {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public EAgentAuthToken findByToken(String authToken) {
+		EAgentAuthToken token = this.findByQuery("FROM EAgentAuthToken a WHERE a.token = ?1", authToken);
+		return token;
 	}
 	
 }

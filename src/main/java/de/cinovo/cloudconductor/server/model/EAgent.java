@@ -2,6 +2,9 @@ package de.cinovo.cloudconductor.server.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -19,14 +22,23 @@ import de.taimos.dao.IEntity;
 @Table(name = "agent", schema = "cloudconductor")
 public class EAgent implements IEntity<Long> {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	
 	private String name;
 	
 	private EAgentAuthToken token;
 	
+	private Long tokenAssociationDate;
+	
 	
 	@Override
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
@@ -66,6 +78,20 @@ public class EAgent implements IEntity<Long> {
 	 */
 	public void setToken(EAgentAuthToken token) {
 		this.token = token;
+	}
+	
+	/**
+	 * @return the tokenAssociationDate the timestamp where the current token was last associated with
+	 */
+	public Long getTokenAssociationDate() {
+		return this.tokenAssociationDate;
+	}
+	
+	/**
+	 * @param tokenAssociationDate the tokenAssociationDate to set
+	 */
+	public void setTokenAssociationDate(Long tokenAssociationDate) {
+		this.tokenAssociationDate = tokenAssociationDate;
 	}
 	
 }
