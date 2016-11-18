@@ -3,18 +3,20 @@
 <div class="col-xs-12 col-sm-12">
 	<div class="panel panel-primary">
 		<div class="panel-heading panel-toggle">
-		<h3 class="panel-title">
-			<span class="copy-button" data-clipboard-text="$token.token" rel="tooltip-down" title="The name of the generated token">$token.token</span>
-			<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${token.token.replace(".", "-")}-hide"></span>
-		</h3>
-		<span class="pull-right">
-			<div class="btn-group">
-				<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.token}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Revoke Token"></button>
-			</div>
-		</span>
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$token.token" rel="tooltip-down" title="The name of the generated token">$token.token</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${token.token.replace(".", "-")}-hide"></span>
+			</h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.token}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token"></button>
+				</div>
+			</span>
 		</div>
 		<div id="${token.token.replace(".", "-")}-hide" class="dropdown-area collapse in">
-			<div class="panel-body"><div class="well well-sm">${token.token}</div>
+			<div class="panel-body">
+				<div class="well well-sm">${token.token}</div>
+			</div>
 		</div>
 		
 		<table class="table table-striped">
@@ -24,9 +26,12 @@
 				</tr>
 			</thead>
 			<tbody class="table-hover small-lines">
+			#set($agentNames = $TOKENAGENTMAP.get($token.getId()))
+			#foreach( $agentName in $agentNames)
 				<tr>
-					<td colspan="2">Some Agents go here</td>
+					<td colspan="2">$agentName</td>
 				</tr>
+			#end
 			</tbody>
 		</table>
 	</div>

@@ -1,6 +1,8 @@
 package de.cinovo.cloudconductor.server.web.interfaces;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -8,6 +10,7 @@ import javax.ws.rs.Produces;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.MediaType;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.RenderedUI;
 
 /**
@@ -25,6 +28,9 @@ public interface IToken {
 	
 	/** */
 	public static final String REVOKE_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
+	
+	/** */
+	public static final String NEW_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_NEW;
 	
 	
 	/**
@@ -53,5 +59,14 @@ public interface IToken {
 	@Path(IToken.REVOKE_TOKEN)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedUI revokeTokenView(@PathParam(IWebPath.VAR_NAME) String token);
+	public abstract RenderedUI editTokenView(@PathParam(IWebPath.VAR_NAME) String token);
+	
+	/**
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IToken.NEW_TOKEN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public abstract AjaxAnswer generateNewToken(@FormParam("agents") String[] agents);
 }

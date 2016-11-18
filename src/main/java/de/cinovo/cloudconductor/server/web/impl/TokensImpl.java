@@ -5,10 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
+import de.cinovo.cloudconductor.server.model.EAgent;
 import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
+import de.cinovo.cloudconductor.server.util.AuthTokenGenerator;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
+import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.interfaces.IToken;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
@@ -26,6 +33,10 @@ public class TokensImpl extends AWebPage implements IToken {
 	
 	@Autowired
 	private IAgentAuthTokenDAO dToken;
+	@Autowired
+	private IAgentDAO dAgent;
+	@Autowired
+	private AuthTokenGenerator tokenGen;
 	
 	
 	@Override
@@ -51,21 +62,47 @@ public class TokensImpl extends AWebPage implements IToken {
 		List<EAgentAuthToken> tokens = this.dToken.findList();
 		CSViewModel view = this.createView();
 		view.addModel("TOKENS", tokens);
+		// send token-agent map to view
+		List<EAgent> agents = this.dAgent.findList();
+		Multimap<Long, String> tokenAgentMap = HashMultimap.create();
+		for (EAgent agent : agents) {
+			tokenAgentMap.put(agent.getToken().getId(), agent.getName());
+		}
+		view.addModel("TOKENAGENTMAP", tokenAgentMap);
 		return view.render();
 	}
 	
 	@Override
+	@Transactional
 	public RenderedUI newTokenView() {
 		CSViewModel modal = this.createModal("mAddToken");
+		List<EAgent> agentsWithoutToken = this.dAgent.getAgentsWithoutToken();
+		modal.addModel("AGENTSWITHOUTTOKEN", agentsWithoutToken);
 		return modal.render();
 	}
 	
 	@Override
-	public RenderedUI revokeTokenView(String token) {
+	@Transactional
+	public RenderedUI editTokenView(String token) {
 		RESTAssert.assertNotEmpty(token);
 		CSViewModel modal = this.createModal("mModToken");
 		modal.addModel("TOKEN", this.dToken.findByToken(token));
 		return modal.render();
 	}
 	
+	@Override
+	@Transactional
+	public AjaxAnswer generateNewToken(String[] agents) {
+		try {
+			EAgentAuthToken generatedToken = this.tokenGen.generateAuthToken(Integer.parseInt(System.getProperty("cloudconductor.tokenlength", "32")));
+			for (String agentId : agents) {
+				EAgent agent = this.dAgent.findById(Long.parseLong(agentId));
+				agent.setToken(generatedToken);
+				this.dAgent.save(agent);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return new AjaxAnswer(IWebPath.WEBROOT + IToken.ROOT);
+	}
 }
