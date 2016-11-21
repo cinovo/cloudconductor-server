@@ -60,7 +60,10 @@
 		<div class="pull-right">
 			<a href="/#{{controller.redirectTo}}" class="btn btn-default">Back</a>
 			<button ng-click="controller.save()" class="btn btn-info">Save</button>
-			<button ng-click="controller.deleteService()" class="btn btn-danger">Delete</button>
+			<button ng-click="controller.deleteService()" class="btn btn-danger" 
+						confirm="Are you sure you want to delete the following service {{controller.service.name}}?"
+						confirm-title="Please verify!" confirm-ok="Yes"
+						confirm-cancel="No">Delete</button>
 		</div>
 	</div>
 </div>

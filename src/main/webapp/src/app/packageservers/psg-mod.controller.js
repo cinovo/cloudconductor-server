@@ -8,6 +8,7 @@
 		// vm stands for ViewModel
 		var vm = this;
 		vm.data = {};
+		
 		vm.save = save;
 		vm.addServer = addServer;
 		vm.editServer = editServer;
