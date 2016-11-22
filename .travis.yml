@@ -6,7 +6,6 @@ jdk:
 branches:
   only:
     - master
-    - feature/angular
 notifications:
   webhooks:
     urls:
