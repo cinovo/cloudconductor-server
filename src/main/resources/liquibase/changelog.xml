@@ -644,7 +644,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="agentauthtokenid" type="bigint">
-				<constraints nullable="false" references="cloudconductor.agentauthtoken(id)" foreignKeyName="fk_agent_auth_token_agent" deleteCascade="false" /> 
+				<constraints references="cloudconductor.agentauthtoken(id)" foreignKeyName="fk_agent_auth_token_agent" deleteCascade="false" /> 
 			</column>
 			<column name="tokenassociationdate" type="bigint">
 				<constraints nullable="false" />

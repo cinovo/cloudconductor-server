@@ -1,0 +1,52 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title">Edit Token</h4>
+</div>
+<div class="modal-body">
+	#if(${TOKEN.revoked} > 0)
+		<p style="color:red"><b>This token is revoked</b></p>
+	#end
+	<form id="token">
+		<div>
+			<p>Select Agents to remove:</p>
+			<fieldset>
+				<ul style="list-style-type:none">
+					#foreach( $agent in $AGENTLIST)
+					<li>
+						<label>
+							<input type="checkbox" name="agents" value="$agent.id" />
+							$agent.name
+						</label>
+					</li>
+					#end
+				</ul>
+			</fieldset>
+		</div>
+		<div>
+			<p>Select Agents to Add (that dont have a token yet):</p>
+			<fieldset>
+				<ul style="list-style-type:none">
+					#foreach( $nagent in $NOTAGENTLIST)
+					<li>
+						<label>
+							<input type="checkbox" name="nagents" value="$nagent.id" />
+							$nagent.name
+						</label>
+					</li>
+					#end
+				</ul>
+			</fieldset>
+		</div>
+	</form>
+	
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	<button type="button" class="btn btn-primary" data-ref="${TOKEN.id}/update" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="token">Apply</button>
+	#if(${TOKEN.revoked} > 0)
+		<!-- put in activation button here, if you ever want to un-revoke -->
+	#else
+		<button type="button" class="btn btn-primary" style="background-color:#DC143C;border-color:#DC143C" data-call-type="POST" data-ref="${TOKEN.id}/revoke"  data-toggle="modal" data-target="#popModal">Revoke</button> 
+	#end
+</div>

@@ -9,13 +9,17 @@
 			</h3>
 			<span class="pull-right">
 				<div class="btn-group">
-					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.token}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token"></button>
 				</div>
 			</span>
 		</div>
 		<div id="${token.token.replace(".", "-")}-hide" class="dropdown-area collapse in">
 			<div class="panel-body">
-				<div class="well well-sm">${token.token}</div>
+				<div class="well well-sm">${token.token}
+				#if(${token.revoked} > 0)
+					<span style="color:red"><b>(revoked)</b></span>
+				#end
+				</div>
 			</div>
 		</div>
 		

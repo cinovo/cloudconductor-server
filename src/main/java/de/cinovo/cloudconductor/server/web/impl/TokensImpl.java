@@ -1,7 +1,9 @@
 package de.cinovo.cloudconductor.server.web.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +68,9 @@ public class TokensImpl extends AWebPage implements IToken {
 		List<EAgent> agents = this.dAgent.findList();
 		Multimap<Long, String> tokenAgentMap = HashMultimap.create();
 		for (EAgent agent : agents) {
-			tokenAgentMap.put(agent.getToken().getId(), agent.getName());
+			if (agent.getToken() != null) {
+				tokenAgentMap.put(agent.getToken().getId(), agent.getName());
+			}
 		}
 		view.addModel("TOKENAGENTMAP", tokenAgentMap);
 		return view.render();
@@ -83,10 +87,29 @@ public class TokensImpl extends AWebPage implements IToken {
 	
 	@Override
 	@Transactional
-	public RenderedUI editTokenView(String token) {
-		RESTAssert.assertNotEmpty(token);
+	public RenderedUI editTokenView(Long tokenId) {
+		RESTAssert.assertNotNull(tokenId);
 		CSViewModel modal = this.createModal("mModToken");
-		modal.addModel("TOKEN", this.dToken.findByToken(token));
+		EAgentAuthToken token = this.dToken.findById(tokenId);
+		modal.addModel("TOKEN", token);
+		List<EAgent> agents = this.dAgent.findList();
+		List<EAgent> agentList = new ArrayList<EAgent>();
+		List<EAgent> notAgentList = new ArrayList<EAgent>();
+		for (EAgent agent : agents) {
+			if (agent.getToken() != null) {
+				if (agent.getToken().getId().equals(tokenId)) {
+					agentList.add(agent);
+				} else if (agent.getToken().getId() < 0) {
+					notAgentList.add(agent);
+				}
+			} else {
+				if (agent.getToken() == null) {
+					notAgentList.add(agent);
+				}
+			}
+		}
+		modal.addModel("AGENTLIST", agentList);
+		modal.addModel("NOTAGENTLIST", notAgentList);
 		return modal.render();
 	}
 	
@@ -105,4 +128,34 @@ public class TokensImpl extends AWebPage implements IToken {
 		}
 		return new AjaxAnswer(IWebPath.WEBROOT + IToken.ROOT);
 	}
+	
+	@Override
+	@Transactional
+	public AjaxAnswer updateToken(Long tokenId, String[] agents, String[] nagents) {
+		EAgentAuthToken tokenToUpdate = this.dToken.findById(tokenId);
+		for (String agentId : agents) {
+			// remove agents from token
+			EAgent agent = this.dAgent.findById(Long.parseLong(agentId));
+			agent.setToken(null);
+			this.dAgent.save(agent);
+		}
+		for (String nAgentId : nagents) {
+			// add agents to token
+			EAgent nagent = this.dAgent.findById(Long.parseLong(nAgentId));
+			nagent.setToken(tokenToUpdate);
+			this.dAgent.save(nagent);
+		}
+		return new AjaxAnswer(IWebPath.WEBROOT + IToken.ROOT);
+	}
+	
+	@Override
+	@Transactional
+	public AjaxAnswer revokeToken(Long tokenId) {
+		RESTAssert.assertNotNull(tokenId);
+		EAgentAuthToken token = this.dToken.findById(tokenId);
+		token.setRevoked((new DateTime()).getMillis());
+		this.dToken.save(token);
+		return new AjaxAnswer(IWebPath.WEBROOT + IToken.ROOT);
+	}
+	
 }

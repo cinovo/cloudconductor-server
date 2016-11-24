@@ -27,10 +27,20 @@ public interface IToken {
 	public static final String ROOT = "/tokens";
 	
 	/** */
-	public static final String REVOKE_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
+	public static final String EDIT_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	
 	/** */
 	public static final String NEW_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_NEW;
+	
+	/**
+	 * 
+	 */
+	public static final String REVOKE_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REVOKE;
+	
+	/**
+	 * 
+	 */
+	public static final String UPDATE_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
 	
 	
 	/**
@@ -56,10 +66,10 @@ public interface IToken {
 	 * @return the modal content
 	 */
 	@GET
-	@Path(IToken.REVOKE_TOKEN)
+	@Path(IToken.EDIT_TOKEN)
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
-	public abstract RenderedUI editTokenView(@PathParam(IWebPath.VAR_NAME) String token);
+	public abstract RenderedUI editTokenView(@PathParam(IWebPath.VAR_NAME) Long tokenId);
 	
 	/**
 	 * @return an ajax answer
@@ -69,4 +79,25 @@ public interface IToken {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public abstract AjaxAnswer generateNewToken(@FormParam("agents") String[] agents);
+	
+	/**
+	 * @param agents the agents to remove from the token
+	 * @param nagents the agents (which are not token-agents yet) to add to the token
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IToken.UPDATE_TOKEN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public abstract AjaxAnswer updateToken(@PathParam(IWebPath.VAR_NAME) Long tokenId, @FormParam("agents") String[] agents, @FormParam("nagents") String[] nagents);
+	
+	/**
+	 * @param tokenId the id of the token
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IToken.REVOKE_TOKEN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public abstract AjaxAnswer revokeToken(@PathParam(IWebPath.VAR_NAME) Long tokenId);
 }

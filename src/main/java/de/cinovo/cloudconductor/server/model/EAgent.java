@@ -67,7 +67,7 @@ public class EAgent implements IEntity<Long> {
 	/**
 	 * @return token for agent authentication
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "agentauthtokenid")
 	public EAgentAuthToken getToken() {
 		return this.token;

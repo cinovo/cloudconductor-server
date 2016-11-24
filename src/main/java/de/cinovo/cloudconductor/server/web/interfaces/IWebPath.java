@@ -65,6 +65,8 @@ public interface IWebPath {
 	public static final String ACTION_DELETE = "/delete";
 	/** remove action */
 	public static final String ACTION_REMOVE = "/remove";
+	/** revoke action */
+	public static final String ACTION_REVOKE = "/revoke";
 	/** edit action */
 	public static final String ACTION_EDIT = "/edit";
 	/** save action */

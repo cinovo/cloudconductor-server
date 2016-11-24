@@ -59,18 +59,18 @@ INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false, true);
 
 INSERT INTO cloudconductor.yumserver VALUES (1, 'localhost', 'http://localhost:8090/static/yum');
 
-INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, 1381489459832, 'a comment');
+INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, -1, 'a comment');
 
-INSERT INTO cloudconductor.agentauthtoken VALUES (2, 'testblahToken02', 1381489459832, 1381489459832, 'another comment');
+INSERT INTO cloudconductor.agentauthtoken VALUES (2, 'testblahToken02', 1381489459832, 1381489489832, 'another comment');
 
 INSERT INTO cloudconductor.agent VALUES (1, 'testAgent01', 1, 1381489459832);
 INSERT INTO cloudconductor.agent VALUES (2, 'testAgent02', 1, 1381489459832);
 INSERT INTO cloudconductor.agent VALUES (3, 'testAgent03', 2, 1381489459832);
 INSERT INTO cloudconductor.agent VALUES (4, 'testAgent04', 2, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (5, 'testAgent05', 0, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', 0, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', 0, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', 0, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (5, 'testAgent05', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', NULL, 1381489459832);
 
 INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL, false, false, false, 1);
 
