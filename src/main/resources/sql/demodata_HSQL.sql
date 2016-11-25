@@ -59,7 +59,7 @@ INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', 1, false, true);
 
 INSERT INTO cloudconductor.yumserver VALUES (1, 'localhost', 'http://localhost:8090/static/yum');
 
-INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, -1, 'a comment');
+INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, NULL, 'a comment');
 
 INSERT INTO cloudconductor.agentauthtoken VALUES (2, 'testblahToken02', 1381489459832, 1381489489832, 'another comment');
 

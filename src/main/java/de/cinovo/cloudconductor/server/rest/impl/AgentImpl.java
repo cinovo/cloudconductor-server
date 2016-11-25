@@ -74,9 +74,9 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
- *		
+ * 
  */
 @JaxRsComponent
 public class AgentImpl implements IAgent {
@@ -380,7 +380,7 @@ public class AgentImpl implements IAgent {
 				break;
 			default:
 				break;
-				
+			
 			}
 			
 		}

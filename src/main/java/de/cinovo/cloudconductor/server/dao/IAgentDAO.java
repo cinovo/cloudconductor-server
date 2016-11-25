@@ -31,4 +31,9 @@ public interface IAgentDAO extends IEntityDAO<EAgent, Long> {
 	 * @return list of Agents that don't have a token yet
 	 */
 	public List<EAgent> getAgentsWithoutToken();
+	
+	/**
+	 * @return the agent with unique name
+	 */
+	public EAgent findAgentByName(String agentName);
 }

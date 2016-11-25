@@ -40,4 +40,10 @@ public class AgentDAOHib extends EntityDAOHibernate<EAgent, Long> implements IAg
 		List<EAgent> agents = this.findListByQuery("FROM EAgent a WHERE a.token IS EMPTY");
 		return agents;
 	}
+	
+	@Override
+	public EAgent findAgentByName(String agentName) {
+		EAgent agent = this.findByQuery("FROM EAgent a WHERE a.name = ?1", agentName);
+		return agent;
+	}
 }

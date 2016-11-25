@@ -2,6 +2,7 @@ package de.cinovo.cloudconductor.server.util;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -45,7 +46,21 @@ public class AuthTokenGenerator {
 				AuthTokenGenerator.LOGGER.error(errorMsg);
 				throw new TokenGenerationException(errorMsg);
 			}
-			generatedToken = new BigInteger(tokenLength * 5, new SecureRandom()).toString(tokenLength);
+			String currentTokenPart = "";
+			currentTokenPart = new BigInteger(tokenLength * 5, new SecureRandom()).toString(32);
+			StringBuilder tokenStringToShuffle = new StringBuilder();
+			tokenStringToShuffle.append(currentTokenPart.substring(0, tokenLength / 2).toUpperCase());
+			tokenStringToShuffle.append(currentTokenPart.substring(tokenLength / 2, tokenLength));
+			
+			// Fisher-Yates Shuffling of chars
+			String toShuffle = tokenStringToShuffle.toString();
+			char[] shuffleArray = toShuffle.toCharArray();
+			int n = toShuffle.length();
+			for (int i = 0; i < (n - 2); i++) {
+				int j = ThreadLocalRandom.current().nextInt(i, n);
+				shuffleArray = this.swap(shuffleArray, i, j);
+			}
+			generatedToken = new String(shuffleArray);
 			count++;
 		}
 		EAgentAuthToken token = new EAgentAuthToken();
@@ -53,5 +68,13 @@ public class AuthTokenGenerator {
 		token.setCreationDate(new DateTime().getMillis());
 		token = this.dToken.save(token);
 		return token;
+	}
+	
+	private char[] swap(char[] toSwapIn, int i, int j) {
+		char[] toReturn = toSwapIn;
+		char temp = toReturn[i];
+		toReturn[i] = toReturn[j];
+		toReturn[j] = temp;
+		return toReturn;
 	}
 }

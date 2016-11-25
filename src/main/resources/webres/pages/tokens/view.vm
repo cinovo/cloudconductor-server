@@ -14,13 +14,11 @@
 			</span>
 		</div>
 		<div id="${token.token.replace(".", "-")}-hide" class="dropdown-area collapse in">
-			<div class="panel-body">
-				<div class="well well-sm">${token.token}
-				#if(${token.revoked} > 0)
-					<span style="color:red"><b>(revoked)</b></span>
+				#if(${token.revoked})
+					#if (${token.revoked} > 0)
+					<span><b style="color:red">Revoked at: </b> ${dateTool.format('dd.MM.yyyy', $token.revoked)}</span>
+					#end
 				#end
-				</div>
-			</div>
 		</div>
 		
 		<table class="table table-striped">

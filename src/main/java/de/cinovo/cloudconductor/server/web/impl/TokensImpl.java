@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.web.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -62,6 +63,7 @@ public class TokensImpl extends AWebPage implements IToken {
 	@Transactional
 	public RenderedUI view() {
 		List<EAgentAuthToken> tokens = this.dToken.findList();
+		Collections.sort(tokens);
 		CSViewModel view = this.createView();
 		view.addModel("TOKENS", tokens);
 		// send token-agent map to view

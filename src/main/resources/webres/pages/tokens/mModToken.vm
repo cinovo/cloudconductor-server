@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 	#if(${TOKEN.revoked} > 0)
-		<p style="color:red"><b>This token is revoked</b></p>
+		<p><b style="color:red">This Token was revoked at: </b> ${dateTool.format('dd.MM.yyyy', $TOKEN.revoked)}</p>
 	#end
 	<form id="token">
 		<div>

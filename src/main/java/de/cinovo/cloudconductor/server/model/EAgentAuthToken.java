@@ -17,7 +17,7 @@ import de.taimos.dao.IEntity;
  */
 @Entity
 @Table(name = "agentauthtoken", schema = "cloudconductor")
-public class EAgentAuthToken implements IEntity<Long> {
+public class EAgentAuthToken implements IEntity<Long>, Comparable<EAgentAuthToken> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -100,6 +100,24 @@ public class EAgentAuthToken implements IEntity<Long> {
 	 */
 	public void setRevokeComment(String revokeComment) {
 		this.revokeComment = revokeComment;
+	}
+	
+	@Override
+	public int compareTo(EAgentAuthToken o) {
+		if ((this.revoked != null) && (o.revoked != null)) {
+			return Long.compare(this.revoked, o.revoked);
+		} else if ((this.revoked == null) && (o.revoked != null)) {
+			return -1;
+		} else if ((this.revoked != null) && (o.revoked == null)) {
+			return 1;
+		} else {
+			if (this.id < o.id) {
+				return -1;
+			} else if (this.id > o.id) {
+				return 1;
+			}
+			return 0;
+		}
 	}
 	
 }
