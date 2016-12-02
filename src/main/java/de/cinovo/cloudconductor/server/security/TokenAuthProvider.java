@@ -22,6 +22,9 @@ import de.taimos.springcxfdaemon.providers.AuthorizationProvider;
  */
 public class TokenAuthProvider extends AuthorizationProvider {
 	
+	private static final String TOKEN = "TOKEN";
+	private static final Boolean TOKEN_AUTH = Boolean.valueOf(System.getProperty("cloudconductor.restauthmandatory", "true"));
+	
 	@Autowired
 	private IAgentAuthTokenDAO dToken;
 	@Autowired
@@ -30,31 +33,49 @@ public class TokenAuthProvider extends AuthorizationProvider {
 	
 	@Override
 	protected boolean isAuthorizationMandatory() {
-		// if config token auth
-		return true;
+		return TokenAuthProvider.TOKEN_AUTH;
 	}
 	
-	// TOKEN TOKE_AGENT
 	@Override
 	protected SecurityContext handleAuthHeader(ContainerRequestContext requestContext, Message msg, String type, String auth1) {
-		if (type == "TOKEN") {
+		SecurityContext result = this.noTokenNeededCheck();
+		if (result != null) {
+			return result;
+		}
+		return this.doTokenAuth(type, auth1);
+	}
+	
+	@Override
+	protected SecurityContext handleOther(ContainerRequestContext requestContext, Message msg, HttpHeaders head) {
+		return this.noTokenNeededCheck();
+	}
+	
+	/**
+	 * This Method allows login for tokens following the Convention for a Header: "Authentication: TOKEN 'Token'_'AgentName'"
+	 */
+	private SecurityContext doTokenAuth(String type, String auth1) {
+		if (type.equals(TokenAuthProvider.TOKEN)) {
 			// Convention: String has the following Form: "Authentication: Basic <Token>_<AgentName>"
 			// auth1 is already reduced to: "<Token>_<AgentName>"
 			String token = auth1.split("_")[0];
-			String agent = auth1.split("_")[1];
+			String agentName = auth1.split("_")[1];
 			
 			EAgentAuthToken authToken = this.dToken.findByToken(token);
-			EAgent dbAgent = this.dAgent.findAgentByName(agent);
+			if ((authToken != null) && (authToken.getRevoked() != null)) {
+				authToken = null;
+			}
+			EAgent dbAgent = this.dAgent.findAgentByName(agentName);
 			if ((authToken != null) && (dbAgent != null)) {
-				return AuthorizationProvider.createSC(agent);
+				return AuthorizationProvider.createSC(agentName);
 			}
 		}
 		return null;
 	}
 	
-	@Override
-	protected SecurityContext handleOther(ContainerRequestContext requestContext, Message msg, HttpHeaders head) {
+	private SecurityContext noTokenNeededCheck() {
+		if (!this.isAuthorizationMandatory()) {
+			return AuthorizationProvider.createSC("Agent");
+		}
 		return null;
 	}
-	
 }

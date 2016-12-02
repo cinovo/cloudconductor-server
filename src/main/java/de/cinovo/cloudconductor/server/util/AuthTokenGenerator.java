@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
 import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
+import de.cinovo.cloudconductor.server.util.exception.TokenGenerationException;
 
 /**
  * Copyright 2016 Cinovo AG<br>
@@ -37,37 +38,47 @@ public class AuthTokenGenerator {
 	 * @throws TokenGenerationException - when generation of unqiue token failed in loop after 10 attempts
 	 */
 	public EAgentAuthToken generateAuthToken(int tokenLength) throws TokenGenerationException {
-		String generatedToken = "";
-		// Try generating token, until you generated a unique one
+		String generatedToken = null;
+		
 		int count = 0;
-		while (!this.dToken.isTokenUnique(generatedToken) || generatedToken.trim().isEmpty()) {
+		while (!this.dToken.isTokenUnique(generatedToken)) {
 			if (count > 10) {
 				String errorMsg = "Failed to generate unique token.";
 				AuthTokenGenerator.LOGGER.error(errorMsg);
 				throw new TokenGenerationException(errorMsg);
 			}
-			String currentTokenPart = "";
-			currentTokenPart = new BigInteger(tokenLength * 5, new SecureRandom()).toString(32);
-			StringBuilder tokenStringToShuffle = new StringBuilder();
-			tokenStringToShuffle.append(currentTokenPart.substring(0, tokenLength / 2).toUpperCase());
-			tokenStringToShuffle.append(currentTokenPart.substring(tokenLength / 2, tokenLength));
-			
-			// Fisher-Yates Shuffling of chars
-			String toShuffle = tokenStringToShuffle.toString();
-			char[] shuffleArray = toShuffle.toCharArray();
-			int n = toShuffle.length();
-			for (int i = 0; i < (n - 2); i++) {
-				int j = ThreadLocalRandom.current().nextInt(i, n);
-				shuffleArray = this.swap(shuffleArray, i, j);
-			}
-			generatedToken = new String(shuffleArray);
 			count++;
+			generatedToken = this.generateToken(tokenLength);
 		}
+		
 		EAgentAuthToken token = new EAgentAuthToken();
 		token.setToken(generatedToken);
 		token.setCreationDate(new DateTime().getMillis());
 		token = this.dToken.save(token);
 		return token;
+	}
+	
+	protected String generateToken(int tokenLength) {
+		String generatedToken = new BigInteger(tokenLength * 5, new SecureRandom()).toString(32);
+		generatedToken = this.generatePartialUppercasedToken(tokenLength, generatedToken);
+		return this.shuffleWithFisherYates(generatedToken);
+	}
+	
+	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
+		StringBuilder tokenStringToShuffle = new StringBuilder();
+		tokenStringToShuffle.append(currentToken.substring(0, tokenLength / 2).toUpperCase());
+		tokenStringToShuffle.append(currentToken.substring(tokenLength / 2, tokenLength));
+		return tokenStringToShuffle.toString();
+	}
+	
+	private String shuffleWithFisherYates(String tokenStringToShuffle) {
+		char[] shuffleArray = tokenStringToShuffle.toCharArray();
+		int tokenLength = tokenStringToShuffle.length();
+		for (int i = 0; i < (tokenLength - 2); i++) {
+			int j = ThreadLocalRandom.current().nextInt(i, tokenLength);
+			shuffleArray = this.swap(shuffleArray, i, j);
+		}
+		return new String(shuffleArray);
 	}
 	
 	private char[] swap(char[] toSwapIn, int i, int j) {

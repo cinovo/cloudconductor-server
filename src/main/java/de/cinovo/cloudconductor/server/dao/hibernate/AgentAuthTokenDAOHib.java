@@ -25,6 +25,9 @@ public class AgentAuthTokenDAOHib extends EntityDAOHibernate<EAgentAuthToken, Lo
 	
 	@Override
 	public boolean isTokenUnique(String authToken) {
+		if ((authToken == null) || authToken.isEmpty()) {
+			return false;
+		}
 		List<EAgentAuthToken> allTokens = this.findListByQuery("FROM EAgentAuthToken a WHERE a.token = ?1", authToken);
 		if (allTokens.size() > 0) {
 			return false;

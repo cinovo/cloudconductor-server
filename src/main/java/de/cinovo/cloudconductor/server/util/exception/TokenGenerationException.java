@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.util;
+package de.cinovo.cloudconductor.server.util.exception;
 
 /**
  * Copyright 2016 Cinovo AG<br>

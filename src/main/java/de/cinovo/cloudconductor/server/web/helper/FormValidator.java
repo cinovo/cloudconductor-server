@@ -9,7 +9,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.util.exception.FormErrorException;
 
 /**
  * Copyright 2014 Cinovo AG<br>

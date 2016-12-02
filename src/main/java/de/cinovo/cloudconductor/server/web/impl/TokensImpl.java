@@ -41,6 +41,15 @@ public class TokensImpl extends AWebPage implements IToken {
 	@Autowired
 	private AuthTokenGenerator tokenGen;
 	
+	private static final String TOKEN = "TOKEN";
+	private static final String TOKENS = "TOKENS";
+	private static final String TOKENAGENTMAP = "TOKENAGENTMAP";
+	private static final String AGENTSWITHOUTTOKEN = "AGENTSWITHOUTTOKEN";
+	private static final String AGENTLIST = "AGENTLIST";
+	private static final String NOTAGENTLIST = "NOTAGENTLIST";
+	
+	private static final Integer TOKEN_LENGTH = Integer.parseInt(System.getProperty("cloudconductor.tokenlength", "32"));
+	
 	
 	@Override
 	protected String getTemplateFolder() {
@@ -65,7 +74,7 @@ public class TokensImpl extends AWebPage implements IToken {
 		List<EAgentAuthToken> tokens = this.dToken.findList();
 		Collections.sort(tokens);
 		CSViewModel view = this.createView();
-		view.addModel("TOKENS", tokens);
+		view.addModel(TokensImpl.TOKENS, tokens);
 		// send token-agent map to view
 		List<EAgent> agents = this.dAgent.findList();
 		Multimap<Long, String> tokenAgentMap = HashMultimap.create();
@@ -74,7 +83,7 @@ public class TokensImpl extends AWebPage implements IToken {
 				tokenAgentMap.put(agent.getToken().getId(), agent.getName());
 			}
 		}
-		view.addModel("TOKENAGENTMAP", tokenAgentMap);
+		view.addModel(TokensImpl.TOKENAGENTMAP, tokenAgentMap);
 		return view.render();
 	}
 	
@@ -83,7 +92,7 @@ public class TokensImpl extends AWebPage implements IToken {
 	public RenderedUI newTokenView() {
 		CSViewModel modal = this.createModal("mAddToken");
 		List<EAgent> agentsWithoutToken = this.dAgent.getAgentsWithoutToken();
-		modal.addModel("AGENTSWITHOUTTOKEN", agentsWithoutToken);
+		modal.addModel(TokensImpl.AGENTSWITHOUTTOKEN, agentsWithoutToken);
 		return modal.render();
 	}
 	
@@ -93,7 +102,7 @@ public class TokensImpl extends AWebPage implements IToken {
 		RESTAssert.assertNotNull(tokenId);
 		CSViewModel modal = this.createModal("mModToken");
 		EAgentAuthToken token = this.dToken.findById(tokenId);
-		modal.addModel("TOKEN", token);
+		modal.addModel(TokensImpl.TOKEN, token);
 		List<EAgent> agents = this.dAgent.findList();
 		List<EAgent> agentList = new ArrayList<EAgent>();
 		List<EAgent> notAgentList = new ArrayList<EAgent>();
@@ -110,8 +119,8 @@ public class TokensImpl extends AWebPage implements IToken {
 				}
 			}
 		}
-		modal.addModel("AGENTLIST", agentList);
-		modal.addModel("NOTAGENTLIST", notAgentList);
+		modal.addModel(TokensImpl.AGENTLIST, agentList);
+		modal.addModel(TokensImpl.NOTAGENTLIST, notAgentList);
 		return modal.render();
 	}
 	
@@ -119,7 +128,7 @@ public class TokensImpl extends AWebPage implements IToken {
 	@Transactional
 	public AjaxAnswer generateNewToken(String[] agents) {
 		try {
-			EAgentAuthToken generatedToken = this.tokenGen.generateAuthToken(Integer.parseInt(System.getProperty("cloudconductor.tokenlength", "32")));
+			EAgentAuthToken generatedToken = this.tokenGen.generateAuthToken(TokensImpl.TOKEN_LENGTH);
 			for (String agentId : agents) {
 				EAgent agent = this.dAgent.findById(Long.parseLong(agentId));
 				agent.setToken(generatedToken);

@@ -17,13 +17,15 @@
 	<import resource="classpath:spring/cxfdaemon.xml" />
 	<import resource="classpath:spring/dao.xml" />
 
-	<!-- 
-	<jaxrs:server id="restService" depends-on="cxf-engine">
+	<jaxrs:server id="restService" address="http://${jaxrs.bindhost:0.0.0.0}:${jaxrs.bindport:${svc.port:8080}}${jaxrs.path:}"
+		depends-on="cxf-engine" serviceAnnotation="${jaxrs.annotation:de.taimos.springcxfdaemon.JaxRsComponent}">
+		<jaxrs:features>
+			<bean class="de.taimos.springcxfdaemon.monitoring.MonitoringFeature" />
+		</jaxrs:features>
 		<jaxrs:providers>
 			<bean class="de.cinovo.cloudconductor.server.security.TokenAuthProvider" />
 		</jaxrs:providers>
 	</jaxrs:server>
- 	-->
 
 	<jaxrs:server id="serverRepo" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/repo" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
@@ -63,7 +65,7 @@
 		<jaxrs:providers>
 <!-- 			<ref bean="exMapper" /> -->
 			<bean class="de.cinovo.cloudconductor.server.rest.filter.JacksonProvider" />
-			<bean class="de.cinovo.cloudconductor.server.util.FormErrorExceptionHander" />
+			<bean class="de.cinovo.cloudconductor.server.util.exception.FormErrorExceptionHander" />
 			<bean id="authTokenProvider2" class="de.cinovo.cloudconductor.server.security.AuthProvider" />
 			<bean class="de.taimos.cxf_renderer.model.UIWriter" />
 		</jaxrs:providers>

@@ -20,10 +20,12 @@ import de.cinovo.cloudconductor.server.comparators.StateComparator;
 import de.cinovo.cloudconductor.server.comparators.StringMapComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
@@ -37,13 +39,20 @@ import de.taimos.restutils.RESTAssert;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 public class HostImpl extends AWebPage implements IHost {
 	
 	private DateTimeFormatter germanFmt = DateTimeFormat.forPattern("HH:mm:ss - dd.MM.yyyy");
 	@Autowired
 	protected IHostDAO dHost;
+	@Autowired
+	protected ITemplateDAO dTemplate;
+	
+	private static final String HOSTS = "HOSTS";
+	private static final String HOST = "host";
+	private static final String DIFFERENCES = "DIFFERENCES";
+	private static final String TEMPLATES = "TEMPLATES";
 	
 	
 	@Override
@@ -79,8 +88,8 @@ public class HostImpl extends AWebPage implements IHost {
 		}
 		this.sortNamedList(eHosts);
 		CSViewModel view = this.createView();
-		view.addModel("HOSTS", eHosts);
-		view.addModel("DIFFERENCES", thDiff);
+		view.addModel(HostImpl.HOSTS, eHosts);
+		view.addModel(HostImpl.DIFFERENCES, thDiff);
 		return view.render();
 	}
 	
@@ -90,8 +99,8 @@ public class HostImpl extends AWebPage implements IHost {
 		EHost eHosts = this.dHost.findByName(hname);
 		Collections.sort(eHosts.getServices(), new StateComparator());
 		CSViewModel modal = this.createModal("mSingleView");
-		modal.addModel("host", eHosts);
-		modal.addModel("DIFFERENCES", this.createHostTemplateDiff(eHosts));
+		modal.addModel(HostImpl.HOST, eHosts);
+		modal.addModel(HostImpl.DIFFERENCES, this.createHostTemplateDiff(eHosts));
 		return modal.render();
 	}
 	
@@ -138,7 +147,7 @@ public class HostImpl extends AWebPage implements IHost {
 		EHost host = this.dHost.findByName(hname);
 		RESTAssert.assertNotNull(host);
 		CSViewModel modal = this.createModal("mDeleteHost");
-		modal.addModel("host", host);
+		modal.addModel(HostImpl.HOST, host);
 		return modal.render();
 	}
 	
@@ -206,5 +215,17 @@ public class HostImpl extends AWebPage implements IHost {
 		}
 		Collections.sort(notices, mapComp);
 		return notices;
+	}
+	
+	@Override
+	@Transactional
+	public RenderedUI editHostTemplateView(String hostId) {
+		RESTAssert.assertNotNull(hostId);
+		EHost hostToEdit = this.dHost.findById(Long.parseLong(hostId));
+		CSViewModel modal = this.createModal("mModHost");
+		modal.addModel(HostImpl.HOST, hostToEdit);
+		List<ETemplate> templates = this.dTemplate.findList();
+		modal.addModel(HostImpl.TEMPLATES, templates);
+		return modal.render();
 	}
 }

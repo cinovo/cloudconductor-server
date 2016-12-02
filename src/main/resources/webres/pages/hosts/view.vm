@@ -13,13 +13,16 @@
 			</h3>
 			<span class="pull-right">
 				<span class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${host.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="POST" rel="tooltip-down" title="Edit host template"></button>
 					<a type="button" class="btn btn-default glyphicon glyphicon-folder-open" href="templates#${host.getTemplate().name}" rel="tooltip-down" title="Goto template ${host.getTemplate().name}"></a>
 					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${host.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete host"></button>
 				</span>
 			</span>			
 		</div>
 		<div id="${host.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
-		
+			<div>
+				<span><b>Agent: </b> ${host.agent.name}</span>
+			</div>
 			<form id="${host.name.replace(".", "-")}-form">
 				<table class="table table-striped">
 					<thead>

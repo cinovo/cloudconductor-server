@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.util.exception.FormErrorException;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.RenderedUI;
 
@@ -34,7 +34,7 @@ import de.taimos.cxf_renderer.model.RenderedUI;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @Path(IHost.ROOT)
 public interface IHost {
@@ -48,6 +48,11 @@ public interface IHost {
 	public static final String SERVICE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
 	/***/
 	public static final String DELETE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
+	
+	/**
+	 * 
+	 */
+	public static final String EDIT_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	
 	
 	/**
@@ -98,4 +103,12 @@ public interface IHost {
 	@Produces(MediaType.APPLICATION_JSON)
 	public AjaxAnswer deleteHost(@PathParam(IWebPath.VAR_NAME) String hname) throws FormErrorException;
 	
+	/**
+	 * @param hostId the id of the host
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IHost.EDIT_ACTION)
+	@Produces(MediaType.TEXT_HTML)
+	public RenderedUI editHostTemplateView(@PathParam(IWebPath.VAR_NAME) String hostId);
 }

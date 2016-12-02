@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.util.exception.FormErrorException;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.RenderedUI;
 

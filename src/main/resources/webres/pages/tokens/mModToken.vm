@@ -3,7 +3,7 @@
 	<h4 class="modal-title">Edit Token</h4>
 </div>
 <div class="modal-body">
-	#if(${TOKEN.revoked} > 0)
+	#if(${TOKEN.revoked} != null)
 		<p><b style="color:red">This Token was revoked at: </b> ${dateTool.format('dd.MM.yyyy', $TOKEN.revoked)}</p>
 	#end
 	<form id="token">
@@ -44,7 +44,7 @@
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	<button type="button" class="btn btn-primary" data-ref="${TOKEN.id}/update" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="token">Apply</button>
-	#if(${TOKEN.revoked} > 0)
+	#if(${TOKEN.revoked} != null)
 		<!-- put in activation button here, if you ever want to un-revoke -->
 	#else
 		<button type="button" class="btn btn-primary" style="background-color:#DC143C;border-color:#DC143C" data-call-type="POST" data-ref="${TOKEN.id}/revoke"  data-toggle="modal" data-target="#popModal">Revoke</button> 
