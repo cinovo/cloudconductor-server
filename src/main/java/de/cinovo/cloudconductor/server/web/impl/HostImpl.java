@@ -228,4 +228,22 @@ public class HostImpl extends AWebPage implements IHost {
 		modal.addModel(HostImpl.TEMPLATES, templates);
 		return modal.render();
 	}
+	
+	@Override
+	@Transactional
+	public AjaxAnswer updateHostTemplate(String hostId, String templateId) {
+		RESTAssert.assertNotNull(hostId);
+		RESTAssert.assertNotNull(templateId);
+		EHost hostToEdit = this.dHost.findById(Long.parseLong(hostId));
+		ETemplate oldTemplate = hostToEdit.getTemplate();
+		oldTemplate.getHosts().remove(hostToEdit);
+		this.dTemplate.save(oldTemplate);
+		ETemplate templateToAssign = this.dTemplate.findById(Long.parseLong(templateId));
+		templateToAssign.getHosts().add(hostToEdit);
+		hostToEdit.setTemplate(templateToAssign);
+		this.dTemplate.save(templateToAssign);
+		this.dHost.save(hostToEdit);
+		return new AjaxAnswer(IWebPath.WEBROOT + IHost.ROOT);
+	}
+	
 }

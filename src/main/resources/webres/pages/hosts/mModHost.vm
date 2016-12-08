@@ -7,7 +7,7 @@
 		<p>Select the Template for this host:</p>
 		<label>Template
 			<select name="template">
-			#foreach{$template in $TEMPLATES}
+			#foreach($template in $TEMPLATES)
 				#if(${host.template.id} == ${template.id})
 				<option value="${template.id}" selected>${template.name}</option>
 				#else
@@ -20,5 +20,5 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	<button type="button" class="btn btn-primary" data-ref="${host.id}/update" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="templateSelect">Apply</button>
+	<button type="button" class="btn btn-primary" data-ref="${host.id}/template/update" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="templateSelect">Apply</button>
 </div>

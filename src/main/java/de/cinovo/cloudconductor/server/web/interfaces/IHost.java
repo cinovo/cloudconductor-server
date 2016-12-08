@@ -54,6 +54,11 @@ public interface IHost {
 	 */
 	public static final String EDIT_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	
+	/**
+	 * 
+	 */
+	public static final String UPDATE_ACTION = "/{" + IWebPath.VAR_NAME + "}/template" + IWebPath.ACTION_UPDATE;
+	
 	
 	/**
 	 * @return the view
@@ -111,4 +116,14 @@ public interface IHost {
 	@Path(IHost.EDIT_ACTION)
 	@Produces(MediaType.TEXT_HTML)
 	public RenderedUI editHostTemplateView(@PathParam(IWebPath.VAR_NAME) String hostId);
+	
+	/**
+	 * @param hostId the id of the host beeing edited
+	 * @param templateId the id of the new template assigned to this host
+	 * @return an ajax answer
+	 */
+	@POST
+	@Path(IHost.UPDATE_ACTION)
+	@Produces(MediaType.APPLICATION_JSON)
+	public AjaxAnswer updateHostTemplate(@PathParam(IWebPath.VAR_NAME) String hostId, @FormParam("template") String templateId);
 }
