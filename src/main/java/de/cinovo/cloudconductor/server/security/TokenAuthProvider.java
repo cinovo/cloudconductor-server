@@ -5,6 +5,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
@@ -55,21 +56,31 @@ public class TokenAuthProvider extends AuthorizationProvider {
 	 */
 	private SecurityContext doTokenAuth(String type, String auth1) {
 		if (type.equals(TokenAuthProvider.TOKEN)) {
-			// Convention: String has the following Form: "Authentication: Basic <Token>_<AgentName>"
+			// Convention: String has the following Form: "Authentication: TOKEN <Token>_<AgentName>"
 			// auth1 is already reduced to: "<Token>_<AgentName>"
 			String token = auth1.split("_")[0];
 			String agentName = auth1.split("_")[1];
 			
 			EAgentAuthToken authToken = this.dToken.findByToken(token);
-			if ((authToken != null) && (authToken.getRevoked() != null)) {
-				authToken = null;
+			if ((authToken == null) || (authToken.getRevoked() != null)) {
+				return null;
 			}
+			
 			EAgent dbAgent = this.dAgent.findAgentByName(agentName);
-			if ((authToken != null) && (dbAgent != null)) {
-				return AuthorizationProvider.createSC(agentName);
+			if (dbAgent == null) {
+				dbAgent = this.createNewAgent(agentName, authToken);
 			}
+			return AuthorizationProvider.createSC(agentName);
 		}
 		return null;
+	}
+	
+	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {
+		EAgent agent = new EAgent();
+		agent.setName(agentName);
+		agent.setToken(authToken);
+		agent.setTokenAssociationDate(DateTime.now().getMillis());
+		return this.dAgent.save(agent);
 	}
 	
 	private SecurityContext noTokenNeededCheck() {

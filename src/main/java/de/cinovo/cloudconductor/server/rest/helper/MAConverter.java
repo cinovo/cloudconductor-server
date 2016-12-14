@@ -48,9 +48,9 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
- *
+ * 
  */
 public class MAConverter {
 	
@@ -170,6 +170,6 @@ public class MAConverter {
 	 * @return the api object
 	 */
 	public static AgentOptions fromModel(EAgentOption model) {
-		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit());
+		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit(), model.getTemplate().getName());
 	}
 }

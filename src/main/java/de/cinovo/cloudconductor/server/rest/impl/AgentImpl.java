@@ -44,6 +44,7 @@ import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
 import de.cinovo.cloudconductor.api.model.TaskState;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
@@ -54,6 +55,8 @@ import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAgent;
+import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
@@ -105,6 +108,8 @@ public class AgentImpl implements IAgent {
 	private IAgentOptionsDAO dagentoptions;
 	@Autowired
 	private IServerOptionsDAO dserveroptions;
+	@Autowired
+	private IAgentDAO dAgent;
 	
 	
 	@Override
@@ -401,25 +406,31 @@ public class AgentImpl implements IAgent {
 	
 	@Override
 	@Transactional
-	public AgentOptions heartBeat(String tname, String hname) {
+	public AgentOptions heartBeat(String tname, String hname, String agentN) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
-		System.out.println(DateTime.now().getMillis() + "heartbeat " + hname);
+		RESTAssert.assertNotEmpty(agentN);
+		EAgent agent = this.dAgent.findAgentByName(agentN);
+		if (agent == null) {
+			agent = this.createNewAgent(agentN, null);
+		}
 		EHost host = this.dhost.findByName(hname);
 		if (host == null) {
 			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
 		}
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
-		this.dhost.save(host);
+		host.setAgent(agent);
+		host = this.dhost.save(host);
 		
-		EAgentOption options = this.dagentoptions.findByTemplate(tname);
+		EAgentOption options = this.dagentoptions.findByTemplate(host.getTemplate());
 		if (options == null) {
 			options = new EAgentOption();
-			options.setTemplate(this.dtemplate.findByName(tname));
+			options.setTemplate(host.getTemplate());
 			options = this.dagentoptions.save(options);
 		}
 		AgentOptions result = MAConverter.fromModel(options);
+		result.setTemplateName(host.getTemplate().getName());
 		boolean onceExecuted = false;
 		if (options.getDoSshKeys() == TaskState.ONCE) {
 			if (host.getExecutedSSH()) {
@@ -449,6 +460,14 @@ public class AgentImpl implements IAgent {
 			this.dhost.save(host);
 		}
 		return result;
+	}
+	
+	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {
+		EAgent agent = new EAgent();
+		agent.setName(agentName);
+		agent.setToken(authToken);
+		agent.setTokenAssociationDate(DateTime.now().getMillis());
+		return this.dAgent.save(agent);
 	}
 	
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {
