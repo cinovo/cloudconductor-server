@@ -1,0 +1,41 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add a new Template</h4>
+</div>
+<div class="modal-body">
+#if( $ERROR )
+	<div class="alert alert-danger">$ERROR.getMessage()</div>
+#end 
+		<form id="addtemplates">
+			<table class="table table-striped">
+		<thead>
+			<tr>
+				<th class="stateSymbol"></th>
+				<th>Template</th>
+			</tr>
+		</thead>
+		<tbody>
+			#foreach($template in ${TEMPLATES})
+			#if(!$template.directory.contains($DIRECTORY))
+			#set($found=true)
+			<tr>
+				<td class="stateSymbol"><input type="checkbox" name="templates" rel="tooltip-right" title="select" value="$template.name"></td>
+				<td>$template.name</td>
+			</tr>
+			#end
+			#end
+			#if(! $found)
+				<tr>
+					<td  colspan="7">none</td>
+				</tr>
+			#end
+		</tbody>		
+						
+		</table>
+		</form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+   	<button type="button" class="btn btn-primary" data-ref="${DIRECTORY.name}/templates/add" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="addtemplates">Apply</button>
+</div>

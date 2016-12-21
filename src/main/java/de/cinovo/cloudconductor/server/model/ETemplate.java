@@ -59,6 +59,8 @@ public class ETemplate implements IEntity<Long>, INamed {
 	private List<ESSHKey> sshkeys;
 	
 	private List<EFile> configFiles;
+
+	private List<EDirectory> directories;
 	
 	private EPackageServer yum;
 	
@@ -119,12 +121,29 @@ public class ETemplate implements IEntity<Long>, INamed {
 	public List<EFile> getConfigFiles() {
 		return this.configFiles;
 	}
+
+	/**
+	 * @return the directories
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "mappingdirectorytemplate", schema = "cloudconductor", //
+			joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "directoryid"))
+	public List<EDirectory> getDirectory() {
+		return this.directories;
+	}
 	
 	/**
 	 * @param configFiles the configFiles to set
 	 */
 	public void setConfigFiles(List<EFile> configFiles) {
 		this.configFiles = configFiles;
+	}
+
+	/**
+	 * @param directories the configFiles to set
+	 */
+	public void setDirectory(List<EDirectory> directories) {
+		this.directories = directories;
 	}
 	
 	/**

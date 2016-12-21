@@ -63,7 +63,7 @@ public class TemplateTest extends APITest {
 			Assert.assertEquals(TemplateTest.TEMPLATE, template.getName());
 		}
 		{
-			Template t = new Template("template2", "new template", "localhost", null, null, null, null);
+			Template t = new Template("template2", "new template", "localhost", null, null, null, null, null);
 			h.save(t);
 			Set<Template> set = h.get();
 			Assert.assertEquals(2, set.size());

@@ -1,0 +1,59 @@
+#foreach($template in ${TEMPLATES})
+<div id="$directory.name" class="col-xs-12 col-sm-10 rel-anchor"></div>
+<div class="col-xs-12 col-sm-12">       
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$template.name" rel="tooltip-down" title="Click to copy to clipboard">$template.name</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${template.name.replace(".", "-")}-hide"></span>
+			</h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<a type="button" class="btn btn-default glyphicon glyphicon-link" href="templates#${template.name}" rel="tooltip-down" title="Jump to template"></a>
+				</div>
+			</span>		
+		</div>
+		<div id="${template.name.replace(".", "-")}-hide" class="dropdown-area collapse in">
+			
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Directoryname</th>
+				<th class="stateSymbol">Template</th>
+				<th class="stateSymbol">Reloadable</th>
+				<th class="stateSymbol"></th>
+				<th class="stateSymbol"><button class="btn btn-primary btn-xs glyphicon glyphicon-import" data-ref="${template.name}/add" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Add directory"></button></th>
+			</tr>
+		</thead>
+		<tbody class="table-hover small-lines">
+			#foreach($directory in ${DIRECTORIES})
+			#if($template.directory.contains($directory))
+			#set($found=true)
+			<tr>
+				<td>$directory.name</td>
+				<td>#if(${directory.pkg.name})${directory.pkg.name}#else - #end</td>
+				<td>#foreach($res in ${directory.dependentServices})
+						$res.name;
+					#end 
+				</td>
+				<td class="stateSymbol">
+					<button class="btn btn-primary btn-xs glyphicon glyphicon-edit" data-ref="${directory.name}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Directory"></button>
+				</td>
+				<td class="stateSymbol">
+					<button class="btn btn-primary btn-xs glyphicon glyphicon-trash" data-ref="${template.name}/${directory.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Delete directory"></button>
+				</td>
+			</tr>
+			#end
+			#end
+			#if(! $found)
+				<tr>
+					<td  colspan="7">none</td>
+				</tr>
+			#end
+		</tbody>		
+						
+		</table>
+		</div>
+	</div>
+</div>
+#end

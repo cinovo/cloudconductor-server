@@ -7,19 +7,12 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 
+import de.cinovo.cloudconductor.server.dao.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.ServiceState;
-import de.cinovo.cloudconductor.server.dao.IAdditionalLinksDAO;
-import de.cinovo.cloudconductor.server.dao.IFileDAO;
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
-import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
@@ -60,6 +53,8 @@ public class IndexImpl extends AWebPage implements IIndex {
 	protected IFileDAO dFile;
 	@Autowired
 	protected ISSHKeyDAO dSSH;
+	@Autowired
+	protected IDirectoryDAO ddir;
 	
 	
 	@Override
@@ -122,6 +117,7 @@ public class IndexImpl extends AWebPage implements IIndex {
 		view.addModel("SERVICECOUNT", this.dSvc.count());
 		view.addModel("FILECOUNT", this.dFile.count());
 		view.addModel("SSHKEYCOUNT", this.dSSH.count());
+		view.addModel("DIRCOUNT", this.ddir.count());
 		return view.render();
 	}
 	

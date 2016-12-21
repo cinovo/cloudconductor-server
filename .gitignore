@@ -2,3 +2,5 @@
 /log
 static/yum/
 cloudconductor.properties
+.idea
+*.iml

@@ -115,6 +115,10 @@
 					Files
 				</a>
 				<a class="list-group-item alternatebg">
+					<span class="badge">$DIRCOUNT</span>
+					Directories
+				</a>
+				<a class="list-group-item alternatebg">
 					<span class="badge">$SSHKEYCOUNT</span>
 					SSH Keys
 				</a>
