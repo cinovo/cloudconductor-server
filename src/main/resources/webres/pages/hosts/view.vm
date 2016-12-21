@@ -10,7 +10,7 @@
 				#if (${host.name} == ${host.agent.name})
 				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">$host.name</span>
 				#else
-				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">$host.name : ${host.agent.name}</span>
+				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.agent.name} : $host.name</span>
 				#end
 				<small><span class="copy-button" data-clipboard-text="${host.getTemplate().name}" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.getTemplate().name}</span></small>
 				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide"></span>

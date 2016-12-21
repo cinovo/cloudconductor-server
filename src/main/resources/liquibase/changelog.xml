@@ -646,13 +646,11 @@
 			<column name="agentauthtokenid" type="bigint">
 				<constraints references="cloudconductor.agentauthtoken(id)" foreignKeyName="fk_agent_auth_token_agent" deleteCascade="false" /> 
 			</column>
-			<column name="tokenassociationdate" type="bigint">
-				<constraints nullable="false" />
-			</column>
+			<column name="tokenassociationdate" type="bigint" />
 		</createTable>
 		<addColumn schemaName="cloudconductor" tableName="host">
 			<column name="agentid" type="bigint">
-				<constraints nullable="false" references="cloudconductor.agent(id)" foreignKeyName="fk_agent_host" deleteCascade="false"/>
+				<constraints references="cloudconductor.agent(id)" foreignKeyName="fk_agent_host" deleteCascade="false"/>
 			</column>
 		</addColumn>
 	</changeSet>

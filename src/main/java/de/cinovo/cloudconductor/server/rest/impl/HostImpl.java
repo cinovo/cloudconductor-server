@@ -52,7 +52,7 @@ import de.taimos.springcxfdaemon.JaxRsComponent;
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @JaxRsComponent
 public class HostImpl extends ImplHelper implements IHost {

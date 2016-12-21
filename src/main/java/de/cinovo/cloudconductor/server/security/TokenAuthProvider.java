@@ -62,17 +62,43 @@ public class TokenAuthProvider extends AuthorizationProvider {
 			String agentName = auth1.split("_")[1];
 			
 			EAgentAuthToken authToken = this.dToken.findByToken(token);
-			if ((authToken == null) || (authToken.getRevoked() != null)) {
+			if (authToken == null) {
+				this.handleUnknownToken(token, agentName);
 				return null;
 			}
 			
-			EAgent dbAgent = this.dAgent.findAgentByName(agentName);
-			if (dbAgent == null) {
-				dbAgent = this.createNewAgent(agentName, authToken);
+			if ((authToken.getRevoked() != null)) {
+				this.handleAgent(agentName, authToken);
+				return null;
 			}
-			return AuthorizationProvider.createSC(agentName);
+			
+			EAgent agent = this.handleAgent(agentName, authToken);
+			return AuthorizationProvider.createSC(agent.getName());
 		}
 		return null;
+	}
+	
+	private void handleUnknownToken(String token, String agentName) {
+		EAgentAuthToken brokenToken = new EAgentAuthToken();
+		brokenToken.setToken(token);
+		brokenToken.setCreationDate(DateTime.now().getMillis());
+		brokenToken.setRevoked(DateTime.now().getMillis());
+		brokenToken.setRevokeComment("Unknown token tried to beeing used by a host.");
+		brokenToken = this.dToken.save(brokenToken);
+		this.handleAgent(agentName, brokenToken);
+	}
+	
+	private EAgent handleAgent(String agentName, EAgentAuthToken authToken) {
+		EAgent dbAgent = this.dAgent.findAgentByName(agentName);
+		if (dbAgent == null) {
+			dbAgent = this.createNewAgent(agentName, authToken);
+		}
+		if ((dbAgent.getToken() == null) || !(dbAgent.getToken().equals(authToken))) {
+			dbAgent.setToken(authToken);
+			dbAgent.setTokenAssociationDate(DateTime.now().getMillis());
+			dbAgent = this.dAgent.save(dbAgent);
+		}
+		return dbAgent;
 	}
 	
 	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {

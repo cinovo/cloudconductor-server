@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>de.taimos</groupId>
 			<artifactId>spring-dao-hibernate</artifactId>
-			<version>1.14</version>
+			<version>1.16</version>
 		</dependency>
 		<dependency>
 			<groupId>org.liquibase</groupId>
@@ -110,7 +110,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.4-1202-jdbc42</version>
+			<version>9.4.1212.jre7</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

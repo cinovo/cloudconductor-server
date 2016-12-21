@@ -292,14 +292,23 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		Set<EService> missingServices = new HashSet<>(templateServices);
+		Set<EServiceState> nonUsedServiceStates = new HashSet<>(host.getServices());
 		for (EServiceState state : host.getServices()) {
 			for (EService service : templateServices) {
 				if (service.getName().equals(state.getService().getName())) {
 					missingServices.remove(service);
+					for (EServiceState ss : nonUsedServiceStates) {
+						if (ss.getService().getId().equals(service.getId())) {
+							nonUsedServiceStates.remove(ss);
+							break;
+						}
+					}
+					break;
 				}
 			}
 		}
 		boolean changes = false;
+		// add new service states
 		for (EService service : missingServices) {
 			EServiceState state = new EServiceState();
 			state.setService(service);
@@ -312,6 +321,10 @@ public class AgentImpl implements IAgent {
 			
 			this.dsvcstate.save(state);
 			changes = true;
+		}
+		// clean up old no more used service states
+		for (EServiceState ss : nonUsedServiceStates) {
+			this.dsvcstate.delete(ss);
 		}
 		return changes;
 	}
@@ -465,8 +478,10 @@ public class AgentImpl implements IAgent {
 	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {
 		EAgent agent = new EAgent();
 		agent.setName(agentName);
-		agent.setToken(authToken);
-		agent.setTokenAssociationDate(DateTime.now().getMillis());
+		if (authToken != null) {
+			agent.setToken(authToken);
+			agent.setTokenAssociationDate(DateTime.now().getMillis());
+		}
 		return this.dAgent.save(agent);
 	}
 	
