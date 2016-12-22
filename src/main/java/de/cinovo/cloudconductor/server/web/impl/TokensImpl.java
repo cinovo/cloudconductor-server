@@ -161,12 +161,22 @@ public class TokensImpl extends AWebPage implements IToken {
 	
 	@Override
 	@Transactional
-	public AjaxAnswer revokeToken(Long tokenId) {
+	public RenderedUI revokeTokenView(Long tokenId) {
+		RESTAssert.assertNotNull(tokenId);
+		CSViewModel modal = this.createModal("mRevokeToken");
+		EAgentAuthToken token = this.dToken.findById(tokenId);
+		modal.addModel(TokensImpl.TOKEN, token);
+		return modal.render();
+	}
+	
+	@Override
+	@Transactional
+	public AjaxAnswer revokeToken(Long tokenId, String comment) {
 		RESTAssert.assertNotNull(tokenId);
 		EAgentAuthToken token = this.dToken.findById(tokenId);
 		token.setRevoked((new DateTime()).getMillis());
+		token.setRevokeComment(comment);
 		this.dToken.save(token);
 		return new AjaxAnswer(IWebPath.WEBROOT + IToken.ROOT);
 	}
-	
 }

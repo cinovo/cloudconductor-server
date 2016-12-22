@@ -35,6 +35,10 @@ public interface IToken {
 	/**
 	 * 
 	 */
+	public static final String REVOKE_TOKEN_VIEW = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REVOKE + "Token";
+	/**
+	 * 
+	 */
 	public static final String REVOKE_TOKEN = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REVOKE;
 	
 	/**
@@ -72,6 +76,7 @@ public interface IToken {
 	public abstract RenderedUI editTokenView(@PathParam(IWebPath.VAR_NAME) Long tokenId);
 	
 	/**
+	 * @param agents the agent list to associate with the token
 	 * @return an ajax answer
 	 */
 	@POST
@@ -93,11 +98,21 @@ public interface IToken {
 	
 	/**
 	 * @param tokenId the id of the token
+	 * @return the modal content
+	 */
+	@GET
+	@Path(IToken.REVOKE_TOKEN_VIEW)
+	@Produces(MediaType.TEXT_HTML)
+	@Transactional
+	public abstract RenderedUI revokeTokenView(@PathParam(IWebPath.VAR_NAME) Long tokenId);
+	
+	/**
+	 * @param tokenId the id of the token
 	 * @return an ajax answer
 	 */
 	@POST
 	@Path(IToken.REVOKE_TOKEN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public abstract AjaxAnswer revokeToken(@PathParam(IWebPath.VAR_NAME) Long tokenId);
+	public abstract AjaxAnswer revokeToken(@PathParam(IWebPath.VAR_NAME) Long tokenId, @FormParam("revokeComment") String comment);
 }

@@ -1,6 +1,19 @@
+
+<div style="width:200px;float:right">
+	<label>
+		<input type="checkbox" onclick="$('.revoked').toggle()" />
+		Hide Revoked
+	</label>
+</div>
+
 #foreach( $token in $TOKENS)
-<div id="$token.token" class="col-xs-12 col-sm-10 rel-anchor"></div>
-<div class="col-xs-12 col-sm-12">
+#if (${token.revoked})
+	#set($revoked = "revoked")
+#else 
+	#set($revoked = "")
+#end
+<div id="$token.token" class="col-xs-12 col-sm-10 rel-anchor $revoked"></div>
+<div class="col-xs-12 col-sm-12 $revoked">
 	<div class="panel panel-primary">
 		<div class="panel-heading panel-toggle">
 			<h3 class="panel-title">
@@ -9,14 +22,16 @@
 			</h3>
 			<span class="pull-right">
 				<div class="btn-group">
-					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token Agents"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-ban-circle" data-ref="${token.id}/revokeToken" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Revoke Token"></button>
 				</div>
 			</span>
 		</div>
 		<div id="${token.token.replace(".", "-")}-hide" class="dropdown-area collapse in">
 				#if(${token.revoked})
 					#if (${token.revoked} > 0)
-					<span><b style="color:red">Revoked at: </b> ${dateTool.format('dd.MM.yyyy', $token.revoked)}</span>
+					<span style="padding: 8px"><b style="color:red">Revoked at: </b> ${dateTool.format('dd.MM.yyyy', $token.revoked)}</span>
+					<span style="padding: 8px"><b> Revoke Reason: </b> ${token.revokeComment} </span>
 					#end
 				#end
 		</div>
