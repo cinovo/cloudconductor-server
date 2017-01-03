@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.cinovo.cloudconductor.server.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +35,6 @@ import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
-import de.cinovo.cloudconductor.server.dao.IFileDAO;
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
-import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
@@ -79,6 +72,8 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 	private ISSHKeyDAO dssh;
 	@Autowired
 	private IFileDAO dcf;
+	@Autowired
+	private IDirectoryDAO ddir;
 	@Autowired
 	private AMConverter amc;
 	
@@ -129,6 +124,11 @@ public class TemplateImpl extends ImplHelper implements ITemplate {
 			model.setConfigFiles(this.findByName(this.dcf, apiObject.getConfigFiles()));
 		} else {
 			model.setConfigFiles(null);
+		}
+		if ((apiObject.getDirectories() != null) && !apiObject.getDirectories().isEmpty()) {
+			model.setDirectory(this.findByName(this.ddir, apiObject.getDirectories()));
+		} else {
+			model.setDirectory(null);
 		}
 		this.dtemplate.save(model);
 	}

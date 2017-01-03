@@ -54,6 +54,7 @@
 			<bean class="de.cinovo.cloudconductor.server.web.impl.PackageServerImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.ServiceImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.FilesImpl" />
+			<bean class="de.cinovo.cloudconductor.server.web.impl.DirectoriesImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.ConfigImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.SSHKeyImpl" />
 			<bean class="de.cinovo.cloudconductor.server.web.impl.WebReportImpl" />

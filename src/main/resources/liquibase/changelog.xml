@@ -10,7 +10,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 	<changeSet id="1" author="psigloch" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
-		<sql dbms="postgresql, hsqldb"><![CDATA[
+		<sql dbms="hsqldb,postgresql"><![CDATA[
 			CREATE SCHEMA cloudconductor;
 		]]></sql>
 
@@ -619,6 +619,68 @@
 			<column name="executedfiles" type="boolean" defaultValueBoolean="false" />
 			<column name="executedpkg" type="boolean" defaultValueBoolean="false" />
 		</addColumn>
+	</changeSet>
+    <changeSet id="20" author="jawe09">
+        <createTable tableName="directory" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="targetpath" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="owner" type="varchar(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filegroup" type="varchar(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="filemode" type="varchar(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="packageid" type="bigint">
+                <constraints references="cloudconductor.package(id)" foreignKeyName="fk_directory_pkg" deleteCascade="true" />
+            </column>
+        </createTable>
+        <createTable tableName="mappingdirectoryservice" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="directoryid" type="bigint">
+                <constraints references="cloudconductor.directory(id)" foreignKeyName="fk_directory_svc" deleteCascade="true" />
+            </column>
+            <column name="serviceid" type="bigint">
+                <constraints references="cloudconductor.service(id)" foreignKeyName="fk_svc_directory" deleteCascade="true" />
+            </column>
+        </createTable>
+    </changeSet>
+	<changeSet id="21" author="jawe09">
+		<addColumn schemaName="cloudconductor" tableName="directory">
+			<column name="version" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="deleted" type="boolean" defaultValue="false"></column>
+			<column name="origid" type="bigint">
+				<constraints references="cloudconductor.directory(id)" foreignKeyName="fk_directory_versionized" deleteCascade="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="22" author="jawe09">
+		<createTable tableName="mappingdirectorytemplate" schemaName="cloudconductor">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="directoryid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.directory(id)" foreignKeyName="fk_directory_template"
+							 deleteCascade="true" />
+			</column>
+			<column name="templateid" type="bigint">
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_directory"
+							 deleteCascade="true" />
+			</column>
+		</createTable>
 	</changeSet>
 	<changeSet id="20" author="ablehm">
 		<createTable schemaName="cloudconductor" tableName="agentauthtoken">

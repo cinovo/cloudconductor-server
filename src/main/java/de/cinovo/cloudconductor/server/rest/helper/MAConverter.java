@@ -24,26 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import de.cinovo.cloudconductor.api.ServiceState;
-import de.cinovo.cloudconductor.api.model.AgentOptions;
-import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.cinovo.cloudconductor.api.model.Dependency;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.model.*;
 import de.cinovo.cloudconductor.api.model.Package;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.SSHKey;
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.cinovo.cloudconductor.server.model.EAgentOption;
-import de.cinovo.cloudconductor.server.model.EDependency;
-import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ESSHKey;
-import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.EServiceState;
-import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.model.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -84,7 +67,8 @@ public class MAConverter {
 		}
 		return new Template(model.getName(), model.getDescription(), model.getYumPath(), rpms, //
 		MAConverter.fromModel(model.getHosts()), MAConverter.fromModel(model.getSshkeys()), //
-		MAConverter.fromModel(model.getConfigFiles()));
+		MAConverter.fromModel(model.getConfigFiles()), //
+				MAConverter.fromModel(model.getDirectory()));
 	}
 	
 	/**
@@ -121,7 +105,18 @@ public class MAConverter {
 		model.getOwner(), model.getGroup(), model.getFileMode(), model.isTemplate(), model.isReloadable(), //
 		model.getChecksum(), services);
 	}
-	
+
+	/**
+	 * @param model the model object
+	 * @return the api object
+	 */
+	public static Directory fromModel(EDirectory model)
+	{
+		Set<String> services = MAConverter.fromModel(model.getDependentServices());
+		return new Directory(model.getName(), model.getPkg() == null ? null : model.getPkg().getName(), model.getTargetPath(), //
+				model.getOwner(), model.getGroup(), model.getFileMode(), services);
+	}
+
 	/**
 	 * @param model the model object
 	 * @return the api object
