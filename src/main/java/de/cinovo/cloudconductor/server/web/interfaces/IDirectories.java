@@ -1,18 +1,24 @@
 package de.cinovo.cloudconductor.server.web.interfaces;
 
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
 import de.cinovo.cloudconductor.api.MediaType;
-import de.cinovo.cloudconductor.server.util.FormErrorException;
+import de.cinovo.cloudconductor.server.util.exception.FormErrorException;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.taimos.cxf_renderer.model.RenderedUI;
-
-import javax.ws.rs.*;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author psigloch
- * 		
+ * 
  */
 @Path(IDirectories.ROOT)
 public interface IDirectories {

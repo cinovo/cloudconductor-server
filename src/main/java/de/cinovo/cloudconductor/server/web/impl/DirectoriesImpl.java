@@ -1,33 +1,39 @@
 package de.cinovo.cloudconductor.server.web.impl;
 
-import de.cinovo.cloudconductor.server.dao.*;
-import de.cinovo.cloudconductor.server.model.*;
-import de.cinovo.cloudconductor.server.util.FormErrorException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import de.cinovo.cloudconductor.server.dao.IDirectoryDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EDirectory;
+import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EService;
+import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.util.exception.FormErrorException;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
 import de.cinovo.cloudconductor.server.web.helper.NavbarHardLinks;
 import de.cinovo.cloudconductor.server.web.helper.SidebarType;
 import de.cinovo.cloudconductor.server.web.interfaces.IDirectories;
-import de.cinovo.cloudconductor.server.web.interfaces.IDirectories;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 /**
  * Copyright 2014 Cinovo AG<br>
  * <br>
  * 
  * @author jawe09
- * 		
+ * 
  */
 public class DirectoriesImpl extends AWebPage implements IDirectories {
 	
@@ -77,14 +83,14 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 	
 	@Transactional
 	private RenderedUI defaultView(String[] filter) {
-
+		
 		List<EDirectory> daodirectories = this.dDirectory.findList();
 		List<EDirectory> directories = new ArrayList<>();
 		for (EDirectory d : daodirectories) {
-
-				this.addSidebarElement(d.getName());
-				directories.add(d);
-
+			
+			this.addSidebarElement(d.getName());
+			directories.add(d);
+			
 		}
 		this.addSidebarElements(directories);
 		List<ETemplate> templates = this.dTemplate.findList();
@@ -147,7 +153,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		modal.addModel("TEMPLATES", templates);
 		return modal.render();
 	}
-
+	
 	@Override
 	public RenderedUI deleteDirectoryView(String name) {
 		RESTAssert.assertNotEmpty(name);
@@ -156,7 +162,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		modal.addModel("DIRECTORY", directory);
 		return modal.render();
 	}
-
+	
 	@Override
 	@Transactional
 	public RenderedUI deleteDirectoryFromTemplateView(String name, String template) {
@@ -171,7 +177,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		modal.addModel("TEMPLATE", t);
 		return modal.render();
 	}
-
+	
 	@Override
 	@Transactional
 	public RenderedUI addDirectoryToTemplateView(String template) {
@@ -184,7 +190,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		modal.addModel("TEMPLATE", t);
 		return modal.render();
 	}
-
+	
 	@Override
 	@Transactional
 	public RenderedUI addTemplateToDirectoryView(String directory) {
@@ -197,13 +203,13 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		modal.addModel("TEMPLATES", templates);
 		return modal.render();
 	}
-
+	
 	@Override
 	@Transactional
 	public AjaxAnswer saveDirectory(String oldname, String newname, String owner, String group, String mode, String targetPath, String depPackage, String[] depServices, String[] templates) throws FormErrorException {
 		RESTAssert.assertNotEmpty(oldname);
 		EDirectory dir = this.dDirectory.findByName(oldname);
-
+		
 		// Form error handling
 		FormErrorException error = null;
 		error = this.assertNotEmpty(newname, error, "name");
@@ -212,7 +218,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		error = this.assertNotEmpty(mode, error, "mode");
 		error = this.assertNotEmpty(targetPath, error, "targetPath");
 		error = this.assertNotEmpty(owner, error, "owner");
-
+		
 		if (!oldname.equals(newname) && (this.dDirectory.findByName(newname) != null)) {
 			error = error == null ? this.createError("The service name already exists.") : error;
 			error.addElementError("name", true);
@@ -231,7 +237,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 			error.addFormParam("depPackage", depPackage);
 			error.addFormParam("depServices", Arrays.asList(depServices));
 			error.addFormParam("templates", templates);
-
+			
 			if (oldname.equals("0")) {
 				error.setParentUrl(IDirectories.ROOT, IWebPath.ACTION_ADD);
 			} else {
@@ -239,7 +245,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 			}
 			throw error;
 		}
-
+		
 		// save process
 		if (dir == null) {
 			dir = new EDirectory();
@@ -266,7 +272,6 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		}
 		
 		dir = this.dDirectory.save(dir);
-
 		
 		List<ETemplate> notfound = this.dTemplate.findList();
 		for (String template : templates) {
@@ -295,7 +300,7 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		if (dir == null) {
 			return new AjaxAnswer(IWebPath.WEBROOT + IDirectories.ROOT);
 		}
-
+		
 		this.dDirectory.delete(dir);
 		this.removeSidebarElement(name);
 		return new AjaxAnswer(IWebPath.WEBROOT + IDirectories.ROOT);
@@ -308,12 +313,12 @@ public class DirectoriesImpl extends AWebPage implements IDirectories {
 		RESTAssert.assertNotEmpty(name);
 		ETemplate t = this.dTemplate.findByName(template);
 		EDirectory dir = this.dDirectory.findByName(name);
-
+		
 		if (t.getDirectory().contains(dir)) {
 			t.getDirectory().remove(dir);
 			this.dTemplate.save(t);
 		}
-
+		
 		// Fill template with models and return.
 		return new AjaxAnswer(IWebPath.WEBROOT + IDirectories.ROOT, IDirectories.TEMPLATE_FILTER + "#" + template);
 	}

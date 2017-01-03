@@ -22,16 +22,14 @@
 			<tr>
 				<th>Owner</th>
 				<th>Directory mode</th>
-				<th></th>
-				<th></th>
+				<th colspan="4"></th>
 			</tr>
 		</thead>
 		<tbody class="small-lines">
 			<tr>
 				<td>$directory.owner : $directory.group</td>
 				<td>#if(!${directory.fileMode.startsWith(0)})0#end$directory.fileMode</td>
-                <td></td>
-				<td></td>
+                <td colspan="4"></td>
 			</tr>
 		</tbody>		
 		
