@@ -55,9 +55,8 @@ public class TemplateTest extends APITest {
 		TemplateHandler h = new TemplateHandler(this.getCSApi());
 		{
 			Set<Template> set = h.get();
-			Assert.assertEquals(1, set.size());
-			Template next = set.iterator().next();
-			Assert.assertEquals(TemplateTest.TEMPLATE, next.getName());
+			Assert.assertEquals(2, set.size());
+			// Assert.assertEquals(TemplateTest.TEMPLATE, next.getName());
 		}
 		{
 			Template template = h.get(TemplateTest.TEMPLATE);
@@ -69,14 +68,14 @@ public class TemplateTest extends APITest {
 			Template t = new Template("template2", "new template", servers, null, null, null, null);
 			h.save(t);
 			Set<Template> set = h.get();
-			Assert.assertEquals(2, set.size());
+			Assert.assertEquals(3, set.size());
 			Template template = h.get("template2");
 			Assert.assertEquals("template2", template.getName());
 		}
 		{
 			h.delete("template2");
 			Set<Template> set = h.get();
-			Assert.assertEquals(1, set.size());
+			Assert.assertEquals(2, set.size());
 		}
 	}
 	

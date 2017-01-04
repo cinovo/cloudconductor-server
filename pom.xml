@@ -73,6 +73,7 @@
 		<dependency>
 			<groupId>de.cinovo.cloudconductor</groupId>
 			<artifactId>cloudconductor-api</artifactId>
+<<<<<<< HEAD
 			<version>2.11</version>
 			<exclusions>
 				<exclusion>
@@ -90,6 +91,29 @@
 			<groupId>de.taimos</groupId>
 			<artifactId>dvalin-jpa</artifactId>
 			<version>${dvalin.version}</version>
+=======
+			<version>2.13</version>
+		</dependency>
+		<dependency>
+			<groupId>de.taimos</groupId>
+			<artifactId>spring-cxf-daemon</artifactId>
+			<version>2.10</version>
+		</dependency>
+		<dependency>
+			<groupId>de.taimos</groupId>
+			<artifactId>spring-dao-hibernate</artifactId>
+			<version>1.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mattbertolini</groupId>
+			<artifactId>liquibase-slf4j</artifactId>
+			<version>1.2.1</version>
+>>>>>>> master
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -107,7 +131,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>9.4-1202-jdbc42</version>
+			<version>9.4.1212.jre7</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

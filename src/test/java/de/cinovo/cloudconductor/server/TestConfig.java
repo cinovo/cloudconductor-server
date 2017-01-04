@@ -8,7 +8,7 @@ import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfig;
  * <br>
  * 
  * @author hoegertn
- * 		
+ * 
  */
 public class TestConfig extends RunnerConfig {
 	
@@ -27,6 +27,7 @@ public class TestConfig extends RunnerConfig {
 		this.addProperty("ds.package", "de/cinovo/cloudconductor/server/model");
 		this.addProperty("jaxrs.path", "/api");
 		this.addProperty("jetty.sessions", "true");
+		this.addProperty("cloudconductor.restauthmandatory", "false");
 	}
 	
 	@Override

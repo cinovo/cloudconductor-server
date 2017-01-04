@@ -17,38 +17,15 @@ package de.cinovo.cloudconductor.server.rest.helper;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.*;
+import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.server.dao.*;
+import de.cinovo.cloudconductor.server.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.cinovo.cloudconductor.api.model.Dependency;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.cinovo.cloudconductor.api.model.Package;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.SSHKey;
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
-import de.cinovo.cloudconductor.server.dao.IFileDAO;
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
-import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.model.EDependency;
-import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ESSHKey;
-import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.ETemplate;
-
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
@@ -65,6 +42,9 @@ public class AMConverter {
 	
 	@Autowired
 	private IFileDAO dcf;
+
+	@Autowired
+	private IDirectoryDAO ddir;
 	
 	@Autowired
 	private IHostDAO dhost;
@@ -129,6 +109,24 @@ public class AMConverter {
 		model.setOwner(api.getOwner());
 		model.setReloadable(api.isReloadable());
 		model.setTemplate(api.isTemplate());
+		model.setTargetPath(api.getTargetPath());
+		model.setPkg(this.dpkg.findByName(api.getPkg()));
+		return model;
+	}
+
+	/**
+	 * @param api the api object
+	 * @return the model object
+	 */
+	public EDirectory toModel(Directory api){
+		EDirectory model = this.ddir.findByName(api.getName());
+		if (model == null){
+			model = new EDirectory();
+			model.setName(api.getName());
+		}
+		model.setFileMode(api.getFileMode());
+		model.setGroup(api.getGroup());
+		model.setOwner(api.getOwner());
 		model.setTargetPath(api.getTargetPath());
 		model.setPkg(this.dpkg.findByName(api.getPkg()));
 		return model;

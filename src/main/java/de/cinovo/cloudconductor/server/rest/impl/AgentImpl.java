@@ -44,6 +44,7 @@ import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
 import de.cinovo.cloudconductor.api.model.TaskState;
 import de.cinovo.cloudconductor.server.comparators.PackageVersionComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
@@ -55,6 +56,8 @@ import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAgent;
+import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EFile;
@@ -75,7 +78,7 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
  *
  */
@@ -108,6 +111,7 @@ public class AgentImpl implements IAgent {
 	private IServerOptionsDAO dserveroptions;
 	@Autowired
 	private IPackageServerGroupDAO dpsg;
+	private IAgentDAO dAgent;
 	
 	
 	@Override
@@ -291,14 +295,23 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		Set<EService> missingServices = new HashSet<>(templateServices);
+		Set<EServiceState> nonUsedServiceStates = new HashSet<>(host.getServices());
 		for (EServiceState state : host.getServices()) {
 			for (EService service : templateServices) {
 				if (service.getName().equals(state.getService().getName())) {
 					missingServices.remove(service);
+					for (EServiceState ss : nonUsedServiceStates) {
+						if (ss.getService().getId().equals(service.getId())) {
+							nonUsedServiceStates.remove(ss);
+							break;
+						}
+					}
+					break;
 				}
 			}
 		}
 		boolean changes = false;
+		// add new service states
 		for (EService service : missingServices) {
 			EServiceState state = new EServiceState();
 			state.setService(service);
@@ -311,6 +324,10 @@ public class AgentImpl implements IAgent {
 			
 			this.dsvcstate.save(state);
 			changes = true;
+		}
+		// clean up old no more used service states
+		for (EServiceState ss : nonUsedServiceStates) {
+			this.dsvcstate.delete(ss);
 		}
 		return changes;
 	}
@@ -405,25 +422,31 @@ public class AgentImpl implements IAgent {
 	
 	@Override
 	@Transactional
-	public AgentOptions heartBeat(String tname, String hname) {
+	public AgentOptions heartBeat(String tname, String hname, String agentN) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
-		System.out.println(DateTime.now().getMillis() + "heartbeat " + hname);
+		RESTAssert.assertNotEmpty(agentN);
+		EAgent agent = this.dAgent.findAgentByName(agentN);
+		if (agent == null) {
+			agent = this.createNewAgent(agentN, null);
+		}
 		EHost host = this.dhost.findByName(hname);
 		if (host == null) {
 			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
 		}
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
-		this.dhost.save(host);
+		host.setAgent(agent);
+		host = this.dhost.save(host);
 		
-		EAgentOption options = this.dagentoptions.findByTemplate(tname);
+		EAgentOption options = this.dagentoptions.findByTemplate(host.getTemplate());
 		if (options == null) {
 			options = new EAgentOption();
-			options.setTemplate(this.dtemplate.findByName(tname));
+			options.setTemplate(host.getTemplate());
 			options = this.dagentoptions.save(options);
 		}
 		AgentOptions result = MAConverter.fromModel(options);
+		result.setTemplateName(host.getTemplate().getName());
 		boolean onceExecuted = false;
 		if (options.getDoSshKeys() == TaskState.ONCE) {
 			if (host.getExecutedSSH()) {
@@ -453,6 +476,16 @@ public class AgentImpl implements IAgent {
 			this.dhost.save(host);
 		}
 		return result;
+	}
+	
+	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {
+		EAgent agent = new EAgent();
+		agent.setName(agentName);
+		if (authToken != null) {
+			agent.setToken(authToken);
+			agent.setTokenAssociationDate(DateTime.now().getMillis());
+		}
+		return this.dAgent.save(agent);
 	}
 	
 	private ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(Collection<EPackageVersion> nominal, Collection<EPackageVersion> actual) {

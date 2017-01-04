@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.cinovo.cloudconductor.api.ServiceState;
+<<<<<<< HEAD
 import de.cinovo.cloudconductor.api.model.AdditionalLink;
 import de.cinovo.cloudconductor.api.model.AgentOptions;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
@@ -50,11 +51,16 @@ import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+=======
+import de.cinovo.cloudconductor.api.model.*;
+import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.server.model.*;
+>>>>>>> master
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
  * 
  */
@@ -96,7 +102,8 @@ public class MAConverter {
 		
 		return new Template(model.getName(), model.getDescription(), servers, rpms, //
 		MAConverter.fromModel(model.getHosts()), MAConverter.fromModel(model.getSshkeys()), //
-		MAConverter.fromModel(model.getConfigFiles()));
+		MAConverter.fromModel(model.getConfigFiles()), //
+				MAConverter.fromModel(model.getDirectory()));
 	}
 	
 	/**
@@ -133,7 +140,18 @@ public class MAConverter {
 		model.getOwner(), model.getGroup(), model.getFileMode(), model.isTemplate(), model.isReloadable(), //
 		model.getChecksum(), services);
 	}
-	
+
+	/**
+	 * @param model the model object
+	 * @return the api object
+	 */
+	public static Directory fromModel(EDirectory model)
+	{
+		Set<String> services = MAConverter.fromModel(model.getDependentServices());
+		return new Directory(model.getName(), model.getPkg() == null ? null : model.getPkg().getName(), model.getTargetPath(), //
+				model.getOwner(), model.getGroup(), model.getFileMode(), services);
+	}
+
 	/**
 	 * @param model the model object
 	 * @return the api object
@@ -182,7 +200,7 @@ public class MAConverter {
 	 * @return the api object
 	 */
 	public static AgentOptions fromModel(EAgentOption model) {
-		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit());
+		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit(), model.getTemplate().getName());
 	}
 	
 	/**

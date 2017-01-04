@@ -1,0 +1,56 @@
+
+<div style="width:200px;float:right">
+	<label>
+		<input type="checkbox" onclick="$('.revoked').toggle()" />
+		Hide Revoked
+	</label>
+</div>
+
+#foreach( $token in $TOKENS)
+#if (${token.revoked})
+	#set($revoked = "revoked")
+#else 
+	#set($revoked = "")
+#end
+<div id="$token.token" class="col-xs-12 col-sm-10 rel-anchor $revoked"></div>
+<div class="col-xs-12 col-sm-12 $revoked">
+	<div class="panel panel-primary">
+		<div class="panel-heading panel-toggle">
+			<h3 class="panel-title">
+				<span class="copy-button" data-clipboard-text="$token.token" rel="tooltip-down" title="The name of the generated token">$token.token</span>
+				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${token.token.replace(".", "-")}-hide"></span>
+			</h3>
+			<span class="pull-right">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${token.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Edit Token Agents"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-ban-circle" data-ref="${token.id}/revokeToken" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Revoke Token"></button>
+				</div>
+			</span>
+		</div>
+		<div id="${token.token.replace(".", "-")}-hide" class="dropdown-area collapse in">
+				#if(${token.revoked})
+					#if (${token.revoked} > 0)
+					<span style="padding: 8px"><b style="color:red">Revoked at: </b> ${dateTool.format('dd.MM.yyyy', $token.revoked)}</span>
+					<span style="padding: 8px"><b> Revoke Reason: </b> ${token.revokeComment} </span>
+					#end
+				#end
+		</div>
+		
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th colspan="2">Agents</th>
+				</tr>
+			</thead>
+			<tbody class="table-hover small-lines">
+			#set($agentNames = $TOKENAGENTMAP.get($token.getId()))
+			#foreach( $agentName in $agentNames)
+				<tr>
+					<td colspan="2">$agentName</td>
+				</tr>
+			#end
+			</tbody>
+		</table>
+	</div>
+</div>
+#end

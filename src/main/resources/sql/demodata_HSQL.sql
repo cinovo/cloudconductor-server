@@ -57,6 +57,8 @@ INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar');
 
 INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
 
+INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', 1, false, true)
+
 
 INSERT INTO cloudconductor.packageservergroup VALUES (1, 'TESTREPO', '1');
 INSERT INTO cloudconductor.packageservergroup VALUES (2, 'Ein etwas anderes REPO', '1');
@@ -70,7 +72,20 @@ INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, 
 
 INSERT INTO cloudconductor.mappingpackageservertemplate VALUES (1, 1);
 
-INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1381489459832, NULL, false, false, false);
+INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, NULL, 'a comment');
+
+INSERT INTO cloudconductor.agentauthtoken VALUES (2, 'testblahToken02', 1381489459832, 1381489489832, 'another comment');
+
+INSERT INTO cloudconductor.agent VALUES (1, 'testAgent01', 1, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (2, 'testAgent02', 1, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (3, 'testAgent03', 2, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (4, 'testAgent04', 2, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (5, 'testAgent05', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', NULL, 1381489459832);
+
+INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1);
 
 INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6');

@@ -1,0 +1,18 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title">Revoke Token</h4>
+</div>
+
+<div class="modal-body">
+	<form id="revokeToken">
+		<div>
+			<p>Provide a Comment for revoking the token:</p>
+			<input style="width:100%" type="text" class="form-control" placeholder="A comment" name="revokeComment" />
+		</div>
+	</form>
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	<button type="button" class="btn btn-primary" data-ref="${TOKEN.id}/revoke" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="revokeToken">Revoke</button>
+</div>

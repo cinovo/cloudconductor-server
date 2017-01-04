@@ -47,9 +47,13 @@ import de.taimos.restutils.RESTAssert;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * 
  * @author psigloch
+<<<<<<< HEAD
  *
+=======
+ * 
+>>>>>>> master
  */
 @JaxRsComponent
 public class FileImpl extends ImplHelper implements IFile {

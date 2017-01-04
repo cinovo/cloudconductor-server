@@ -1,0 +1,24 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title"> Edit the Template of the host <strong>${host.getName()}</strong></h4>
+</div>
+<div class="modal-body">
+	<form id="templateSelect">
+		<p>Select the Template for this host:</p>
+		<label>Template
+			<select name="template">
+			#foreach($template in $TEMPLATES)
+				#if(${host.template.id} == ${template.id})
+				<option value="${template.id}" selected>${template.name}</option>
+				#else
+				<option value="${template.id}">${template.name}</option>
+				#end
+			#end
+			</select>
+		</label>
+	</form>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	<button type="button" class="btn btn-primary" data-ref="${host.id}/template/update" data-call-type="POST" data-toggle="modal" data-target="#popModal" data-form="templateSelect">Apply</button>
+</div>
