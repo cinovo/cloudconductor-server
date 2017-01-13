@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header" *ngIf="mode == 'edit'">Edit Configuration Key-Value-Pair</h1>
+    <h1 class="page-header" *ngIf="mode == 'new'">New Configuration Key-Value-Pair</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-list-alt fa-fw"></i> Key-Value-Pair
+      </div>
+      <div class="panel-body">
+        <div class="form-group" [class.has-error]="!isKeyValid()">
+          <label class="control-label" for="key">Key</label>
+          <input type="text" class="form-control" [(ngModel)]="cv.key" id="key" [disabled]="mode == 'edit'">
+        </div>
+        <div class="form-group" [class.has-error]="!isValueValid()">
+          <label class="control-label" for="value">Value</label>
+          <input type="text" class="form-control" [(ngModel)]="cv.value" id="value">
+        </div>
+        <div class="form-group" [class.has-error]="!isTemplateValid()">
+          <label class="control-label" for="template">Template</label>
+          <input type="text" class="form-control" [(ngModel)]="cv.template" id="template" [disabled]="mode == 'edit'"
+                 list="tempalteList">
+          <datalist id="tempalteList">
+            <option *ngFor="let template of configHttp.templates" value="{{template}}"></option>
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="service">Service</label>
+          <input type="text" class="form-control" [(ngModel)]="cv.service" id="service" [disabled]="mode == 'edit'">
+        </div>
+
+
+        <div class="pull-right">
+          <button [routerLink]="['/config',cv.template]" class="btn btn-default">Back</button>
+          <button (click)="save()" class="btn btn-info"
+                  [disabled]="!isKeyValid() || !isValueValid() || !isTemplateValid() ">Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

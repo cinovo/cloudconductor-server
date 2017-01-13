@@ -1,7 +1,7 @@
 package de.cinovo.cloudconductor.server.dao;
 
 import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
-import de.taimos.dao.IEntityDAO;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 /**
  * Copyright 2016 Cinovo AG<br>

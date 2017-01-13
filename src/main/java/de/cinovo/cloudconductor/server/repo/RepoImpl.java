@@ -1,26 +1,22 @@
 package de.cinovo.cloudconductor.server.repo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
+import de.cinovo.cloudconductor.server.handler.PackageServerHandler;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
+import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StreamUtils;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StreamUtils;
-
-import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
-import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
-import de.cinovo.cloudconductor.server.repo.provider.AWSS3Provider;
-import de.cinovo.cloudconductor.server.repo.provider.FileProvider;
-import de.cinovo.cloudconductor.server.repo.provider.HTTPProvider;
-import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -78,18 +74,7 @@ public class RepoImpl implements IRepo {
 			if(server == null) {
 				server = group.getPackageServers().iterator().next();
 			}
-			if (server != null) {
-				switch (server.getProviderType()) {
-				case AWSS3:
-					return new AWSS3Provider(server);
-				case FILE:
-					return new FileProvider(server);
-				case HTTP:
-					return new HTTPProvider(server);
-				default:
-					break;
-				}
-			}
+			return PackageServerHandler.findRepoProvider(server);
 		}
 		return null;
 	}

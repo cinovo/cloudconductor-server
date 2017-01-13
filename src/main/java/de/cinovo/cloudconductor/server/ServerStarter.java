@@ -16,21 +16,7 @@ package de.cinovo.cloudconductor.server;
  * and limitations under the License. #L%
  */
 
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.util.Map;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.velocity.app.Velocity;
-
-import de.cinovo.cloudconductor.server.installer.InstallationAdapter;
+import de.cinovo.cloudconductor.server.tasks.ServerTaskHelper;
 import de.cinovo.cloudconductor.server.util.JMXResourceProvider;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
@@ -38,6 +24,13 @@ import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
 import de.taimos.daemon.spring.SpringDaemonAdapter;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import javax.management.*;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.util.Map;
 
 /**
  * Copyright 2012 Cinovo AG<br>
@@ -47,79 +40,79 @@ import de.taimos.daemon.spring.SpringDaemonAdapter;
  * @author mhilbert
  */
 public class ServerStarter extends SpringDaemonAdapter {
-	
-	/** C2 properties file name */
-	public static final String CLOUDCONDUCTOR_PROPERTIES = "cloudconductor.properties";
-	// Exception messages.
-	private static final String EXCEPTION_IN_PHASE = "Exception in phase %s.";
-	/** the name of the server daemon */
-	public static final String DAEMON_NAME = "cloudconductor";
-	/** the name of the server daemon */
-	public static final String INSTALLING_DAEMON_NAME = "cloudconductor_INSTALLING";
-	/** the logger */
-	private static final Logger log = Logger.getLogger(ServerStarter.class);
-	
-	
-	/**
-	 * Main method.
-	 *
-	 * @param args the command line arguments
-	 */
-	public static void main(final String[] args) {
-		System.getProperties().put("jaxrs.path", "/api");
-		Log4jLoggingConfigurer.setup();
-		if (ServerStarter.checkInstalled()) {
-			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
-		} else {
-			DaemonStarter.startDaemon(ServerStarter.INSTALLING_DAEMON_NAME, new InstallationAdapter());
-		}
-	}
-	
-	private static boolean checkInstalled() {
-		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
-		return f.exists();
-	}
-	
-	@Override
-	protected void doBeforeSpringStart() {
-		// In dev mode all classes related to the config server should log on the level DEBUG.
-		if (DaemonStarter.isDevelopmentMode()) {
-			Logger.getLogger("de.cinovo.cloudconductor.server").setLevel(Level.DEBUG);
-		}
-		Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
-		super.doBeforeSpringStart();
-	}
-	
-	@Override
-	protected void doAfterSpringStart() {
-		JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
-		final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
-		try {
-			ManagementFactory.getPlatformMBeanServer().registerMBean(prov, new ObjectName(name));
-		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
-			ServerStarter.log.warn("Failed to init JMX", e);
-		}
-		
-		ServerTaskHelper initializer = this.getContext().getBean(ServerTaskHelper.class);
-		initializer.init();
-		super.doAfterSpringStart();
-	}
-	
-	@Override
-	public void exception(LifecyclePhase phase, Throwable exception) {
-		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
-	}
-	
-	@Override
-	public IPropertyProvider getPropertyProvider() {
-		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
-	}
-	
-	@Override
-	protected void loadBasicProperties(Map<String, String> map) {
-		super.loadBasicProperties(map);
-		map.put("ds.package", "de/cinovo/cloudconductor/server/model");
-		map.put("jaxrs.path", "/api");
-		map.put("jetty.sessions", "true");
-	}
+
+    /**
+     * C2 properties file name
+     */
+    public static final String CLOUDCONDUCTOR_PROPERTIES = "cloudconductor.properties";
+    /**
+     * the name of the server daemon
+     */
+    public static final String DAEMON_NAME = "cloudconductor";
+
+    // Exception messages.
+    private static final String EXCEPTION_IN_PHASE = "Exception in phase %s.";
+    /**
+     * the logger
+     */
+    private static final Logger log = Logger.getLogger(ServerStarter.class);
+
+
+    /**
+     * Main method.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(final String[] args) {
+        System.getProperties().put("jaxrs.path", "/api");
+        Log4jLoggingConfigurer.setup();
+        DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
+    }
+
+    private static boolean checkInstalled() {
+        File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
+        return f.exists();
+    }
+
+    @Override
+    protected void doBeforeSpringStart() {
+        // In dev mode all classes related to the config server should log on the level DEBUG.
+        if(DaemonStarter.isDevelopmentMode()) {
+            Logger.getLogger("de.cinovo.cloudconductor.server").setLevel(Level.DEBUG);
+        }
+        super.doBeforeSpringStart();
+    }
+
+    @Override
+    protected void doAfterSpringStart() {
+        JMXResourceProvider prov = this.getContext().getBean(JMXResourceProvider.class);
+        final String name = prov.getClass().getName() + ":type=" + prov.getClass().getSimpleName();
+        try {
+            ManagementFactory.getPlatformMBeanServer().registerMBean(prov, new ObjectName(name));
+        } catch(InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
+            ServerStarter.log.warn("Failed to init JMX", e);
+        }
+
+        ServerTaskHelper initializer = this.getContext().getBean(ServerTaskHelper.class);
+        initializer.init();
+        super.doAfterSpringStart();
+    }
+
+    @Override
+    public void exception(LifecyclePhase phase, Throwable exception) {
+        ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
+    }
+
+    @Override
+    public IPropertyProvider getPropertyProvider() {
+        return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
+    }
+
+    @Override
+    protected void loadBasicProperties(Map<String, String> map) {
+        super.loadBasicProperties(map);
+        map.put("ds.package", "de/cinovo/cloudconductor/server/model");
+        map.put("jaxrs.path", "/api");
+        map.put("jetty.sessions", "true");
+    }
 }

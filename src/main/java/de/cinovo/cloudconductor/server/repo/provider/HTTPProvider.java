@@ -1,20 +1,18 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-
 import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.WS;
 import de.taimos.httputils.WSConstants;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -95,7 +93,7 @@ public class HTTPProvider implements IRepoProvider {
 			try {
 				return entity.getContent();
 			} catch (IllegalStateException | IOException e) {
-				throw new RuntimeException("Failed to create stream", e);
+				throw new RuntimeException("Failed to createEntity stream", e);
 			}
 		}
 		throw new RuntimeException("HTTP entity was null");

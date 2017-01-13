@@ -22,40 +22,20 @@ package de.cinovo.cloudconductor.api.model;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public class PackageVersion implements INamed {
-	
+
 	private String name;
 	private String version;
 	private Set<Dependency> dependencies;
-	private String packageServerGroup;
-	
-	
-	/**
-	 * Class constructor.
-	 * 
-	 * @param name the base name of the RPM
-	 * @param version the version of the RPM
-	 * @param dependencies the dependencies of the RPM
-	 * @param packageServerGroup the package server group
-	 */
-	@JsonCreator
-	public PackageVersion(@JsonProperty("name") String name, @JsonProperty("version") String version, @JsonProperty("dependencies") Set<Dependency> dependencies, @JsonProperty("packageServerGroup") String packageServerGroup) {
-		this.name = name;
-		this.version = version;
-		this.dependencies = dependencies;
-		this.packageServerGroup = packageServerGroup;
-	}
-	
+	private Set<String> packageServerGroup;
+
+
 	/**
 	 * @return the name
 	 */
@@ -63,32 +43,53 @@ public class PackageVersion implements INamed {
 	public String getName() {
 		return this.name;
 	}
-	
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @return the version
 	 */
 	public String getVersion() {
 		return this.version;
 	}
-	
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	/**
 	 * @return the dependencies
 	 */
 	public Set<Dependency> getDependencies() {
 		return this.dependencies;
 	}
-	
+
+	/**
+	 * @param dependencies the dependencies to set
+	 */
+	public void setDependencies(Set<Dependency> dependencies) {
+		this.dependencies = dependencies;
+	}
+
 	/**
 	 * @return the packageServerGroup
 	 */
-	public String getPackageServerGroup() {
+	public Set<String> getPackageServerGroup() {
 		return this.packageServerGroup;
 	}
-	
+
 	/**
 	 * @param packageServerGroup the packageServerGroup to set
 	 */
-	public void setPackageServerGroup(String packageServerGroup) {
+	public void setPackageServerGroup(Set<String> packageServerGroup) {
 		this.packageServerGroup = packageServerGroup;
 	}
 }

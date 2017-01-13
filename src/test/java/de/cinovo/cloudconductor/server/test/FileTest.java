@@ -17,17 +17,16 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ConfigFileHandler;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Set;
 
 /**
  * 
@@ -63,7 +62,18 @@ public class FileTest extends APITest {
 			Assert.assertEquals("Testfile for root", data);
 		}
 		{
-			ConfigFile cf = new ConfigFile("file2", "nginx", "/root/bar", "root", "root", "700", false, false, "", null);
+			ConfigFile cf = new ConfigFile();
+			cf.setName("file2");
+			cf.setPkg("nginx");
+			cf.setFileMode("700");
+			cf.setChecksum("");
+			cf.setGroup("root");
+			cf.setOwner("root");
+			cf.setReloadable(false);
+			cf.setTemplate(false);
+			cf.setTargetPath("/root/bar");
+			cf.setPkg(null);
+
 			h.save(cf);
 			Set<ConfigFile> set = h.get();
 			Assert.assertEquals(2, set.size());

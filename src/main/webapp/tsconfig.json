@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "outDir": "dist"
+  },
+  "filesGlob": [
+    "src/**/*.ts",
+    "typings/index.d.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": true
+  },
+  "files": [
+    "typings/index.d.ts",
+    "src/app.module.ts",
+    "src/app/app.comp.ts",
+    "src/app/app.routing.ts",
+    "src/app/configvalues/cs.edit.comp.ts",
+    "src/app/configvalues/cv.overview.comp.ts",
+    "src/app/home/home.comp.ts",
+    "src/app/nav/nav.comp.ts",
+    "src/app/nav/topNav.comp.ts",
+    "src/app/packageservers/ps.edit.comp.ts",
+    "src/app/packageservers/ps.overview.comp.ts",
+    "src/app/packageservers/psg.edit.comp.ts",
+    "src/app/service/service.detail.comp.ts",
+    "src/app/service/service.overview.comp.ts",
+    "src/app/services/alert/alert.comp.ts",
+    "src/app/services/alert/alert.service.ts",
+    "src/app/services/http/abstract.http.service.ts",
+    "src/app/services/http/additionalLinks.http.service.ts",
+    "src/app/services/http/configValue.http.service.ts",
+    "src/app/services/http/package.http.service.ts",
+    "src/app/services/http/packageserver.http.service.ts",
+    "src/app/services/http/packageservergroup.http.service.ts",
+    "src/app/services/http/service.http.service.ts",
+    "src/app/services/panelhead/panelhead.comp.ts",
+    "src/app/util/sorters.util.ts",
+    "src/app/util/validator.util.ts",
+    "src/environment.ts",
+    "src/main.ts",
+    "src/rxjs-extensions.ts"
+  ]
+}

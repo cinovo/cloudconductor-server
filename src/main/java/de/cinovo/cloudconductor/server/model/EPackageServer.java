@@ -17,19 +17,12 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import de.cinovo.cloudconductor.api.model.PackageServer;
 import de.cinovo.cloudconductor.server.repo.indexer.RepoIndexerType;
 import de.cinovo.cloudconductor.server.repo.provider.RepoProviderType;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -40,7 +33,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "packageserver", schema = "cloudconductor")
-public class EPackageServer implements IEntity<Long> {
+public class EPackageServer extends AModelApiConvertable<PackageServer> implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -236,5 +229,11 @@ public class EPackageServer implements IEntity<Long> {
 	 */
 	public void setIndexerType(RepoIndexerType indexerType) {
 		this.indexerType = indexerType;
+	}
+
+	@Override
+	@Transient
+	public Class<PackageServer> getApiClass() {
+		return PackageServer.class;
 	}
 }

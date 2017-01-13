@@ -1,18 +1,18 @@
 package de.cinovo.cloudconductor.server.security;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.HttpHeaders;
-
+import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
+import de.cinovo.cloudconductor.server.model.EAgent;
+import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
+import de.taimos.dvalin.jaxrs.providers.AuthorizationProvider;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.security.SecurityContext;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.cinovo.cloudconductor.server.dao.IAgentAuthTokenDAO;
-import de.cinovo.cloudconductor.server.dao.IAgentDAO;
-import de.cinovo.cloudconductor.server.model.EAgent;
-import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
-import de.taimos.springcxfdaemon.providers.AuthorizationProvider;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.HttpHeaders;
 
 /**
  * Copyright 2016 Cinovo AG<br>
@@ -21,10 +21,11 @@ import de.taimos.springcxfdaemon.providers.AuthorizationProvider;
  * @author ablehm
  * 
  */
+@JaxRsComponent
 public class TokenAuthProvider extends AuthorizationProvider {
 	
 	private static final String TOKEN = "TOKEN";
-	private static final Boolean TOKEN_AUTH = Boolean.valueOf(System.getProperty("cloudconductor.restauthmandatory", "true"));
+	private static final Boolean TOKEN_AUTH = Boolean.valueOf(System.getProperty("cloudconductor.restauthmandatory", "false"));
 	
 	@Autowired
 	private IAgentAuthTokenDAO dToken;

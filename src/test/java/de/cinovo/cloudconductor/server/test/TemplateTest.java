@@ -17,23 +17,18 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
+import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
+import de.cinovo.cloudconductor.api.lib.manager.TemplateHandler;
+import de.cinovo.cloudconductor.api.model.*;
+import de.cinovo.cloudconductor.server.APITest;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
-import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
-import de.cinovo.cloudconductor.api.lib.manager.TemplateHandler;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.SSHKey;
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -65,7 +60,11 @@ public class TemplateTest extends APITest {
 		{
 			Set<String> servers = new HashSet<>();
 			servers.add("localhost");
-			Template t = new Template("template2", "new template", servers, null, null, null, null);
+			Template t = new Template();
+			t.setName("template2");
+			t.setDescription("new template");
+			t.setHosts(servers);
+
 			h.save(t);
 			Set<Template> set = h.get();
 			Assert.assertEquals(3, set.size());
@@ -125,7 +124,11 @@ public class TemplateTest extends APITest {
 			// Assert.assertEquals(4, versions.size());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.3-1", null, "TESTREPO");
+			PackageVersion pv = new PackageVersion();
+			pv.setName("nginx");
+			pv.setVersion("1.5.4-1");
+			pv.setPackageServerGroup(new HashSet<String>());
+			pv.getPackageServerGroup().add("TESTREPO");
 			h.addVersion(TemplateTest.TEMPLATE, pv);
 			Set<PackageVersion> versions = h.getVersions(TemplateTest.TEMPLATE);
 			Assert.assertEquals(5, versions.size());
@@ -140,7 +143,11 @@ public class TemplateTest extends APITest {
 			Assert.assertEquals(5, versions.size());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null, "TESTREPO");
+			PackageVersion pv = new PackageVersion();
+			pv.setName("nginx");
+			pv.setVersion("1.5.4-1");
+			pv.setPackageServerGroup(new HashSet<String>());
+			pv.getPackageServerGroup().add("TESTREPO");
 			new PackageHandler(this.getCSApi()).addRPM("nginx", pv);
 			
 			h.addVersion(TemplateTest.TEMPLATE, pv);

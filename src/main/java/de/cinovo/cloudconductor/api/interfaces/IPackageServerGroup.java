@@ -19,16 +19,10 @@ package de.cinovo.cloudconductor.api.interfaces;
  * limitations under the License.
  * #L%
  */
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.PackageServerGroup;
+
+import javax.ws.rs.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -46,7 +40,7 @@ public interface IPackageServerGroup {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup[] get();
+	PackageServerGroup[] get();
 	
 	/**
 	 * @param id the {@link PackageServerGroup} id
@@ -55,7 +49,7 @@ public interface IPackageServerGroup {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PackageServerGroup get(@PathParam("id") Long id);
+	PackageServerGroup get(@PathParam("id") Long id);
 	
 	/**
 	 * @param group the {@link PackageServerGroup}
@@ -63,19 +57,19 @@ public interface IPackageServerGroup {
 	 */
 	@POST
 	@Path("/")
-	public Long newGroup(PackageServerGroup group);
+	Long newGroup(PackageServerGroup group);
 	
 	/**
 	 * @param group the {@link PackageServerGroup}
 	 */
 	@PUT
 	@Path("/")
-	public void edit(PackageServerGroup group);
+	void edit(PackageServerGroup group);
 	
 	/**
 	 * @param id the id of the the {@link PackageServerGroup} to delete
 	 */
 	@DELETE
 	@Path("/{id}")
-	public void delete(@PathParam("id") Long id);
+	void delete(@PathParam("id") Long id);
 }

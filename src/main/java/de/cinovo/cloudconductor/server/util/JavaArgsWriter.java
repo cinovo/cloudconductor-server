@@ -17,13 +17,8 @@ package de.cinovo.cloudconductor.server.util;
  * #L%
  */
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Map.Entry;
+import de.cinovo.cloudconductor.api.model.ConfigValue;
+import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -31,8 +26,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-
-import de.taimos.dvalin.jaxrs.JaxRsComponent;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.Collection;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,7 +43,7 @@ import de.taimos.dvalin.jaxrs.JaxRsComponent;
 @Provider
 @Produces(de.cinovo.cloudconductor.api.MediaType.APPLICATION_JAVAARGS)
 @JaxRsComponent
-public class JavaArgsWriter implements MessageBodyWriter<Map<String, String>> {
+public class JavaArgsWriter implements MessageBodyWriter<Collection<ConfigValue>> {
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -52,18 +51,18 @@ public class JavaArgsWriter implements MessageBodyWriter<Map<String, String>> {
 	}
 	
 	@Override
-	public long getSize(Map<String, String> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+	public long getSize(Collection<ConfigValue> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
 		return -1;
 	}
 	
 	@Override
-	public void writeTo(Map<String, String> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+	public void writeTo(Collection<ConfigValue> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
 		final PrintStream printStream = new PrintStream(entityStream, false, "UTF8");
-		for (Entry<String, String> entry : t.entrySet()) {
+		for (ConfigValue entry : t) {
 			printStream.print("-D");
 			printStream.print(entry.getKey());
 			printStream.print("=\"");
-			printStream.print(entry.getValue().replaceAll("\"", "\\\""));
+			printStream.print(entry.getValue().toString().replaceAll("\"", "\\\""));
 			printStream.print("\" ");
 		}
 		printStream.flush();

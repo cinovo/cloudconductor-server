@@ -17,82 +17,106 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Repository("ConfigValueDAOHib")
 public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> implements IConfigValueDAO {
-	
-	@Override
-	public Class<EConfigValue> getEntityClass() {
-		return EConfigValue.class;
-	}
-	
-	@Override
-	public List<EConfigValue> findGlobal() {
-		return this.findVersionedListByQuery("FROM EConfigValue c WHERE c.template = 'GLOBAL' AND (c.service IS NULL OR c.service ='') ", "c");
-	}
-	
-	@Override
-	public List<EConfigValue> findGlobal(String service) {
-		return this.findVersionedListByQuery("FROM EConfigValue c WHERE c.template = 'GLOBAL' AND c.service = ?1", "c", service);
-	}
-	
-	@Override
-	public EConfigValue findGlobal(String service, String key) {
-		return this.findVersionedByQuery("FROM EConfigValue c WHERE c.template = 'GLOBAL' AND c.service = ?1 AND c.configkey = ?2", "c", service, key);
-	}
-	
-	@Override
-	public List<EConfigValue> findBy(String template) {
-		return this.findVersionedListByQuery("FROM EConfigValue c WHERE c.template = ?1  AND (c.service IS NULL OR c.service ='')", "c", template);
-	}
-	
-	@Override
-	public List<EConfigValue> findBy(String template, String service) {
-		return this.findVersionedListByQuery("FROM EConfigValue c WHERE c.template = ?1 AND c.service = ?2", "c", template, service);
-	}
-	
-	@Override
-	public EConfigValue findBy(String template, String service, String key) {
-		return this.findVersionedByQuery("FROM EConfigValue c WHERE c.template = ?1 AND c.service = ?2 AND c.configkey = ?3", "c", template, service, key);
-	}
-	
-	@Override
-	public EConfigValue findKey(String key) {
-		return this.findVersionedByQuery("FROM EConfigValue c WHERE c.template = 'GLOBAL' AND (c.service IS NULL OR c.service ='') AND c.configkey = ?1", "c", key);
-	}
-	
-	@Override
-	public EConfigValue findKey(String template, String key) {
-		return this.findVersionedByQuery("FROM EConfigValue c WHERE c.template = ?1 AND (c.service IS NULL OR c.service ='') AND c.configkey = ?2", "c", template, key);
-	}
-	
-	@Override
-	public List<EConfigValue> findAll(String template) {
-		return this.findVersionedListByQuery("FROM EConfigValue c WHERE c.template = ?1", "c", template);
-	}
-	
-	@Override
-	public List<String> findTemplates() {
-		return this.entityManager.createQuery("SELECT DISTINCT conf.template FROM EConfigValue conf").getResultList();
-	}
-	
-	@Override
-	public AuditCategory getAuditCategory() {
-		return AuditCategory.CONFIG;
-	}
-	
+
+    public static final String RESERVED_GLOBAL = "GLOBAL";
+
+    private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
+    private static final String WHERE_SERVICE = " AND c.service = ?2";
+    private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
+    private static final String WHERE_KEY = " AND c.configkey = ?";
+
+    private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf WHERE conf.deleted = false";
+
+    @Override
+    public Class<EConfigValue> getEntityClass() {
+        return EConfigValue.class;
+    }
+
+    @Override
+    public List<EConfigValue> findBy(String template) {
+        return this.findList(template, null, null);
+    }
+
+    @Override
+    public List<EConfigValue> findBy(String template, String service) {
+        return this.findList(template, service, null);
+    }
+
+    @Override
+    public EConfigValue findBy(String template, String service, String key) {
+        return this.find(template, service, key);
+    }
+
+    @Override
+    public List<String> findTemplates() {
+        List<String> result = this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES).getResultList();
+        if(!result.contains(ConfigValueDAOHib.RESERVED_GLOBAL)) {
+            result.add(ConfigValueDAOHib.RESERVED_GLOBAL);
+        }
+        return result;
+    }
+
+    @Override
+    public List<EConfigValue> findAll(String template) {
+        return this.findVersionedListByQuery(ConfigValueDAOHib.BASE_QUERY, "c", template);
+    }
+
+    @Override
+    public AuditCategory getAuditCategory() {
+        return AuditCategory.CONFIG;
+    }
+
+    private List<EConfigValue> findList(String template, String service, String key) {
+        return this.findVersionedListByQuery(createQuery(template, service, key), "c", getParams(template, service, key));
+    }
+
+
+    private EConfigValue find(String template, String service, String key) {
+        return this.findVersionedByQuery(createQuery(template, service, key), "c", getParams(template, service, key));
+    }
+
+
+    private String createQuery(String template, String service, String key) {
+        StringBuilder b = new StringBuilder();
+        b.append(BASE_QUERY);
+        int app = 2;
+        if(service == null || service.isEmpty()) {
+            b.append(WHERE_SERVICE_NULL);
+        } else {
+            b.append(WHERE_SERVICE);
+            app = 3;
+        }
+        if(key != null && !(key.isEmpty())) {
+            b.append(WHERE_KEY);
+            b.append(app);
+        }
+
+        return b.toString();
+    }
+
+    private String[] getParams(String... params) {
+        List<String> req = new ArrayList<>();
+        for(String s : params) {
+            if(s != null && !(s.isEmpty())) {
+                req.add(s);
+            }
+        }
+        return req.toArray(new String[req.size()]);
+    }
 }

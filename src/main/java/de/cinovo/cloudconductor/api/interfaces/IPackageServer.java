@@ -20,17 +20,10 @@ package de.cinovo.cloudconductor.api.interfaces;
  * #L%
  */
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.PackageServer;
+
+import javax.ws.rs.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -50,14 +43,14 @@ public interface IPackageServer {
 	 */
 	@GET
 	@Path("/{id}")
-	public PackageServer get(@PathParam("id") Long id);
+	PackageServer get(@PathParam("id") Long id);
 	
 	/**
 	 * @param id the server id
 	 */
 	@DELETE
 	@Path("/{id}")
-	public void delete(@PathParam("id") Long id);
+	void delete(@PathParam("id") Long id);
 	
 	/**
 	 * @param ps the package server
@@ -65,12 +58,12 @@ public interface IPackageServer {
 	 */
 	@POST
 	@Path("/")
-	public Long newServer(PackageServer ps);
+	Long newServer(PackageServer ps);
 	
 	/**
 	 * @param ps the package server
 	 */
 	@PUT
 	@Path("/")
-	public void editServer(PackageServer ps);
+	void editServer(PackageServer ps);
 }

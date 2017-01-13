@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- #%L cloudconductor-server %% Copyright (C) 2013 - 2014 Cinovo AG %% Licensed under the Apache License, Version 2.0 (the "License"); you 
+<!-- #%L cloudconductor-server %% Copyright (C) 2013 - 2014 Cinovo AG %% Licensed under the Apache License, Version 2.0 (the "License"); you
 	may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
 	Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
 	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations 
@@ -729,22 +729,27 @@
 				<constraints nullable="true" />
 			</column>
 		</createTable>
+
+		<insert schemaName="cloudconductor" tableName="packageservergroup">
+			<column name="name">base</column>
+		</insert>
 		
 		<addColumn schemaName="cloudconductor" tableName="packageserver">
-			<column name="servergroupid" type="bigint">
+			<column name="servergroupid" type="bigint" defaultValue="1">
 				<constraints nullable="false" references="cloudconductor.packageservergroup(id)" foreignKeyName="fk_psg_ps" deleteCascade="true" />
+
 			</column>
-			<column name="indexerType" type="int">
+			<column name="indexertype" type="int" defaultValue="1">
 				<constraints nullable="false" />
 			</column>
-			<column name="providerType" type="int">
+			<column name="providertype" type="int" defaultValue="1">
 				<constraints nullable="false" />
 			</column>
-			<column name="basePath" type="varchar(255)" />
-			<column name="bucketName" type="varchar(255)" />
-			<column name="awsRegion" type="varchar(255)" />
-			<column name="accessKeyId" type="varchar(255)" />
-			<column name="secretKey" type="varchar(255)" />
+			<column name="basepath" type="varchar(255)" />
+			<column name="bucketname" type="varchar(255)" />
+			<column name="awsregion" type="varchar(255)" />
+			<column name="accesskeyid" type="varchar(255)" />
+			<column name="secretkey" type="varchar(255)" />
 		</addColumn>
 		
 		<createTable schemaName="cloudconductor" tableName="mappingversiongroup">

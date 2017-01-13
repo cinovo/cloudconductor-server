@@ -17,18 +17,18 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -52,10 +52,12 @@ public class PackageTest extends APITest {
 		{
 			Package pkg = h.get("nginx");
 			Assert.assertEquals("nginx", pkg.getName());
-			Assert.assertEquals("Auto-generated from repository update on 2013-09-04 14:20:08.", pkg.getDescription());
+			Assert.assertEquals("Auto-generated from repository updateEntity on 2013-09-04 14:20:08.", pkg.getDescription());
 		}
 		{
-			Package p = new Package("package1", "package1", null);
+			Package p = new Package();
+			p.setName("package1");
+			p.setDescription("package1");
 			h.save(p);
 			Set<Package> set = h.get();
 			Assert.assertEquals(7, set.size());
@@ -80,7 +82,12 @@ public class PackageTest extends APITest {
 			Assert.assertEquals("1.5.3-1", pv.getVersion());
 		}
 		{
-			PackageVersion pv = new PackageVersion("nginx", "1.5.4-1", null, "TESTREPO");
+			PackageVersion pv = new PackageVersion();
+			pv.setName("nginx");
+			pv.setVersion("1.5.4-1");
+			pv.setPackageServerGroup(new HashSet<String>());
+			pv.getPackageServerGroup().add("TESTREPO");
+
 			h.addRPM("nginx", pv);
 			Set<PackageVersion> rpms = h.getRPMS("nginx");
 			Assert.assertEquals(2, rpms.size());

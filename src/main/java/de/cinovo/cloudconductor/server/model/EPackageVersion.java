@@ -17,25 +17,13 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.model.INamed;
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -46,7 +34,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "packageversion", schema = "cloudconductor")
-public class EPackageVersion implements IEntity<Long>, INamed {
+public class EPackageVersion extends AModelApiConvertable<PackageVersion> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -187,5 +175,10 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 	public void setServerGroups(Set<EPackageServerGroup> serverGroups) {
 		this.serverGroups = serverGroups;
 	}
-	
+
+	@Override
+	@Transient
+	public Class<PackageVersion> getApiClass() {
+		return PackageVersion.class;
+	}
 }

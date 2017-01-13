@@ -17,18 +17,17 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.List;
-
+import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
+import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
-import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
-import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,7 +43,7 @@ public class PackageServerDAOHib extends EntityDAOHibernate<EPackageServer, Long
 	public Class<EPackageServer> getEntityClass() {
 		return EPackageServer.class;
 	}
-	
+
 	@Override
 	public List<EPackageServer> findForGroup(EPackageServerGroup group) {
 		return this.findListByQuery("FROM EPackageServer ps WHERE ps.serverGroup = ?1", group.getId());

@@ -17,13 +17,10 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import de.cinovo.cloudconductor.api.model.ConfigValue;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -34,7 +31,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "configvalues", schema = "cloudconductor")
-public class EConfigValue implements IVersionized<Long> {
+public class EConfigValue extends AModelApiConvertable<ConfigValue> implements IVersionized<Long> {
 	
 	/**	 */
 	private static final long serialVersionUID = 1L;
@@ -167,5 +164,18 @@ public class EConfigValue implements IVersionized<Long> {
 		r.setVersion(this.version);
 		return r;
 	}
-	
+
+	@Override
+	@Transient
+	public Class<ConfigValue> getApiClass() {
+		return ConfigValue.class;
+	}
+
+	@Override
+	@Transient
+	public ConfigValue toApi() {
+		ConfigValue configValue = super.toApi();
+		configValue.setKey(this.configkey);
+		return configValue;
+	}
 }

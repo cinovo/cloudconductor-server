@@ -1,0 +1,12 @@
+<div class="row">
+  <div class="col-sm-12 alert-space">
+    <template ngFor let-alert [ngForOf]="alertService.getAlerts()" let-i="index">
+      <div *ngIf="alert" class="alert alert-{{alert?.type}} alert-dismissible fade in" role="alert-{i}">
+        <button type="button" class="close" data-dismiss="alert-{i}" aria-label="Close" (click)="alertService.closeAlert(i)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {{alert?.msg}}
+      </div>
+    </template>
+  </div>
+</div>

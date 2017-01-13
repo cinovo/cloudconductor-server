@@ -1,0 +1,73 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group input-group">
+      <span class="input-group-addon">Search </span>
+      <input type="text" class="form-control" [(ngModel)]="searchQuery">
+    </div>
+  </div>
+  <div class="col-md-8">
+    <a routerLink="/packageservers/new" role="button" class="btn btn-default pull-right">Add a new Group</a>
+  </div>
+</div>
+
+<div class="space-20"></div>
+
+<div class="row">
+  <div class="col-md-12" *ngIf="groups && groups.length >0">
+    <cc-panel *ngFor="let group of groups" [icon]="'fa-list-alt'" [title]="group.name">
+
+      <li cc-panel-dropdown>
+        <a routerLink="/packageservers/{{group.id}}/new">Add new Server</a>
+      </li>
+      <li class="divider" cc-panel-dropdown></li>
+
+      <li cc-panel-dropdown>
+        <a routerLink="/packageservers/edit/{{group.id}}">Edit</a>
+      </li>
+
+      <li cc-panel-dropdown>
+        <a href="javascript:void(0)" mwlConfirm
+           [title]="'Please verify!'"
+           [message]="'Are you sure you want to delete the following group: <strong>'+ group.name+'</strong>?'"
+           confirmButtonType="danger"
+           (confirm)="deleteServerGroup(group.id)"
+           [appendToBody]="true">
+          Delete
+        </a>
+        <!-- <a ng-click="deleteServerGroup(server.id)"
+            confirm="Are you sure you want to delete the following group: {{group.name}}?"
+            confirm-title="Please verify!" confirm-ok="Yes"
+            confirm-cancel="No">Delete </a>-->
+      </li>
+
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <tbody>
+        <tr *ngFor="let server of group.packageServers" [class.info]="server.id == group.primaryServer">
+          <td width="30px">
+            <i class="fa fa-check fa-fw" *ngIf="server.id === group.primaryServer"></i>
+          </td>
+          <td>
+            {{server.description}}
+          </td>
+          <td>
+            {{server.path}}
+          </td>
+          <td width="15px">
+            <a href="#/packageservers/{{group.id}}/edit/{{server.id}}"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td width="15px">
+            <a href="javascript:void(0)" mwlConfirm
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following server: '+ server.description+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteServer(server.id)">
+              <i class="fa fa-bitbucket fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

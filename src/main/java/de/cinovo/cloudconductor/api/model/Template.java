@@ -23,51 +23,29 @@ package de.cinovo.cloudconductor.api.model;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public class Template implements INamed {
-	
+
 	private String name;
 	private String description;
-	
+
 	private Set<String> packageServers;
-	
-	private Map<String, String> packages;
-	
+
+	private Map<String, String> versions;
+
 	private Set<String> hosts;
-	
+
 	private Set<String> sshkeys;
-	
+
 	private Set<String> configFiles;
-	
-	
-	/**
-	 * @param name the template name
-	 * @param description the description
-	 * @param packageServers the package server
-	 * @param packages the package versions
-	 * @param hosts collection of hosts
-	 * @param sshkeys collection of ssh keys
-	 * @param configFiles collection of config files
-	 */
-	public Template(@JsonProperty("name") String name, @JsonProperty("description") String description, @JsonProperty("packageServers") Set<String> packageServers, @JsonProperty("packages") Map<String, String> packages, @JsonProperty("hosts") Set<String> hosts, @JsonProperty("sshekeys") Set<String> sshkeys, @JsonProperty("configfiles") Set<String> configFiles) {
-		super();
-		this.name = name;
-		this.description = description;
-		this.setPackageServers(packageServers);
-		this.setPackages(packages);
-		this.hosts = hosts;
-		this.sshkeys = sshkeys;
-		this.configFiles = configFiles;
-	}
-	
+
+	private Set<String> directories;
+
 	/**
 	 * @return the name
 	 */
@@ -75,61 +53,109 @@ public class Template implements INamed {
 	public String getName() {
 		return this.name;
 	}
-	
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * @return the versions
+	 */
+	public Map<String, String> getVersions() {
+		return this.versions;
+	}
+
+	/**
+	 * @param versions the versions to set
+	 */
+	public void setVersions(Map<String, String> versions) {
+		this.versions = versions;
+	}
+
 	/**
 	 * @return the hosts
 	 */
 	public Set<String> getHosts() {
 		return this.hosts;
 	}
-	
+
+	/**
+	 * @param hosts the hosts to set
+	 */
+	public void setHosts(Set<String> hosts) {
+		this.hosts = hosts;
+	}
+
 	/**
 	 * @return the sshkeys
 	 */
 	public Set<String> getSshkeys() {
 		return this.sshkeys;
 	}
-	
+
+	/**
+	 * @param sshkeys the sshkeys to set
+	 */
+	public void setSshkeys(Set<String> sshkeys) {
+		this.sshkeys = sshkeys;
+	}
+
 	/**
 	 * @return the configFiles
 	 */
 	public Set<String> getConfigFiles() {
 		return this.configFiles;
 	}
-	
+
+	/**
+	 * @param configFiles the configFiles to set
+	 */
+	public void setConfigFiles(Set<String> configFiles) {
+		this.configFiles = configFiles;
+	}
+
+	/**
+	 * @return the directories
+	 */
+	public Set<String> getDirectories() {
+		return this.directories;
+	}
+
+	/**
+	 * @param directories the directories to set
+	 */
+	public void setDirectories(Set<String> directories) {
+		this.directories = directories;
+	}
+
 	/**
 	 * @return the packageServers
 	 */
 	public Set<String> getPackageServers() {
 		return this.packageServers;
 	}
-	
+
 	/**
 	 * @param packageServers the packageServers to set
 	 */
 	public void setPackageServers(Set<String> packageServers) {
 		this.packageServers = packageServers;
 	}
-	
-	/**
-	 * @return the packages
-	 */
-	public Map<String, String> getPackages() {
-		return this.packages;
-	}
-	
-	/**
-	 * @param packages the packages to set
-	 */
-	public void setPackages(Map<String, String> packages) {
-		this.packages = packages;
-	}
-	
 }

@@ -3,7 +3,7 @@ RPMSOURCE=""
 CLOUDCONDUCTOR=localhost:8090
 YUMPATH="/opt/cloudconductor/static/yum"
 
-#copy rpms from a source
+#copy versions from a source
 if [ ! -z "$RPMSOURCE" ]; then
         if [ ! -z "$YUMPATH" ]; then
                 echo "Starting to copy yum repo..."

@@ -1,0 +1,47 @@
+import { HTTPService } from "./abstract.http.service";
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
+import { Observable } from "rxjs";
+/**
+ * Created by psigloch on 11.01.2017.
+ */
+
+export interface Service {
+  id?:number;
+  name:string;
+  description?:string;
+  initScript?:string;
+  packages?:Array<String>;
+  templates?:Array<String>;
+}
+
+@Injectable()
+export class ServiceHttpService extends HTTPService {
+
+  constructor(protected http: Http) {
+    super(http);
+    this.basePathURL = 'service/';
+  }
+
+  public getServices(): Observable<Array<Service>> {
+    return this._get("");
+  }
+
+  public getService(serviceName:string): Observable<Service> {
+    return this._get(serviceName);
+  }
+
+
+  public getServiceUsage(serviceName:string): Observable<any> {
+    return this._get(serviceName+"/usage");
+  }
+
+  public deleteService(service: Service): Observable<boolean> {
+    return this._delete(service.name);
+  }
+
+  public save(service: Service):Observable<boolean> {
+    service['@class'] = 'de.cinovo.cloudconductor.api.model.Service';
+    return this._put("", service);
+  }
+}

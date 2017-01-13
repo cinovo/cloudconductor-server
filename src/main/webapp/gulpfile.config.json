@@ -1,0 +1,47 @@
+{
+  "target" : "dist",
+  "tsconfig":"./tsconfig.json",
+  "vendor": {
+    "src": [
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/core-js/client/shim.min.js",
+      "node_modules/zone.js/dist/zone.js",
+      "node_modules/reflect-metadata/Reflect.js",
+      "node_modules/systemjs/dist/system.src.js",
+      "node_modules/tether/dist/js/tether.min.js",
+      "node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "node_modules/datatables.net/js/jquery.dataTables.js",
+      "node_modules/datatables.net-bs/js/dataTables.bootstrap.js",
+      "node_modules/datatables.net-responsive/js/dataTables.responsive.js",
+      "node_modules/datatables.net-responsive-bs/js/responsive.bootstrap.js",
+      "node_modules/metismenu/dist/metisMenu.min.js"
+    ],
+    "inactivesrc": [
+    ],
+    "target": "dist"
+  },
+  "libs": [
+    {"src": "node_modules/**/rxjs/**/*.js", "target":"dist/lib"},
+    {"src": "node_modules/**/@angular/**/bundles/*.umd.*js", "target":"dist/lib"},
+    {"src": "node_modules/**/angular2-component-outlet/**/*.js", "target":"dist/lib"},
+    {"src": "node_modules/**/ng2-webstorage/**/*.js", "target":"dist/lib"},
+    {"src": "node_modules/**/angular2-uuid/**/*.js", "target":"dist/lib"},
+    {"src": "public/sb-admin-2.js", "target":"dist/lib"},
+    {"src": "node_modules/angular2-bootstrap-confirm/dist/umd/*.js", "target":"dist/lib/angular2-bootstrap-confirm"},
+    {"src": "node_modules/**/angular2-bootstrap-confirm/position/*.js", "target":"dist/lib"}
+  ],
+  "assets": [
+    {"src": [ "src/index.html" ], "target" : "dist", "flatten": [0,0]},
+    {"src": [ "src/**/*.html", "public/**/*.html", "!src/index.html" ], "target" : "dist/html", "flatten": [0,0]},
+    {"src": [ "src/**/*.css", "public/**/*.css", "!src/index.css" ], "target" : "dist/css", "flatten": [0,0]},
+    {"src": ["public/**/*", "!public/**/*.html",  "!public/**/*.css" ], "target" : "dist", "flatten": [1]},
+    {"src": [ "node_modules/font-awesome/fonts/*.*" ], "target" : "dist/fonts", "flatten": [0,0]},
+    {"src": [ "node_modules/datatables.net-bs/css/*.*" ], "target" : "dist/css", "flatten": [0,0]},
+    {"src": [ "node_modules/datatables.net-responsive-bs/css/*.*" ], "target" : "dist/css", "flatten": [0,0]},
+    {"src": [ "node_modules/metismenu/dist/metisMenu.min.css" ], "target" : "dist/css", "flatten": [0,0]}
+  ],
+  "styles": [
+    {"src": "src/glob/*.scss", "file": "glob.min.css", "target" : "dist/css"},
+    {"src": "src/app/**/*.scss", "target" : "dist/css"}
+  ]
+}

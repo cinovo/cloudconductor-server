@@ -20,50 +20,26 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import de.cinovo.cloudconductor.api.ServiceState;
+
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public class Service implements INamed {
-	
+
 	private Long id;
 	private String name;
 	private String description;
 	private String initScript;
-	private ServiceState state;
+	private ServiceState state = ServiceState.STOPPED;
 	private Set<String> packages;
-	
-	
-	/**
-	 * Class constructor.
-	 * 
-	 * @param id the id
-	 * @param name the name of the service
-	 * @param description a description of this service
-	 * @param initScript the name of the init script of this service
-	 * @param state the serviceState
-	 * @param pkgs the packages
-	 */
-	@JsonCreator
-	public Service(@JsonProperty("id") Long id, @JsonProperty("name") String name, @JsonProperty("description") String description, @JsonProperty("initScript") String initScript, @JsonProperty("state") ServiceState state, @JsonProperty("pkgs") Set<String> pkgs) {
-		this.setId(id);
-		this.name = name;
-		this.description = description;
-		this.initScript = initScript;
-		this.setState(state);
-		this.packages = pkgs;
-	}
-	
+
+
 	/**
 	 * @return the name
 	 */
@@ -71,54 +47,81 @@ public class Service implements INamed {
 	public String getName() {
 		return this.name;
 	}
-	
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	/**
 	 * @return the initScript
 	 */
 	public String getInitScript() {
 		return this.initScript;
 	}
-	
+
+	/**
+	 * @param initScript the initScript to set
+	 */
+	public void setInitScript(String initScript) {
+		this.initScript = initScript;
+	}
+
 	/**
 	 * @return the state
 	 */
 	public ServiceState getState() {
 		return this.state;
 	}
-	
+
 	/**
 	 * @param state the state to set
 	 */
 	public void setState(ServiceState state) {
 		this.state = state;
 	}
-	
+
 	/**
 	 * @return the packages
 	 */
 	public Set<String> getPackages() {
 		return this.packages;
 	}
-	
+
+	/**
+	 * @param packages the packages to set
+	 */
+	public void setPackages(Set<String> packages) {
+		this.packages = packages;
+	}
+
 	/**
 	 * @return the id
 	 */
 	public Long getId() {
 		return this.id;
 	}
-	
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
 }

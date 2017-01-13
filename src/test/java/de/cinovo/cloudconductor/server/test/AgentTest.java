@@ -1,20 +1,18 @@
 package de.cinovo.cloudconductor.server.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+import de.cinovo.cloudconductor.api.lib.manager.AgentHandler;
+import de.cinovo.cloudconductor.api.model.*;
+import de.cinovo.cloudconductor.server.APITest;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
-import de.cinovo.cloudconductor.api.lib.manager.AgentHandler;
-import de.cinovo.cloudconductor.api.model.PackageState;
-import de.cinovo.cloudconductor.api.model.PackageStateChanges;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.ServiceStates;
-import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")
@@ -75,18 +73,29 @@ public class AgentTest extends APITest {
 	
 	private PackageState getAllInstalled() {
 		List<PackageVersion> pkgs = new ArrayList<>();
-		pkgs.add(new PackageVersion("nginx", "1.5.3-1", null, "TESTREPO"));
-		pkgs.add(new PackageVersion("postgresql92", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
-		pkgs.add(new PackageVersion("postgresql92-libs", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
-		pkgs.add(new PackageVersion("postgresql92-server", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
-		pkgs.add(new PackageVersion("jdk", "1.7.0_45-fcs", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("nginx", "1.5.3-1", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("postgresql92", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("postgresql92-libs", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("postgresql92-server", "9.2.4-1PGDG.rhel6", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("jdk", "1.7.0_45-fcs", null, "TESTREPO"));
 		return new PackageState(pkgs);
 	}
-	
+
 	private PackageState getPartiallyInstalled() {
 		List<PackageVersion> pkgs = new ArrayList<>();
-		pkgs.add(new PackageVersion("nginx", "1.5.2-1", null, "TESTREPO"));
-		pkgs.add(new PackageVersion("nodejs", "0.10.12-1", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("nginx", "1.5.2-1", null, "TESTREPO"));
+		pkgs.add(this.createPackageState("nodejs", "0.10.12-1", null, "TESTREPO"));
 		return new PackageState(pkgs);
 	}
+
+	private PackageVersion createPackageState(String name, String version, Set<Dependency> dep, String psg) {
+		PackageVersion packageVersion = new PackageVersion();
+		packageVersion.setName(name);
+		packageVersion.setVersion(version);
+		packageVersion.setDependencies(dep);
+		packageVersion.setPackageServerGroup(new HashSet<String>());
+		packageVersion.getPackageServerGroup().add(psg);
+		return packageVersion;
+	}
+
 }

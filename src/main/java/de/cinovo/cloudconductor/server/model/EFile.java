@@ -17,23 +17,12 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,7 +33,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "file", schema = "cloudconductor")
-public class EFile implements IVersionized<Long>, INamed {
+public class EFile extends AModelApiConvertable<ConfigFile> implements IVersionized<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -318,5 +307,18 @@ public class EFile implements IVersionized<Long>, INamed {
 		r.setVersion(this.version);
 		return r;
 	}
-	
+
+	@Override
+	@Transient
+	public Class<ConfigFile> getApiClass() {
+		return ConfigFile.class;
+	}
+
+	@Override
+	@Transient
+	public ConfigFile toApi() {
+		ConfigFile configFile = super.toApi();
+		configFile.setDependentServices(this.namedModelToStringSet(this.dependentServices));
+		return configFile;
+	}
 }

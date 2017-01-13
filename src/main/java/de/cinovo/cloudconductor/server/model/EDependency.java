@@ -17,18 +17,12 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import de.cinovo.cloudconductor.api.DependencyType;
+import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -39,7 +33,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "dependency", schema = "cloudconductor")
-public class EDependency implements IEntity<Long>, INamed {
+public class EDependency extends AModelApiConvertable<Dependency> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -177,5 +171,10 @@ public class EDependency implements IEntity<Long>, INamed {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
+
+	@Override
+	@Transient
+	public Class<Dependency> getApiClass() {
+		return Dependency.class;
+	}
 }

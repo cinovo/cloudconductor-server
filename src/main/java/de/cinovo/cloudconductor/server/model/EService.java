@@ -17,23 +17,13 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.model.Service;
+import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import de.cinovo.cloudconductor.api.model.INamed;
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,7 +34,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "service", schema = "cloudconductor")
-public class EService implements IEntity<Long>, INamed {
+public class EService extends AModelApiConvertable<Service> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -147,5 +137,18 @@ public class EService implements IEntity<Long>, INamed {
 		int val = (this.getName() == null) ? 0 : this.getName().hashCode();
 		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
 		return val * idVal;
+	}
+
+	@Override
+	@Transient
+	public Class<Service> getApiClass() {
+		return Service.class;
+	}
+
+	@Override
+	public Service toApi() {
+		Service service = super.toApi();
+		service.setPackages(this.namedModelToStringSet(this.packages));
+		return service;
 	}
 }

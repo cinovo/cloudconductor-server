@@ -2,8 +2,6 @@ package de.cinovo.cloudconductor.api.model;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Copyright 2015 Cinovo AG<br>
  * <br>
@@ -19,20 +17,7 @@ public class PackageServerGroup implements INamed {
 	private Long primaryServer;
 	
 	
-	/**
-	 * @param id the id
-	 * @param name the name
-	 * @param packageServers the package server ids
-	 * @param primaryServer the primary server id
-	 */
-	public PackageServerGroup(@JsonProperty("id") Long id, @JsonProperty("name") String name, @JsonProperty("packageServers") Set<PackageServer> packageServers, @JsonProperty("primaryServer") Long primaryServer) {
-		super();
-		this.setId(id);
-		this.name = name;
-		this.packageServers = packageServers;
-		this.primaryServer = primaryServer;
-	}
-	
+
 	/**
 	 * @param name the name to set
 	 */

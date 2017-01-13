@@ -17,34 +17,29 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.google.common.collect.Sets;
-
-import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ServiceHandler;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Set;
 
 /**
- * 
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author hoegertn
- * 
  */
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")
 public class ServiceTest extends APITest {
-	
+
 	@Test
 	public void test1() throws CloudConductorException {
 		ServiceHandler h = new ServiceHandler(this.getCSApi());
@@ -58,7 +53,11 @@ public class ServiceTest extends APITest {
 			Assert.assertEquals("nginx", svc.getDescription());
 		}
 		{
-			Service s = new Service(1L, "svc1", "svc1", "svc1", ServiceState.STOPPED, null);
+			Service s = new Service();
+			s.setId(1L);
+			s.setName("svc1");
+			s.setDescription("svc1");
+			s.setInitScript("svc1");
 			h.save(s);
 			Set<Service> set = h.get();
 			Assert.assertEquals(4, set.size());
@@ -66,7 +65,12 @@ public class ServiceTest extends APITest {
 			Assert.assertEquals("svc1", svc.getName());
 		}
 		{
-			Service s = new Service(2L, "svc2", "svc2", "svc2", ServiceState.STOPPED, Sets.newHashSet("jdk"));
+			Service s = new Service();
+			s.setId(2L);
+			s.setName("svc2");
+			s.setDescription("svc2");
+			s.setInitScript("svc2");
+			s.setPackages(Sets.newHashSet("jdk"));
 			h.save(s);
 			Set<Service> set = h.get();
 			Assert.assertEquals(5, set.size());
@@ -81,7 +85,7 @@ public class ServiceTest extends APITest {
 			Assert.assertEquals(3, set.size());
 		}
 	}
-	
+
 	@Test
 	public void testRPM() throws CloudConductorException {
 		ServiceHandler h = new ServiceHandler(this.getCSApi());

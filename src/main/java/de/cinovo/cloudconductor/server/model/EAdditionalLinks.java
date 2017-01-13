@@ -17,13 +17,10 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import de.cinovo.cloudconductor.api.model.AdditionalLink;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -34,7 +31,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "additionallinks", schema = "cloudconductor")
-public class EAdditionalLinks implements IEntity<Long> {
+public class EAdditionalLinks extends AModelApiConvertable<AdditionalLink> implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -85,5 +82,11 @@ public class EAdditionalLinks implements IEntity<Long> {
 	 */
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	@Transient
+	public Class<AdditionalLink> getApiClass() {
+		return AdditionalLink.class;
 	}
 }

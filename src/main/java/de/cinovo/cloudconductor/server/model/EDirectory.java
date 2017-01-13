@@ -1,8 +1,8 @@
 package de.cinovo.cloudconductor.server.model;
 
+import de.cinovo.cloudconductor.api.model.Directory;
 import de.cinovo.cloudconductor.api.model.INamed;
-import de.taimos.dao.IEntity;
-import org.hibernate.annotations.ManyToAny;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "directory", schema = "cloudconductor")
-public class EDirectory implements IVersionized<Long>, INamed {
+public class EDirectory extends AModelApiConvertable<Directory> implements IVersionized<Long>, INamed {
 
     private static final long serialVersionUID = 1L;
     private Long id;
@@ -166,4 +166,17 @@ public class EDirectory implements IVersionized<Long>, INamed {
         return r;
     }
 
+    @Override
+    @Transient
+    public Class<Directory> getApiClass() {
+        return Directory.class;
+    }
+
+    @Override
+    @Transient
+    public Directory toApi() {
+        Directory configFile = super.toApi();
+        configFile.setDependentServices(this.namedModelToStringSet(this.dependentServices));
+        return configFile;
+    }
 }

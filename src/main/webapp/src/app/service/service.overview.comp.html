@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">Services</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group input-group">
+      <label class="input-group-addon" for="search">Search </label>
+      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
+    </div>
+  </div>
+  <div class="col-md-8">
+    <button [routerLink]="['new']" class="btn btn-default pull-right">Add a new Service</button>
+  </div>
+</div>
+
+<div class="row" *ngIf="services.length < 1">
+  <div class="col-sm-12">
+    <div class="alert alert-warning" role="alert-1">
+      There are currently no Services defined.<br/>
+      <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">Add a new service</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="services && services.length > 0">
+  <div class="col-md-12">
+    <cc-panel [icon]="'fa-flask'" [title]="'All available services'">
+
+      <li cc-panel-dropdown>
+        <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">Add new service</a>
+      </li>
+
+      <li class="divider" cc-panel-dropdown></li>
+
+      <li cc-panel-dropdown>
+        <a href="javascript:void(0)" mwlConfirm
+           [title]="'Please verify!'"
+           [message]="'Are you sure you want to delete <strong>all<strong> services?'"
+           confirmButtonType="danger"
+           (confirm)="deleteService(service.name)"
+           [appendToBody]="true">
+          Delete all services
+        </a>
+      </li>
+
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <thead>
+        <tr>
+          <th width="30%">Name</th>
+          <th>Description</th>
+          <th width="15px"></th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)">
+          <td>
+            {{service.name}}
+          </td>
+          <td class="word-break">
+            {{service.description}}
+          </td>
+          <td>
+            <a [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td>
+            <a href="javascript:void(0)" mwlConfirm
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following service: '+ service.name+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteService(service)">
+              <i class="fa fa-bitbucket fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

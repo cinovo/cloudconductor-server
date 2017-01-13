@@ -1,12 +1,11 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IAgentDAO;
 import de.cinovo.cloudconductor.server.model.EAgent;
-import de.taimos.dao.hibernate.EntityDAOHibernate;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Copyright 2016 Cinovo AG<br>

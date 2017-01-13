@@ -17,23 +17,13 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.model.Template;
+import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import de.cinovo.cloudconductor.api.model.INamed;
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,7 +34,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "template", schema = "cloudconductor")
-public class ETemplate implements IEntity<Long>, INamed {
+public class ETemplate extends AModelApiConvertable<Template> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -254,5 +244,11 @@ public class ETemplate implements IEntity<Long>, INamed {
 	 */
 	public void setPackageServers(List<EPackageServer> packageServers) {
 		this.packageServers = packageServers;
+	}
+
+	@Override
+	@Transient
+	public Class<Template> getApiClass() {
+		return Template.class;
 	}
 }

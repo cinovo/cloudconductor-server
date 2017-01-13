@@ -17,11 +17,12 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageServer;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -37,4 +38,11 @@ public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ET
 	 * @return the templates using the package server
 	 */
 	public List<ETemplate> findByPackageServer(EPackageServer packageServer);
+
+
+	/**
+	 * @param pkg the package
+	 * @return the templates using a version of this package
+	 */
+	public List<ETemplate> findByPackage(EPackage pkg);
 }

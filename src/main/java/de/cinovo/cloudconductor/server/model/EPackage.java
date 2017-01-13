@@ -17,19 +17,12 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.model.Package;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -40,13 +33,13 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "package", schema = "cloudconductor")
-public class EPackage implements IEntity<Long>, INamed {
+public class EPackage extends AModelApiConvertable<Package> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
 	private String description;
-	private Set<EPackageVersion> rpms;
+	private Set<EPackageVersion> versions;
 	
 	
 	@Override
@@ -94,18 +87,18 @@ public class EPackage implements IEntity<Long>, INamed {
 	}
 	
 	/**
-	 * @return the rpms
+	 * @return the versions
 	 */
 	@OneToMany(mappedBy = "pkg", fetch = FetchType.LAZY)
-	public Set<EPackageVersion> getRPMs() {
-		return this.rpms;
+	public Set<EPackageVersion> getVersions() {
+		return this.versions;
 	}
 	
 	/**
-	 * @param rpms the rpms to set
+	 * @param rpms the versions to set
 	 */
-	public void setRPMs(Set<EPackageVersion> rpms) {
-		this.rpms = rpms;
+	public void setVersions(Set<EPackageVersion> rpms) {
+		this.versions = rpms;
 	}
 	
 	@Override
@@ -123,5 +116,19 @@ public class EPackage implements IEntity<Long>, INamed {
 	@Override
 	public int hashCode() {
 		return (this.getName() == null) ? 0 : this.getName().hashCode();
+	}
+
+	@Override
+	@Transient
+	public Class<Package> getApiClass() {
+		return Package.class;
+	}
+
+	@Override
+	@Transient
+	public Package toApi() {
+		Package ret = super.toApi();
+		ret.setVersions(this.namedModelToStringSet(this.versions));
+		return ret;
 	}
 }

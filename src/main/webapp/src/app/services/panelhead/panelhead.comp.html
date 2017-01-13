@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <i class="fa {{icon}} fa-fw"></i> {{title}}
+    <div class="pull-right">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+          {{dropDownLabel}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu pull-right" role="menu">
+          <ng-content select="[cc-panel-dropdown]"></ng-content>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <ng-content select="[cc-panel-body]"></ng-content>
+  </div>
+</div>

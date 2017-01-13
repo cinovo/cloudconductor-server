@@ -17,13 +17,6 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.DependencyType;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.IOModuleHandler;
@@ -33,19 +26,23 @@ import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * 
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author hoegertn
- * 
  */
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")
 public class IOModuleTest extends APITest {
-	
+
 	@Test
 	public void test() throws CloudConductorException {
 		PackageHandler h = new PackageHandler(this.getCSApi());
@@ -54,16 +51,35 @@ public class IOModuleTest extends APITest {
 			Set<Package> packages = h.get();
 			Assert.assertEquals(6, packages.size());
 		}
-		
+
 		{
 			HashSet<Dependency> test = new HashSet<Dependency>();
-			test.add(new Dependency("asd", "4.1.1", "", DependencyType.REQUIRES.toString()));
+			Dependency dep = new Dependency();
+			dep.setName("asd");
+			dep.setVersion("4.1.1");
+			dep.setOperator("");
+			dep.setType(DependencyType.REQUIRES);
+			;
+
+			test.add(dep);
 			Set<PackageVersion> set = new HashSet<PackageVersion>();
-			set.add(new PackageVersion("package1", "1.0.0", null, "TESTREPO"));
-			set.add(new PackageVersion("package2", "1.2.0", test, "TESTREPO"));
+			PackageVersion pv1 = new PackageVersion();
+			pv1.setName("package1");
+			pv1.setVersion("1.0.0");
+			pv1.setPackageServerGroup(new HashSet<String>());
+			pv1.getPackageServerGroup().add("TESTREPO");
+
+			PackageVersion pv2 = new PackageVersion();
+			pv2.setName("package1");
+			pv2.setVersion("1.2.0");
+			pv2.setPackageServerGroup(new HashSet<String>());
+			pv2.getPackageServerGroup().add("TESTREPO");
+
+			set.add(pv1);
+			set.add(pv2);
 			ioH.importPackages(set);
 		}
-		
+
 		{
 			Set<Package> packages = h.get();
 			Assert.assertEquals(7, packages.size());

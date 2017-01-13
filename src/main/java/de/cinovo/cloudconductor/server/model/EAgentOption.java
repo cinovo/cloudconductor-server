@@ -1,18 +1,11 @@
 package de.cinovo.cloudconductor.server.model;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import de.cinovo.cloudconductor.api.model.AgentOptions;
 import de.cinovo.cloudconductor.api.model.TaskState;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -23,7 +16,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "agentoption", schema = "cloudconductor")
-public class EAgentOption implements IEntity<Long> {
+public class EAgentOption extends AModelApiConvertable<AgentOptions> implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -229,5 +222,11 @@ public class EAgentOption implements IEntity<Long> {
 	 */
 	public void setFileManagementTimerUnit(TimeUnit fileManagementTimerUnit) {
 		this.fileManagementTimerUnit = fileManagementTimerUnit;
+	}
+
+	@Override
+	@Transient
+	public Class<AgentOptions> getApiClass() {
+		return AgentOptions.class;
 	}
 }

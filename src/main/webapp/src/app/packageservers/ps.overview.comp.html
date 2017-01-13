@@ -1,0 +1,83 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">Package-Servers</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group input-group">
+      <label class="input-group-addon" for="search">Search </label>
+      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
+    </div>
+  </div>
+  <div class="col-md-8">
+    <button [routerLink]="['new']" class="btn btn-default pull-right">Add a new Package-Server-Group</button>
+  </div>
+</div>
+
+<div class="row" *ngIf="groups.length < 1">
+  <div class="col-sm-12">
+    <div class="alert alert-warning" role="alert-1">
+      There are currently no Package-Servers defined.<br/>
+      <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New Package-Server-Group</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="groups.length > 0">
+  <div class="col-md-12" *ngIf="groups && groups.length >0">
+    <cc-panel *ngFor="let group of groups" [icon]="'fa-list-alt'" [title]="group.name">
+
+      <li cc-panel-dropdown>
+        <a [routerLink]="[group.id,'server','new']" [queryParams]="{'ret':'ov'}">New Package-Server</a>
+      </li>
+      <li class="divider" cc-panel-dropdown></li>
+
+      <li cc-panel-dropdown>
+        <a [routerLink]="[group.id]">Edit Package-Server-Group</a>
+      </li>
+
+      <li cc-panel-dropdown>
+        <a href="javascript:void(0)" mwlConfirm
+           [title]="'Please verify!'"
+           [message]="'Are you sure you want to delete the following group: <strong>'+ group.name+'</strong>?'"
+           confirmButtonType="danger"
+           (confirm)="deleteServerGroup(group.id)"
+           [appendToBody]="true">
+          Delete Package-Server-Group
+        </a>
+      </li>
+
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <tbody>
+        <tr *ngFor="let server of group.packageServers" [class.info]="server.id == group.primaryServer">
+          <td width="30px">
+            <i class="fa fa-check fa-fw" *ngIf="server.id === group.primaryServer"></i>
+          </td>
+          <td>
+            {{server.description}}
+          </td>
+          <td>
+            {{server.path}}
+          </td>
+          <td width="15px">
+            <a [routerLink]="[group.id,'server', server.id]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td width="15px">
+            <a href="javascript:void(0)" mwlConfirm
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following Package-Server: '+ server.description+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteServer(server.id)">
+              <i class="fa fa-bitbucket fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>
