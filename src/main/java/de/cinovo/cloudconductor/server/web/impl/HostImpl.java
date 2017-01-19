@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.cinovo.cloudconductor.server.model.*;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
@@ -21,11 +22,6 @@ import de.cinovo.cloudconductor.server.comparators.StringMapComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EPackageState;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.EServiceState;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
@@ -192,6 +188,15 @@ public class HostImpl extends AWebPage implements IHost {
 					notices.add(wrongVersion);
 					missing.remove(trpm);
 					continue;
+				}
+				for (EPackageVersion deppack : trpms) {
+					for(EDependency dep : deppack.getDependencies()){
+						if(trpm.getPkg().getName().equals(dep.getName())){
+							missing.remove(trpm);
+							found = true;
+							break;
+						}
+					}
 				}
 			}
 			// rpm is not within template

@@ -517,6 +517,20 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		toErase.removeAll(keep);
+
+		// remove dependencies from erase list
+		Set<EPackageVersion> dependencies = new HashSet<>();
+		for (EPackageVersion i : nominal){
+			for (EDependency d : i.getDependencies()) {
+				for(EPackageVersion e : toErase) {
+					if(e.getPkg().getName().equals(d.getName())){
+						dependencies.add(e);
+					}
+				}
+			}
+		}
+		toErase.removeAll(dependencies);
+
 		
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
 		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
