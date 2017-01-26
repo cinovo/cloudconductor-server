@@ -17,10 +17,11 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileTag;
+import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -29,7 +30,7 @@ import de.cinovo.cloudconductor.server.model.EFileTag;
  * @author psigloch
  *
  */
-public interface IFileDAO extends IAuditedEntity<EFile, Long>, IFindNamed<EFile> {
+public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	
 	/**
 	 * @return the row count

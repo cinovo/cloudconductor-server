@@ -22,18 +22,21 @@ package de.cinovo.cloudconductor.api.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class ConfigFile implements INamed {
-	
+
 	private String name;
 	private String pkg;
 	private String targetPath;
@@ -44,8 +47,7 @@ public class ConfigFile implements INamed {
 	private boolean isReloadable;
 	private String checksum;
 	private Set<String> dependentServices;
-	
-	
+
 
 	/**
 	 * @return the name
@@ -53,71 +55,6 @@ public class ConfigFile implements INamed {
 	@Override
 	public String getName() {
 		return this.name;
-	}
-	
-	/**
-	 * @return the targetPath
-	 */
-	public String getTargetPath() {
-		return this.targetPath;
-	}
-	
-	/**
-	 * @return the owner
-	 */
-	public String getOwner() {
-		return this.owner;
-	}
-	
-	/**
-	 * @return the group
-	 */
-	public String getGroup() {
-		return this.group;
-	}
-	
-	/**
-	 * @return the fileMode
-	 */
-	public String getFileMode() {
-		return this.fileMode;
-	}
-	
-	/**
-	 * @return the isTemplate
-	 */
-	@JsonProperty("isReloadable")
-	public boolean isReloadable() {
-		return this.isReloadable;
-	}
-	
-	/**
-	 * @return the isTemplate
-	 */
-	@JsonProperty("isTemplate")
-	public boolean isTemplate() {
-		return this.isTemplate;
-	}
-	
-	/**
-	 * @return the checksum
-	 */
-	public String getChecksum() {
-		return this.checksum;
-	}
-	
-	/**
-	 * @return the pkg
-	 */
-	public String getPkg() {
-		return this.pkg;
-	}
-	
-	/**
-	 * @return the dependentServices
-	 */
-	public Set<String> getDependentServices() {
-		return this.dependentServices;
 	}
 
 	/**
@@ -128,10 +65,10 @@ public class ConfigFile implements INamed {
 	}
 
 	/**
-	 * @param pkg the pkg to set
+	 * @return the targetPath
 	 */
-	public void setPkg(String pkg) {
-		this.pkg = pkg;
+	public String getTargetPath() {
+		return this.targetPath;
 	}
 
 	/**
@@ -142,10 +79,24 @@ public class ConfigFile implements INamed {
 	}
 
 	/**
+	 * @return the owner
+	 */
+	public String getOwner() {
+		return this.owner;
+	}
+
+	/**
 	 * @param owner the owner to set
 	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	/**
+	 * @return the group
+	 */
+	public String getGroup() {
+		return this.group;
 	}
 
 	/**
@@ -156,6 +107,13 @@ public class ConfigFile implements INamed {
 	}
 
 	/**
+	 * @return the fileMode
+	 */
+	public String getFileMode() {
+		return this.fileMode;
+	}
+
+	/**
 	 * @param fileMode the fileMode to set
 	 */
 	public void setFileMode(String fileMode) {
@@ -163,10 +121,11 @@ public class ConfigFile implements INamed {
 	}
 
 	/**
-	 * @param template the isTemplate to set
+	 * @return the isTemplate
 	 */
-	public void setTemplate(boolean template) {
-		this.isTemplate = template;
+	@JsonProperty("isReloadable")
+	public boolean isReloadable() {
+		return this.isReloadable;
 	}
 
 	/**
@@ -177,10 +136,53 @@ public class ConfigFile implements INamed {
 	}
 
 	/**
+	 * @return the isTemplate
+	 */
+	@JsonProperty("isTemplate")
+	public boolean isTemplate() {
+		return this.isTemplate;
+	}
+
+	/**
+	 * @param template the isTemplate to set
+	 */
+	public void setTemplate(boolean template) {
+		this.isTemplate = template;
+	}
+
+	/**
+	 * @return the checksum
+	 */
+	public String getChecksum() {
+		return this.checksum;
+	}
+
+	/**
 	 * @param checksum the checksum to set
 	 */
 	public void setChecksum(String checksum) {
 		this.checksum = checksum;
+	}
+
+	/**
+	 * @return the pkg
+	 */
+	public String getPkg() {
+		return this.pkg;
+	}
+
+	/**
+	 * @param pkg the pkg to set
+	 */
+	public void setPkg(String pkg) {
+		this.pkg = pkg;
+	}
+
+	/**
+	 * @return the dependentServices
+	 */
+	public Set<String> getDependentServices() {
+		return this.dependentServices;
 	}
 
 	/**

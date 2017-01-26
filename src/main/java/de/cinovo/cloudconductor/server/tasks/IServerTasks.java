@@ -1,21 +1,19 @@
 package de.cinovo.cloudconductor.server.tasks;
 
+import de.cinovo.cloudconductor.server.model.EServerOptions;
+
 /**
- * Copyright 2014 Cinovo AG<br>
+ * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  *
  */
-public interface IServerTasks {
-	
-	/**
-	 * the cleanup task
-	 */
-	String CLEAN_UP = "CLEAN_UP_TASK";
-	
-	/**
-	 * the indexer task
-	 */
-	String INDEXER = "INDEXER_TASK";
+public interface IServerTasks extends Runnable{
+
+	String getTaskIdentifier();
+
+	void create(EServerOptions settings);
+
+	void update(EServerOptions oldSettings, EServerOptions newSettings);
 }

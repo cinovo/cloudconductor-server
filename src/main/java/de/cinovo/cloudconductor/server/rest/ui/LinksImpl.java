@@ -54,20 +54,12 @@ public class LinksImpl implements ILinks {
 	
 	@Override
 	@Transactional
-	public AdditionalLink getLink(long id) {
-		EAdditionalLinks model = this.additionalLinksDAO.findById(id);
-		RESTAssert.assertNotNull(model);
-		return model.toApi();
-	}
-	
-	@Override
-	@Transactional
-	public AdditionalLink updateLink(long id, AdditionalLink link) {
+	public AdditionalLink updateLink(AdditionalLink link) {
 		RESTAssert.assertNotNull(link);
 		RESTAssert.assertNotNull(link.getLabel());
 		RESTAssert.assertNotNull(link.getUrl());
 		
-		EAdditionalLinks model = this.additionalLinksDAO.findById(id);
+		EAdditionalLinks model = this.additionalLinksDAO.findById(link.getId());
 		RESTAssert.assertNotNull(model);
 
 		model.setLabel(link.getLabel());

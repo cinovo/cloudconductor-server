@@ -1,28 +1,31 @@
-/**
- * Created by psigloch on 28.09.2016.
- */
 import { Component, HostListener, AfterViewInit } from "@angular/core";
 /// <reference path="../../typings/globals/jquery/index.d.ts" />;
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   moduleId: module.id,
   selector: 'app-component',
   templateUrl: 'html/app.comp.html'
 })
 export class AppComponent implements AfterViewInit{
+
   @HostListener('window:resize') onResize() {
-    this.handleTheme();
+    AppComponent.handleTheme();
   }
 
   constructor() {
   };
 
-
-  public ngAfterViewInit(): void {
-    this.handleTheme();
+  ngAfterViewInit(): void {
+    AppComponent.handleTheme();
   }
 
-  private handleTheme() {
+  private static handleTheme() {
     let topOffset = 50;
     let width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     if (width < 768) {

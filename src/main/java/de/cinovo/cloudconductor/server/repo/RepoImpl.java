@@ -1,10 +1,9 @@
 package de.cinovo.cloudconductor.server.repo;
 
-import de.cinovo.cloudconductor.server.dao.IPackageServerDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageServerGroupDAO;
-import de.cinovo.cloudconductor.server.handler.PackageServerHandler;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
-import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
+import de.cinovo.cloudconductor.server.handler.RepoHandler;
+import de.cinovo.cloudconductor.server.model.ERepo;
+import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
@@ -25,15 +24,12 @@ import java.util.List;
  * @author Thorsten Hoeger
  *
  */
-// TODO add angularjs view
 public class RepoImpl implements IRepo {
 	
 	@Autowired
-	private IPackageServerGroupDAO psgDAO;
-
+	private IRepoDAO repoDAO;
 	@Autowired
-	private IPackageServerDAO psDAO;
-	
+	private RepoHandler repoHandler;
 	
 	
 	@Override
@@ -65,16 +61,10 @@ public class RepoImpl implements IRepo {
 	}
 	
 	private IRepoProvider findProvider(String repo) {
-		EPackageServerGroup group = this.psgDAO.findByName(repo);
-		if (group != null) {
-			EPackageServer server = null;
-			if (group.getPrimaryServerId() != null) {
-				server = this.psDAO.findById(group.getPrimaryServerId());
-			}
-			if(server == null) {
-				server = group.getPackageServers().iterator().next();
-			}
-			return PackageServerHandler.findRepoProvider(server);
+		ERepo erepo = this.repoDAO.findByName(repo);
+		if (erepo != null) {
+			ERepoMirror primaryMirror = this.repoHandler.findPrimaryMirror(erepo);
+			return this.repoHandler.findRepoProvider(primaryMirror);
 		}
 		return null;
 	}

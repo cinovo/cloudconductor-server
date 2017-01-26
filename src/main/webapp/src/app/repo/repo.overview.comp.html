@@ -1,0 +1,93 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header"><i class="fa fa-server fa-fw"></i> Repositories</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="form-group input-group">
+      <label class="input-group-addon" for="search">Search </label>
+      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
+    </div>
+  </div>
+  <div class="col-md-8">
+    <button [routerLink]="['new']" class="btn btn-default pull-right">Add a new Repository</button>
+  </div>
+</div>
+
+<div class="row" *ngIf="repos.length < 1">
+  <div class="col-sm-12">
+    <div class="alert alert-warning" role="alert-1">
+      There are currently no Repositories defined.<br/>
+      <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New Repository</a>
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="repos.length > 0">
+  <div class="col-md-12" *ngIf="repos && repos.length >0">
+    <cc-panel *ngFor="let repo of repos" [icon]="'fa-server'" [title]="repo.name"
+              (onHeaderDblClick)="goToDetail(repo)">
+
+      <li cc-panel-dropdown>
+        <a [routerLink]="[repo.id,'mirror','new']" [queryParams]="{'ret':'ov'}">New Repository</a>
+      </li>
+      <li class="divider" cc-panel-dropdown></li>
+
+      <li cc-panel-dropdown>
+        <a [routerLink]="[repo.name]">Edit Repository</a>
+      </li>
+
+      <li cc-panel-dropdown>
+        <a href="javascript:void(0)" mwlConfirm
+           [title]="'Please verify!'"
+           [message]="'Are you sure you want to delete the following repository: <strong>'+ repo.name+'</strong>?'"
+           confirmButtonType="danger"
+           (confirm)="deleteRepo(repo.name)"
+           [appendToBody]="true">
+          Delete Repository
+        </a>
+      </li>
+
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <tbody>
+        <tr *ngFor="let mirror of repo.mirrors" [class.info]="mirror.id == repo.primaryMirror"
+            (dblclick)="goToMirror(mirror)">
+          <td width="30px">
+            <i class="fa fa-desktop fa-fw"></i>
+          </td>
+          <td width="30px">
+            <i class="fa fa-check fa-fw" *ngIf="mirror.id === repo.primaryMirror"></i>
+          </td>
+          <td>
+            {{mirror.description}}
+          </td>
+          <td>
+            {{mirror.path}}
+          </td>
+          <td width="15px">
+            <a [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}"><i
+              class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td width="15px">
+            <a href="javascript:void(0)" mwlConfirm
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following mirror: '+ mirror.description+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteMirror(mirror.id)">
+              <i class="fa fa-bitbucket fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+        <tr [routerLink]="[this.repo.name, 'mirror', 'new']" role="button">
+          <td><i class="fa fa-plus fa-fw"></i></td>
+          <td colspan="5">Add a new mirror</td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

@@ -73,7 +73,7 @@ public class AgentImpl implements IAgent {
 	@Autowired
 	private IServerOptionsDAO serverOptionsDAO;
 	@Autowired
-	private IPackageServerGroupDAO dpsg;
+	private IRepoDAO repoDAO;
 	@Autowired
 	private IAgentDAO agentDAO;
 
@@ -207,7 +207,7 @@ public class AgentImpl implements IAgent {
 			rpm.setPkg(pkg);
 			rpm.setVersion(irpm.getVersion());
 			rpm.setDeprecated(true);
-			//rpm.getServerGroups().add(this.dpsg.findByName(irpm.getPackageServerGroup()));
+			//rpm.getRepos().add(this.repoDAO.findByName(irpm.getRepos()));
 			rpm = this.versionDAO.save(rpm);
 		}
 		state = new EPackageState();
@@ -408,7 +408,7 @@ public class AgentImpl implements IAgent {
 			options.setTemplate(host.getTemplate());
 			options = this.agentOptionsDAO.save(options);
 		}
-		AgentOptions result = options.toApi();
+		AgentOption result = options.toApi();
 		result.setTemplateName(host.getTemplate().getName());
 		boolean onceExecuted = false;
 		if(options.getDoSshKeys() == TaskState.ONCE) {
@@ -438,7 +438,8 @@ public class AgentImpl implements IAgent {
 		if(onceExecuted) {
 			this.hostDAO.save(host);
 		}
-		return result;
+		//TODO BROKEN DUE TO INTERFACE CHANGES
+		return null;
 	}
 
 	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {

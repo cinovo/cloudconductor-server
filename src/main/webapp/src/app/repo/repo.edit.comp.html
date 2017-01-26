@@ -1,0 +1,113 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header" *ngIf="mode == 'edit'"><i class="fa fa-server fa-fw"></i> Repository Details
+      <h4 *ngIf="repo">{{repo.name}}</h4>
+    </h1>
+    <h1 class="page-header" *ngIf="mode == 'new'"><i class="fa fa-server fa-fw"></i> New Repository</h1>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-server fa-fw"></i> Repository
+      </div>
+      <div class="panel-body">
+        <div class="form-group" [class.has-error]="!isNameValid()">
+          <label class="control-label" for="reponame">Repository Name</label>
+          <input type="text" class="form-control" [(ngModel)]="repo.name" id="reponame">
+        </div>
+
+        <div class="space-20"></div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-desktop fa-fw"></i> Mirrors
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <tbody>
+                <tr *ngFor="let mirror of repo.mirrors"
+                    [class.info]="mirror.id == repo.primaryMirror"
+                    (dblclick)="editMirror(mirror.id)">
+                  <td width="30px">
+                    <i class="fa fa-desktop fa-fw"></i>
+                  </td>
+                  <td *ngIf="mirror.id === repo.primaryMirror" width="30px"><i class="fa fa-check fa-fw"
+                                                                               title="Primary mirror"></i></td>
+                  <td *ngIf="mirror.id !== repo.primaryMirror" width="30px">
+                    <input type="radio" name="primaryMirror" (click)="setPrimary(mirror.id)"
+                           title="Set as primary mirror">
+                  </td>
+                  <td>{{mirror.description}} -- {{mirror.path}}</td>
+                  <td width="30px">
+                    <a (click)="editMirror(mirror.id)"><i class="fa fa-edit fa-fw"></i></a>
+                  </td>
+                  <td width="30px">
+                    <a (click)="deleteMirror(mirror.id)"><i class="fa fa-bitbucket fa-fw"></i></a>
+                  </td>
+                </tr>
+
+                <tr (click)="addMirror()" role="button">
+                  <td><i class="fa fa-plus fa-fw"></i></td>
+                  <td colspan="4">Add a new Mirror</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <button [routerLink]="['/repo']" class="btn btn-default">Back</button>
+          <button (click)="save()" class="btn btn-info" [disabled]="!isNameValid()">Save</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-server fa-fw"></i> Provided packages
+        <small class="pull-right" *ngIf="repo.lastIndex">last selected: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm'}} Uhr</small>
+      </div>
+      <div class="panel-body">
+        <div class="alert alert-warning" role="alert-1" *ngIf="packages.length < 1">
+          There are currently no packages provided, these will be added with the next repo scan.
+        </div>
+
+        <table class="table-responsive table table-striped table-hover"  *ngIf="packages.length > 0">
+          <thead>
+          <tr>
+            <th width="30%">Package</th>
+            <th>Version</th>
+            <th width="15px"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let pkg of packages" (dblclick)="gotToPackage(pkg)">
+            <td>
+              {{pkg.name}}
+            </td>
+            <td>
+              {{pkg.version}}
+            </td>
+            <td>
+              <a [routerLink]="['/package', pkg.name]" [queryParams]="{'ret':'repoDetail', 'id':repo.name}"><i
+                class="fa fa-external-link fa-fw"></i></a>
+            </td>
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+

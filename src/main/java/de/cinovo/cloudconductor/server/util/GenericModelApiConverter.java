@@ -5,10 +5,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
@@ -52,8 +49,9 @@ public class GenericModelApiConverter {
 	private static <Destination, Origin> void copyValue(Origin origin, Destination result, Field originField, Field destinationField) {
 		try {
 			Object value = GenericModelApiConverter.extractValue(origin, originField);
-			destinationField.set(result, GenericModelApiConverter.getCorrectValue(value, originField, destinationField));
-		} catch(IllegalAccessException e) {
+			Object correctValue = GenericModelApiConverter.getCorrectValue(value, originField, destinationField);
+			destinationField.set(result, correctValue);
+		} catch(IllegalAccessException | IllegalArgumentException e) {
 			GenericModelApiConverter.logger.error("Failed to copy value", e);
 		}
 
@@ -68,13 +66,10 @@ public class GenericModelApiConverter {
 			Class<?> destinationFieldClass = destinationField.getType();
 
 			if(originalValue instanceof Collection) {
-				if(((Collection) originalValue).isEmpty()) {
-					return originalValue;
-				}
 				Collection<Object> newValue;
 				if(List.class.isAssignableFrom(destinationFieldClass)) {
 					newValue = new ArrayList<>();
-				}else {
+				} else {
 					newValue = new HashSet<>();
 				}
 				for(Object element : (Collection) originalValue) {
@@ -84,9 +79,6 @@ public class GenericModelApiConverter {
 			}
 
 			if(originalValue instanceof Map) {
-				if(((Map) originalValue).isEmpty()) {
-					return originalValue;
-				}
 				HashMap<Object, Object> newValue = new HashMap<>();
 				for(Map.Entry<Object, Object> entry : ((Map<Object, Object>) originalValue).entrySet()) {
 					newValue.put(entry.getKey(), getCorrectValue(entry.getValue(), originField, destinationField));
@@ -112,7 +104,7 @@ public class GenericModelApiConverter {
 				return ((INamed) originalValue).getName();
 			}
 
-			if(destinationFieldClass.isAssignableFrom(originalValue.getClass())) {
+			if(destinationFieldClass.isAssignableFrom(originField.getType())) {
 				return originalValue;
 			}
 		} catch(SecurityException e) {

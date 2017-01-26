@@ -5,7 +5,8 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </button>
-  <a class="navbar-brand" href="index.html">CloudConductor</a>
+  <a class="navbar-left" [routerLink]="['/']"><img src="/images/50x50.jpg"></a>
+  <a class="navbar-brand" [routerLink]="['/']">CloudConductor <small *ngIf="settings.name"> - {{settings.name}}</small></a>
 </div>
 <!-- /.navbar-header -->
 

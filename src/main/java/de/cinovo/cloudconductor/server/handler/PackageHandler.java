@@ -4,16 +4,14 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.*;
 import de.cinovo.cloudconductor.server.model.*;
+import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.WebApplicationException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,19 +22,17 @@ import java.util.Set;
 @Service
 public class PackageHandler {
 
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Autowired
 	private IPackageDAO packageDAO;
 	@Autowired
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
-	private IPackageServerGroupDAO packageServerGroupDAO;
+	private IRepoDAO repoDAO;
 	@Autowired
 	private IDependencyDAO dependencyDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-
-
-	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * @param pv the package version
@@ -99,17 +95,49 @@ public class PackageHandler {
 	}
 
 	/**
-	 * @param psgs collection of package server group names
-	 * @return a set of the package server group entities
+	 * @param repos collection of repos names
+	 * @return a set of the repo entities
 	 */
-	public Set<EPackageServerGroup> getPackageServerGroups(Collection<String> psgs) {
-		HashSet<EPackageServerGroup> result = new HashSet<>();
-		for(String psg : psgs) {
-			result.add(this.packageServerGroupDAO.findByName(psg));
+	public Set<ERepo> getRepos(Collection<String> repos) {
+		HashSet<ERepo> result = new HashSet<>();
+		for(String repo : repos) {
+			result.add(this.repoDAO.findByName(repo));
 		}
 		return result;
 	}
 
+	/**
+	 * @param epackage the package
+	 * @param repos    the repos to look in
+	 * @return the newest verison of the package in the provided repos
+	 */
+	public EPackageVersion getNewestPackageInRepo(EPackage epackage, Collection<ERepo> repos) {
+		if(repos == null || repos.isEmpty() || epackage == null || epackage.getVersions().isEmpty()) {
+			return null;
+		}
+		PackageVersionComparator versionComp = new PackageVersionComparator();
+
+		List<EPackageVersion> result = new ArrayList<>();
+		for(EPackageVersion ePackageVersion : epackage.getVersions()) {
+			for(ERepo repo : ePackageVersion.getRepos()) {
+				if(repos.contains(repo)) {
+					result.add(ePackageVersion);
+					break;
+				}
+			}
+		}
+		if(result.isEmpty()) {
+			return null;
+		}
+
+		Collections.sort(result, versionComp);
+		return result.get(result.size() - 1);
+	}
+
+	/**
+	 * @param version the version
+	 * @return true, if any template ueses the version
+	 */
 	public boolean checkIfInUse(EPackageVersion version) {
 		for(ETemplate t : this.templateDAO.findList()) {
 			if(t.getPackageVersions().contains(version)) {
@@ -122,7 +150,7 @@ public class PackageHandler {
 	private EPackageVersion fillFields(EPackageVersion epv, PackageVersion pv) {
 		epv.setVersion(pv.getVersion());
 		epv.setName(pv.getName());
-		epv.setServerGroups(this.getPackageServerGroups(pv.getPackageServerGroup()));
+		epv.setRepos(this.getRepos(pv.getRepos()));
 		epv.setDeprecated(false);
 		epv.setDependencies(new HashSet<EDependency>());
 		for(Dependency dep : pv.getDependencies()) {
@@ -142,5 +170,19 @@ public class PackageHandler {
 		edep.setType(dep.getType());
 		edep.setVersion(dep.getVersion());
 		return edep;
+	}
+
+	/**
+	 * @param version the version you want to check
+	 * @param repos the repos you want to check
+	 * @return true, if the version is contained in one of the given repos
+	 */
+	public boolean versionAvailableInRepo(EPackageVersion version, List<ERepo> repos) {
+		for(ERepo repo : repos) {
+			if(version.getRepos().contains(repo)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

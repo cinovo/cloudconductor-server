@@ -342,7 +342,7 @@
 							<vendor>Cinovo AG</vendor>
 							<packager>Cinovo AG</packager>
 							<copyright>2013, Cinovo AG</copyright>
-							<group>Applications/System</group>
+							<repo>Applications/System</repo>
 							<prefix>/</prefix>
 							<changelogFile>package/changelog</changelogFile>
 							<mappings>

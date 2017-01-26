@@ -66,14 +66,14 @@ public class IOModuleTest extends APITest {
 			PackageVersion pv1 = new PackageVersion();
 			pv1.setName("package1");
 			pv1.setVersion("1.0.0");
-			pv1.setPackageServerGroup(new HashSet<String>());
-			pv1.getPackageServerGroup().add("TESTREPO");
+			pv1.setRepos(new HashSet<String>());
+			pv1.getRepos().add("TESTREPO");
 
 			PackageVersion pv2 = new PackageVersion();
 			pv2.setName("package1");
 			pv2.setVersion("1.2.0");
-			pv2.setPackageServerGroup(new HashSet<String>());
-			pv2.getPackageServerGroup().add("TESTREPO");
+			pv2.setRepos(new HashSet<String>());
+			pv2.getRepos().add("TESTREPO");
 
 			set.add(pv1);
 			set.add(pv2);

@@ -19,6 +19,7 @@ package de.cinovo.cloudconductor.server.dao;
 
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -27,7 +28,7 @@ import de.cinovo.cloudconductor.server.model.EFileData;
  * @author psigloch
  * 
  */
-public interface IFileDataDAO extends IAuditedEntity<EFileData, Long> {
+public interface IFileDataDAO extends IEntityDAO<EFileData, Long> {
 	
 	/**
 	 * @param file the file

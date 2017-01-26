@@ -6,9 +6,9 @@
  */
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
 import { HTTPService } from "./abstract.http.service";
 import { Validator } from "../../util/validator.util";
+import { BehaviorSubject, Observable } from "rxjs";
 
 export interface ConfigValue {
   key: string;
@@ -19,11 +19,14 @@ export interface ConfigValue {
 
 @Injectable()
 export class ConfigValueHttpService extends HTTPService {
-  private _templates: Array<string> = [];
+  private _templates: BehaviorSubject<Array<string>> = new BehaviorSubject([]);
+  public templates: Observable<Array<string>> = this._templates.asObservable();
+  private reloading: boolean = false;
 
   constructor(protected http: Http) {
     super(http);
     this.basePathURL = 'config/';
+    this.reloadTemplates();
   }
 
   public getValues(template: string): Observable<Array<ConfigValue>> {
@@ -31,40 +34,45 @@ export class ConfigValueHttpService extends HTTPService {
   }
 
   public deleteValue(val: ConfigValue): Observable<boolean> {
+    let ret;
     if (!Validator.notEmpty(val.service)) {
-      return this._delete(val.template + "/null/" + val.key);
+      ret = this._delete(val.template + "/null/" + val.key);
+    } else {
+      ret = this._delete(val.template + "/" + val.service + "/" + val.key);
     }
-    return this._delete(val.template + "/" + val.service + "/" + val.key);
+    ret.subscribe(() => this.reloadTemplates(), () => {
+    });
+    return ret;
   }
 
   public save(val: ConfigValue): Observable<ConfigValue> {
     val['@class'] = "de.cinovo.cloudconductor.api.model.ConfigValue";
-    return this._put("", val);
-  }
-
-  get templates(): Array<string> {
-    if (!this._templates || this._templates.length < 1) {
-      this.reloadTemplates();
-    }
-    return this._templates;
-  }
-
-  set templates(val: Array<string>) {
-    this._templates = val.sort((a: string, b: string) => {
-      if (a == "GLOBAL") return -1;
-      if (b == "GLOBAL") return 1;
-      if (a < b) return -1;
-      if (a > b) return 1;
-      return 0;
+    let ret = this._put("", val);
+    ret.subscribe(() => this.reloadTemplates(), () => {
     });
+    return ret;
   }
 
-  public reloadTemplates(): void {
-    this._get("").subscribe((result) => this.templates = result);
+  private reloadTemplates(): void {
+    if (!this.reloading) {
+      this.reloading = true;
+      this._get("").subscribe(
+        (result) => {
+          this._templates.next(result.sort((a: string, b: string) => {
+            if (a == "GLOBAL") return -1;
+            if (b == "GLOBAL") return 1;
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+          }));
+          this.reloading = false;
+        }
+      );
+    }
   }
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {
-    if(!Validator.notEmpty(service)) {
+    if (!Validator.notEmpty(service)) {
       return this._get(template + "/null/" + key);
     }
     return this._get(template + "/" + service + "/" + key);

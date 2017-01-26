@@ -20,6 +20,10 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -29,22 +33,16 @@ import java.util.Set;
  *
  * @author psigloch
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class Template implements INamed {
 
 	private String name;
 	private String description;
-
-	private Set<String> packageServers;
-
+	private Set<String> repos;
 	private Map<String, String> versions;
-
 	private Set<String> hosts;
-
-	private Set<String> sshkeys;
-
-	private Set<String> configFiles;
-
-	private Set<String> directories;
+	private Boolean autoUpdate;
+	private Boolean smoothUpdate;
 
 	/**
 	 * @return the name
@@ -104,58 +102,44 @@ public class Template implements INamed {
 	}
 
 	/**
-	 * @return the sshkeys
+	 * @return the repos
 	 */
-	public Set<String> getSshkeys() {
-		return this.sshkeys;
+	public Set<String> getRepos() {
+		return this.repos;
 	}
 
 	/**
-	 * @param sshkeys the sshkeys to set
+	 * @param repos the repos to set
 	 */
-	public void setSshkeys(Set<String> sshkeys) {
-		this.sshkeys = sshkeys;
+	public void setRepos(Set<String> repos) {
+		this.repos = repos;
 	}
 
 	/**
-	 * @return the configFiles
+	 * @return the autoUpdate
 	 */
-	public Set<String> getConfigFiles() {
-		return this.configFiles;
+	public Boolean getAutoUpdate() {
+		return this.autoUpdate;
 	}
 
 	/**
-	 * @param configFiles the configFiles to set
+	 * @param autoUpdate the autoUpdate to set
 	 */
-	public void setConfigFiles(Set<String> configFiles) {
-		this.configFiles = configFiles;
+	public void setAutoUpdate(Boolean autoUpdate) {
+		this.autoUpdate = autoUpdate;
 	}
 
 	/**
-	 * @return the directories
+	 * @return the smoothUpdate
 	 */
-	public Set<String> getDirectories() {
-		return this.directories;
+	public Boolean getSmoothUpdate() {
+		return this.smoothUpdate;
 	}
 
 	/**
-	 * @param directories the directories to set
+	 * @param smoothUpdate the smoothUpdate to set
 	 */
-	public void setDirectories(Set<String> directories) {
-		this.directories = directories;
-	}
-
-	/**
-	 * @return the packageServers
-	 */
-	public Set<String> getPackageServers() {
-		return this.packageServers;
-	}
-
-	/**
-	 * @param packageServers the packageServers to set
-	 */
-	public void setPackageServers(Set<String> packageServers) {
-		this.packageServers = packageServers;
+	public void setSmoothUpdate(Boolean smoothUpdate) {
+		this.smoothUpdate = smoothUpdate;
 	}
 }

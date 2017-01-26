@@ -17,21 +17,13 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.Settings;
+import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
-
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -42,16 +34,14 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "serveroptions", schema = "cloudconductor")
-public class EServerOptions implements IEntity<Long> {
+public class EServerOptions extends AModelApiConvertable<Settings> implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
 	
 	private String name;
-	
-	private String bgcolor;
-	
+
 	private boolean allowautoupdate;
 	
 	private String description;
@@ -96,20 +86,6 @@ public class EServerOptions implements IEntity<Long> {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	/**
-	 * @return the bgcolor
-	 */
-	public String getBgcolor() {
-		return this.bgcolor;
-	}
-	
-	/**
-	 * @param bgcolor the bgcolor to set
-	 */
-	public void setBgcolor(String bgcolor) {
-		this.bgcolor = bgcolor;
 	}
 	
 	/**
@@ -254,5 +230,10 @@ public class EServerOptions implements IEntity<Long> {
 	public void setDisallowUninstall(Set<String> disallowUninstall) {
 		this.disallowUninstall = disallowUninstall;
 	}
-	
+
+	@Override
+	@Transient
+	public Class<Settings> getApiClass() {
+		return Settings.class;
+	}
 }

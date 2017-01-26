@@ -17,17 +17,15 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import de.cinovo.cloudconductor.server.dao.IFileDAO;
+import de.cinovo.cloudconductor.server.model.EFile;
+import de.cinovo.cloudconductor.server.model.EFileTag;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import de.cinovo.cloudconductor.server.dao.IFileDAO;
-import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EFileTag;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -71,10 +69,5 @@ public class FileDAOHib extends AVersionedEntityHib<EFile> implements IFileDAO {
 			}
 		}
 		return result;
-	}
-	
-	@Override
-	protected AuditCategory getAuditCategory() {
-		return AuditCategory.FILE;
 	}
 }

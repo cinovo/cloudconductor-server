@@ -18,7 +18,7 @@ package de.cinovo.cloudconductor.server.dao;
  */
 
 import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
@@ -34,10 +34,10 @@ import java.util.List;
 public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ETemplate> {
 	
 	/**
-	 * @param packageServer the package server id
-	 * @return the templates using the package server
+	 * @param repo the repo
+	 * @return the templates using the repo
 	 */
-	public List<ETemplate> findByPackageServer(EPackageServer packageServer);
+	public List<ETemplate> findByRepo(ERepo repo);
 
 
 	/**

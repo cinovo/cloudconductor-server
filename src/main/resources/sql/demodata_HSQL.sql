@@ -19,12 +19,12 @@
 ---
 SET DATABASE REFERENTIAL INTEGRITY FALSE;
 
-INSERT INTO cloudconductor.package VALUES (1, 'postgresql92', 'Auto-generated from repository update on 2013-09-04 14:20:07.');
-INSERT INTO cloudconductor.package VALUES (2, 'postgresql92-libs', 'Auto-generated from repository update on 2013-09-04 14:20:07.');
-INSERT INTO cloudconductor.package VALUES (3, 'nginx', 'Auto-generated from repository update on 2013-09-04 14:20:08.');
-INSERT INTO cloudconductor.package VALUES (4, 'jdk', 'Auto-generated from repository update on 2013-09-04 14:20:08.');
-INSERT INTO cloudconductor.package VALUES (5, 'postgresql92-server', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
-INSERT INTO cloudconductor.package VALUES (6, 'nodejs', 'Auto-generated from repository update on 2013-09-04 14:20:09.');
+INSERT INTO cloudconductor.package VALUES (1, 'postgresql92', 'Auto-generated from repository selected on 2013-09-04 14:20:07.');
+INSERT INTO cloudconductor.package VALUES (2, 'postgresql92-libs', 'Auto-generated from repository selected on 2013-09-04 14:20:07.');
+INSERT INTO cloudconductor.package VALUES (3, 'nginx', 'Auto-generated from repository selected on 2013-09-04 14:20:08.');
+INSERT INTO cloudconductor.package VALUES (4, 'jdk', 'Auto-generated from repository selected on 2013-09-04 14:20:08.');
+INSERT INTO cloudconductor.package VALUES (5, 'postgresql92-server', 'Auto-generated from repository selected on 2013-09-04 14:20:09.');
+INSERT INTO cloudconductor.package VALUES (6, 'nodejs', 'Auto-generated from repository selected on 2013-09-04 14:20:09.');
 
 INSERT INTO cloudconductor.auditlog VALUES (1, 1385544948453, 'Admin', 'Added template dev', 1, 0, null, null, null);
 INSERT INTO cloudconductor.auditlog VALUES (2, 1390125583142, 'Admin', 'Added service service1', 6, 0, null, null, null);
@@ -68,7 +68,7 @@ INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, 
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (2, 'Ein TestRepo', 'http://irgendwo.com/yum',  2, 0, 2, '/static/yum');
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (3, 'Irgendwo Repo', 'http://irgendwoAnderst.com/yum',  2, 0, 2, '/static/yum');
 INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (4, 'Yanz weit weg', 'http://yanzweitweg.com/yum',  2, 0, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repo',  3, 1, 2, 'http://yum.cloudconductor.net/cloudconductor.repo');
+INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repos',  3, 1, 2, 'http://yum.cloudconductor.net/cloudconductor.repos');
 
 INSERT INTO cloudconductor.mappingpackageservertemplate VALUES (1, 1);
 

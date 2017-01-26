@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-user-circle fa-fw"></i> Agent behaviour
+      </div>
+      <div class="panel-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="alivetimer" style="text-align:left">Send "alive" message
+              every </label>
+            <div class="col-sm-3">
+              <input type="number" class="form-control" style="text-align:right" id="alivetimer"
+                     [(ngModel)]="options.aliveTimer">
+            </div>
+            <div class="col-sm-5">
+              <select name="alivetimerUnit" class="form-control" id="alivetimerUnit"
+                      [(ngModel)]="options.aliveTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="packagehandler" style="text-align:left">Handle packages and versions </label>
+            <div class="col-sm-3">
+              <select name="alivetimerUnit" class="form-control" id="packagehandler" [(ngModel)]="options.doPackageManagement">
+                <option value="OFF" selected="selected">off</option>
+                <option value="ONCE">once</option>
+                <option value="REPEAT">repeat every</option>
+              </select>
+            </div>
+            <div class="col-sm-2" *ngIf="options.doPackageManagement == 'REPEAT'">
+              <input type="number" class="form-control" style="text-align:right" id="packagehandlertimer"
+                     [(ngModel)]="options.packageManagementTimer">
+            </div>
+            <div class="col-sm-3" *ngIf="options.doPackageManagement == 'REPEAT'">
+              <select name="alivetimerUnit" class="form-control" id="packagehandlerUnit"
+                      [(ngModel)]="options.packageManagementTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="filehandler" style="text-align:left">Handle files and directories </label>
+            <div class="col-sm-3">
+              <select name="alivetimerUnit" class="form-control" id="filehandler" [(ngModel)]="options.doFileManagement">
+                <option value="OFF" selected="selected">off</option>
+                <option value="ONCE">once</option>
+                <option value="REPEAT">repeat every</option>
+              </select>
+            </div>
+            <div class="col-sm-2" *ngIf="options.doFileManagement == 'REPEAT'">
+              <input type="number" class="form-control" style="text-align:right" id="filehandlertimer"
+                     [(ngModel)]="options.fileManagementTimer">
+            </div>
+            <div class="col-sm-3" *ngIf="options.doFileManagement == 'REPEAT'">
+              <select name="alivetimerUnit" class="form-control" id="filehandlerUnit"
+                      [(ngModel)]="options.fileManagementTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="sshkeyhandler" style="text-align:left">Handle SSH keys </label>
+            <div class="col-sm-3">
+              <select name="alivetimerUnit" class="form-control" id="sshkeyhandler" [(ngModel)]="options.doSshKeys">
+                <option value="OFF" selected="selected">off</option>
+                <option value="ONCE">once</option>
+                <option value="REPEAT">repeat every</option>
+              </select>
+            </div>
+            <div class="col-sm-2" *ngIf="options.doSshKeys == 'REPEAT'">
+              <input type="number" class="form-control" style="text-align:right" id="sshkeyhandlertimer"
+                     [(ngModel)]="options.sshKeysTimer">
+            </div>
+            <div class="col-sm-3" *ngIf="options.doSshKeys == 'REPEAT'">
+              <select name="alivetimerUnit" class="form-control" id="sshkeyhandlerUnit"
+                      [(ngModel)]="options.sshKeysTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <button (click)="saveOptions()" class="btn btn-info">Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

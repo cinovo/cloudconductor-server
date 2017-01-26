@@ -6,18 +6,18 @@ YUMPATH="/opt/cloudconductor/static/yum"
 #copy versions from a source
 if [ ! -z "$RPMSOURCE" ]; then
         if [ ! -z "$YUMPATH" ]; then
-                echo "Starting to copy yum repo..."
+                echo "Starting to copy yum repos..."
                 cp -n $RPMSOURCE/*.rpm $YUMPATH
         fi
 fi
 
-#update yum repo
+#selected yum repos
 if [ ! -z "$YUMPATH" ]; then
-        echo "Creating the yum repo"
+        echo "Creating the yum repos"
         repomanage -o -k 3 -c $YUMPATH | xargs rm
         createrepo $YUMPATH
         if [ $? -gt 0 ]; then
-                echo "Error creating repo"
+                echo "Error creating repos"
                 exit 1;
         fi
 

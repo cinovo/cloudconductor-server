@@ -127,8 +127,8 @@ public class TemplateTest extends APITest {
 			PackageVersion pv = new PackageVersion();
 			pv.setName("nginx");
 			pv.setVersion("1.5.4-1");
-			pv.setPackageServerGroup(new HashSet<String>());
-			pv.getPackageServerGroup().add("TESTREPO");
+			pv.setRepos(new HashSet<String>());
+			pv.getRepos().add("TESTREPO");
 			h.addVersion(TemplateTest.TEMPLATE, pv);
 			Set<PackageVersion> versions = h.getVersions(TemplateTest.TEMPLATE);
 			Assert.assertEquals(5, versions.size());
@@ -146,8 +146,8 @@ public class TemplateTest extends APITest {
 			PackageVersion pv = new PackageVersion();
 			pv.setName("nginx");
 			pv.setVersion("1.5.4-1");
-			pv.setPackageServerGroup(new HashSet<String>());
-			pv.getPackageServerGroup().add("TESTREPO");
+			pv.setRepos(new HashSet<String>());
+			pv.getRepos().add("TESTREPO");
 			new PackageHandler(this.getCSApi()).addRPM("nginx", pv);
 			
 			h.addVersion(TemplateTest.TEMPLATE, pv);

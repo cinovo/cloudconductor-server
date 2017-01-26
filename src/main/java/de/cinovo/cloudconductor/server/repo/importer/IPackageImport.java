@@ -20,8 +20,8 @@ public interface IPackageImport {
 	
 	/**
 	 * @param packageVersions the package versions
-	 * @param packageServerGroupName the group name
+	 * @param repoName the repo name
 	 */
-	void importVersions(Set<PackageVersion> packageVersions, String packageServerGroupName);
+	void importVersions(Set<PackageVersion> packageVersions, String repoName);
 	
 }

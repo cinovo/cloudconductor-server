@@ -716,28 +716,37 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	<changeSet id="20" author="psigloch">
-		<renameTable schemaName="cloudconductor" newTableName="packageserver" oldTableName="yumserver"/>
-		<createTable schemaName="cloudconductor" tableName="packageservergroup">
+	<changeSet id="21" author="psigloch">
+		<dropColumn schemaName="cloudconductor" tableName="serveroptions" columnName="bgcolor" />
+	</changeSet>
+	<changeSet id="22" author="psigloch">
+		<createTable schemaName="cloudconductor" tableName="repo">
 			<column name="id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="varchar(255)">
 				<constraints nullable="false" unique="true" />
 			</column>
-			<column name="primaryserverid" type="bigint">
+			<column name="primarymirrorid" type="bigint">
 				<constraints nullable="true" />
 			</column>
+			<column name="description" type="text">
+				<constraints nullable="true" />
+			</column>
+            <column name="lastindex" type="bigint">
+                <constraints nullable="true" />
+            </column>
 		</createTable>
 
-		<insert schemaName="cloudconductor" tableName="packageservergroup">
-			<column name="name">base</column>
+		<insert schemaName="cloudconductor" tableName="repo">
+			<column name="name" value="Base-Repo" />
+			<column name="description" value="The default repository"/>
 		</insert>
-		
-		<addColumn schemaName="cloudconductor" tableName="packageserver">
-			<column name="servergroupid" type="bigint" defaultValue="1">
-				<constraints nullable="false" references="cloudconductor.packageservergroup(id)" foreignKeyName="fk_psg_ps" deleteCascade="true" />
 
+		<renameTable schemaName="cloudconductor" newTableName="repomirror" oldTableName="yumserver"/>
+		<addColumn schemaName="cloudconductor" tableName="repomirror">
+			<column name="repoid" type="bigint" defaultValue="1">
+				<constraints nullable="false" references="cloudconductor.repo(id)" foreignKeyName="fk_repo_mirror" deleteCascade="true" />
 			</column>
 			<column name="indexertype" type="int" defaultValue="1">
 				<constraints nullable="false" />
@@ -751,30 +760,36 @@
 			<column name="accesskeyid" type="varchar(255)" />
 			<column name="secretkey" type="varchar(255)" />
 		</addColumn>
-		
-		<createTable schemaName="cloudconductor" tableName="mappingversiongroup">
+		<update tableName="repomirror" schemaName="cloudconductor">
+			<column name="repoid" value="1" />
+		</update>
+
+		<createTable schemaName="cloudconductor" tableName="map_version_repo">
 			<column name="versionid" type="bigint" >
-				<constraints nullable="false" references="cloudconductor.packageversion(id)" foreignKeyName="fk_version_psg" deleteCascade="true" />
+				<constraints nullable="false" references="cloudconductor.packageversion(id)" foreignKeyName="fk_version_repo" deleteCascade="true" />
 			</column>
-			<column name="groupid" type="bigint" >
-				<constraints nullable="false" references="cloudconductor.packageservergroup(id)" foreignKeyName="fk_psg_version" deleteCascade="true" />
+			<column name="repoid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.repo(id)" foreignKeyName="fk_repo_version" deleteCascade="true" />
 			</column>
 		</createTable>
-		
-		<renameColumn schemaName="cloudconductor" tableName="template" oldColumnName="yum" newColumnName="packageserver"/>
-		<renameColumn schemaName="cloudconductor" tableName="packageserver" oldColumnName="yumpath" newColumnName="path"/>
-		
-		<createTable schemaName="cloudconductor" tableName="mappingpackageservertemplate">
+
+		<sql>INSERT INTO cloudconductor.map_version_repo (versionid, repoid) SELECT id, '1' FROM cloudconductor.packageversion;</sql>
+
+		<renameColumn schemaName="cloudconductor" tableName="repomirror" oldColumnName="yumpath" newColumnName="path"/>
+
+		<createTable schemaName="cloudconductor" tableName="map_template_repo">
 			<column name="templateid" type="bigint" >
-				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_version_template" deleteCascade="true" />
+				<constraints nullable="false" references="cloudconductor.template(id)" foreignKeyName="fk_template_repo" deleteCascade="true" />
 			</column>
-			<column name="serverid" type="bigint" >
-				<constraints nullable="false" references="cloudconductor.packageserver(id)" foreignKeyName="fk_template_version" deleteCascade="true" />
+			<column name="repoid" type="bigint" >
+				<constraints nullable="false" references="cloudconductor.repo(id)" foreignKeyName="fk_repo_template" deleteCascade="true" />
 			</column>
 		</createTable>
-		
-		<sql>INSERT INTO cloudconductor.mappingpackageservertemplate (templateid, serverid) SELECT id, packageserver FROM cloudconductor.template;</sql>
-		
-		<dropColumn schemaName="cloudconductor" tableName="template" columnName="packageserver"/>
+
+		<sql>INSERT INTO cloudconductor.map_template_repo (templateid, repoid) SELECT id, '1' FROM cloudconductor.template;</sql>
+		<dropColumn schemaName="cloudconductor" tableName="template" columnName="yum"/>
 	</changeSet>
+    <changeSet id="23" author="psigloch">
+        <dropTable tableName="auditlog" schemaName="cloudconductor" />
+    </changeSet>
 </databaseChangeLog>

@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-book fa-fw"></i> Installed packages
+      </div>
+      <div class="panel-body">
+
+        <table class=" table-condensed table-responsive table table-striped table-hover">
+          <thead>
+          <tr>
+            <th width="15px"> <input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
+            <th>Package-Name</th>
+            <th>Installed version</th>
+            <th>Latest version</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let pv of packageVersions;" [class.warning]="!isPkgLatest(pv)">
+            <td>
+              <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="pkgSelect(pv, $event)" >
+            </td>
+            <td>
+              {{pv.pkg}}
+            </td>
+            <td>
+              {{pv.version}}
+            </td>
+            <td>
+              <template [ngIf]="packageTree[pv.pkg]">
+                {{packageTree[pv.pkg].newestVersion.version}}
+              </template>
+            </td>
+            <td *ngIf="!isPkgLatest(pv)">
+              <a (click)="updatePackage(pv)" role="button" title="Update pacakge to newest"><i class="fa fa-refresh fa-fw"></i></a>
+            </td>
+            <td *ngIf="isPkgLatest(pv)"></td>
+            <td>
+              <a (click)="removePackage(pv)" role="button" title="Remove package from template"><i class="fa fa-bitbucket fa-fw"></i></a>
+            </td>
+          </tr>
+
+          <tr *ngIf="newPackage">
+
+            <td colspan="6">
+              <label class="control-label"><i class="fa fa-plus fa-fw"></i>  Add a new package
+                package</label>
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <div class="col-sm-6">
+                    <select #pkgSelect class="form-control" id="pkg" [(ngModel)]="newPackage.pkg" (ngModelChange)="onPackageChange()">
+                      <option *ngFor="let pt of packageTreeArray()" value="{{pt.pkgName}}">{{pt.pkgName}}</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <select class="form-control" id="version"[(ngModel)]="newPackage.version" [disabled]="!pkgSelect.value">
+                      <option *ngFor="let version of getVersions(pkgSelect.value)" value="{{version.version}}" >{{version.version}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pull-right">
+                <button (click)="cancelAddPackage()" class="btn btn-default">Cancel</button>
+                <button (click)="addNewPackage()" class="btn btn-success"
+                        [disabled]="">Add
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!newPackage" (click)="goToAddPackage()">
+            <td colspan="6" role="button"><i class="fa fa-plus fa-fw"></i>
+              Add a new package
+            </td>
+          </tr>
+
+          </tbody>
+        </table>
+        <div class="pull-right">
+          <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
+            <i class="fa fa-refresh fa-fw"></i> Update selected</button>
+          <button (click)="removeSelected()" class="btn btn-danger" [disabled]="!isPkgSelected()">
+            <i class="fa fa-bitbucket fa-fw"></i> Remove selected</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

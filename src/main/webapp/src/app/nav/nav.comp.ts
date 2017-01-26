@@ -1,10 +1,15 @@
 import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
-import { Router } from "@angular/router";
 import { AdditionalLinkHttpService, AdditionalLink } from "../services/http/additionalLinks.http.service";
 import { ConfigValueHttpService } from "../services/http/configValue.http.service";
 
 /// <reference path="../../../typings/globals/jquery/index.d.ts" />;
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   moduleId: module.id,
   selector: 'main-navbar',
@@ -12,18 +17,20 @@ import { ConfigValueHttpService } from "../services/http/configValue.http.servic
   templateUrl: 'html/nav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
-export class NavComponent  implements AfterViewInit {
+export class NavComponent implements AfterViewInit {
 
-  private links:Array<AdditionalLink> = [];
+  protected links: Array<AdditionalLink> = [];
+  protected templates: Array<string> = [];
 
-  constructor(private router: Router, private linksHttp:AdditionalLinkHttpService, private confHttp:ConfigValueHttpService) {
-
+  constructor(private linksHttp: AdditionalLinkHttpService,
+              private confHttp: ConfigValueHttpService) {
   };
 
   ngAfterViewInit(): void {
     (<any>$('#sideMenu')).metisMenu();
 
-    this.linksHttp.getLinks().subscribe((result) => this.links = result);
+    this.linksHttp.links.subscribe((result) => this.links = result);
+    this.confHttp.templates.subscribe((result) => this.templates = result);
 
   }
 }

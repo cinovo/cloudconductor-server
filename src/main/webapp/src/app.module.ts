@@ -1,5 +1,8 @@
 /**
- * Created by thoprloph on 12.08.2016.
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
  */
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
@@ -17,12 +20,18 @@ import { CCPanelComponent } from "./app/services/panelhead/panelhead.comp";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { ConfirmOptions, Position, ConfirmModule } from "angular2-bootstrap-confirm";
 import { Positioning } from "angular2-bootstrap-confirm/position";
-import { PackageServerGroupHttpService } from "./app/services/http/packageservergroup.http.service";
-import { PackageServerHttpService } from "./app/services/http/packageserver.http.service";
 import { AdditionalLinkHttpService } from "./app/services/http/additionalLinks.http.service";
 import { ConfigValueHttpService } from "./app/services/http/configValue.http.service";
 import { ServiceHttpService } from "./app/services/http/service.http.service";
 import { PackageHttpService } from "./app/services/http/package.http.service";
+import { SettingHttpService } from "./app/services/http/setting.http.service";
+import { LinksEdit } from "./app/links/links.edit.comp";
+import { RepoMirrorHttpService } from "./app/services/http/repomirror.http.service";
+import { RepoHttpService } from "./app/services/http/repo.http.service";
+import { TemplateHttpService } from "./app/services/http/template.http.service";
+import { TemplateMetaDataEdit } from "./app/template/metadata.edit.comp";
+import { TemplatePackageDetail } from "./app/template/template.package.detail.comp";
+import { AgentOptionDetail } from "./app/template/agentoption.detail.comp";
 
 @NgModule({
   imports: [
@@ -39,17 +48,23 @@ import { PackageHttpService } from "./app/services/http/package.http.service";
     AlertComponent,
     CCPanelComponent,
     ROUTED_COMPONENTS(),
+    LinksEdit,
+    TemplateMetaDataEdit,
+    TemplatePackageDetail,
+    AgentOptionDetail,
     NavComponent,
     TopNavComponent
   ],
   providers: [
     AlertService,
     ConfigValueHttpService,
-    PackageServerHttpService,
-    PackageServerGroupHttpService,
+    RepoMirrorHttpService,
+    RepoHttpService,
     AdditionalLinkHttpService,
     ServiceHttpService,
     PackageHttpService,
+    SettingHttpService,
+    TemplateHttpService,
     ConfirmOptions,
     {provide: Position, useClass: Positioning}
   ],

@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-lg-12">
-    <h1 class="page-header">Configuration Key-Value-Pairs
+    <h1 class="page-header"><i class="fa fa-code-fork fa-fw"></i> Configuration Key-Value-Pairs
       <h4>
         Template: {{template}}
         <a *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirm
@@ -42,7 +42,7 @@
 
 <div class="row" *ngIf="tree && tree.length >0">
   <div class="col-md-6" *ngFor="let service of tree">
-    <cc-panel [icon]="'fa-indent'" [title]="service.name">
+    <cc-panel [icon]="service.icon" [title]="service.name">
       <li cc-panel-dropdown>
         <a [routerLink]="['/config', template, service.name, 'new']" [queryParams]="{'ret':'ov'}">Add new Key-Value</a>
       </li>
@@ -69,7 +69,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let kv of service.kvs">
+          <tr *ngFor="let kv of service.kvs" (dblclick)="goToDetail(kv)">
             <td>
               {{kv.key}}
             </td>

@@ -93,8 +93,8 @@ public class AgentTest extends APITest {
 		packageVersion.setName(name);
 		packageVersion.setVersion(version);
 		packageVersion.setDependencies(dep);
-		packageVersion.setPackageServerGroup(new HashSet<String>());
-		packageVersion.getPackageServerGroup().add(psg);
+		packageVersion.setRepos(new HashSet<String>());
+		packageVersion.getRepos().add(psg);
 		return packageVersion;
 	}
 

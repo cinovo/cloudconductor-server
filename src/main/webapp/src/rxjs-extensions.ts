@@ -1,5 +1,8 @@
 /**
- * Created by psigloch on 03.11.2016.
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
  */
 // Observable class extensions
 import 'rxjs/add/observable/of';
@@ -13,3 +16,5 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
+import "rxjs/add/operator/toPromise";
+import "rxjs/add/operator/share";

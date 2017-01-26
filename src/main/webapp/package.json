@@ -30,7 +30,7 @@
     "datatables.net-bs": "^1.10.12",
     "datatables.net-responsive": "^2.1.0",
     "datatables.net-responsive-bs": "^2.1.0",
-    "font-awesome": "^4.6.3",
+    "font-awesome": "^4.7.0",
     "metismenu": "~1.1.3",
     "ng2-webstorage": "^1.2.5",
     "reflect-metadata": "^0.1.3",

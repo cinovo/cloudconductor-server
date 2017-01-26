@@ -1,13 +1,12 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
-import java.util.List;
+import de.cinovo.cloudconductor.server.model.IVersionized;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import de.cinovo.cloudconductor.server.model.IVersionized;
+import java.util.List;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -17,25 +16,17 @@ import de.cinovo.cloudconductor.server.model.IVersionized;
  *
  * @param <E> the entity
  */
-public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends AAuditedEntityHib<E, Long> {
+public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends EntityDAOHibernate<E, Long> {
 
-	@Override
-	@Transactional
-	public E save(final E element, String auditMessage) {
-		if ((element.getId() == null) || (element.getId() < 0)) {
-			return this.saveNewElement(element);
-		}
-		if (auditMessage == null) {
-			return super.save(this.createNewRevision(element), this.getChangeEntry(element));
-		}
-		return super.save(this.createNewRevision(element), auditMessage);
-	}
 
 	@Override
 	@Transactional
 	public E save(E element) {
 		this.entityManager.detach(element);
-		return this.save(element, null);
+		if ((element.getId() == null) || (element.getId() < 0)) {
+			return this.saveNewElement(element);
+		}
+		return super.save(this.createNewRevision(element));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -59,13 +50,6 @@ public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends 
 		E ele = super.save(element);
 		ele.setOrigId(ele.getId());
 		return this.entityManager.merge(ele);
-	}
-
-	@Override
-	@Transactional
-	public void delete(final E element, String auditMessage) {
-		element.setDeleted(true);
-		super.save(element, auditMessage);
 	}
 
 	@Override

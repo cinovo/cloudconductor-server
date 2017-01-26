@@ -2,10 +2,13 @@ import { HTTPService } from "./abstract.http.service";
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Observable } from "rxjs";
-/**
- * Created by psigloch on 11.01.2017.
- */
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 export interface Service {
   id?:number;
   name:string;

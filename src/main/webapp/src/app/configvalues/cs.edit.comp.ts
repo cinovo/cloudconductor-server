@@ -4,8 +4,11 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AlertService } from "../services/alert/alert.service";
 import { Validator } from "../util/validator.util";
 /**
- * Created by psigloch on 11.01.2017.
- */
+  * Copyright 2017 Cinovo AG<br>
+  * <br>
+  *
+  * @author psigloch
+  */
 @Component({
   moduleId: module.id,
   selector: 'cs-edit',
@@ -15,8 +18,10 @@ export class ConfigValueEdit implements AfterViewInit {
 
   private cv: ConfigValue = {template: "", service: "", key: "", value: ""};
   private mode: string = 'new';
+  protected templates: Array<String> = [];
 
-  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute, private alerts: AlertService, private router: Router) {
+  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
+              private alerts: AlertService, private router: Router) {
   };
 
   ngAfterViewInit(): void {
@@ -35,15 +40,15 @@ export class ConfigValueEdit implements AfterViewInit {
           );
       }
     });
+    this.configHttp.templates.subscribe((result) => this.templates = result);
   }
 
-  private save(): void {
+  protected save(): void {
     if (this.fieldValidation()) {
       return;
     }
     this.configHttp.save(this.cv).subscribe(
       () => {
-        this.configHttp.reloadTemplates();
         this.router.navigate(["config", this.cv.template])
       }
     );

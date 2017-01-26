@@ -5,6 +5,13 @@ import { AlertService } from "../services/alert/alert.service";
 import { PackageHttpService, Package } from "../services/http/package.http.service";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
+
+/**
+ * Copyright 2016 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   moduleId: module.id,
   selector: 'service-detail',
@@ -13,10 +20,11 @@ import { Validator } from "../util/validator.util";
 export class ServiceDetail implements AfterViewInit {
 
   private service: Service = {id: -1, name: "", description: "", initScript: "", packages: []};
-  private templateRefs: Array<{template: string, pkg: string}> = [];
+  protected templateRefs: Array<{template: string, pkg: string}> = [];
   private showAddPackage: boolean = false;
   private newPackage: string;
-  private allPackages: Array<Package> = [];
+  protected allPackages: Array<Package> = [];
+  private back: any;
 
 
   constructor(private serviceHttp: ServiceHttpService, private packageHttp: PackageHttpService,
@@ -29,6 +37,9 @@ export class ServiceDetail implements AfterViewInit {
     this.route.params.subscribe((params) => {
       this.loadData(params['serviceName']);
     });
+    this.route.queryParams.subscribe((params) => {
+      this.back = {ret: params['ret'], id: params['id']};
+    });
   }
 
   private loadData(serviceName: string) {
@@ -40,7 +51,7 @@ export class ServiceDetail implements AfterViewInit {
         },
         () => {
           this.alerts.danger("The service you are looking for doesn't not exists.");
-          this.router.navigate(['services']);
+          this.router.navigate(['service']);
         }
       );
 
@@ -65,7 +76,7 @@ export class ServiceDetail implements AfterViewInit {
     );
   }
 
-  private deletePackage(pkg) {
+  protected deletePackage(pkg) {
     if (Validator.idIsSet(this.service.id)) {
       this.serviceHttp.getService(this.service.name).subscribe(
         (result) => {
@@ -87,7 +98,7 @@ export class ServiceDetail implements AfterViewInit {
     }
   }
 
-  private saveNewPackage() {
+  protected saveNewPackage() {
     if (!Validator.notEmpty(this.newPackage)) {
       this.alerts.warning("Please select a package before saving!");
       return;
@@ -100,15 +111,11 @@ export class ServiceDetail implements AfterViewInit {
       (service) => {
         service.packages.push(this.newPackage);
         this.serviceHttp.save(service).subscribe(
-          (succ) => {
-            this.localAddPackage();
-          },
-          (error) => this.alerts.danger("The package add failed!")
+          () => this.localAddPackage(),
+          () => this.alerts.danger("The package add failed!")
         );
       },
-      (error) => {
-        this.alerts.danger("The package add failed!");
-      }
+      () => this.alerts.danger("The package add failed!")
     );
   }
 
@@ -128,7 +135,7 @@ export class ServiceDetail implements AfterViewInit {
     this.showAddPackage = false;
   }
 
-  private goToAddPackage() {
+  protected goToAddPackage() {
     this.newPackage = null;
     this.packageHttp.getPackages().subscribe((result) => this.allPackages = result.filter((pkg) => this.filterUsedPackages(pkg)).sort(Sorter.packages));
     this.showAddPackage = true;
@@ -156,11 +163,25 @@ export class ServiceDetail implements AfterViewInit {
     return Validator.notEmpty(this.service.initScript);
   }
 
-  private gotoPackage(pkgName: string) {
-    this.router.navigate(['package'], pkgName);
+  protected goToBack(): void {
+    if (this.back) {
+      if (this.back.ret == 'packageDetail') {
+        this.gotoPackage(this.back.id, true);
+        return;
+      }
+    }
+    this.router.navigate(['service']);
   }
 
-  private gotoTemplate(templateName: string) {
+  private gotoPackage(pkgName: string, back?: boolean) {
+    if (back) {
+      this.router.navigate(['package', pkgName]);
+    } else {
+      this.router.navigate(['package', pkgName], {queryParams: {ret: 'serviceDetail', id: this.service.name}});
+    }
+  }
+
+  protected gotoTemplate(templateName: string) {
     this.router.navigate(['template', templateName]);
   }
 

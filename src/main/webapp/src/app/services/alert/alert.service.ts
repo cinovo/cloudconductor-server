@@ -1,9 +1,11 @@
-/**
- * Created by psigloch on 11.10.2016.
- */
-
 import { Injectable } from "@angular/core";
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Injectable()
 export class AlertService {
 

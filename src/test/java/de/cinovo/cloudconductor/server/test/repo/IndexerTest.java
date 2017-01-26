@@ -55,7 +55,7 @@ public class IndexerTest {
 		}
 		
 		@Override
-		public String getPackageServerGroupName() {
+		public String getRepoName() {
 			return "TESTREPO";
 		}
 		

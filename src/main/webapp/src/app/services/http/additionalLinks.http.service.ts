@@ -1,14 +1,15 @@
-/**
- * Created by psigloch on 04.11.2016.
- */
-/**
- * Created by psigloch on 03.11.2016.
- */
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Observable } from "rxjs/Observable";
 import { HTTPService } from "./abstract.http.service";
+import { Sorter } from "../../util/sorters.util";
+import { BehaviorSubject, Observable } from "rxjs";
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 export interface AdditionalLink {
   id?: number;
   label:string;
@@ -18,32 +19,51 @@ export interface AdditionalLink {
 @Injectable()
 export class AdditionalLinkHttpService extends HTTPService {
 
+  private _linksData: BehaviorSubject<Array<AdditionalLink>> = new BehaviorSubject([]);
+  public links: Observable<Array<AdditionalLink>> = this._linksData.asObservable();
+
+  private reloading: boolean = false;
+
   constructor(protected http: Http) {
     super(http);
     this.basePathURL = 'links/';
+    this.reloadLinks();
   }
 
   public getLinks():Observable<Array<AdditionalLink>> {
     return this._get("");
   }
 
-  public getLink(id:number):Observable<AdditionalLink> {
-    return this._get(id.toString());
-  }
-
   public deleteLink(id:number): Observable<boolean> {
-    return this._delete(id.toString());
+    let res = this._delete(id.toString());
+    res.subscribe(() => this.reloadLinks(), () =>{});
+    return res;
   }
 
-  public new(link: AdditionalLink):Observable<AdditionalLink> {
+  public newLink(link: AdditionalLink):Observable<AdditionalLink> {
     link['@class'] = "de.cinovo.cloudconductor.api.model.AdditionalLink";
-    return this._post("", link);
+    let res = this._post("", link);
+    res.subscribe(() => this.reloadLinks(), () =>{});
+    return res;
   }
 
 
-  public edit(link: AdditionalLink):Observable<AdditionalLink> {
+  public editLink(link: AdditionalLink):Observable<AdditionalLink> {
     link['@class'] = "de.cinovo.cloudconductor.api.model.AdditionalLink";
-    return this._put("", link);
+    let res = this._put("", link).share();
+    res.subscribe(() => this.reloadLinks(), () =>{});
+    return res;
   }
 
+  private reloadLinks() {
+    if (!this.reloading) {
+      this.reloading = true;
+      this.getLinks().subscribe(
+        (result) => {
+          this._linksData.next(result.sort(Sorter.links));
+          this.reloading = false;
+        }
+      );
+    }
+  }
 }

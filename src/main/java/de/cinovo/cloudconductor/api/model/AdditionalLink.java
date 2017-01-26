@@ -3,6 +3,10 @@
  */
 package de.cinovo.cloudconductor.api.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 /**
  * Copyright 2015 Taimos GmbH<br>
  * <br>
@@ -10,6 +14,7 @@ package de.cinovo.cloudconductor.api.model;
  * @author thoeger
  * 		
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class AdditionalLink {
 	
 	private Long id;

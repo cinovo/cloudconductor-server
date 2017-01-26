@@ -1,9 +1,11 @@
-/**
- * Created by psigloch on 03.11.2016.
- */
 import { Component, ViewEncapsulation } from "@angular/core";
 import { AlertService } from "./alert.service";
-
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   moduleId: module.id,
   selector: 'alert-area',

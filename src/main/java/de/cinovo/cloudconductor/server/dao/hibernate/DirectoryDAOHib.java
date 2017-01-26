@@ -2,7 +2,6 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IDirectoryDAO;
 import de.cinovo.cloudconductor.server.model.EDirectory;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,10 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("DirectoryDAOHib")
 public class DirectoryDAOHib extends AVersionedEntityHib<EDirectory> implements IDirectoryDAO {
-    @Override
-    protected AuditCategory getAuditCategory() {
-        return AuditCategory.FILE;
-    }
 
     @Override
     public Class<EDirectory> getEntityClass() {

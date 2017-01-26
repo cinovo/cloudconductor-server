@@ -2,7 +2,7 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
@@ -29,26 +29,25 @@ import java.util.List;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Repository("TemplateDaoHib")
 public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implements ITemplateDAO {
-	
+
 	@Override
 	public Class<ETemplate> getEntityClass() {
 		return ETemplate.class;
 	}
-	
+
 	@Override
 	public ETemplate findByName(String name) {
 		return this.findByQuery("FROM ETemplate t WHERE t.name = ?1", name);
 	}
-	
+
 	@Override
-	public List<ETemplate> findByPackageServer(EPackageServer packageServer) {
-		return this.findListByQuery("FROM ETemplate t WHERE ?1 IN elements(t.packageServers)", packageServer);
+	public List<ETemplate> findByRepo(ERepo repo) {
+		return this.findListByQuery("FROM ETemplate t WHERE ?1 IN elements(t.repos)", repo);
 	}
 
 	@Override

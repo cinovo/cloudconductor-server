@@ -77,11 +77,6 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
         return this.findVersionedListByQuery(ConfigValueDAOHib.BASE_QUERY, "c", template);
     }
 
-    @Override
-    public AuditCategory getAuditCategory() {
-        return AuditCategory.CONFIG;
-    }
-
     private List<EConfigValue> findList(String template, String service, String key) {
         return this.findVersionedListByQuery(createQuery(template, service, key), "c", getParams(template, service, key));
     }

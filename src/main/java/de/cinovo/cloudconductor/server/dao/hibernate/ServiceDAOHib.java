@@ -17,60 +17,53 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Repository("ServiceDAOHib")
-public class ServiceDAOHib extends AAuditedEntityHib<EService, Long> implements IServiceDAO {
-	
+public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements IServiceDAO {
+
 	@Override
 	public Class<EService> getEntityClass() {
 		return EService.class;
 	}
-	
+
 	@Override
 	public EService findByName(String name) {
 		return this.findByQuery("FROM EService s WHERE s.name = ?1", name);
 	}
-	
+
 	@Override
 	public List<EService> findByName(Set<String> names) {
 		StringBuilder find = new StringBuilder();
 		find.append("(");
-		for (String n : names) {
+		for(String n : names) {
 			find.append("'" + n + "'");
 		}
 		find.append(")");
 		return this.findListByQuery("FROM EService s WHERE s.name IN ?1", find);
 	}
-	
+
 	@Override
 	public List<EService> findByPackage(EPackage pkg) {
 		return this.findListByQuery("FROM EService s WHERE ?1 in elements(s.packages)", pkg);
 	}
-	
+
 	@Override
 	public Long count() {
 		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EService").getSingleResult();
 	}
-	
-	@Override
-	protected AuditCategory getAuditCategory() {
-		return AuditCategory.SERVICE;
-	}
-	
+
 }

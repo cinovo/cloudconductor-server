@@ -4,7 +4,11 @@ import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,22 +37,6 @@ public interface IPackage {
 	@Produces(MediaType.APPLICATION_JSON)
 	Package get(@PathParam("package") String pkgName);
 
-	/**
-	 * @param pkg the package to save
-	 */
-	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	void save(Package pkg);
-
-
-	/**
-	 * @param pkgName the name of package to delete
-	 */
-	@DELETE
-	@Path("/{package}")
-	void delete(@PathParam("package") String pkgName);
 
 	/**
 	 * Get the existing package versions of a package
@@ -62,23 +50,22 @@ public interface IPackage {
 	Set<PackageVersion> getVersions(@PathParam("pkg") String pkgname);
 
 	/**
-	 * Add a new version to a package
-	 *
-	 * @param pkgname        the package name
-	 * @param versionContent the version content
+	 * @param pkgname the pacakge name
+	 * @return map of template-packageVersion pairs
 	 */
-	@PUT
-	@Path("/{pkg}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	void addVersion(@PathParam("pkg") String pkgname, PackageVersion versionContent);
+	@GET
+	@Path("/{pkg}/usage")
+	@Produces(MediaType.APPLICATION_JSON)
+	Map<String, String> getUsage(@PathParam("pkg") String pkgname);
 
 	/**
-	 * Delete a version from a package
+	 * Get the existing package versions of a repo
 	 *
-	 * @param pkgname the package name
-	 * @param version the version
+	 * @param repoName the repo name
+	 * @return collection of package versions
 	 */
-	@DELETE
-	@Path("/{pkg}/{version}")
-	void removeVersion(@PathParam("pkg") String pkgname, @PathParam("version") String version);
+	@GET
+	@Path("/versions/repo/{repo}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Set<PackageVersion> getVersionsForRepo(@PathParam("repo") String repoName);
 }

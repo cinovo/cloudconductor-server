@@ -1,11 +1,12 @@
-/**
- * Created by psigloch on 03.11.2016.
- */
 import { Http, Response, Headers } from "@angular/http";
 import { Observable } from "rxjs";
 
-import 'rxjs/add/operator/toPromise';
-
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 export abstract class HTTPService {
 
   private apiURL = 'api/';
@@ -22,49 +23,59 @@ export abstract class HTTPService {
   protected _get(pathUrl: string): Observable<any> {
     return this.http
       .get(this.target(pathUrl))
-      .map(this.extractData)
-      .catch(this.handleError);
+      .map(HTTPService.extractData)
+      .catch(HTTPService.handleError)
+      .share();
   }
 
-  protected _post(pathUrl:string, data:any):Observable<any> {
+  protected _post(pathUrl: string, data: any): Observable<any> {
     return this.http
       .post(this.target(pathUrl), JSON.stringify(data), {headers: this.headers})
-      .map(this.extractData)
-      .catch(this.handleError);
+      .map(HTTPService.extractData)
+      .catch(HTTPService.handleError)
+      .share();
   }
 
-  protected _put(pathUrl:string, data:any):Observable<any> {
+  protected _put(pathUrl: string, data: any): Observable<any> {
     return this.http
       .put(this.target(pathUrl), JSON.stringify(data), {headers: this.headers})
-      .map(() => data)
-      .catch(this.handleError);
+      .map((response) => {
+        let result = HTTPService.extractData(response);
+        if (Object.keys(result).length === 0) {
+          return data;
+        }
+        return result;
+      })
+      .catch(HTTPService.handleError)
+      .share();
   }
 
-  protected _delete(pathUrl:string):Observable<boolean> {
-    return this.http
-      .delete(this.target(pathUrl), {headers: this.headers})
-      .map(() => true)
-      .catch(this.handleError);
+  protected _delete(pathUrl: string): Observable<any> {
+    return this.http.delete(this.target(pathUrl), {headers: this.headers})
+      .map(HTTPService.extractData)
+      .catch(HTTPService.handleError)
+      .share();
   }
 
-  protected extractData(res: Response):any {
-    let body:any = res.json();
-    return body || {};
+  protected static extractData(res: Response): any {
+    try {
+      return res.json();
+    } catch (error) {
+      return {};
+    }
   }
 
-  private target(pathUrl:string):string {
+  private target(pathUrl: string): string {
     return this.apiURL + this.basePathURL + pathUrl;
   }
-  private handleError(error: Response | any) {
+
+  private static handleError(error: Response | any) {
     let errMsg: string;
     if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      errMsg = `${error.status} - ${error.statusText || ''} ${error}`;
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
-    console.error(errMsg);
     return Observable.throw(errMsg);
   }
 }

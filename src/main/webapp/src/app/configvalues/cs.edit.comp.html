@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-lg-12">
-    <h1 class="page-header" *ngIf="mode == 'edit'">Edit Configuration Key-Value-Pair</h1>
-    <h1 class="page-header" *ngIf="mode == 'new'">New Configuration Key-Value-Pair</h1>
+    <h1 class="page-header" *ngIf="mode == 'edit'"><i class="fa fa-code-fork fa-fw"></i> Edit Configuration Key-Value-Pair</h1>
+    <h1 class="page-header" *ngIf="mode == 'new'"><i class="fa fa-code-fork fa-fw"></i> New Configuration Key-Value-Pair</h1>
   </div>
 </div>
 
@@ -25,7 +25,7 @@
           <input type="text" class="form-control" [(ngModel)]="cv.template" id="template" [disabled]="mode == 'edit'"
                  list="tempalteList">
           <datalist id="tempalteList">
-            <option *ngFor="let template of configHttp.templates" value="{{template}}"></option>
+            <option *ngFor="let template of templates" value="{{template}}"></option>
           </datalist>
         </div>
         <div class="form-group">

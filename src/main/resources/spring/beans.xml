@@ -17,7 +17,7 @@
 	<import resource="classpath:spring/cxfdaemon.xml" />
 	<import resource="classpath:spring/dao.xml" />
 
-	<jaxrs:server id="repoServer" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/repo" depends-on="cxf-engine">
+	<jaxrs:server id="repoServer" address="http://${svc.ip:0.0.0.0}:${svc.port:8090}/repos" depends-on="cxf-engine">
 		<jaxrs:serviceBeans>
 			<bean class="de.cinovo.cloudconductor.server.repo.RepoImpl" />
 		</jaxrs:serviceBeans>

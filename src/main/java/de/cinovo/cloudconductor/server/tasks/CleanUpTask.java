@@ -17,51 +17,71 @@ package de.cinovo.cloudconductor.server.tasks;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.lib.helper.SchedulerService;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EServerOptions;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Copyright 2013 Cinovo AG<br>
+ * Copyright 2017 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
-@Service("cleanuptask")
-public class CleanUpTask implements Runnable {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CleanUpTask.class);
+@Service()
+public class CleanUpTask implements IServerTasks {
+
 	private static final int MAX_AGE = 180;
-	
+
 	@Autowired
 	private IHostDAO hostDAO;
-	
-	
+
+
 	@Override
 	public void run() {
 		this.cleanUpHosts();
-		//TODO: Find other things which may be cleaned up periodicly
 	}
 
 
 	private void cleanUpHosts() {
 		List<EHost> hosts = this.hostDAO.findList();
-		for (EHost host : hosts) {
+		for(EHost host : hosts) {
 			DateTime now = new DateTime();
 			DateTime dt = new DateTime(host.getLastSeen());
 			int diff = Minutes.minutesBetween(dt, now).getMinutes();
-			if (diff > CleanUpTask.MAX_AGE) {
+			if(diff > CleanUpTask.MAX_AGE) {
 				this.hostDAO.delete(host);
 			}
 		}
 	}
-	
+
+	@Override
+	public String getTaskIdentifier() {
+		return "CLEAN_UP_TASK";
+	}
+
+	@Override
+	public void create(EServerOptions settings) {
+		SchedulerService.instance.register(this.getTaskIdentifier(), this, settings.getHostCleanUpTimer(), settings.getHostCleanUpTimerUnit());
+	}
+
+	@Override
+	public void update(EServerOptions oldSettings, EServerOptions newSettings) {
+		boolean change = oldSettings == null;
+		if(oldSettings.getHostCleanUpTimer() != newSettings.getHostCleanUpTimer()) {
+			change = true;
+		}
+		if(!oldSettings.getHostCleanUpTimerUnit().equals(newSettings.getHostCleanUpTimerUnit())) {
+			change = true;
+		}
+		if(change) {
+			SchedulerService.instance.resetTask(this.getTaskIdentifier(), newSettings.getHostCleanUpTimer(), newSettings.getHostCleanUpTimerUnit());
+		}
+	}
 }

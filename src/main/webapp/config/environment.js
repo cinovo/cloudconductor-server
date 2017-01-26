@@ -1,7 +1,7 @@
 // Angular-CLI server configuration
 // Unrelated to environment.dev|prod.ts
 
-/* jshint node: true */
+/* jshint nameField: true */
 
 module.exports = function(environment) {
   return {

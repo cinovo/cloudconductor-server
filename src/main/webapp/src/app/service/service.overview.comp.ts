@@ -4,9 +4,11 @@ import { Router } from "@angular/router";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
 /**
- * Created by psigloch on 11.01.2017.
- */
-
+  * Copyright 2017 Cinovo AG<br>
+  * <br>
+  *
+  * @author psigloch
+  */
 @Component({
   moduleId: module.id,
   selector: 'service-overview',
@@ -38,8 +40,8 @@ export class ServiceOverview implements AfterViewInit {
 
   set services(value: Array<Service>) {
     this._services = value
-      .filter(group => ServiceOverview.filterData(group, this._searchQuery))
-      .sort(Sorter.sortService);
+      .filter(repo => ServiceOverview.filterData(repo, this._searchQuery))
+      .sort(Sorter.service);
   }
 
   get searchQuery(): string {
@@ -51,13 +53,13 @@ export class ServiceOverview implements AfterViewInit {
     this.loadData();
   }
 
-  private gotoDetails(service: Service) {
+  protected gotoDetails(service: Service) {
     if (Validator.notEmpty(service.name)) {
-      this.router.navigate(['services', service.name]);
+      this.router.navigate(['service', service.name]);
     }
   }
 
-  private deleteService(service: Service): void {
+  protected deleteService(service: Service): void {
     if (service) {
       this.serviceHttp.deleteService(service);
     }

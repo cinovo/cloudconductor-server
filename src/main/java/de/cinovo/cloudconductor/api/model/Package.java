@@ -21,6 +21,10 @@ package de.cinovo.cloudconductor.api.model;
  */
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 import java.util.Set;
 
 /**
@@ -29,6 +33,7 @@ import java.util.Set;
  *
  * @author psigloch
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class Package implements INamed {
 
 	private String name;

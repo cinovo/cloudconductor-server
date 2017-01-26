@@ -1,9 +1,9 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
+import de.cinovo.cloudconductor.server.repo.RepoEntry;
+
 import java.io.InputStream;
 import java.util.List;
-
-import de.cinovo.cloudconductor.server.repo.RepoEntry;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -38,8 +38,8 @@ public interface IRepoProvider {
 	boolean isListable();
 	
 	/**
-	 * @return the name of the package server group
+	 * @return the name of the repo
 	 */
-	String getPackageServerGroupName();
+	String getRepoName();
 	
 }

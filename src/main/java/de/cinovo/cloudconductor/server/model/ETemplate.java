@@ -23,7 +23,9 @@ import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -51,7 +53,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 
 	private List<EDirectory> directories;
 	
-	private List<EPackageServer> packageServers = new ArrayList<>();
+	private List<ERepo> repos = new ArrayList<>();
 	
 	private Boolean autoUpdate;
 	
@@ -214,14 +216,11 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ETemplate)) {
+		if(!(obj instanceof ETemplate)) {
 			return false;
 		}
 		ETemplate other = (ETemplate) obj;
-		if (this.getName() == null) {
-			return false;
-		}
-		return this.getName().equals(other.getName());
+		return this.getName() != null && this.getName().equals(other.getName());
 	}
 	
 	@Override
@@ -230,25 +229,39 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	}
 	
 	/**
-	 * @return the packageServers
+	 * @return the repos
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingpackageservertemplate", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "serverid"))
-	public List<EPackageServer> getPackageServers() {
-		return this.packageServers;
+	@JoinTable(name = "map_template_repo", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
+	public List<ERepo> getRepos() {
+		return this.repos;
 	}
 	
 	/**
-	 * @param packageServers the packageServers to set
+	 * @param repos the repos to set
 	 */
-	public void setPackageServers(List<EPackageServer> packageServers) {
-		this.packageServers = packageServers;
+	public void setRepos(List<ERepo> repos) {
+		this.repos = repos;
 	}
 
 	@Override
 	@Transient
 	public Class<Template> getApiClass() {
 		return Template.class;
+	}
+
+	@Override
+	public Template toApi() {
+		Template template = super.toApi();
+		template.setHosts(this.namedModelToStringSet(this.hosts));
+		template.setRepos(this.namedModelToStringSet(this.repos));
+
+		Map<String, String> versions = new HashMap<>();
+		for(EPackageVersion pv : this.packageVersions) {
+			versions.put(pv.getPkg().getName(), pv.getVersion());
+		}
+		template.setVersions(versions);
+		return template;
 	}
 }

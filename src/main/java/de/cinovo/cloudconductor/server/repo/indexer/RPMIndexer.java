@@ -46,7 +46,7 @@ public class RPMIndexer implements IRepoIndexer {
 			try {
 				String primaryHREF = xpath.evaluate("/repomd/data[@type='primary']/location/@href", repoXML);
 				GZIPInputStream gzipInputStream = new GZIPInputStream(provider.getEntryStream(primaryHREF));
-				RPMPrimaryParser handler = new RPMPrimaryParser(provider.getPackageServerGroupName());
+				RPMPrimaryParser handler = new RPMPrimaryParser(provider.getRepoName());
 				this.xmlSAX(gzipInputStream, handler);
 				return handler.versions;
 			} catch(XPathExpressionException e) {
@@ -55,7 +55,7 @@ public class RPMIndexer implements IRepoIndexer {
 				throw new RuntimeException("Failed to read repodata", e);
 			}
 		}
-		throw new RuntimeException("Didn't find index file");
+		return null;
 	}
 
 	private Document xmlDOM(InputStream xmlStream) {
@@ -93,11 +93,11 @@ public class RPMIndexer implements IRepoIndexer {
 
 		private RPMPrimaryState state = RPMPrimaryState.Repo;
 
-		private String packageServerGroupName;
+		private String repoName;
 
 
-		RPMPrimaryParser(String packageServerGroupName) {
-			this.packageServerGroupName = packageServerGroupName;
+		RPMPrimaryParser(String repoName) {
+			this.repoName = repoName;
 		}
 
 		@Override
@@ -169,8 +169,8 @@ public class RPMIndexer implements IRepoIndexer {
 				pv.setName(this.name);
 				pv.setVersion(this.version);
 				pv.setDependencies(this.dependencies);
-				pv.setPackageServerGroup(new HashSet<String>());
-				pv.getPackageServerGroup().add(this.packageServerGroupName);
+				pv.setRepos(new HashSet<String>());
+				pv.getRepos().add(this.repoName);
 				this.versions.add(pv);
 				this.state = RPMPrimaryState.Repo;
 			} else if((this.state == RPMPrimaryState.Requires) && qName.equals("rpm:requires")) {

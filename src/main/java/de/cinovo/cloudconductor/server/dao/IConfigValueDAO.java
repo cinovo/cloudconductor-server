@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server.dao;
  */
 
 import de.cinovo.cloudconductor.server.model.EConfigValue;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * @author psigloch
  */
-public interface IConfigValueDAO extends IAuditedEntity<EConfigValue, Long> {
+public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 
     /**
      * @param template the template name

@@ -8,7 +8,7 @@
         <a [routerLink]="['hosts']" routerLinkActive="active"><i class="fa fa-laptop fa-fw"></i> Hosts</a>
       </li>
       <li>
-        <a [routerLink]="['templates']" routerLinkActive="active"><i class="fa fa-institution fa-fw"></i> Templates</a>
+        <a [routerLink]="['template']" routerLinkActive="active"><i class="fa fa-institution fa-fw"></i> Templates</a>
       </li>
 
       <li role="presentation" class="nav-divider"></li>
@@ -16,8 +16,14 @@
       <li>
         <a><i class="fa fa-code-fork fa-fw"></i> Config<i class="fa arrow"></i></a>
         <ul class="nav nav-second-level">
-          <li *ngFor="let template of confHttp.templates"><a [routerLink]="['config',template]" routerLinkActive="active">{{template}}</a></li>
-          <li><a [routerLink]="['config','newTemplate','', 'new']" [queryParams]="{'ret':'ov'}" routerLinkActive="active"><i class="fa fa-plus fa-fw"></i> new Template</a></li>
+          <li *ngFor="let template of templates">
+            <a [routerLink]="['config',template]" routerLinkActive="active">{{template}}</a>
+          </li>
+          <li>
+            <a [routerLink]="['config','newTemplate','', 'new']" [queryParams]="{'ret':'ov'}" routerLinkActive="active">
+              <i class="fa fa-plus fa-fw"></i> new Template
+            </a>
+          </li>
         </ul>
       </li>
       <li>
@@ -27,16 +33,28 @@
         <a [routerLink]="['directories']" routerLinkActive="active"><i class="fa fa-folder fa-fw"></i> Directories</a>
       </li>
       <li>
-        <a [routerLink]="['services']" routerLinkActive="active"><i class="fa fa-flask fa-fw"></i> Services</a>
+        <a [routerLink]="['service']" routerLinkActive="active"><i class="fa fa-flask fa-fw"></i> Services</a>
       </li>
       <li>
-        <a [routerLink]="['packages']" routerLinkActive="active"><i class="fa fa-book fa-fw"></i> Packages</a>
+        <a [routerLink]="['package']" routerLinkActive="active"><i class="fa fa-book fa-fw"></i> Packages</a>
       </li>
 
       <li role="presentation" class="nav-divider"></li>
 
       <li>
-        <a [routerLink]="['packageservers']" routerLinkActive="active"><i class="fa fa-qrcode fa-fw"></i> Package-Servers</a>
+        <a [routerLink]="['repo']" routerLinkActive="active">
+          <i class="fa fa-server fa-fw"></i> Repositories
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['sshkeys']" routerLinkActive="active">
+          <i class="fa fa-key fa-fw"></i> SSH-Keys
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['token']" routerLinkActive="active">
+          <i class="fa fa-address-card fa-fw"></i> Auth-Token
+        </a>
       </li>
       <li>
         <a [routerLink]="['settings']" routerLinkActive="active"><i class="fa fa-gear fa-fw"></i> Settings</a>
@@ -44,11 +62,10 @@
       <li>
         <a><i class="fa fa-external-link fa-fw"></i> External Links<i class="fa arrow"></i></a>
         <ul class="nav nav-second-level">
-          <li *ngFor="let link of links"><a href="{{link.url}}" target="_blank">{{link.label}}</a> </li>
+          <li *ngFor="let link of links"><a href="{{link.url}}" target="_blank">{{link.label}}</a></li>
         </ul>
       </li>
     </ul>
   </div>
-  <!-- /.sidebar-collapse -->
 </div>
-<!-- /.navbar-static-side -->
+

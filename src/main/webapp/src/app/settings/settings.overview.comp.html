@@ -1,0 +1,157 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header"><i class="fa fa-gear fa-fw"></i> Settings</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-gear fa-fw"></i> Settings
+      </div>
+      <div class="panel-body">
+        <div class="form-group" [class.has-error]="!settings.name">
+          <label class="control-label" for="servername">Server-Name</label>
+          <input type="text" class="form-control" value="Default" id="servername" [(ngModel)]="settings.name">
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="description">Server Description</label>
+          <textarea class="form-control" rows="3" id="description" [(ngModel)]="settings.description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="autoupdate">
+            <input type="checkbox" id="autoupdate" [(ngModel)]="settings.allowautoupdate">
+            Allow auto selected in the configuration of the templates</label>
+        </div>
+
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Host Cleanup
+              timer: </label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" style="text-align:right" value="30" id="cleanuptimer"
+                     [(ngModel)]="settings.hostCleanUpTimer">
+            </div>
+            <div class="col-sm-3">
+              <select name="hostCleanUpTimerUnit" class="form-control" id="cleanuptimerunit" [(ngModel)]="settings.hostCleanUpTimerUnit">
+                <option value="NANOSECONDS">NANOSECONDS</option>
+                <option value="MICROSECONDS">MICROSECONDS</option>
+                <option value="MILLISECONDS">MILLISECONDS</option>
+                <option value="SECONDS" selected="selected">SECONDS</option>
+                <option value="MINUTES">MINUTES</option>
+                <option value="HOURS">HOURS</option>
+                <option value="DAYS">DAYS</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Index-Scan timer: </label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" style="text-align:right" value="30" id="indexscantimer"
+                     [(ngModel)]="settings.indexScanTimer">
+            </div>
+            <div class="col-sm-3">
+              <select name="hostCleanUpTimerUnit" class="form-control" id="indexscantimerunit" [(ngModel)]="settings.indexScanTimerUnit">
+                <option value="NANOSECONDS">NANOSECONDS</option>
+                <option value="MICROSECONDS">MICROSECONDS</option>
+                <option value="MILLISECONDS">MILLISECONDS</option>
+                <option value="SECONDS" selected="selected">SECONDS</option>
+                <option value="MINUTES">MINUTES</option>
+                <option value="HOURS">HOURS</option>
+                <option value="DAYS">DAYS</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Page refresh
+              timer: </label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" style="text-align:right" value="30" id="refreshtimer"
+                     [(ngModel)]="settings.pageRefreshTimer">
+            </div>
+            <div class="col-sm-3">
+              <select name="hostCleanUpTimerUnit" class="form-control" id="refreshtimerunit"[(ngModel)]="settings.pageRefreshTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-book fa-fw"></i> Deinstall-Protected packages:
+          </div>
+          <div class="panel-body">
+            <table class="table-responsive table table-striped table-hover">
+              <tbody>
+              <tr *ngFor="let package of settings.disallowUninstall">
+                <td>
+                  {{package}}
+                </td>
+                <td width="30px">
+                  <a href="javascript:void(0)" mwlConfirm
+                     [title]="'Please verify!'"
+                     [message]="'Are you sure you want to remove the following package protection from the settings: '+ package+'?'"
+                     placement="left"
+                     confirmButtonType="danger"
+                     (confirm)="removePackage(package)">
+                    <i class="fa fa-bitbucket fa-fw" title="remove"></i>
+                  </a>
+                </td>
+              </tr>
+
+              <tr *ngIf="showAddPackage">
+                <td colspan="3">
+                  <div class="form-group">
+                    <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a protected
+                      package</label>
+                    <input type="text" class="form-control" [(ngModel)]="newPackage" id="addpackage" list="packageList">
+                    <datalist id="packageList">
+                      <option *ngFor="let pkg of allPackages" value="{{pkg.name}}">{{pkg.name}}</option>
+                    </datalist>
+                  </div>
+
+                  <div class="pull-right">
+                    <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
+                    <button (click)="saveNewPackage()" class="btn btn-success"
+                            [disabled]="!newPackage">Add
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
+                <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
+                  Add a protected package
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <button (click)="saveSettings()" class="btn btn-info" [disabled]="!settings.name">Save
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <links-edit></links-edit>
+  </div>
+</div>

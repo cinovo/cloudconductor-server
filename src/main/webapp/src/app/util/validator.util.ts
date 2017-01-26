@@ -1,11 +1,16 @@
 /**
- * Created by psigloch on 13.01.2017.
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
  */
-
 export class Validator {
 
   public static notEmpty(obj:string):boolean {
-    return obj && obj.trim().length > 0;
+    if(obj) {
+      return obj.trim().length > 0;
+    }
+    return false;
   }
 
   public static idIsSet(obj:number):boolean {

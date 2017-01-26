@@ -1,6 +1,6 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
-import de.cinovo.cloudconductor.server.model.EPackageServer;
+import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.WS;
 import de.taimos.httputils.WSConstants;
@@ -23,15 +23,15 @@ import java.util.List;
  */
 public class HTTPProvider implements IRepoProvider {
 	
-	private EPackageServer packageServer;
+	private ERepoMirror mirror;
 	
 	
 	/**
-	 * @param packageServer the package server to contact
+	 * @param mirror the mirror to contact
 	 */
-	public HTTPProvider(EPackageServer packageServer) {
-		if (packageServer.getProviderType() == RepoProviderType.AWSS3) {
-			this.packageServer = packageServer;
+	public HTTPProvider(ERepoMirror mirror) {
+		if (mirror.getProviderType() == RepoProviderType.HTTP) {
+			this.mirror = mirror;
 		}
 	}
 	
@@ -47,15 +47,18 @@ public class HTTPProvider implements IRepoProvider {
 	
 	@Override
 	public RepoEntry getEntry(String key) {
-		HttpResponse response = WS.url(this.packageServer.getBasePath() + key).get();
-		RepoEntry e = new RepoEntry();
-		e.setDirectory(false);
-		e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
-		e.setSize(this.getSize(response));
-		e.setModified(new Date());
-		e.setChecksum(this.getChecksum(response));
-		e.setContentType(this.getType(response));
-		return e;
+		if(this.mirror != null && this.mirror.getBasePath() != null) {
+			HttpResponse response = WS.url(this.mirror.getBasePath() + key).get();
+			RepoEntry e = new RepoEntry();
+			e.setDirectory(false);
+			e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
+			e.setSize(this.getSize(response));
+			e.setModified(new Date());
+			e.setChecksum(this.getChecksum(response));
+			e.setContentType(this.getType(response));
+			return e;
+		}
+		return null;
 	}
 	
 	private String getType(HttpResponse response) {
@@ -87,7 +90,7 @@ public class HTTPProvider implements IRepoProvider {
 	
 	@Override
 	public InputStream getEntryStream(String key) {
-		HttpResponse response = WS.url(this.packageServer.getBasePath() + key).get();
+		HttpResponse response = WS.url(this.mirror.getBasePath() + key).get();
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
 			try {
@@ -100,7 +103,7 @@ public class HTTPProvider implements IRepoProvider {
 	}
 	
 	@Override
-	public String getPackageServerGroupName() {
-		return this.packageServer.getServerGroup().getName();
+	public String getRepoName() {
+		return this.mirror.getRepo().getName();
 	}
 }

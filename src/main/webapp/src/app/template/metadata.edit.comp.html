@@ -1,0 +1,118 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-institution fa-fw"></i> Template details
+      </div>
+      <div class="panel-body">
+
+        <div class="form-group" [class.has-error]="!isNameValid()">
+          <label class="control-label" for="name">Name</label>
+          <input type="text" class="form-control" [(ngModel)]="template.name" id="name" [disabled]="mode == modes.EDIT">
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="description">Description</label>
+          <textarea type="text" class="form-control" [(ngModel)]="template.description" id="description"
+                    rows="3"></textarea>
+        </div>
+
+        <div class="form-group" *ngIf="settings.allowautoupdate">
+          <label for="autoupdate">
+            <input type="checkbox" id="autoupdate" [(ngModel)]="template.autoUpdate">
+            Allow automated package updates for this template</label>
+        </div>
+
+        <div class="form-group">
+          <label for="smoothupdates">
+            <input type="checkbox" id="smoothupdates" [(ngModel)]="template.smoothUpdate">
+            Minimize overall downtime on package changes </label>
+        </div>
+
+        <div class="form-group" *ngIf="mode == modes.NEW">
+          <label for="copypackages">Copy behaviour from </label>
+          <select class="form-control" [(ngModel)]="copyFrom" id="copypackages">
+            <option value="" selected>None</option>
+            <option *ngFor="let existingTemplate of existingTemplateNames" value="{{existingTemplate}}">{{existingTemplate}}</option>
+          </select>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-server fa-fw"></i> Repositories
+          </div>
+          <div class="panel-body" *ngIf="mode == modes.EDIT || (mode == modes.NEW && !copyFrom)">
+            <table class="table-responsive table table-striped table-hover">
+              <tbody>
+              <tr *ngFor="let repo of template.repos">
+                <td>
+                  {{repo}}
+                </td>
+                <td width="30px">
+                  <a [routerLink]="['/repo',repo]" [queryParams]="{'ret':'templateDetail', 'id':repo}"><i
+                    class="fa fa-external-link fa-fw" title="go to repo"></i></a>
+                </td>
+                <td width="30px">
+                  <a href="javascript:void(0)" mwlConfirm
+                     [title]="'Please verify!'"
+                     [message]="'Are you sure you want to remove the following repo and it\'s packages from the template?'"
+                     placement="left"
+                     confirmButtonType="danger"
+                     (confirm)="removeRepo(repo)">
+                    <i class="fa fa-bitbucket fa-fw" title="remove"></i>
+                  </a>
+                </td>
+              </tr>
+
+              <tr *ngIf="showNewRepo">
+                <td colspan="3">
+                  <div class="form-group">
+                    <label class="control-label" for="addrepo"><i class="fa fa-plus fa-fw"></i> Add a repository</label>
+                    <input type="text" class="form-control" [(ngModel)]="newRepo" id="addrepo" list="repolist"
+                           [disabled]="allRepos.length < 1">
+                    <datalist id="repolist">
+                      <option *ngFor="let rep of allRepos" value="{{rep.name}}">{{rep.name}}</option>
+                    </datalist>
+                  </div>
+
+                  <div class="pull-right">
+                    <button (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
+                    <button (click)="addNewRepo()" class="btn btn-success"
+                            [disabled]="!newRepo || allRepos.length < 1">Add
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="!showNewRepo" (click)="goToAddRepo()">
+                <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
+                  Add a repository
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel-body" *ngIf="mode == modes.NEW && copyFrom">
+            <p>The repositories will be copied from the template {{copyFrom}}</p>
+          </div>
+        </div>
+
+        <div class="pull-right">
+          <button (click)="goToBack()" class="btn btn-default">Back</button>
+          <button (click)="saveTemplateMetadata()" class="btn btn-info"
+                  [disabled]="!isNameValid()">Save
+          </button>
+          <button *ngIf="mode == modes.EDIT" class="btn btn-danger" mwlConfirm
+                  [title]="'Please verify!'"
+                  [message]="'Are you sure you want to remove this template and its configuration?'"
+                  placement="left"
+                  confirmButtonType="danger"
+                  (confirm)="deleteTemplate()">Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

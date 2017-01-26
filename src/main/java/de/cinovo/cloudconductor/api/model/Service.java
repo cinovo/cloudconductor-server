@@ -20,6 +20,9 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import de.cinovo.cloudconductor.api.ServiceState;
 
 import java.util.Set;
@@ -30,6 +33,7 @@ import java.util.Set;
  *
  * @author psigloch
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class Service implements INamed {
 
 	private Long id;

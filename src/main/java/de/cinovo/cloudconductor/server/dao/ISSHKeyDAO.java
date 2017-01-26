@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server.dao;
  */
 
 import de.cinovo.cloudconductor.server.model.ESSHKey;
+import de.taimos.dvalin.jpa.IEntityDAO;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -26,7 +27,7 @@ import de.cinovo.cloudconductor.server.model.ESSHKey;
  * @author psigloch
  * 
  */
-public interface ISSHKeyDAO extends IAuditedEntity<ESSHKey, Long>, IFindNamed<ESSHKey> {
+public interface ISSHKeyDAO extends IEntityDAO<ESSHKey, Long>, IFindNamed<ESSHKey> {
 	
 	/**
 	 * @param owner name of the owner

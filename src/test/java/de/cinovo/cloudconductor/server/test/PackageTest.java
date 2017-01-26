@@ -85,8 +85,8 @@ public class PackageTest extends APITest {
 			PackageVersion pv = new PackageVersion();
 			pv.setName("nginx");
 			pv.setVersion("1.5.4-1");
-			pv.setPackageServerGroup(new HashSet<String>());
-			pv.getPackageServerGroup().add("TESTREPO");
+			pv.setRepos(new HashSet<String>());
+			pv.getRepos().add("TESTREPO");
 
 			h.addRPM("nginx", pv);
 			Set<PackageVersion> rpms = h.getRPMS("nginx");

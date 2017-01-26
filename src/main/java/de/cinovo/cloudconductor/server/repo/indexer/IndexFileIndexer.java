@@ -1,20 +1,18 @@
 package de.cinovo.cloudconductor.server.repo.indexer;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StreamUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
-
 import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Set;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -52,7 +50,7 @@ public class IndexFileIndexer implements IRepoIndexer {
 				throw new RuntimeException("Failed to read index", e);
 			}
 		}
-		throw new RuntimeException("Didn't find index file");
+		return null;
 	}
 
 }

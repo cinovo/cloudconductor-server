@@ -28,12 +28,10 @@ import java.util.List;
  */
 
 /**
- * 
  * Copyright 2015 Taimos GmbH<br>
  * <br>
  *
  * @author thoeger
- * 		
  */
 @Path("/links")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,22 +42,17 @@ public interface ILinks {
 	 */
 	@GET
 	List<AdditionalLink> getLinks();
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response createLink(AdditionalLink link);
-	
-	@Path("/{id}")
-	@GET
-	AdditionalLink getLink(@PathParam("id") long id);
-	
-	@Path("/{id}")
+
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	AdditionalLink updateLink(@PathParam("id") long id, AdditionalLink link);
-	
+	AdditionalLink updateLink(AdditionalLink link);
+
 	@Path("/{id}")
 	@DELETE
 	void deleteLink(@PathParam("id") long id);
-	
+
 }

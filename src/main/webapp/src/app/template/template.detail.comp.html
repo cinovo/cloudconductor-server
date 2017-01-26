@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-lg-12">
+
+    <h1 class="page-header">
+      <a (click)="reloadTemplate()" class="pull-right" role="button" title="Reload template">
+        <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
+      </a>
+      <i class="fa fa-institution fa-fw"></i> Template Details
+      <h4 *ngIf="currentTemplate">{{currentTemplate.name}}</h4>
+
+    </h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <template-package-detail [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></template-package-detail>
+
+    <agentoption-detail [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></agentoption-detail>
+  </div>
+
+  <div class="col-md-6">
+
+    <template-metadata-edit [obsTemplate]="template" (reloadTrigger)="reloadTemplate()" [mode]="modes.EDIT"></template-metadata-edit>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-laptop fa-fw"></i> Hosts
+          </div>
+          <div class="panel-body">
+            <p *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
+              There are currently no host useing this template.
+            </p>
+            <table class=" table-condensed table-responsive table table-striped table-hover" *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
+              <thead>
+              <tr>
+                <th>Agent-Name</th>
+                <th width="15px"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let host of currentTemplate.hosts">
+                <td>{{host}}</td>
+                <td>
+                  <a [routerLink]="['host',host]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

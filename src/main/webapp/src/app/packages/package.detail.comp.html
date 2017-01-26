@@ -1,0 +1,214 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header"><i class="fa fa-book fa-fw"></i> Package Details
+      <h4 *ngIf="pkg">{{pkg.name}}</h4>
+    </h1>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-book fa-fw"></i> Package-Details
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label" for="name">Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="pkg.name" id="name" disabled>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="description">Description</label>
+                  <textarea type="text" class="form-control" [(ngModel)]="pkg.description" id="description" rows="8"
+                            disabled></textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <i class="fa fa-hashtag fa-fw"></i> Versions
+                  </div>
+                  <div class="panel-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <tbody>
+                        <tr *ngFor="let version of pkg.versions">
+                          <td class="word-break">{{version}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pull-right">
+              <button (click)="goToBack()" class="btn btn-default">Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-server fa-fw"></i> Repositories providing the package
+          </div>
+          <div class="panel-body">
+            <table class="table-responsive table table-striped table-hover">
+              <thead>
+              <tr>
+                <th width="30%">Name</th>
+                <th>Provided versions</th>
+                <th width="15px"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let repo of repos" (dblclick)="gotoRepo(repo)">
+                <td>
+                  {{repo.name}}
+                </td>
+                <td>
+                  <template ngFor let-version [ngForOf]="repo.versions" let-last="last">
+                    {{version.version}}<template [ngIf]="!last">,</template>
+                  </template>
+                </td>
+                <td>
+                  <a [routerLink]="['/repo', repo.name]"><i
+                    class="fa fa-external-link fa-fw"></i></a>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-flask fa-fw"></i> Associated services
+          </div>
+          <div class="panel-body">
+            <table class="table-responsive table table-striped table-hover">
+              <thead>
+              <tr>
+                <th>Service-Name</th>
+                <th width="15px"></th>
+                <th width="15px"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let service of services" (dblclick)="gotoService(service.name)">
+                <td>
+                  {{service.name}}
+                </td>
+                <td>
+                  <a [routerLink]="['/service', service.name]" [queryParams]="{'ret':'packageDetail', 'id':pkg.name}"><i
+                    class="fa fa-external-link fa-fw"></i></a>
+                </td>
+                <td>
+                  <a href="javascript:void(0)" mwlConfirm
+                     [title]="'Please verify!'"
+                     [message]="'Are you sure you want to remove the following service link from the package: '+ service.name+'?'"
+                     placement="left"
+                     confirmButtonType="danger"
+                     (confirm)="removeService(service)">
+                    <i class="fa fa-bitbucket fa-fw"></i>
+                  </a>
+                </td>
+              </tr>
+
+              <tr *ngIf="showAddService">
+                <td colspan="3">
+                  <div class="form-group">
+                    <label class="control-label" for="addservice"><i class="fa fa-plus fa-fw"></i> Add a service
+                      provided by
+                      this package</label>
+                    <select class="form-control" [(ngModel)]="newService" id="addservice">
+                      <option *ngFor="let service of addableServices" [ngValue]="service">{{service.name}}</option>
+                    </select>
+                  </div>
+
+                  <div class="pull-right">
+                    <button (click)="showAddService = false" class="btn btn-default">Cancel</button>
+                    <button [routerLink]="['/service', 'new']" [queryParams]="{'ret':'packageDetail', 'id':pkg.name}"
+                            class="btn btn-info">Create a new Service
+                    </button>
+                    <button (click)="saveNewService()" class="btn btn-success"
+                            [disabled]="!newService">Add
+                    </button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="!showAddService" (click)="goToAddService()">
+                <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
+                  Add a service provided by this package
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-institution fa-fw"></i> Used in templates
+          </div>
+          <div class="panel-body">
+            <table class="table-responsive table table-striped table-hover">
+              <thead>
+              <tr>
+                <th width="30%">Template</th>
+                <th>Version</th>
+                <th width="15px"></th>
+              </tr>
+              </thead>
+              <tbody *ngIf="templateRefs.length > 0">
+              <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
+                <td>
+                  {{ref.template}}
+                </td>
+                <td class="word-break">
+                  {{ref.version}}
+                </td>
+                <td>
+                  <a [routerLink]="['/template', ref.template]"><i
+                    class="fa fa-external-link fa-fw"></i></a>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf="templateRefs.length < 1">
+              <tr>
+                <td colspan="3">
+                  This package is currently not used by any template
+                </td>
+              </tr>
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

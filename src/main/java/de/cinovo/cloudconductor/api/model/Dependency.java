@@ -20,6 +20,9 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import de.cinovo.cloudconductor.api.DependencyType;
 
 /**
@@ -29,6 +32,7 @@ import de.cinovo.cloudconductor.api.DependencyType;
  *
  * @author psigloch
  */
+@JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class Dependency implements INamed {
 
 	private String name;

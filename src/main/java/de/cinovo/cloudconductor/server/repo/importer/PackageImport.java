@@ -19,7 +19,7 @@ import de.cinovo.cloudconductor.server.handler.PackageHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageServerGroup;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,24 +56,24 @@ public class PackageImport implements IPackageImport {
 	 */
 	@Override
 	public void importVersions(Set<PackageVersion> packageVersions) {
-		Map<String, Set<PackageVersion>> groupMap = new HashMap<>();
+		Map<String, Set<PackageVersion>> repoMap = new HashMap<>();
 		for(PackageVersion packageVersion : packageVersions) {
-			for(String psg : packageVersion.getPackageServerGroup()) {
-				if(!groupMap.containsKey(psg)) {
-					groupMap.put(psg, new HashSet<PackageVersion>());
+			for(String repo : packageVersion.getRepos()) {
+				if(!repoMap.containsKey(repo)) {
+					repoMap.put(repo, new HashSet<PackageVersion>());
 				}
-				groupMap.get(psg).add(packageVersion);
+				repoMap.get(repo).add(packageVersion);
 			}
 		}
 
-		for(Entry<String, Set<PackageVersion>> entry : groupMap.entrySet()) {
+		for(Entry<String, Set<PackageVersion>> entry : repoMap.entrySet()) {
 			this.importVersions(entry.getValue(), entry.getKey());
 		}
 	}
 
 	@Override
 	@Transactional
-	public void importVersions(Set<PackageVersion> packageVersions, String packageServerGroupName) {
+	public void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		HashMap<String, PackageVersion> provided = new HashMap<>();
@@ -96,11 +96,11 @@ public class PackageImport implements IPackageImport {
 			provided.put(epackage.getName(), version);
 		}
 
-		this.performDBClean(packageServerGroupName, provided);
+		this.performDBClean(repoName, provided);
 		this.templateHandler.updateAllPackages();
 	}
 
-	private void performDBClean(String packageServerGroupName, HashMap<String, PackageVersion> provided) {
+	private void performDBClean(String repoName, HashMap<String, PackageVersion> provided) {
 		List<EPackage> inDB = this.packageDAO.findList();
 		List<EFile> cfgs = this.fileDAO.findList();
 		for(EPackage pkg : inDB) {
@@ -121,8 +121,8 @@ public class PackageImport implements IPackageImport {
 			// clean up version list
 			PackageVersion packageVersion = new PackageVersion();
 			packageVersion.setName(pkg.getName());
-			packageVersion.setPackageServerGroup(new HashSet<String>());
-			packageVersion.getPackageServerGroup().add(packageServerGroupName);
+			packageVersion.setRepos(new HashSet<String>());
+			packageVersion.getRepos().add(repoName);
 			boolean cleanUp = this.cleanUpVersionUsage(packageVersion, pkg.getVersions());
 			if(cleanUp) {
 				this.packageDAO.deleteById(pkg.getId());
@@ -139,13 +139,13 @@ public class PackageImport implements IPackageImport {
 				continue;
 			}
 			// check if other mirrors are still out there
-			for(EPackageServerGroup svg : dbVersion.getServerGroups()) {
-				if((newPackageVersion != null) && newPackageVersion.getPackageServerGroup().contains(svg.getName())) {
-					dbVersion.getServerGroups().remove(svg);
+			for(ERepo svg : dbVersion.getRepos()) {
+				if((newPackageVersion != null) && newPackageVersion.getRepos().contains(svg.getName())) {
+					dbVersion.getRepos().remove(svg);
 				}
 			}
 
-			if(dbVersion.getServerGroups().size() > 0) {
+			if(dbVersion.getRepos().size() > 0) {
 				// keep it since other mirrors still reference it
 				dbVersion.setDeprecated(false);
 				this.versionDAO.save(dbVersion);

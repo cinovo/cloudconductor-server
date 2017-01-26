@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-lg-12">
-    <h1 class="page-header">Service Details
+    <h1 class="page-header"><i class="fa fa-flask fa-fw"></i> Service Details
       <h4 *ngIf="service">{{service.name}}</h4>
     </h1>
   </div>
@@ -11,7 +11,7 @@
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <i class="fa fa-list-alt fa-fw"></i> Service-Details
+        <i class="fa fa-flask fa-fw"></i> Service-Details
       </div>
       <div class="panel-body">
         <div class="form-group" [class.has-error]="!isNameValid()">
@@ -28,7 +28,7 @@
         </div>
 
         <div class="pull-right">
-          <button [routerLink]="['/services']" class="btn btn-default">Back</button>
+          <button (click)="goToBack()" class="btn btn-default">Back</button>
           <button (click)="save()" class="btn btn-info"
                   [disabled]="!isNameValid() || !isScriptValid()">Save
           </button>
@@ -40,7 +40,7 @@
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <i class="fa fa-list-alt fa-fw"></i> Provided by package
+        <i class="fa fa-book fa-fw"></i> Provided by
       </div>
       <div class="panel-body">
         <table class="table-responsive table table-striped table-hover">
@@ -57,7 +57,7 @@
               {{package}}
             </td>
             <td>
-              <a [routerLink]="['/package', package]" [queryParams]="{'ret':'serviceDetail', 'id':service.id}"><i
+              <a [routerLink]="['/package', package]" [queryParams]="{'ret':'serviceDetail', 'id':service.name}"><i
                 class="fa fa-external-link fa-fw"></i></a>
             </td>
             <td>
@@ -82,8 +82,8 @@
               </div>
 
               <div class="pull-right">
-                <button (click)="showAddPackage = false" class="btn btn-default">Abort</button>
-                <button (click)="saveNewPackage()" class="btn btn-info"
+                <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
+                <button (click)="saveNewPackage()" class="btn btn-success"
                         [disabled]="!newPackage">Add
                 </button>
               </div>
@@ -105,7 +105,7 @@
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <i class="fa fa-list-alt fa-fw"></i> Template references
+        <i class="fa fa-institution fa-fw"></i> Template references
       </div>
       <div class="panel-body">
         <table class="table-responsive table table-striped table-hover">
@@ -125,7 +125,7 @@
               {{ref.pkg}}
             </td>
             <td>
-              <a [routerLink]="['/template', template]" [queryParams]="{'ret':'serviceDetail', 'ref':service.name}"><i
+              <a [routerLink]="['/template', template]"><i
                 class="fa fa-external-link fa-fw"></i></a>
             </td>
           </tr>

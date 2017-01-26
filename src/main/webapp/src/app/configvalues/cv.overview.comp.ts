@@ -1,16 +1,21 @@
 import { Component, AfterViewInit } from "@angular/core";
 import { ConfigValueHttpService, ConfigValue } from "../services/http/configValue.http.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
+import { AlertService } from "../services/alert/alert.service";
 
 /**
- * Created by psigloch on 10.01.2017.
- */
+  * Copyright 2017 Cinovo AG<br>
+  * <br>
+  *
+  * @author psigloch
+  */
 
-export interface ConfigValieTreeNode {
+interface ConfigValueTreeNode {
   name: string;
   kvs: Array<ConfigValue>;
+  icon: string;
 }
 
 @Component({
@@ -23,9 +28,10 @@ export class ConfigValueOverview implements AfterViewInit {
   private _searchQuery: string = null;
   private template: string;
 
-  private tree: Array<ConfigValieTreeNode> = [];
+  private tree: Array<ConfigValueTreeNode> = [];
 
-  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute) {
+  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
+              private router: Router, private alerts: AlertService) {
   };
 
   ngAfterViewInit(): void {
@@ -44,20 +50,18 @@ export class ConfigValueOverview implements AfterViewInit {
     this.loadData();
   }
 
-  private deleteCurrentTemplate() {
+  protected deleteCurrentTemplate() {
     for (let index in this.tree) {
       for (let kv of this.tree[index].kvs) {
-        if (+index >= this.tree.length - 1) {
-          this.deleteKey(kv, () => this.configHttp.reloadTemplates());
-        } else {
-          this.deleteKey(kv);
-        }
+        this.deleteKey(kv);
       }
     }
+    this.alerts.success("The template \"" + this.template + "\" was deleted successfully!");
+    this.router.navigate(['config', 'GLOBAL']);
   }
 
-  private deleteService(name: string) {
-    let element: ConfigValieTreeNode;
+  protected deleteService(name: string) {
+    let element: ConfigValueTreeNode;
     for (let nodeIndex in this.tree) {
       if (this.tree[nodeIndex].name == name) {
         element = this.tree[nodeIndex];
@@ -68,10 +72,10 @@ export class ConfigValueOverview implements AfterViewInit {
     }
   }
 
-  private deleteKey(kv: ConfigValue, successCallback?: () => any): void {
+  private deleteKey(kv: ConfigValue): void {
     this.configHttp.deleteValue(kv).subscribe(
       () => {
-        let element: ConfigValieTreeNode;
+        let element: ConfigValueTreeNode;
         for (let nodeIndex in this.tree) {
           if (this.tree[nodeIndex].name == kv.service) {
             element = this.tree[nodeIndex];
@@ -85,17 +89,14 @@ export class ConfigValueOverview implements AfterViewInit {
         if (element.kvs.length < 1) {
           this.tree.splice(this.tree.indexOf(element), 1);
         }
-        if (successCallback) {
-          successCallback();
-        }
       }
     );
   }
 
   private generateTree(result: Array<ConfigValue>): void {
-    let temp: {[name: string]: Array<ConfigValue>; } = {};
+    let temp: {[name: string]: Array<ConfigValue>;} = {};
     for (let cf of result) {
-      if (this.filterData(cf, this._searchQuery)) {
+      if (ConfigValueOverview.filterData(cf, this._searchQuery)) {
         continue;
       }
       if (!cf.service) {
@@ -111,19 +112,24 @@ export class ConfigValueOverview implements AfterViewInit {
     this.tree = [];
     for (let key in temp) {
       temp[key] = temp[key].sort(Sorter.configValue);
-      this.tree.push({name: key, kvs: temp[key]});
+      this.tree.push({name: key, kvs: temp[key], icon: key.trim() == '' ? 'fa-institution' : 'fa-flask'});
     }
 
-    this.tree = this.tree.sort(Sorter.node);
+    this.tree = this.tree.sort(Sorter.nameField);
   }
-
 
 
   private loadData() {
     this.configHttp.getValues(this.template).subscribe((result) => this.generateTree(result));
   }
 
-  private filterData(cf: ConfigValue, query: string): boolean {
+  protected goToDetail(cv: ConfigValue) {
+    if (cv) {
+      this.router.navigate(['config', cv.template, cv.service, cv.key]);
+    }
+  }
+
+  private static filterData(cf: ConfigValue, query: string): boolean {
     if (Validator.notEmpty(query)) {
       for (let field in cf) {
         if (cf[field].indexOf(query.trim()) >= 0) {

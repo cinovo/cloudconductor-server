@@ -1,50 +1,70 @@
-/**
- * Created by thoprloph on 12.08.2016.
- */
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./home/home.comp";
-import { PackageServersOverview } from "./packageservers/ps.overview.comp";
-import { PackageServerGroupEdit } from "./packageservers/psg.edit.comp";
-import { PackageServerEdit } from "./packageservers/ps.edit.comp";
 import { ConfigValueOverview } from "./configvalues/cv.overview.comp";
 import { ConfigValueEdit } from "./configvalues/cs.edit.comp";
 import { ServiceOverview } from "./service/service.overview.comp";
 import { ServiceDetail } from "./service/service.detail.comp";
+import { SettingsOverview } from "./settings/settings.overview.comp";
+import { PackageOverview } from "./packages/package.overview.comp";
+import { PackageDetail } from "./packages/package.detail.comp";
+import { RepoOverview } from "./repo/repo.overview.comp";
+import { RepoEdit } from "./repo/repo.edit.comp";
+import { MirrorEdit } from "./repo/mirror.edit.comp";
+import { TemplateOverview } from "./template/template.overview.comp";
+import { TemplateDetail } from "./template/template.detail.comp";
+import { TemplateNew } from "./template/template.new.comp";
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 export const APP_ROUTES: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
+
   {path: 'home', component: HomeComponent},
 
-  {path: 'hosts', component: HomeComponent},
+  {path: 'host', component: HomeComponent},
 
-  {path: 'files', component: HomeComponent},
-
-  {path: 'settings', component: HomeComponent},
-
-  {path: 'packageservers', component: PackageServersOverview},
-  {path: 'packageservers/new', component: PackageServerGroupEdit},
-  {path: 'packageservers/:id', component: PackageServerGroupEdit},
-  {path: 'packageservers/:id/server/new', component: PackageServerEdit},
-  {path: 'packageservers/:id/server/:serverid', component: PackageServerEdit},
+  {path: 'template', component: TemplateOverview},
+  {path: 'template/new', component: TemplateNew},
+  {path: 'template/:templateName', component: TemplateDetail},
 
   {path: 'config/:template', component: ConfigValueOverview},
   {path: 'config/:template/:service/new', component: ConfigValueEdit},
   {path: 'config/:template/:service/:key', component: ConfigValueEdit},
 
-  {path: 'services', component: ServiceOverview},
-  {path: 'services/:serviceName', component: ServiceDetail},
-  {path: 'services/new', component: ServiceDetail},
+  {path: 'file', component: HomeComponent},
 
+  {path: 'directory', component: HomeComponent},
 
+  {path: 'service', component: ServiceOverview},
+  {path: 'service/:serviceName', component: ServiceDetail},
+  {path: 'service/new', component: ServiceDetail},
+
+  {path: 'package', component: PackageOverview},
+  {path: 'package/:packageName', component: PackageDetail},
+
+  {path: 'repo', component: RepoOverview},
+  {path: 'repo/new', component: RepoEdit},
+  {path: 'repo/:repoName', component: RepoEdit},
+  {path: 'repo/:repoName/mirror/new', component: MirrorEdit},
+  {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit},
+
+  {path: 'ssh', component: HomeComponent},
+
+  {path: 'settings', component: SettingsOverview},
+
+  {path: '', redirectTo: '/home', pathMatch: 'full'},
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
 
 export const ROUTED_COMPONENTS = () => {
-  let res = []
+  let res = [];
   for (let route of APP_ROUTES) {
     if (route.component) {
       res.push(route.component);
     }
   }
   return res;
-}
+};

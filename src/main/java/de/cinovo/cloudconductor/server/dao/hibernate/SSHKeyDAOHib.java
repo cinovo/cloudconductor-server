@@ -17,11 +17,11 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,7 +31,7 @@ import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
  * 
  */
 @Repository("SSHKeyDAOHib")
-public class SSHKeyDAOHib extends AAuditedEntityHib<ESSHKey, Long> implements ISSHKeyDAO {
+public class SSHKeyDAOHib extends EntityDAOHibernate<ESSHKey, Long> implements ISSHKeyDAO {
 	
 	@Override
 	public Class<ESSHKey> getEntityClass() {
@@ -51,10 +51,5 @@ public class SSHKeyDAOHib extends AAuditedEntityHib<ESSHKey, Long> implements IS
 	@Override
 	public Long count() {
 		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM ESSHKey").getSingleResult();
-	}
-	
-	@Override
-	protected AuditCategory getAuditCategory() {
-		return AuditCategory.SSHKEY;
 	}
 }

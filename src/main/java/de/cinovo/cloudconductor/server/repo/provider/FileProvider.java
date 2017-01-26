@@ -1,5 +1,8 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
+import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import de.cinovo.cloudconductor.server.repo.RepoEntry;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,9 +10,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.cinovo.cloudconductor.server.model.EPackageServer;
-import de.cinovo.cloudconductor.server.repo.RepoEntry;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -20,15 +20,15 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
  */
 public class FileProvider implements IRepoProvider {
 	
-	private EPackageServer packageServer;
+	private ERepoMirror mirror;
 	
 	
 	/**
-	 * @param packageServer the package server to contact
+	 * @param mirror the mirror to contact
 	 */
-	public FileProvider(EPackageServer packageServer) {
-		if (packageServer.getProviderType() == RepoProviderType.AWSS3) {
-			this.packageServer = packageServer;
+	public FileProvider(ERepoMirror mirror) {
+		if (mirror.getProviderType() == RepoProviderType.FILE) {
+			this.mirror = mirror;
 		}
 	}
 	
@@ -39,7 +39,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public List<RepoEntry> getEntries(String folder) {
-		File dir = new File(this.packageServer.getBasePath() + folder);
+		File dir = new File(this.mirror.getBasePath() + folder);
 		if (!dir.isDirectory()) {
 			return null;
 		}
@@ -52,7 +52,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public RepoEntry getEntry(String key) {
-		File file = new File(this.packageServer.getBasePath() + key);
+		File file = new File(this.mirror.getBasePath() + key);
 		if (file.exists()) {
 			return this.createEntry(file);
 		}
@@ -70,7 +70,7 @@ public class FileProvider implements IRepoProvider {
 	
 	@Override
 	public InputStream getEntryStream(String key) {
-		File file = new File(this.packageServer.getBasePath() + key);
+		File file = new File(this.mirror.getBasePath() + key);
 		if (file.exists()) {
 			try {
 				return new FileInputStream(file);
@@ -82,7 +82,7 @@ public class FileProvider implements IRepoProvider {
 	}
 	
 	@Override
-	public String getPackageServerGroupName() {
-		return this.packageServer.getServerGroup().getName();
+	public String getRepoName() {
+		return this.mirror.getRepo().getName();
 	}
 }
