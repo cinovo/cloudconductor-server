@@ -34,10 +34,10 @@ export class TemplateMetaDataEdit implements AfterViewInit {
   private settings: Settings = {};
 
   protected allRepos: Array<Repo> = [];
-  private newRepo: string;
+  private newRepo: string = "";
   private showNewRepo: boolean = false;
 
-  private copyFrom: string;
+  private copyFrom: string = "";
 
   private back: any;
 
@@ -116,8 +116,7 @@ export class TemplateMetaDataEdit implements AfterViewInit {
   }
 
   protected addNewRepo(): void {
-    if (this.newRepo
-    ) {
+    if (this.newRepo) {
       this.template.repos.push(this.newRepo);
       this.template.repos.sort();
       this.settings.disallowUninstall.sort();
@@ -129,11 +128,14 @@ export class TemplateMetaDataEdit implements AfterViewInit {
   protected removeRepo(repoName: string): void {
     if (Validator.notEmpty(repoName)) {
       this.template.repos.splice(this.template.repos.indexOf(repoName), 1);
+      if(this.showNewRepo) {
+        this.goToAddRepo();
+      }
     }
   }
 
   protected goToAddRepo(): void {
-    this.newRepo = null;
+    this.newRepo = "";
     this.showNewRepo = true;
     this.repoHttp.getRepos().subscribe(
       (result) => {
@@ -142,15 +144,11 @@ export class TemplateMetaDataEdit implements AfterViewInit {
             return !this.template.repos.includes(repo.name)
           }
         ).sort(Sorter.repo);
-        if (this.allRepos.length < 1) {
-          this.newRepo = "There are no more repositories available...";
+        if(this.allRepos.length > 0) {
+          this.newRepo = this.allRepos[0].name;
         }
       }
     )
-  }
-
-  protected goToBack(): void {
-    this.router.navigate(['template']);
   }
 
   public isNameValid(): boolean {

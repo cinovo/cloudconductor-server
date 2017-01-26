@@ -15,6 +15,11 @@
 
       </thead>
       <tbody>
+      <tr *ngIf="links.length <= 0" class="warning">
+        <td colspan="5" class="text-center">
+          There are currently no links available.
+        </td>
+      </tr>
 
       <tr *ngFor="let link of links" (dblclick)="goToEditLink(link)">
         <template [ngIf]="!editLink || editLink.id != link.id">

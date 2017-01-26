@@ -52,6 +52,11 @@
           </tr>
           </thead>
           <tbody>
+          <tr *ngIf="!service.packages || service.packages.length <= 0" class="warning">
+            <td colspan="3" class="text-center">
+              This service is currently not provided by a package.
+            </td>
+          </tr>
           <tr *ngFor="let package of service.packages" (dblclick)="gotoPackage(package)">
             <td>
               {{package}}
@@ -117,6 +122,11 @@
           </tr>
           </thead>
           <tbody>
+          <tr *ngIf="!templateRefs || templateRefs.length <= 0" class="warning">
+            <td colspan="3" class="text-center">
+              This service is currently not used by any template.
+            </td>
+          </tr>
           <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
             <td>
               {{ref.template}}

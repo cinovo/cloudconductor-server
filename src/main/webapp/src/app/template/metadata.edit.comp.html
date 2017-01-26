@@ -43,6 +43,11 @@
           <div class="panel-body" *ngIf="mode == modes.EDIT || (mode == modes.NEW && !copyFrom)">
             <table class="table-responsive table table-striped table-hover">
               <tbody>
+              <tr *ngIf="!template.repos || template.repos.length <= 0" class="danger">
+                <td colspan="3" class="text-center">
+                  There are currently no repositories selected.
+                </td>
+              </tr>
               <tr *ngFor="let repo of template.repos">
                 <td>
                   {{repo}}
@@ -67,11 +72,10 @@
                 <td colspan="3">
                   <div class="form-group">
                     <label class="control-label" for="addrepo"><i class="fa fa-plus fa-fw"></i> Add a repository</label>
-                    <input type="text" class="form-control" [(ngModel)]="newRepo" id="addrepo" list="repolist"
-                           [disabled]="allRepos.length < 1">
-                    <datalist id="repolist">
+                    <select class="form-control" [(ngModel)]="newRepo" id="addrepo" [disabled]="allRepos.length <= 0">
+                      <option value="" selected *ngIf="allRepos.length <= 0">There are currently no more repositories available</option>
                       <option *ngFor="let rep of allRepos" value="{{rep.name}}">{{rep.name}}</option>
-                    </datalist>
+                    </select>
                   </div>
 
                   <div class="pull-right">
@@ -94,12 +98,11 @@
           </div>
 
           <div class="panel-body" *ngIf="mode == modes.NEW && copyFrom">
-            <p>The repositories will be copied from the template {{copyFrom}}</p>
+            <div class="alert alert-warning">The repositories will be copied from the template {{copyFrom}}</div>
           </div>
         </div>
 
         <div class="pull-right">
-          <button (click)="goToBack()" class="btn btn-default">Back</button>
           <button (click)="saveTemplateMetadata()" class="btn btn-info"
                   [disabled]="!isNameValid()">Save
           </button>

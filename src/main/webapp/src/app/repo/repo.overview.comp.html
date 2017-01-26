@@ -53,6 +53,11 @@
 
       <table class="table-responsive table table-striped table-hover" cc-panel-body>
         <tbody>
+        <tr *ngIf="!repo.mirrors || repo.mirrors.length <= 0" class="warning">
+          <td colspan="6" class="text-center">
+            There are currently no mirrors defined.
+          </td>
+        </tr>
         <tr *ngFor="let mirror of repo.mirrors" [class.info]="mirror.id == repo.primaryMirror"
             (dblclick)="goToMirror(mirror)">
           <td width="30px">

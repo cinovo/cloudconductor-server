@@ -95,6 +95,11 @@
           <div class="panel-body">
             <table class="table-responsive table table-striped table-hover">
               <tbody>
+              <tr *ngIf="!settings.disallowUninstall || settings.disallowUninstall.length <= 0" class="warning">
+                <td colspan="6" class="text-center">
+                  There are currently no deinstall-protected packages.
+                </td>
+              </tr>
               <tr *ngFor="let package of settings.disallowUninstall">
                 <td>
                   {{package}}

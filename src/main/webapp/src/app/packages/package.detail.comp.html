@@ -71,13 +71,19 @@
               </tr>
               </thead>
               <tbody>
+              <tr *ngIf="!repos || repos.length <= 0" class="warning">
+                <td colspan="3" class="text-center">
+                  There are currently no repositories providing the package.
+                </td>
+              </tr>
               <tr *ngFor="let repo of repos" (dblclick)="gotoRepo(repo)">
                 <td>
                   {{repo.name}}
                 </td>
                 <td>
                   <template ngFor let-version [ngForOf]="repo.versions" let-last="last">
-                    {{version.version}}<template [ngIf]="!last">,</template>
+                    {{version.version}}
+                    <template [ngIf]="!last">,</template>
                   </template>
                 </td>
                 <td>
@@ -111,6 +117,11 @@
               </tr>
               </thead>
               <tbody>
+              <tr *ngIf="!services || services.length <= 0" class="warning">
+                <td colspan="3" class="text-center">
+                  There are currently no services associated with the package.
+                </td>
+              </tr>
               <tr *ngFor="let service of services" (dblclick)="gotoService(service.name)">
                 <td>
                   {{service.name}}
@@ -181,7 +192,7 @@
                 <th width="15px"></th>
               </tr>
               </thead>
-              <tbody *ngIf="templateRefs.length > 0">
+              <tbody>
               <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
                 <td>
                   {{ref.template}}
@@ -194,11 +205,10 @@
                     class="fa fa-external-link fa-fw"></i></a>
                 </td>
               </tr>
-              </tbody>
-              <tbody *ngIf="templateRefs.length < 1">
-              <tr>
-                <td colspan="3">
-                  This package is currently not used by any template
+
+              <tr *ngIf="!templateRefs || templateRefs.length <= 0" class="warning">
+                <td colspan="3" class="text-center">
+                  This package is currently not used by any template.
                 </td>
               </tr>
               </tbody>

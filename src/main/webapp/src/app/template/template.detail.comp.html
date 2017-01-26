@@ -13,13 +13,13 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-8">
     <template-package-detail [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></template-package-detail>
 
     <agentoption-detail [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></agentoption-detail>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-4">
 
     <template-metadata-edit [obsTemplate]="template" (reloadTrigger)="reloadTemplate()" [mode]="modes.EDIT"></template-metadata-edit>
 
@@ -30,9 +30,9 @@
             <i class="fa fa-laptop fa-fw"></i> Hosts
           </div>
           <div class="panel-body">
-            <p *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
-              There are currently no host useing this template.
-            </p>
+            <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
+              There are currently no host using this template.
+            </div>
             <table class=" table-condensed table-responsive table table-striped table-hover" *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
               <thead>
               <tr>
@@ -53,7 +53,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
 </div>
