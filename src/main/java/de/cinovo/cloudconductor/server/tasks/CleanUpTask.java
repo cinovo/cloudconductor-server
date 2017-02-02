@@ -17,10 +17,10 @@ package de.cinovo.cloudconductor.server.tasks;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.lib.helper.SchedulerService;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
+import de.cinovo.cloudconductor.server.util.SchedulerService;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;

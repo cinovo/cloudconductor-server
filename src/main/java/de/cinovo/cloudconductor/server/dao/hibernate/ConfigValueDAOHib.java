@@ -19,7 +19,6 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
     private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
     private static final String WHERE_KEY = " AND c.configkey = ?";
 
+    @SuppressWarnings("JpaQlInspection")
     private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf WHERE conf.deleted = false";
 
     @Override
@@ -50,12 +50,12 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
 
     @Override
     public List<EConfigValue> findBy(String template) {
-        return this.findList(template, null, null);
+        return this.findList(template, null);
     }
 
     @Override
     public List<EConfigValue> findBy(String template, String service) {
-        return this.findList(template, service, null);
+        return this.findList(template, service);
     }
 
     @Override
@@ -77,13 +77,13 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
         return this.findVersionedListByQuery(ConfigValueDAOHib.BASE_QUERY, "c", template);
     }
 
-    private List<EConfigValue> findList(String template, String service, String key) {
-        return this.findVersionedListByQuery(createQuery(template, service, key), "c", getParams(template, service, key));
+    private List<EConfigValue> findList(String template, String service) {
+        return this.findVersionedListByQuery(this.createQuery(template, service, null), "c", this.getParams(template, service, null));
     }
 
 
     private EConfigValue find(String template, String service, String key) {
-        return this.findVersionedByQuery(createQuery(template, service, key), "c", getParams(template, service, key));
+        return this.findVersionedByQuery(this.createQuery(template, service, key), "c", this.getParams(template, service, key));
     }
 
 

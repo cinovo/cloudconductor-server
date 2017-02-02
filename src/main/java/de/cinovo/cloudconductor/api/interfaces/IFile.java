@@ -33,23 +33,20 @@ import javax.ws.rs.*;
  *
  */
 @Path("/file")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IFile {
 
 	/**
 	 * @return set of api objects
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	public ConfigFile[] get();
 
 	/**
 	 * @param apiObject the api object
 	 */
 	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	public void save(ConfigFile apiObject);
 
 	/**
@@ -58,7 +55,6 @@ public interface IFile {
 	 */
 	@GET
 	@Path("/{filename}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public ConfigFile get(@PathParam("filename") String name);
 
 	/**
@@ -74,7 +70,6 @@ public interface IFile {
 	 */
 	@GET
 	@Path("/{filename}/data")
-	@Produces(MediaType.APPLICATION_JSON)
 	public String getData(@PathParam("filename") String name);
 	
 	/**
@@ -83,8 +78,6 @@ public interface IFile {
 	 */
 	@PUT
 	@Path("/{filename}/data")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	public void saveData(@PathParam("filename") String name, String data);
 	
 	/**
@@ -93,6 +86,5 @@ public interface IFile {
 	 */
 	@GET
 	@Path("/template/{template}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public ConfigFile[] getConfigFiles(@PathParam("template") String template);
 }

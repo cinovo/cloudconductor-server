@@ -17,17 +17,10 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import de.cinovo.cloudconductor.api.ServiceState;
+import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>

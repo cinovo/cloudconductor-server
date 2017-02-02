@@ -1,7 +1,7 @@
 package de.cinovo.cloudconductor.server.model;
 
+import de.cinovo.cloudconductor.api.enums.TaskState;
 import de.cinovo.cloudconductor.api.model.AgentOption;
-import de.cinovo.cloudconductor.api.model.TaskState;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;

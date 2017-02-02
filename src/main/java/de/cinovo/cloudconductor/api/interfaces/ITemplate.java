@@ -14,23 +14,20 @@ import java.util.Set;
  * @author psigloch
  */
 @Path("template")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface ITemplate {
 
 	/**
 	 * @return set of service objects
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	Set<Template> get();
 
 	/**
 	 * @param template the template to save
 	 */
 	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	void save(Template template);
 
 	/**
@@ -38,7 +35,6 @@ public interface ITemplate {
 	 */
 	@DELETE
 	@Path("/{template}")
-	@Produces(MediaType.APPLICATION_JSON)
 	void delete(@PathParam("template") String templateName);
 
 	/**
@@ -47,7 +43,6 @@ public interface ITemplate {
 	 */
 	@GET
 	@Path("/{template}")
-	@Produces(MediaType.APPLICATION_JSON)
 	Template get(@PathParam("template") String templateName);
 
 	/**
@@ -57,8 +52,6 @@ public interface ITemplate {
 	 */
 	@PUT
 	@Path("/{template}/package/{package}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	Template updatePackage(@PathParam("template") String templateName, @PathParam("package") String packageName);
 
 	/**
@@ -68,7 +61,6 @@ public interface ITemplate {
 	 */
 	@DELETE
 	@Path("/{template}/package/{package}")
-	@Produces(MediaType.APPLICATION_JSON)
 	Template deletePackage(@PathParam("template") String templateName, @PathParam("package") String packageName);
 
 	/**
@@ -76,7 +68,6 @@ public interface ITemplate {
 	 */
 	@GET
 	@Path("/{template}/agentoption")
-	@Produces(MediaType.APPLICATION_JSON)
 	AgentOption getAgentOption(@PathParam("template") String templateName);
 
 	/**
@@ -84,7 +75,5 @@ public interface ITemplate {
 	 */
 	@PUT
 	@Path("/{template}/agentoption")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	AgentOption saveAgentOption(@PathParam("template") String templateName, AgentOption option);
 }

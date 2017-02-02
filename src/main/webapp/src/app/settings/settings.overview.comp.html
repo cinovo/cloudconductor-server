@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-horizontal">
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="!noGtEqZero(settings.hostCleanUpTimer)">
             <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Host Cleanup
               timer: </label>
             <div class="col-sm-6">
@@ -35,41 +35,37 @@
                      [(ngModel)]="settings.hostCleanUpTimer">
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="cleanuptimerunit" [(ngModel)]="settings.hostCleanUpTimerUnit">
-                <option value="NANOSECONDS">NANOSECONDS</option>
-                <option value="MICROSECONDS">MICROSECONDS</option>
-                <option value="MILLISECONDS">MILLISECONDS</option>
-                <option value="SECONDS" selected="selected">SECONDS</option>
-                <option value="MINUTES">MINUTES</option>
-                <option value="HOURS">HOURS</option>
-                <option value="DAYS">DAYS</option>
+              <select name="hostCleanUpTimerUnit" class="form-control" id="cleanuptimerunit"
+                      [(ngModel)]="settings.hostCleanUpTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
               </select>
             </div>
           </div>
         </div>
 
         <div class="form-horizontal">
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="!noGtEqZero(settings.indexScanTimer)">
             <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Index-Scan timer: </label>
             <div class="col-sm-6">
               <input type="number" class="form-control" style="text-align:right" value="30" id="indexscantimer"
                      [(ngModel)]="settings.indexScanTimer">
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="indexscantimerunit" [(ngModel)]="settings.indexScanTimerUnit">
-                <option value="NANOSECONDS">NANOSECONDS</option>
-                <option value="MICROSECONDS">MICROSECONDS</option>
-                <option value="MILLISECONDS">MILLISECONDS</option>
-                <option value="SECONDS" selected="selected">SECONDS</option>
-                <option value="MINUTES">MINUTES</option>
-                <option value="HOURS">HOURS</option>
-                <option value="DAYS">DAYS</option>
+              <select name="hostCleanUpTimerUnit" class="form-control" id="indexscantimerunit"
+                      [(ngModel)]="settings.indexScanTimerUnit">
+                <option value="SECONDS" selected="selected">Seconds</option>
+                <option value="MINUTES">Minutes</option>
+                <option value="HOURS">Hours</option>
+                <option value="DAYS">Days</option>
               </select>
             </div>
           </div>
         </div>
         <div class="form-horizontal">
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="!noGtEqZero(settings.pageRefreshTimer)">
             <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Page refresh
               timer: </label>
             <div class="col-sm-6">
@@ -77,7 +73,8 @@
                      [(ngModel)]="settings.pageRefreshTimer">
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="refreshtimerunit"[(ngModel)]="settings.pageRefreshTimerUnit">
+              <select name="hostCleanUpTimerUnit" class="form-control" id="refreshtimerunit"
+                      [(ngModel)]="settings.pageRefreshTimerUnit">
                 <option value="SECONDS" selected="selected">Seconds</option>
                 <option value="MINUTES">Minutes</option>
                 <option value="HOURS">Hours</option>
@@ -130,7 +127,8 @@
                   <div class="pull-right">
                     <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
                     <button (click)="saveNewPackage()" class="btn btn-success"
-                            [disabled]="!newPackage">Add
+                            [disabled]="!newPackage">
+                      Add
                     </button>
                   </div>
                 </td>
@@ -148,7 +146,10 @@
         </div>
 
         <div class="pull-right">
-          <button (click)="saveSettings()" class="btn btn-info" [disabled]="!settings.name">Save
+          <button (click)="saveSettings()" class="btn btn-info"
+                  [disabled]="!settings.name|| !noGtEqZero(settings.hostCleanUpTimer)
+                  ||!noGtEqZero(settings.pageRefreshTimer) || !noGtEqZero(settings.indexScanTimer)">
+            Save
           </button>
         </div>
 

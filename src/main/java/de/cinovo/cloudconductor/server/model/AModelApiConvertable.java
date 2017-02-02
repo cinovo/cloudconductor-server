@@ -1,6 +1,6 @@
 package de.cinovo.cloudconductor.server.model;
 
-import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 
 import java.beans.Transient;

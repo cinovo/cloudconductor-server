@@ -17,12 +17,6 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.HostHandler;
@@ -31,24 +25,27 @@ import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Set;
 
 /**
- * 
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author hoegertn
- * 
  */
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")
 public class HostTest extends APITest {
-	
+
 	private static final String TEST_SERVICE = "nginx";
 	private static final String HOST22 = "host2";
 	private static final String HOST1 = "host1";
-	
-	
+
+
 	@Test
 	public void test1() throws CloudConductorException {
 		HostHandler h = new HostHandler(this.getCSApi());
@@ -64,21 +61,22 @@ public class HostTest extends APITest {
 			Assert.assertEquals(HostTest.HOST1, host.getName());
 		}
 		{
-			Host host = new Host(HostTest.HOST22, HostTest.HOST22, "dev", null);
+			Host host = new Host(); host.setName(HostTest.HOST22);
+			host.setAgent(HostTest.HOST22);
+			host.setTemplate("dev");
 			h.save(host);
 			Set<Host> hosts = h.get();
 			Assert.assertEquals(2, hosts.size());
 			Host host2 = h.get(HostTest.HOST22);
 			Assert.assertNotNull(host2);
 			Assert.assertEquals(HostTest.HOST22, host2.getName());
-		}
-		{
+		} {
 			h.delete(HostTest.HOST22);
 			Set<Host> hosts = h.get();
 			Assert.assertEquals(1, hosts.size());
 		}
 	}
-	
+
 	@Test
 	public void testServices() throws CloudConductorException {
 		HostHandler h = new HostHandler(this.getCSApi());
@@ -113,7 +111,7 @@ public class HostTest extends APITest {
 			Assert.assertEquals(0, services.size());
 		}
 	}
-	
+
 	private void assertState(HostHandler h, ServiceState state) throws CloudConductorException {
 		Set<Service> services = h.getServices(HostTest.HOST1);
 		Assert.assertEquals(1, services.size());

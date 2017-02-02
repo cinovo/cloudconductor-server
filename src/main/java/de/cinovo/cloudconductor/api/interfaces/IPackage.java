@@ -4,10 +4,7 @@ import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,14 +15,14 @@ import java.util.Set;
  * @author psigloch
  */
 @Path("/package")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IPackage {
 
 	/**
 	 * @return set of packages
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	Set<Package> get();
 
 	/**
@@ -34,7 +31,6 @@ public interface IPackage {
 	 */
 	@GET
 	@Path("/{package}")
-	@Produces(MediaType.APPLICATION_JSON)
 	Package get(@PathParam("package") String pkgName);
 
 
@@ -46,7 +42,6 @@ public interface IPackage {
 	 */
 	@GET
 	@Path("/{pkg}/versions")
-	@Produces(MediaType.APPLICATION_JSON)
 	Set<PackageVersion> getVersions(@PathParam("pkg") String pkgname);
 
 	/**
@@ -55,7 +50,6 @@ public interface IPackage {
 	 */
 	@GET
 	@Path("/{pkg}/usage")
-	@Produces(MediaType.APPLICATION_JSON)
 	Map<String, String> getUsage(@PathParam("pkg") String pkgname);
 
 	/**
@@ -66,6 +60,5 @@ public interface IPackage {
 	 */
 	@GET
 	@Path("/versions/repo/{repo}")
-	@Produces(MediaType.APPLICATION_JSON)
 	Set<PackageVersion> getVersionsForRepo(@PathParam("repo") String repoName);
 }

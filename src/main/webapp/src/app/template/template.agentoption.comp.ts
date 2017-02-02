@@ -2,6 +2,7 @@ import { Component, AfterViewInit, Input, Output, EventEmitter } from "@angular/
 import { Template, TemplateHttpService, AgentOption } from "../services/http/template.http.service";
 import { Observable } from "rxjs";
 import { AlertService } from "../services/alert/alert.service";
+import { Validator } from "../util/validator.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -11,14 +12,16 @@ import { AlertService } from "../services/alert/alert.service";
  */
 @Component({
   moduleId: module.id,
-  selector: 'agentoption-detail',
-  templateUrl: 'html/agentoption.detail.comp.html'
+  selector: 'template-agentoptions',
+  templateUrl: 'html/template.agentoption.comp.html'
 })
-export class AgentOptionDetail implements AfterViewInit {
+export class TemplateAgentOptions implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
   private options: AgentOption = {};
+
+  private noGtEqZero = Validator.noGtEqZero;
 
   constructor(private templateHttp: TemplateHttpService,
               private alerts: AlertService) {

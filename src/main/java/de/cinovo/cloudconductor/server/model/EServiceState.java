@@ -17,52 +17,44 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import de.cinovo.cloudconductor.api.ServiceState;
+import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "servicestate", schema = "cloudconductor")
 public class EServiceState implements IEntity<Long> {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	
+
 	private EService service;
-	
+
 	private EHost host;
 	private ServiceState state = ServiceState.STOPPED;
-	
-	
+
+
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-	
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the service
 	 */
@@ -71,14 +63,14 @@ public class EServiceState implements IEntity<Long> {
 	public EService getService() {
 		return this.service;
 	}
-	
+
 	/**
 	 * @param service the service to set
 	 */
 	public void setService(EService service) {
 		this.service = service;
 	}
-	
+
 	/**
 	 * @return the host
 	 */
@@ -87,28 +79,28 @@ public class EServiceState implements IEntity<Long> {
 	public EHost getHost() {
 		return this.host;
 	}
-	
+
 	/**
 	 * @param host the host to set
 	 */
 	public void setHost(EHost host) {
 		this.host = host;
 	}
-	
+
 	/**
 	 * @return the state
 	 */
 	public ServiceState getState() {
 		return this.state;
 	}
-	
+
 	/**
 	 * @param state the state to set
 	 */
 	public void setState(ServiceState state) {
 		this.state = state;
 	}
-	
+
 	/**
 	 * apply the next state in the chain
 	 */

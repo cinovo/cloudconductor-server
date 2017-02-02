@@ -23,7 +23,8 @@ package de.cinovo.cloudconductor.api.model;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import de.cinovo.cloudconductor.api.DependencyType;
+import de.cinovo.cloudconductor.api.enums.DependencyType;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 
 /**
  * Copyright 2013 Cinovo AG<br>

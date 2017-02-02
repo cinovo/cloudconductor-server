@@ -6,7 +6,7 @@
       </div>
       <div class="panel-body">
         <div class="form-horizontal">
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="!noGtEqZero(options.aliveTimer)">
             <label class="col-sm-4 control-label" for="alivetimer" style="text-align:left">Send "alive" message
               every </label>
             <div class="col-sm-3">
@@ -24,10 +24,12 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="col-sm-4 control-label" for="packagehandler" style="text-align:left">Handle packages and versions </label>
+          <div class="form-group" [class.has-error]="!noGtEqZero(options.packageManagementTimer)">
+            <label class="col-sm-4 control-label" for="packagehandler" style="text-align:left">Handle packages and
+              versions </label>
             <div class="col-sm-3">
-              <select name="alivetimerUnit" class="form-control" id="packagehandler" [(ngModel)]="options.doPackageManagement">
+              <select name="alivetimerUnit" class="form-control" id="packagehandler"
+                      [(ngModel)]="options.doPackageManagement">
                 <option value="OFF" selected="selected">off</option>
                 <option value="ONCE">once</option>
                 <option value="REPEAT">repeat every</option>
@@ -48,10 +50,12 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="col-sm-4 control-label" for="filehandler" style="text-align:left">Handle files and directories </label>
+          <div class="form-group" [class.has-error]="!noGtEqZero(options.fileManagementTimer)">
+            <label class="col-sm-4 control-label" for="filehandler" style="text-align:left">Handle files and
+              directories </label>
             <div class="col-sm-3">
-              <select name="alivetimerUnit" class="form-control" id="filehandler" [(ngModel)]="options.doFileManagement">
+              <select name="alivetimerUnit" class="form-control" id="filehandler"
+                      [(ngModel)]="options.doFileManagement">
                 <option value="OFF" selected="selected">off</option>
                 <option value="ONCE">once</option>
                 <option value="REPEAT">repeat every</option>
@@ -72,7 +76,7 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" [class.has-error]="!noGtEqZero(options.sshKeysTimer)">
             <label class="col-sm-4 control-label" for="sshkeyhandler" style="text-align:left">Handle SSH keys </label>
             <div class="col-sm-3">
               <select name="alivetimerUnit" class="form-control" id="sshkeyhandler" [(ngModel)]="options.doSshKeys">
@@ -98,7 +102,10 @@
         </div>
 
         <div class="pull-right">
-          <button (click)="saveOptions()" class="btn btn-info">Save
+          <button (click)="saveOptions()" class="btn btn-info"
+                  [disabled]="!noGtEqZero(options.sshKeysTimer) || !noGtEqZero(options.fileManagementTimer)
+                  ||!noGtEqZero(options.packageManagementTimer) || !noGtEqZero(options.aliveTimer)">
+            Save
           </button>
         </div>
       </div>

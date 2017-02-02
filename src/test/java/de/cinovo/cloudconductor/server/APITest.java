@@ -17,14 +17,13 @@ package de.cinovo.cloudconductor.server;
  * #L%
  */
 
-import org.apache.http.HttpResponse;
-import org.junit.Assert;
-
-import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfiguration;
+import de.taimos.dvalin.jaxrs.MapperFactory;
 import de.taimos.httputils.HTTPRequest;
 import de.taimos.httputils.WS;
+import org.apache.http.HttpResponse;
+import org.junit.Assert;
 
 /**
  * 

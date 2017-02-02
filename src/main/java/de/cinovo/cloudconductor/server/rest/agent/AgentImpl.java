@@ -17,28 +17,12 @@ package de.cinovo.cloudconductor.server.rest.agent;
  * #L%
  */
 
-import com.google.common.collect.ArrayListMultimap;
-import de.cinovo.cloudconductor.api.ServiceState;
-import de.cinovo.cloudconductor.api.interfaces.IAgent;
-import de.cinovo.cloudconductor.api.model.*;
-import de.cinovo.cloudconductor.server.dao.*;
-import de.cinovo.cloudconductor.server.model.*;
-import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
-import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
-import de.cinovo.cloudconductor.server.util.comparators.VersionStringComparator;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
-import de.taimos.restutils.RESTAssert;
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- *
+ * <p>
  * TODO: REWORK
  *
  * @author psigloch
@@ -46,8 +30,8 @@ import java.util.*;
  */
 @Deprecated
 @JaxRsComponent
-public class AgentImpl implements IAgent {
-
+public class AgentImpl {
+/*
 	private static final int MAX_TIMEOUT_HOST = 30;
 
 	private static final int MAX_UPDATE_THRESHOLD = 15;
@@ -78,7 +62,6 @@ public class AgentImpl implements IAgent {
 	private IAgentDAO agentDAO;
 
 
-	@Override
 	@Transactional
 	public Set<String> getAliveAgents() {
 		List<EHost> hosts = this.hostDAO.findList();
@@ -95,7 +78,7 @@ public class AgentImpl implements IAgent {
 		return result;
 	}
 
-	@Override
+	
 	@Transactional
 	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState) {
 		RESTAssert.assertNotEmpty(hname);
@@ -164,10 +147,10 @@ public class AgentImpl implements IAgent {
 		return host;
 	}
 
-	/**
+	*//**
 	 * @param template
 	 * @param host
-	 */
+	 *//*
 	private boolean sendPackageChanges(ETemplate template, EHost host) {
 		DateTime now = DateTime.now();
 		int maxHostsOnUpdate = template.getHosts().size() / 2;
@@ -193,12 +176,12 @@ public class AgentImpl implements IAgent {
 		return false;
 	}
 
-	/**
+	*//**
 	 * @param host
 	 * @param irpm
 	 * @param pkg
 	 * @return
-	 */
+	 *//*
 	private EPackageState createMissingState(EHost host, PackageVersion irpm, EPackage pkg) {
 		EPackageState state;
 		EPackageVersion rpm = this.versionDAO.find(irpm.getName(), irpm.getVersion());
@@ -217,12 +200,12 @@ public class AgentImpl implements IAgent {
 		return state;
 	}
 
-	/**
+	*//**
 	 * @param host
 	 * @param irpm
 	 * @param leftPackages
 	 * @return
-	 */
+	 *//*
 	private EPackageState updateExistingState(EHost host, PackageVersion irpm, HashSet<EPackageState> leftPackages) {
 		VersionStringComparator vsc = new VersionStringComparator();
 		for(EPackageState state : host.getPackages()) {
@@ -295,7 +278,7 @@ public class AgentImpl implements IAgent {
 		return changes;
 	}
 
-	@Override
+	
 	@Transactional
 	public ServiceStatesChanges notifyServiceState(String tname, String hname, ServiceStates serviceState) {
 		RESTAssert.assertNotEmpty(hname);
@@ -383,7 +366,7 @@ public class AgentImpl implements IAgent {
 		return serviceStatesChanges;
 	}
 
-	@Override
+	
 	@Transactional
 	public AgentOptions heartBeat(String tname, String hname, String agentN) {
 		RESTAssert.assertNotEmpty(hname);
@@ -509,9 +492,9 @@ public class AgentImpl implements IAgent {
 		return map;
 	}
 
-	@Override
+	
 	@Transactional
 	public boolean isServerAlive() {
 		return true;
-	}
+	}*/
 }

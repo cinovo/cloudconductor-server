@@ -13,14 +13,14 @@ import java.util.Collection;
  * @author psigloch
  */
 @Path("/config")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IConfigValue {
 
     /**
      * @return a collection of known templates
      */
     @GET
-    @Path("/")
-    @Produces({MediaType.APPLICATION_JSON})
     Collection<String> getAvailableTemplates();
 
     /**
@@ -31,7 +31,6 @@ public interface IConfigValue {
      */
     @GET
     @Path("/{template}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_JAVAARGS, MediaType.APPLICATION_JAVAPROPS})
     Collection<ConfigValue> get(@PathParam("template") String template);
 
     /**
@@ -42,7 +41,6 @@ public interface IConfigValue {
      */
     @GET
     @Path("/{template}/unstacked")
-    @Produces({MediaType.APPLICATION_JSON})
     Collection<ConfigValue> getUnstacked(@PathParam("template") String template);
 
     /**
@@ -76,8 +74,6 @@ public interface IConfigValue {
      * @param config the config value
      */
     @PUT
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
     void save(ConfigValue config);
 
     /**

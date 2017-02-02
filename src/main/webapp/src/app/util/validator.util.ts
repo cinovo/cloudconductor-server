@@ -16,4 +16,8 @@ export class Validator {
   public static idIsSet(obj:number):boolean {
     return obj && obj > 0
   }
+
+  public static noGtEqZero(obj:number):boolean {
+    return obj >= 0;
+  }
 }

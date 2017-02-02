@@ -5,6 +5,7 @@ import { AdditionalLink } from "../services/http/additionalLinks.http.service";
 import { Repo } from "../services/http/repo.http.service";
 import { RepoMirror } from "../services/http/repomirror.http.service";
 import { Template } from "../services/http/template.http.service";
+import { Host } from "../services/http/host.http.service";
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -64,6 +65,12 @@ export class Sorter {
   }
 
   public static service(a: Service, b: Service):number {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+  }
+
+  public static host(a: Host, b: Host):number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;

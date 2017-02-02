@@ -12,22 +12,19 @@ import javax.ws.rs.*;
  * @author psigloch
  */
 @Path("settings")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface ISettings {
 
 	/**
 	 * @return set of service objects
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	Settings get();
 
 	/**
 	 * @param settings the settings to save
 	 */
 	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	void save(Settings settings);
 }

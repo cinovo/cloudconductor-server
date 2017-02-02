@@ -35,6 +35,7 @@ import java.util.List;
  */
 @Path("/links")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface ILinks {
 
 	/**
@@ -44,11 +45,9 @@ public interface ILinks {
 	List<AdditionalLink> getLinks();
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	Response createLink(AdditionalLink link);
 
 	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
 	AdditionalLink updateLink(AdditionalLink link);
 
 	@Path("/{id}")

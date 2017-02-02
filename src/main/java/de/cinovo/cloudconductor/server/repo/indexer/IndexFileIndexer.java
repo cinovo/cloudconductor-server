@@ -3,10 +3,10 @@ package de.cinovo.cloudconductor.server.repo.indexer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import de.taimos.dvalin.jaxrs.MapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 

@@ -3,6 +3,7 @@ package de.cinovo.cloudconductor.api.model;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 
 import java.util.Set;
 

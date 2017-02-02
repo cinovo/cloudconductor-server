@@ -1,7 +1,7 @@
 package de.cinovo.cloudconductor.server.model;
 
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Directory;
-import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;

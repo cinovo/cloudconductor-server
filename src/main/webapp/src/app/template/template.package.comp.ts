@@ -19,10 +19,10 @@ interface TemplatePackageVersion {
 
 @Component({
   moduleId: module.id,
-  selector: 'template-package-detail',
-  templateUrl: 'html/template.package.detail.comp.html'
+  selector: 'template-packages',
+  templateUrl: 'html/template.package.comp.html'
 })
-export class TemplatePackageDetail implements AfterViewInit {
+export class TemplatePackages implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();

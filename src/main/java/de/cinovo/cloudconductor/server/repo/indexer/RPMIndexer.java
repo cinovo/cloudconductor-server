@@ -1,6 +1,6 @@
 package de.cinovo.cloudconductor.server.repo.indexer;
 
-import de.cinovo.cloudconductor.api.DependencyType;
+import de.cinovo.cloudconductor.api.enums.DependencyType;
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;

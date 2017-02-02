@@ -17,8 +17,8 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;
@@ -48,8 +48,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private String checksum;
 	private List<EService> dependentServices;
 	
-	private List<EFileTag> tags;
-	
 	private Long version;
 	private boolean deleted = false;
 	private Long origId;
@@ -73,7 +71,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	/**
 	 * @return the pkg
 	 */
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "packageid")
 	public EPackage getPkg() {
 		return this.pkg;
@@ -218,23 +216,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		this.name = name;
 	}
 	
-	/**
-	 * @return the tags
-	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "taggedfiles", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "tagid"))
-	public List<EFileTag> getTags() {
-		return this.tags;
-	}
-	
-	/**
-	 * @param tags the tags to set
-	 */
-	public void setTags(List<EFileTag> tags) {
-		this.tags = tags;
-	}
-	
+
 	@Override
 	public boolean isDeleted() {
 		return this.deleted;
@@ -273,14 +255,11 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof EFile)) {
+		if(!(obj instanceof EFile)) {
 			return false;
 		}
 		EFile other = (EFile) obj;
-		if (this.getName() == null) {
-			return false;
-		}
-		return this.getName().equals(other.getName());
+		return this.getName() != null && this.getName().equals(other.getName());
 	}
 	
 	@Override
@@ -301,7 +280,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		r.setOwner(this.owner);
 		r.setPkg(this.pkg);
 		r.setReloadable(this.isReloadable);
-		r.setTags(this.tags);
 		r.setTargetPath(this.targetPath);
 		r.setTemplate(this.isTemplate);
 		r.setVersion(this.version);

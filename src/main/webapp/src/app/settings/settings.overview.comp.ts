@@ -25,6 +25,7 @@ export class SettingsOverview implements AfterViewInit {
   private newPackage: string;
   private showAddPackage: boolean = false;
 
+  private noGtEqZero = Validator.noGtEqZero;
   constructor(private settingHttp: SettingHttpService, private packageHttp:PackageHttpService, private alerts: AlertService) {
   };
 

@@ -17,10 +17,10 @@ import { Mode } from "../util/enums.util";
  */
 @Component({
   moduleId: module.id,
-  selector: 'template-metadata-edit',
-  templateUrl: 'html/metadata.edit.comp.html'
+  selector: 'template-metadata',
+  templateUrl: 'html/template.metadata.comp.html'
 })
-export class TemplateMetaDataEdit implements AfterViewInit {
+export class TemplateMetaData implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Input() mode: Mode = Mode.EDIT;

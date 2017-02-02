@@ -33,14 +33,14 @@ import java.util.Map;
  * @author psigloch
  */
 @Path("service")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IService {
 
     /**
      * @return set of service objects
      */
     @GET
-    @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     Service[] get();
 
     /**
@@ -49,16 +49,12 @@ public interface IService {
      */
     @GET
     @Path("/{service}")
-    @Produces(MediaType.APPLICATION_JSON)
     Service get(@PathParam("service") String service);
 
     /**
      * @param apiObject the service object
      */
     @PUT
-    @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     void save(Service apiObject);
 
     /**

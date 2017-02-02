@@ -19,12 +19,9 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
-import de.cinovo.cloudconductor.server.model.EFileTag;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,16 +55,4 @@ public class FileDAOHib extends AVersionedEntityHib<EFile> implements IFileDAO {
 		return this.findVersionedListByQuery(query, "f", Arrays.asList(tagnames));
 	}
 	
-	@Override
-	public List<EFile> findByTag(EFileTag... tags) {
-		List<EFile> findList = this.findList();
-		List<EFile> result = new ArrayList<>();
-		List<EFileTag> taged = Arrays.asList(tags);
-		for (EFile f : findList) {
-			if (!Collections.disjoint(f.getTags(), taged)) {
-				result.add(f);
-			}
-		}
-		return result;
-	}
 }

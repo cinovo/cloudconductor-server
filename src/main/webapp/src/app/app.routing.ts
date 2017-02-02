@@ -1,3 +1,4 @@
+///<reference path="host/host.overview.comp.ts"/>
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./home/home.comp";
 import { ConfigValueOverview } from "./configvalues/cv.overview.comp";
@@ -13,6 +14,8 @@ import { MirrorEdit } from "./repo/mirror.edit.comp";
 import { TemplateOverview } from "./template/template.overview.comp";
 import { TemplateDetail } from "./template/template.detail.comp";
 import { TemplateNew } from "./template/template.new.comp";
+import { HostOverview } from "./host/host.overview.comp";
+import { HostDetail } from "./host/host.detail.comp";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,7 +27,8 @@ export const APP_ROUTES: Routes = [
 
   {path: 'home', component: HomeComponent},
 
-  {path: 'host', component: HomeComponent},
+  {path: 'host', component: HostOverview},
+  {path: 'host/:hostName', component: HostDetail},
 
   {path: 'template', component: TemplateOverview},
   {path: 'template/new', component: TemplateNew},
@@ -55,7 +59,6 @@ export const APP_ROUTES: Routes = [
 
   {path: 'settings', component: SettingsOverview},
 
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
 

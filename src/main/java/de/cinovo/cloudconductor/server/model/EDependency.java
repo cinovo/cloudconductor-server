@@ -17,9 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.DependencyType;
+import de.cinovo.cloudconductor.api.enums.DependencyType;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Dependency;
-import de.cinovo.cloudconductor.api.model.INamed;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;

@@ -1,0 +1,80 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-flask fa-fw"></i> Services
+        <small class="pull-right" *ngIf="host.lastSeen">last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
+          Uhr
+        </small>
+      </div>
+      <div class="panel-body">
+        <div class="alert alert-warning" *ngIf="!services || services.length <= 0">
+          There are currently no services available on this host.
+        </div>
+        <table class=" table-condensed table-responsive table table-striped table-hover"
+               *ngIf="services && services.length > 0">
+          <thead>
+          <tr>
+            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
+            <th>Service Name</th>
+            <th>State</th>
+            <th width="15px">Autostart</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let service of services">
+            <td>
+              <input type="checkbox" [(ngModel)]="service.selected" title="Service select">
+            </td>
+            <td>{{service.name}}</td>
+            <td>
+                    <span class="label label-default label-as-badge"
+                          [class.label-success]="isServiceStarted(service)"
+                          [class.label-warning]="isServiceTransient(service)"
+                          [class.label-danger]="isServiceStoped(service)">
+                      {{service.state}}
+                    </span>
+            </td>
+            <td class="text-center">
+              <input type="checkbox" [(ngModel)]="service.autostart"
+                     title="Automaticly start this service on host restart">
+            </td>
+            <td>
+              <a class="btn btn-xs text-success" role="button" (click)="handleService('start', service)"
+                 [class.disabled]="isServiceStarted(service, true)">
+                <i class="fa fa-play fa-fw" title="Start service"></i>
+              </a>
+            </td>
+            <td>
+              <a class="btn btn-xs text-danger" role="button" (click)="handleService('stop', service)"
+                 [class.disabled]="isServiceStoped(service, true)">
+                <i class="fa fa-stop fa-fw" title="Stop service"></i>
+              </a>
+            </td>
+            <td>
+              <a class="btn btn-xs text-info" role="button" (click)="handleService('restart', service)"
+                 [class.disabled]="isServiceStoped(service, true) || isServiceTransient(service)">
+                <i class="fa fa-repeat fa-fw" title="Restart service"></i>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="text-center" *ngIf="services && services.length > 0">
+          <button (click)="handleSelected('start')" class="btn btn-success" [disabled]="!isSelected('start')">
+            <i class="fa fa-play fa-fw"></i> Start selected
+          </button>
+          <button (click)="handleSelected('stop')" class="btn btn-danger" [disabled]="!isSelected('stop')">
+            <i class="fa fa-stop fa-fw"></i> Stop selected
+          </button>
+          <button (click)="handleSelected('restart')" class="btn btn-info" [disabled]="!isSelected('restart')">
+            <i class="fa fa-repeat fa-fw"></i> Restart selected
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

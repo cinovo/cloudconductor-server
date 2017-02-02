@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-book fa-fw"></i> Package-Changes
+        <small class="pull-right" *ngIf="host.lastSeen">last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
+          Uhr
+        </small>
+      </div>
+      <div class="panel-body">
+        <div class="alert alert-success" *ngIf="!packageChanges">
+          All Packages are in sync with the template.
+        </div>
+
+        <table class=" table-condensed table-responsive table table-striped table-hover"
+               *ngIf="packageChanges">
+          <thead>
+          <tr>
+            <th>Package Name</th>
+            <th>Host version</th>
+            <th>Template version</th>
+            <th>State</th>
+          </tr>
+          </thead>
+          <tbody>
+          <template ngFor let-pkg [ngForOf]="packages">
+            <tr *ngIf="pkg.state != 'ok'">
+              <td>{{pkg.name}}</td>
+              <td>{{pkg.hostVersion}}</td>
+              <td>{{pkg.templateVersion}}</td>
+              <td>
+              <span class="label label-default label-as-badge"
+                    [class.label-success]="pkg.state == 'installing' || pkg.state == 'upgrading'"
+                    [class.label-danger]="pkg.state == 'uninstalling' || pkg.state == 'downgrading'">
+                {{pkg.state}}
+              </span>
+              </td>
+            </tr>
+          </template>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>

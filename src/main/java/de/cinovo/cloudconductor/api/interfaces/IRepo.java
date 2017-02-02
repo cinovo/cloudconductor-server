@@ -19,6 +19,7 @@ package de.cinovo.cloudconductor.api.interfaces;
  * limitations under the License.
  * #L%
  */
+
 import de.cinovo.cloudconductor.api.MediaType;
 import de.cinovo.cloudconductor.api.model.Repo;
 
@@ -27,45 +28,41 @@ import javax.ws.rs.*;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Path("/repo")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IRepo {
-	
+
 	/**
 	 * @return set of api objects
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	Repo[] get();
-	
+
 	/**
 	 * @param name the {@link Repo} name
 	 * @return the {@link Repo}
 	 */
 	@GET
 	@Path("/{name}")
-	@Produces(MediaType.APPLICATION_JSON)
 	Repo get(@PathParam("name") String name);
-	
+
 	/**
 	 * @param repo the {@link Repo}
 	 * @return the new id
 	 */
 	@POST
-	@Path("/")
 	Long newRepo(Repo repo);
-	
+
 	/**
 	 * @param repo the {@link Repo}
 	 */
 	@PUT
-	@Path("/")
 	void edit(Repo repo);
-	
+
 	/**
 	 * @param name the name of the the {@link Repo} to delete
 	 */

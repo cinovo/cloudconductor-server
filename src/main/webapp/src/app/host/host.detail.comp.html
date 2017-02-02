@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      <a (click)="reloadHost()" class="pull-right" role="button" title="Reload template">
+        <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
+      </a>
+      <i class="fa fa-laptop fa-fw"></i> Host-Details
+      <h4 *ngIf="host">{{host.name}}</h4>
+    </h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <host-services [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-services>
+  </div>
+
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <i class="fa fa-laptop fa-fw"></i> Host-Details
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="control-label" for="name">Name</label>
+              <input type="text" class="form-control" [(ngModel)]="host.name" id="name" disabled>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="agent">
+                <i class="fa fa-address-card fa-fw"></i>
+                Agent-Name</label>
+              <input type="text" class="form-control" [(ngModel)]="host.agent" id="agent" disabled>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="template">
+                <i class="fa fa-institution fa-fw"></i>
+                Template
+                <a [routerLink]="['/template',host.template]">
+                  <i class="fa fa-external-link fa-fw" title="Jump to template"></i>
+                </a>
+              </label>
+              <input type="text" class="form-control" [(ngModel)]="host.template" id="template" disabled/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <host-packages [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-packages>
+  </div>
+
+</div>
+

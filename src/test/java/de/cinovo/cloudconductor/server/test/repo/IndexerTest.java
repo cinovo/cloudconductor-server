@@ -1,20 +1,18 @@
 package de.cinovo.cloudconductor.server.test.repo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.server.repo.RepoEntry;
+import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
+import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import de.taimos.dvalin.jaxrs.MapperFactory;
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.cinovo.cloudconductor.api.lib.helper.MapperFactory;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.server.repo.RepoEntry;
-import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
-import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 
 /**
  * Copyright 2015 Cinovo AG<br>

@@ -17,7 +17,7 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.DependencyType;
+import de.cinovo.cloudconductor.api.enums.DependencyType;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.IOModuleHandler;
 import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;

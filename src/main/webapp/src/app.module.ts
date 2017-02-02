@@ -29,9 +29,12 @@ import { LinksEdit } from "./app/links/links.edit.comp";
 import { RepoMirrorHttpService } from "./app/services/http/repomirror.http.service";
 import { RepoHttpService } from "./app/services/http/repo.http.service";
 import { TemplateHttpService } from "./app/services/http/template.http.service";
-import { TemplateMetaDataEdit } from "./app/template/metadata.edit.comp";
-import { TemplatePackageDetail } from "./app/template/template.package.detail.comp";
-import { AgentOptionDetail } from "./app/template/agentoption.detail.comp";
+import { HostHttpService } from "./app/services/http/host.http.service";
+import { HostPackages } from "./app/host/host.package.comp";
+import { TemplateMetaData } from "./app/template/template.metadata.comp";
+import { TemplateAgentOptions } from "./app/template/template.agentoption.comp";
+import { TemplatePackages } from "./app/template/template.package.comp";
+import { HostServices } from "./app/host/host.service.comp";
 
 @NgModule({
   imports: [
@@ -49,9 +52,11 @@ import { AgentOptionDetail } from "./app/template/agentoption.detail.comp";
     CCPanelComponent,
     ROUTED_COMPONENTS(),
     LinksEdit,
-    TemplateMetaDataEdit,
-    TemplatePackageDetail,
-    AgentOptionDetail,
+    TemplateMetaData,
+    TemplatePackages,
+    TemplateAgentOptions,
+    HostServices,
+    HostPackages,
     NavComponent,
     TopNavComponent
   ],
@@ -65,6 +70,7 @@ import { AgentOptionDetail } from "./app/template/agentoption.detail.comp";
     PackageHttpService,
     SettingHttpService,
     TemplateHttpService,
+    HostHttpService,
     ConfirmOptions,
     {provide: Position, useClass: Positioning}
   ],

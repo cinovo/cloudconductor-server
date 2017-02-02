@@ -33,24 +33,20 @@ import javax.ws.rs.*;
  *
  */
 @Path("/directory")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface IDirectory  {
 
 	/**
 	 * @return set of api objects
 	 */
 	@GET
-	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Directory[] get();
 
 	/**
-	 * @param name the name of the object to save
 	 * @param apiObject the api object
 	 */
 	@PUT
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	public void save(Directory apiObject);
 
 	/**
@@ -59,7 +55,6 @@ public interface IDirectory  {
 	 */
 	@GET
 	@Path("/{directory}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Directory get(@PathParam("directory") String name);
 
 	/**
@@ -75,6 +70,5 @@ public interface IDirectory  {
 	 */
 	@GET
 	@Path("/template/{template}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Directory[] getDirectories(@PathParam("template") String template);
 }

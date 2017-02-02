@@ -1,13 +1,10 @@
 package de.cinovo.cloudconductor.server.util;
 
-import de.cinovo.cloudconductor.api.ICCReservedConfigNames;
 import de.cinovo.cloudconductor.api.model.ConfigValue;
 import de.cinovo.cloudconductor.server.dao.hibernate.ConfigValueDAOHib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -32,22 +29,9 @@ public class ReservedConfigKeyStore {
 
 
 	private ReservedConfigKeyStore() {
-		this.initReserverdKeys();
 		this.initPropertyValues();
 	}
 
-	private void initReserverdKeys() {
-		Field[] declaredFields = ICCReservedConfigNames.class.getDeclaredFields();
-		for(Field field : declaredFields) {
-			if(Modifier.isStatic(field.getModifiers()) && field.getType().isAssignableFrom(String.class)) {
-				try {
-					this.reserved.put((String) field.get(null), null);
-				} catch(IllegalArgumentException | IllegalAccessException e) {
-					ReservedConfigKeyStore.LOGGER.warn("Failed to reserve key for " + field.getName());
-				}
-			}
-		}
-	}
 
 	private void initPropertyValues() {
 		this.registerReserverdKey(ICCProperties.CC_NAME, (String) System.getProperties().get(ICCProperties.CC_NAME));

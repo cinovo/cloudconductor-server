@@ -11,7 +11,6 @@ package de.cinovo.cloudconductor.server.tasks;
  * and limitations under the License. #L%
  */
 
-import de.cinovo.cloudconductor.api.lib.helper.SchedulerService;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
@@ -21,6 +20,7 @@ import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.repo.importer.IPackageImport;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import de.cinovo.cloudconductor.server.util.SchedulerService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

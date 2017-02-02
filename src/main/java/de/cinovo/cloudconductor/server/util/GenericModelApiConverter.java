@@ -1,11 +1,14 @@
 package de.cinovo.cloudconductor.server.util;
 
-import de.cinovo.cloudconductor.api.model.INamed;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
@@ -65,7 +68,7 @@ public class GenericModelApiConverter {
 
 			Class<?> destinationFieldClass = destinationField.getType();
 
-			if(originalValue instanceof Collection) {
+			if(originalValue instanceof Collection && Collection.class.isAssignableFrom(destinationFieldClass)) {
 				Collection<Object> newValue;
 				if(List.class.isAssignableFrom(destinationFieldClass)) {
 					newValue = new ArrayList<>();
@@ -78,7 +81,7 @@ public class GenericModelApiConverter {
 				return newValue;
 			}
 
-			if(originalValue instanceof Map) {
+			if(originalValue instanceof Map && Map.class.isAssignableFrom(destinationFieldClass)) {
 				HashMap<Object, Object> newValue = new HashMap<>();
 				for(Map.Entry<Object, Object> entry : ((Map<Object, Object>) originalValue).entrySet()) {
 					newValue.put(entry.getKey(), getCorrectValue(entry.getValue(), originField, destinationField));

@@ -23,7 +23,7 @@ export abstract class HTTPService {
   protected _get(pathUrl: string): Observable<any> {
     return this.http
       .get(this.target(pathUrl))
-      .map(HTTPService.extractData)
+      .map(this.extractData)
       .catch(HTTPService.handleError)
       .share();
   }
@@ -31,7 +31,7 @@ export abstract class HTTPService {
   protected _post(pathUrl: string, data: any): Observable<any> {
     return this.http
       .post(this.target(pathUrl), JSON.stringify(data), {headers: this.headers})
-      .map(HTTPService.extractData)
+      .map(this.extractData)
       .catch(HTTPService.handleError)
       .share();
   }
@@ -40,7 +40,7 @@ export abstract class HTTPService {
     return this.http
       .put(this.target(pathUrl), JSON.stringify(data), {headers: this.headers})
       .map((response) => {
-        let result = HTTPService.extractData(response);
+        let result = this.extractData(response);
         if (Object.keys(result).length === 0) {
           return data;
         }
@@ -52,12 +52,12 @@ export abstract class HTTPService {
 
   protected _delete(pathUrl: string): Observable<any> {
     return this.http.delete(this.target(pathUrl), {headers: this.headers})
-      .map(HTTPService.extractData)
+      .map(this.extractData)
       .catch(HTTPService.handleError)
       .share();
   }
 
-  protected static extractData(res: Response): any {
+  protected extractData(res: Response): any {
     try {
       return res.json();
     } catch (error) {
