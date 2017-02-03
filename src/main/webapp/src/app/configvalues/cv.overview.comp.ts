@@ -1,9 +1,9 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { ConfigValueHttpService, ConfigValue } from "../services/http/configValue.http.service";
+import { ConfigValueHttpService, ConfigValue } from "../util/http/configValue.http.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 
 /**
   * Copyright 2017 Cinovo AG<br>

@@ -1,10 +1,10 @@
 import { Component, Input, AfterViewInit, Output, EventEmitter } from "@angular/core";
-import { Template, TemplateHttpService } from "../services/http/template.http.service";
-import { PackageHttpService, PackageVersion } from "../services/http/package.http.service";
+import { Template, TemplateHttpService } from "../util/http/template.http.service";
+import { PackageHttpService, PackageVersion } from "../util/http/package.http.service";
 import { Sorter } from "../util/sorters.util";
 import { Observable } from "rxjs";
 import { Validator } from "../util/validator.util";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>

@@ -1,14 +1,15 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { ConfigValueHttpService, ConfigValue } from "../services/http/configValue.http.service";
+import { ConfigValueHttpService, ConfigValue } from "../util/http/configValue.http.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 import { Validator } from "../util/validator.util";
+import { ServiceHttpService } from "../util/http/service.http.service";
 /**
-  * Copyright 2017 Cinovo AG<br>
-  * <br>
-  *
-  * @author psigloch
-  */
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   moduleId: module.id,
   selector: 'cs-edit',
@@ -19,9 +20,11 @@ export class ConfigValueEdit implements AfterViewInit {
   private cv: ConfigValue = {template: "", service: "", key: "", value: ""};
   private mode: string = 'new';
   protected templates: Array<String> = [];
+  protected services: Array<String> = [];
 
   constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
-              private alerts: AlertService, private router: Router) {
+              private alerts: AlertService, private router: Router,
+              private serviceHttp: ServiceHttpService) {
   };
 
   ngAfterViewInit(): void {
@@ -36,11 +39,16 @@ export class ConfigValueEdit implements AfterViewInit {
           .subscribe(
             (result) =>
               this.cv.value = result,
-            () => {}
+            () => {
+            }
           );
       }
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
+    this.serviceHttp.getServices().subscribe(
+      (result) => {
+        this.services = result.map((val) => {return val.name});
+      });
   }
 
   protected save(): void {

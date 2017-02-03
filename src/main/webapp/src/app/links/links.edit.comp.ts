@@ -1,9 +1,9 @@
 import { Component, AfterViewInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AdditionalLinkHttpService, AdditionalLink } from "../services/http/additionalLinks.http.service";
-import { SettingHttpService, Settings } from "../services/http/setting.http.service";
+import { AdditionalLinkHttpService, AdditionalLink } from "../util/http/additionalLinks.http.service";
+import { SettingHttpService, Settings } from "../util/http/setting.http.service";
 import { Validator } from "../util/validator.util";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 
 /**
  * Copyright 2017 Cinovo AG<br>

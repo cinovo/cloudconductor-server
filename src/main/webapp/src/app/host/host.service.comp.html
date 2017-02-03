@@ -1,13 +1,8 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-flask fa-fw"></i> Services
-        <small class="pull-right" *ngIf="host.lastSeen">last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
-          Uhr
-        </small>
-      </div>
-      <div class="panel-body">
+    <cc-panel title="Services" icon="fa-flask" subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}} Uhr">
+
+      <div cc-panel-body>
         <div class="alert alert-warning" *ngIf="!services || services.length <= 0">
           There are currently no services available on this host.
         </div>
@@ -75,6 +70,6 @@
           </button>
         </div>
       </div>
-    </div>
+    </cc-panel>
   </div>
 </div>

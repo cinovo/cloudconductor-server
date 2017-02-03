@@ -1,16 +1,5 @@
-<div class="row">
-  <div class="col-lg-12">
-
-    <h1 class="page-header">
-      <a (click)="reloadTemplate()" class="pull-right" role="button" title="Reload template">
-        <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
-      </a>
-      <i class="fa fa-institution fa-fw"></i> Template Details
-      <h4 *ngIf="currentTemplate">{{currentTemplate.name}}</h4>
-
-    </h1>
-  </div>
-</div>
+<cc-title title="Template Details" titleIcon="fa-institution" [subtitle]="currentTemplate.name" [reloadable]="true"
+          (onreload)="reloadTemplate()"></cc-title>
 
 <div class="row">
   <div class="col-md-8">
@@ -21,19 +10,18 @@
 
   <div class="col-md-4">
 
-    <template-metadata [obsTemplate]="template" (reloadTrigger)="reloadTemplate()" [mode]="modes.EDIT"></template-metadata>
+    <template-metadata [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"
+                       [mode]="modes.EDIT"></template-metadata>
 
     <div class="row">
       <div class="col-md-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <i class="fa fa-laptop fa-fw"></i> Hosts
-          </div>
-          <div class="panel-body">
+        <cc-panel title="Hosts" icon="fa-laptop" [collapsable]="true">
+          <div cc-panel-body>
             <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
               There are currently no host using this template.
             </div>
-            <table class=" table-condensed table-responsive table table-striped table-hover" *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
+            <table class=" table-condensed table-responsive table table-striped table-hover"
+                   *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
               <thead>
               <tr>
                 <th>Agent-Name</th>
@@ -50,7 +38,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </cc-panel>
       </div>
     </div>
   </div>

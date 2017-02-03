@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Input, Output, EventEmitter } from "@angular/core";
-import { Template, TemplateHttpService, AgentOption } from "../services/http/template.http.service";
+import { Template, TemplateHttpService, AgentOption } from "../util/http/template.http.service";
 import { Observable } from "rxjs";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 import { Validator } from "../util/validator.util";
 
 /**

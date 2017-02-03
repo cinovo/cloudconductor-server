@@ -6,8 +6,8 @@
  */
 import { Component, Input, EventEmitter, Output } from "@angular/core";
 import { Observable } from "rxjs";
-import { TemplateHttpService } from "../services/http/template.http.service";
-import { Host } from "../services/http/host.http.service";
+import { TemplateHttpService } from "../util/http/template.http.service";
+import { Host } from "../util/http/host.http.service";
 import { Sorter } from "../util/sorters.util";
 
 @Component({

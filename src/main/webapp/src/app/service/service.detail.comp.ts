@@ -1,8 +1,8 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { Service, ServiceHttpService } from "../services/http/service.http.service";
+import { Service, ServiceHttpService } from "../util/http/service.http.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../services/alert/alert.service";
-import { PackageHttpService, Package } from "../services/http/package.http.service";
+import { AlertService } from "../util/alert/alert.service";
+import { PackageHttpService, Package } from "../util/http/package.http.service";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
 

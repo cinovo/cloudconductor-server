@@ -1,0 +1,27 @@
+<div class="form-group input-group">
+  <label class="input-group-addon" for="labelquery">{{label}} </label>
+
+  <template [ngIf]="mode == 'text'">
+    <input type="text" class="form-control" [(ngModel)]="query" id="labelquery" list="queryList">
+    <datalist id="queryList" *ngIf="data && data.length > 0">
+      <template [ngIf]="dataField">
+        <option *ngFor="let elem of data" value="{{elem[dataField]}}"></option>
+      </template>
+      <template [ngIf]="!dataField">
+        <option *ngFor="let elem of data" value="{{elem}}"></option>
+      </template>
+    </datalist>
+  </template>
+
+  <template [ngIf]="mode == 'select'">
+    <select class="form-control" [(ngModel)]="query" id="labelquery">
+      <template [ngIf]="dataField">
+        <option *ngFor="let elem of data" value="{{elem[dataField]}}">{{elem[dataField]}}</option>
+      </template>
+      <template [ngIf]="!dataField">
+        <option *ngFor="let elem of data" value="{{elem}}">{{elem}}</option>
+      </template>
+    </select>
+  </template>
+
+</div>

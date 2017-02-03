@@ -16,6 +16,7 @@ import { TemplateDetail } from "./template/template.detail.comp";
 import { TemplateNew } from "./template/template.new.comp";
 import { HostOverview } from "./host/host.overview.comp";
 import { HostDetail } from "./host/host.detail.comp";
+import { ConfigValuePreview } from "./configvalues/cv.preview.comp";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -34,6 +35,7 @@ export const APP_ROUTES: Routes = [
   {path: 'template/new', component: TemplateNew},
   {path: 'template/:templateName', component: TemplateDetail},
 
+  {path: 'config/preview', component: ConfigValuePreview},
   {path: 'config/:template', component: ConfigValueOverview},
   {path: 'config/:template/:service/new', component: ConfigValueEdit},
   {path: 'config/:template/:service/:key', component: ConfigValueEdit},

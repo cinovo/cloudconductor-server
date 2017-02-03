@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
-import { SettingHttpService, Settings } from "../services/http/setting.http.service";
+import { SettingHttpService, Settings } from "../util/http/setting.http.service";
 
 /**
  * Copyright 2017 Cinovo AG<br>

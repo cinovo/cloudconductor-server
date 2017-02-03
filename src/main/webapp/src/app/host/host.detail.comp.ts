@@ -6,8 +6,8 @@
  */
 import { Component, AfterViewInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Host, HostHttpService } from "../services/http/host.http.service";
-import { AlertService } from "../services/alert/alert.service";
+import { Host, HostHttpService } from "../util/http/host.http.service";
+import { AlertService } from "../util/alert/alert.service";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Validator } from "../util/validator.util";
 

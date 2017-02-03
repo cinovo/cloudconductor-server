@@ -41,16 +41,18 @@ gulp.task('prep:libs', function () {
 });
 
 gulp.task('compile:ts', function () {
-  return typescript.createProject(conf.tsconfig).src()
+  var tsProject = typescript.createProject(conf.tsconfig);
+  var tsResult = tsProject.src()
+    .pipe(sourcemaps.init())
+    .pipe(tsProject(typescript.reporter.defaultReporter()));
+  return tsResult.js
     .pipe(plumber({
       errorHandler: function (err) {
         console.error('>>> [tsc] Typescript compilation failed'.bold.green);
         this.emit('end');
       }}))
-    .pipe(sourcemaps.init())
-    .pipe(typescript(tsConfig.compilerOptions))
     .pipe(sourcemaps.write('.'))
-    .pipe(flatten({subPath: [1]}))
+    //.pipe(flatten({subPath: [1]}))
     .pipe(gulp.dest(conf.target));
 });
 
@@ -92,14 +94,14 @@ gulp.task('compile:sass', function () {
   var styles = [];
   conf.styles.forEach(function(style){
     var g = gulp.src(style.src)
-      .pipe(sourcemaps.init())
+      .pipe(sourcemaps.init({largeFile: true}))
       .pipe(plumber({
         errorHandler: function (err) {
           console.error('>>> [sass] Sass style compilation failed'.bold.green);
           console.error(err.message);
           this.emit('end');
         }}))
-      .pipe(sass({ errLogToConsole: true }));
+      .pipe(sass().on('error', sass.logError));
     if(style.file) {
       g.pipe(concat(style.file));
     }else {

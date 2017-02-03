@@ -1,10 +1,10 @@
 import { Component, AfterViewInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 import { Observable } from "rxjs";
 import { Validator } from "../util/validator.util";
-import { RepoMirror, RepoMirrorHttpService } from "../services/http/repomirror.http.service";
-import { Repo, RepoHttpService } from "../services/http/repo.http.service";
+import { RepoMirror, RepoMirrorHttpService } from "../util/http/repomirror.http.service";
+import { Repo, RepoHttpService } from "../util/http/repo.http.service";
 
 /**
   * Copyright 2017 Cinovo AG<br>
@@ -78,7 +78,6 @@ export class MirrorEdit implements AfterViewInit {
       },
       (error) => {
         this.alerts.danger("Failed to save the mirror");
-        console.log(error);
       }
     );
   }

@@ -1,0 +1,29 @@
+<cc-title title="Preview Configuration Key-Value-Pairs" titleIcon="fa-code-fork"></cc-title>
+
+<div class="row">
+  <div class="col-md-4">
+    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="templateQuery = $event" ></cc-filter>
+  </div>
+
+  <div class="col-md-4">
+    <cc-filter mode="select" label="Service" [data]="services" (onQueryChange)="serviceQuery = $event" ></cc-filter>
+  </div>
+  <div class="col-md-4">
+    <cc-filter mode="select" label="Mode" [data]="modes" (onQueryChange)="modeQuery = $event" [selected]="modes[0]"></cc-filter>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <cc-panel title="Preview" icon="fa-list-alt">
+    <div cc-panel-body>
+        <pre *ngIf="preview && preview != null && modeQuery == modes[0]"><span *ngFor="let obj of preview">{{obj | json}}<br/></span>
+        </pre>
+      <pre *ngIf="preview && modeQuery != modes[0]">{{preview}}</pre>
+      <div class="alert alert-warning" *ngIf="!preview">
+        Nothing found
+      </div>
+    </div>
+    </cc-panel>
+  </div>
+</div>

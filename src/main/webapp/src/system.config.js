@@ -32,7 +32,7 @@
     'app': {main: 'main.js', defaultExtension: 'js'},
     'rxjs': {main: 'bundles/RX.min.js', defaultExtension: 'js'},
     'angular2-in-memory-web-api': {main: 'index.js', defaultExtension: 'js'},
-    'ng2-webstorage': {main: 'index.js', defaultExtension: 'js'},
+    'ng2-webstorage': {main: 'bundles/core.umd.js', defaultExtension: 'js'},
     'angular2-uuid': {main: 'index.js', defaultExtension: 'js'}
   };
 

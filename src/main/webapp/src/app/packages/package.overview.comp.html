@@ -1,15 +1,9 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header"><i class="fa fa-book fa-fw"></i> Packages</h1>
-  </div>
-</div>
+<cc-title title="Packages" titleIcon="fa-book"></cc-title>
+
 
 <div class="row">
   <div class="col-md-4">
-    <div class="form-group input-group">
-      <label class="input-group-addon" for="search">Search </label>
-      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
-    </div>
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
 </div>
 
@@ -23,38 +17,33 @@
 
 <div class="row" *ngIf="packages && packages.length > 0">
   <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-book fa-fw"></i> All available packages
-      </div>
-      <div class="panel-body">
-        <table class="table-responsive table table-striped table-hover">
-          <thead>
-          <tr>
-            <th width="30%">Package-Name</th>
-            <th># Versions</th>
-            <th>Latest version</th>
-            <th width="15px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let pkg of packages" (dblclick)="gotoDetails(pkg)">
-            <td>
-              {{pkg.name}}
-            </td>
-            <td>
-              {{pkg.versions.length}}
-            </td>
-            <td>
-              {{pkg.versions[0]}}
-            </td>
-            <td>
-              <a [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <cc-panel title="All available packages" icon="fa-book">
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <thead>
+        <tr>
+          <th width="30%">Package-Name</th>
+          <th># Versions</th>
+          <th>Latest version</th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let pkg of packages" (dblclick)="gotoDetails(pkg)">
+          <td>
+            {{pkg.name}}
+          </td>
+          <td>
+            {{pkg.versions.length}}
+          </td>
+          <td>
+            {{pkg.versions[0]}}
+          </td>
+          <td>
+            <a [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
   </div>
 </div>

@@ -9,32 +9,34 @@ import { BrowserModule } from "@angular/platform-browser";
 import { Ng2Webstorage } from "ng2-webstorage";
 import { NavComponent } from "./app/nav/nav.comp";
 import { AppComponent } from "./app/app.comp";
-import { AlertService } from "./app/services/alert/alert.service";
+import { AlertService } from "./app/util/alert/alert.service";
 import { ROUTED_COMPONENTS, APP_ROUTES } from "./app/app.routing";
 import { TopNavComponent } from "./app/nav/topNav.comp";
-import { AlertComponent } from "./app/services/alert/alert.comp";
+import { AlertComponent } from "./app/util/alert/alert.comp";
 import { RouterModule } from "@angular/router";
 import { HttpModule } from "@angular/http";
 import "./rxjs-extensions";
-import { CCPanelComponent } from "./app/services/panelhead/panelhead.comp";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { ConfirmOptions, Position, ConfirmModule } from "angular2-bootstrap-confirm";
 import { Positioning } from "angular2-bootstrap-confirm/position";
-import { AdditionalLinkHttpService } from "./app/services/http/additionalLinks.http.service";
-import { ConfigValueHttpService } from "./app/services/http/configValue.http.service";
-import { ServiceHttpService } from "./app/services/http/service.http.service";
-import { PackageHttpService } from "./app/services/http/package.http.service";
-import { SettingHttpService } from "./app/services/http/setting.http.service";
+import { AdditionalLinkHttpService } from "./app/util/http/additionalLinks.http.service";
+import { ConfigValueHttpService } from "./app/util/http/configValue.http.service";
+import { ServiceHttpService } from "./app/util/http/service.http.service";
+import { PackageHttpService } from "./app/util/http/package.http.service";
+import { SettingHttpService } from "./app/util/http/setting.http.service";
 import { LinksEdit } from "./app/links/links.edit.comp";
-import { RepoMirrorHttpService } from "./app/services/http/repomirror.http.service";
-import { RepoHttpService } from "./app/services/http/repo.http.service";
-import { TemplateHttpService } from "./app/services/http/template.http.service";
-import { HostHttpService } from "./app/services/http/host.http.service";
+import { RepoMirrorHttpService } from "./app/util/http/repomirror.http.service";
+import { RepoHttpService } from "./app/util/http/repo.http.service";
+import { TemplateHttpService } from "./app/util/http/template.http.service";
+import { HostHttpService } from "./app/util/http/host.http.service";
 import { HostPackages } from "./app/host/host.package.comp";
 import { TemplateMetaData } from "./app/template/template.metadata.comp";
 import { TemplateAgentOptions } from "./app/template/template.agentoption.comp";
 import { TemplatePackages } from "./app/template/template.package.comp";
 import { HostServices } from "./app/host/host.service.comp";
+import { CCTitle } from "./app/util/cctitle/cctitle.comp";
+import { CCPanel } from "./app/util/ccpanel/ccpanel.comp";
+import { CCFilter } from "./app/util/ccfilter/ccfilter.comp";
 
 @NgModule({
   imports: [
@@ -49,7 +51,9 @@ import { HostServices } from "./app/host/host.service.comp";
   declarations: [
     AppComponent,
     AlertComponent,
-    CCPanelComponent,
+    CCPanel,
+    CCTitle,
+    CCFilter,
     ROUTED_COMPONENTS(),
     LinksEdit,
     TemplateMetaData,

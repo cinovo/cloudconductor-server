@@ -19,7 +19,7 @@ public class ConfigValue implements Comparable<ConfigValue> {
     private Object value;
 
     private String template;
-    private String service;
+    private String service = null;
 
     /**
      * @return the key
@@ -74,7 +74,7 @@ public class ConfigValue implements Comparable<ConfigValue> {
      * @param service the service to set
      */
     public void setService(String service) {
-        if(service == null || service.isEmpty()) {
+        if(service == null || service.trim().isEmpty()) {
             this.service = null;
         }else {
             this.service = service;

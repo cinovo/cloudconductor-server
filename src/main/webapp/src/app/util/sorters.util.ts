@@ -1,11 +1,11 @@
-import { ConfigValue } from "../services/http/configValue.http.service";
-import { Package, PackageVersion } from "../services/http/package.http.service";
-import { Service } from "../services/http/service.http.service";
-import { AdditionalLink } from "../services/http/additionalLinks.http.service";
-import { Repo } from "../services/http/repo.http.service";
-import { RepoMirror } from "../services/http/repomirror.http.service";
-import { Template } from "../services/http/template.http.service";
-import { Host } from "../services/http/host.http.service";
+import { ConfigValue } from "./http/configValue.http.service";
+import { Package, PackageVersion } from "./http/package.http.service";
+import { Service } from "./http/service.http.service";
+import { AdditionalLink } from "./http/additionalLinks.http.service";
+import { Repo } from "./http/repo.http.service";
+import { RepoMirror } from "./http/repomirror.http.service";
+import { Template } from "./http/template.http.service";
+import { Host } from "./http/host.http.service";
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>

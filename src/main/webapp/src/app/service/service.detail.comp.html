@@ -1,19 +1,10 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header"><i class="fa fa-flask fa-fw"></i> Service Details
-      <h4 *ngIf="service">{{service.name}}</h4>
-    </h1>
-  </div>
-</div>
+<cc-title title="Service Details" titleIcon="fa-flask" [subtitle]="service.name"></cc-title>
 
 <div class="row">
 
   <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-flask fa-fw"></i> Service-Details
-      </div>
-      <div class="panel-body">
+    <cc-panel title="Service-Details" icon="fa-flask">
+      <div cc-panel-body>
         <div class="form-group" [class.has-error]="!isNameValid()">
           <label class="control-label" for="name">Name</label>
           <input type="text" class="form-control" [(ngModel)]="service.name" id="name">
@@ -34,115 +25,106 @@
           </button>
         </div>
       </div>
-    </div>
+    </cc-panel>
   </div>
 
   <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-book fa-fw"></i> Provided by
-      </div>
-      <div class="panel-body">
-        <table class="table-responsive table table-striped table-hover">
-          <thead>
-          <tr>
-            <th>Package-Name</th>
-            <th width="15px"></th>
-            <th width="15px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngIf="!service.packages || service.packages.length <= 0" class="warning">
-            <td colspan="3" class="text-center">
-              This service is currently not provided by a package.
-            </td>
-          </tr>
-          <tr *ngFor="let package of service.packages" (dblclick)="gotoPackage(package)">
-            <td>
-              {{package}}
-            </td>
-            <td>
-              <a [routerLink]="['/package', package]" [queryParams]="{'ret':'serviceDetail', 'id':service.name}"><i
-                class="fa fa-external-link fa-fw"></i></a>
-            </td>
-            <td>
-              <a href="javascript:void(0)" mwlConfirm
-                 [title]="'Please verify!'"
-                 [message]="'Are you sure you want to remove the following package link from the serive: '+ package.name+'?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deletePackage(package)">
-                <i class="fa fa-bitbucket fa-fw"></i>
-              </a>
-            </td>
-          </tr>
+    <cc-panel title="Provided by" icon="fa-book" [collapsable]="true">
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <thead>
+        <tr>
+          <th>Package-Name</th>
+          <th width="15px"></th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngIf="!service.packages || service.packages.length <= 0" class="warning">
+          <td colspan="3" class="text-center">
+            This service is currently not provided by a package.
+          </td>
+        </tr>
+        <tr *ngFor="let package of service.packages" (dblclick)="gotoPackage(package)">
+          <td>
+            {{package}}
+          </td>
+          <td>
+            <a [routerLink]="['/package', package]" [queryParams]="{'ret':'serviceDetail', 'id':service.name}"><i
+              class="fa fa-external-link fa-fw"></i></a>
+          </td>
+          <td>
+            <a href="javascript:void(0)" mwlConfirm
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to remove the following package link from the serive: '+ package.name+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deletePackage(package)">
+              <i class="fa fa-bitbucket fa-fw"></i>
+            </a>
+          </td>
+        </tr>
 
-          <tr *ngIf="showAddPackage">
-            <td colspan="3">
-              <div class="form-group">
-                <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a package providing this service</label>
-                <select class="form-control" [(ngModel)]="newPackage" id="addpackage">
-                  <option *ngFor="let pkg of allPackages" value="{{pkg.name}}">{{pkg.name}}</option>
-                </select>
-              </div>
+        <tr *ngIf="showAddPackage">
+          <td colspan="3">
+            <div class="form-group">
+              <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a package providing
+                this service</label>
+              <select class="form-control" [(ngModel)]="newPackage" id="addpackage">
+                <option *ngFor="let pkg of allPackages" value="{{pkg.name}}">{{pkg.name}}</option>
+              </select>
+            </div>
 
-              <div class="pull-right">
-                <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
-                <button (click)="saveNewPackage()" class="btn btn-success"
-                        [disabled]="!newPackage">Add
-                </button>
-              </div>
-            </td>
-          </tr>
+            <div class="pull-right">
+              <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
+              <button (click)="saveNewPackage()" class="btn btn-success"
+                      [disabled]="!newPackage">Add
+              </button>
+            </div>
+          </td>
+        </tr>
 
-          <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
-            <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
-              Add a package providing this service
-            </td>
-          </tr>
+        <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
+          <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
+            Add a package providing this service
+          </td>
+        </tr>
 
-          </tbody>
-        </table>
-      </div>
-    </div>
+        </tbody>
+      </table>
+    </cc-panel>
   </div>
 
   <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-institution fa-fw"></i> Template references
-      </div>
-      <div class="panel-body">
-        <table class="table-responsive table table-striped table-hover">
-          <thead>
-          <tr>
-            <th width="30%">Template</th>
-            <th>Package</th>
-            <th width="15px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngIf="!templateRefs || templateRefs.length <= 0" class="warning">
-            <td colspan="3" class="text-center">
-              This service is currently not used by any template.
-            </td>
-          </tr>
-          <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
-            <td>
-              {{ref.template}}
-            </td>
-            <td class="word-break">
-              {{ref.pkg}}
-            </td>
-            <td>
-              <a [routerLink]="['/template', template]"><i
-                class="fa fa-external-link fa-fw"></i></a>
-            </td>
-          </tr>
+    <cc-panel title="Template references" icon="fa-institution" [collapsable]="true">
+      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <thead>
+        <tr>
+          <th width="30%">Template</th>
+          <th>Package</th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngIf="!templateRefs || templateRefs.length <= 0" class="warning">
+          <td colspan="3" class="text-center">
+            This service is currently not used by any template.
+          </td>
+        </tr>
+        <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
+          <td>
+            {{ref.template}}
+          </td>
+          <td class="word-break">
+            {{ref.pkg}}
+          </td>
+          <td>
+            <a [routerLink]="['/template', ref.template]"><i
+              class="fa fa-external-link fa-fw"></i></a>
+          </td>
+        </tr>
 
-          </tbody>
-        </table>
-      </div>
-    </div>
+        </tbody>
+      </table>
+    </cc-panel>
   </div>
 </div>

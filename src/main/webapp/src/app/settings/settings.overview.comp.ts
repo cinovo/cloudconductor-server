@@ -1,7 +1,7 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { SettingHttpService, Settings } from "../services/http/setting.http.service";
-import { AlertService } from "../services/alert/alert.service";
-import { Package, PackageHttpService } from "../services/http/package.http.service";
+import { SettingHttpService, Settings } from "../util/http/setting.http.service";
+import { AlertService } from "../util/alert/alert.service";
+import { Package, PackageHttpService } from "../util/http/package.http.service";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
 

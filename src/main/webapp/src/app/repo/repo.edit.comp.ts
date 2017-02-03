@@ -1,11 +1,11 @@
 import { Component, AfterViewInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Observable } from "rxjs";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 import { Validator } from "../util/validator.util";
-import { Repo, RepoHttpService } from "../services/http/repo.http.service";
-import { RepoMirrorHttpService } from "../services/http/repomirror.http.service";
-import { PackageHttpService, PackageVersion } from "../services/http/package.http.service";
+import { Repo, RepoHttpService } from "../util/http/repo.http.service";
+import { RepoMirrorHttpService } from "../util/http/repomirror.http.service";
+import { PackageHttpService, PackageVersion } from "../util/http/package.http.service";
 import { Sorter } from "../util/sorters.util";
 
 /**

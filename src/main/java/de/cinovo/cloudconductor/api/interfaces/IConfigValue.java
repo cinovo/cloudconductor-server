@@ -31,6 +31,7 @@ public interface IConfigValue {
      */
     @GET
     @Path("/{template}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_JAVAARGS, MediaType.APPLICATION_JAVAPROPS})
     Collection<ConfigValue> get(@PathParam("template") String template);
 
     /**

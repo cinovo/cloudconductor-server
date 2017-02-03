@@ -1,12 +1,12 @@
 import { Component, AfterViewInit, Input, Output, EventEmitter } from "@angular/core";
-import { Template, TemplateHttpService } from "../services/http/template.http.service";
-import { Settings, SettingHttpService } from "../services/http/setting.http.service";
-import { Repo, RepoHttpService } from "../services/http/repo.http.service";
+import { Template, TemplateHttpService } from "../util/http/template.http.service";
+import { Settings, SettingHttpService } from "../util/http/setting.http.service";
+import { Repo, RepoHttpService } from "../util/http/repo.http.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Validator } from "../util/validator.util";
 import { Sorter } from "../util/sorters.util";
 import { Observable } from "rxjs";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 import { Mode } from "../util/enums.util";
 
 /**

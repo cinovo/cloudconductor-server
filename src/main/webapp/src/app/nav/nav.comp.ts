@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
-import { AdditionalLinkHttpService, AdditionalLink } from "../services/http/additionalLinks.http.service";
-import { ConfigValueHttpService } from "../services/http/configValue.http.service";
+import { AdditionalLinkHttpService, AdditionalLink } from "../util/http/additionalLinks.http.service";
+import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 
 /// <reference path="../../../typings/globals/jquery/index.d.ts" />;
 

@@ -6,10 +6,10 @@
  */
 import { Component, Input, EventEmitter, Output, AfterViewInit } from "@angular/core";
 import { Observable } from "rxjs";
-import { Host, HostHttpService } from "../services/http/host.http.service";
+import { Host, HostHttpService } from "../util/http/host.http.service";
 import { ServiceState } from "../util/enums.util";
 import { Sorter } from "../util/sorters.util";
-import { AlertService } from "../services/alert/alert.service";
+import { AlertService } from "../util/alert/alert.service";
 
 interface ServiceStateElement {
   name: string;

@@ -1,4 +1,4 @@
-import { Http, Response, Headers } from "@angular/http";
+import { Http, Response, Headers, RequestOptionsArgs } from "@angular/http";
 import { Observable } from "rxjs";
 
 /**
@@ -20,9 +20,16 @@ export abstract class HTTPService {
   constructor(protected http: Http) {
   }
 
-  protected _get(pathUrl: string): Observable<any> {
+  protected _get(pathUrl: string, additionalHeaders?: Headers): Observable<any> {
+    let options: RequestOptionsArgs = {headers: this.headers};
+    if (additionalHeaders) {
+      for (let index of additionalHeaders.keys()) {
+        options.headers.set(index, additionalHeaders.get(index));
+      }
+    }
+
     return this.http
-      .get(this.target(pathUrl))
+      .get(this.target(pathUrl), options)
       .map(this.extractData)
       .catch(HTTPService.handleError)
       .share();
@@ -61,7 +68,7 @@ export abstract class HTTPService {
     try {
       return res.json();
     } catch (error) {
-      return {};
+      return res;
     }
   }
 

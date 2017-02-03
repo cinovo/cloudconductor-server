@@ -1,14 +1,5 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header">
-      <a (click)="reloadHost()" class="pull-right" role="button" title="Reload template">
-        <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
-      </a>
-      <i class="fa fa-laptop fa-fw"></i> Host-Details
-      <h4 *ngIf="host">{{host.name}}</h4>
-    </h1>
-  </div>
-</div>
+<cc-title title="Host-Details" titleIcon="fa-laptop" [subtitle]="host.name" [reloadable]="true"
+          (onReload)="reloadHost()"></cc-title>
 
 <div class="row">
   <div class="col-md-6">
@@ -18,11 +9,8 @@
   <div class="col-md-6">
     <div class="row">
       <div class="col-md-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <i class="fa fa-laptop fa-fw"></i> Host-Details
-          </div>
-          <div class="panel-body">
+        <cc-panel title="Host-Details" icon="fa-laptop" [collapsable]="true">
+          <div cc-panel-body>
             <div class="form-group">
               <label class="control-label" for="name">Name</label>
               <input type="text" class="form-control" [(ngModel)]="host.name" id="name" disabled>
@@ -44,13 +32,14 @@
               <input type="text" class="form-control" [(ngModel)]="host.template" id="template" disabled/>
             </div>
           </div>
-        </div>
-      </div>
+        </cc-panel>
     </div>
-
-
-    <host-packages [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-packages>
   </div>
+
+
+  <host-packages [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-packages>
+
+</div>
 
 </div>
 

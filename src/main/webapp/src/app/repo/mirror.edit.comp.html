@@ -1,17 +1,10 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header" *ngIf="mode == 'edit'"><i class="fa fa-server fa-fw"></i> Edit Repo-Mirror</h1>
-    <h1 class="page-header" *ngIf="mode == 'new'"><i class="fa fa-server fa-fw"></i> New Repo-Mirror</h1>
-  </div>
-</div>
+<cc-title title="Edit Repo-Mirror" titleIcon="fa-server" *ngIf="mode == 'edit'"></cc-title>
+<cc-title title="New Repo-Mirror" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
 
 <div class="row">
   <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-desktop fa-fw"></i> Mirror
-      </div>
-      <div class="panel-body">
+    <cc-panel title="Mirror" icon="fa-desktop">
+      <div cc-panel-body>
         <div class="form-group" [class.has-error]="!isDescriptionValid()">
           <label class="control-label" for="description">Description</label>
           <input type="text" class="form-control" [(ngModel)]="mirror.description" id="description">
@@ -73,10 +66,11 @@
           <button *ngIf="returnToOverview" [routerLink]="['/repo']" class="btn btn-default">Back</button>
           <button *ngIf="!returnToOverview" [routerLink]="['/repo',repo.name]" class="btn btn-default">Back
           </button>
-          <button (click)="save()" class="btn btn-info" [disabled]="!isDescriptionValid() || !isPathValid()">Save</button>
+          <button (click)="save()" class="btn btn-info" [disabled]="!isDescriptionValid() || !isPathValid()">Save
+          </button>
         </div>
       </div>
-    </div>
+    </cc-panel>
   </div>
 </div>
 

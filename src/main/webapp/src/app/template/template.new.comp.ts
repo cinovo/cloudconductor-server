@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { Template } from "../services/http/template.http.service";
+import { Template } from "../util/http/template.http.service";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Mode } from "../util/enums.util";
 /**

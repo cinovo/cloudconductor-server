@@ -1,9 +1,9 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { Host, HostHttpService } from "../services/http/host.http.service";
+import { Host, HostHttpService } from "../util/http/host.http.service";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
 import { Router } from "@angular/router";
-import { Template, TemplateHttpService } from "../services/http/template.http.service";
+import { Template, TemplateHttpService } from "../util/http/template.http.service";
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -61,7 +61,6 @@ export class HostOverview implements AfterViewInit {
 
   set searchTemplateQuery(value: string) {
     this._searchTemplateQuery = value;
-    console.log(value)
     this.loadData();
   }
 
@@ -101,7 +100,6 @@ export class HostOverview implements AfterViewInit {
 
   private static filterTemplateData(host: Host, templateQuery: string) {
     if (Validator.notEmpty(templateQuery)) {
-      console.log('here')
       return host.template == templateQuery;
     }
     return true;

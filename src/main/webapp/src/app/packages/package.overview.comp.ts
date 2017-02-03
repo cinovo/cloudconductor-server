@@ -1,9 +1,9 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { Service, ServiceHttpService } from "../services/http/service.http.service";
+import { Service, ServiceHttpService } from "../util/http/service.http.service";
 import { Router } from "@angular/router";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
-import { PackageHttpService, Package } from "../services/http/package.http.service";
+import { PackageHttpService, Package } from "../util/http/package.http.service";
 /**
   * Copyright 2017 Cinovo AG<br>
   * <br>

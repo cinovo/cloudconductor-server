@@ -1,27 +1,17 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header"><i class="fa fa-code-fork fa-fw"></i> Configuration Key-Value-Pairs
-      <h4>
-        Template: {{template}}
-        <a *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirm
-           [title]="'Please verify!'"
-           [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>'+ template+'</strong>?'"
-           confirmButtonType="danger"
-           (confirm)="deleteCurrentTemplate()"
-           [appendToBody]="true">
-          <i class="fa fa-bitbucket fa-fw"></i>
-        </a>
-      </h4>
-    </h1>
-  </div>
-</div>
+<cc-title title="Configuration Key-Value-Pairs" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
+  <a cc-subtitle-addition *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirm
+     [title]="'Please verify!'"
+     [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>'+ template+'</strong>?'"
+     confirmButtonType="danger"
+     (confirm)="deleteCurrentTemplate()"
+     [appendToBody]="true">
+    <i class="fa fa-bitbucket fa-fw"></i>
+  </a>
+</cc-title>
 
 <div class="row">
   <div class="col-md-4">
-    <div class="form-group input-group">
-      <label class="input-group-addon" for="search">Search </label>
-      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
-    </div>
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-8">
     <button [routerLink]="['/config', template, '', 'new']" [queryParams]="{'ret':'ov'}"
@@ -42,7 +32,7 @@
 
 <div class="row" *ngIf="tree && tree.length >0">
   <div class="col-md-6" *ngFor="let service of tree">
-    <cc-panel [icon]="service.icon" [title]="service.name">
+    <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
       <li cc-panel-dropdown>
         <a [routerLink]="['/config', template, service.name, 'new']" [queryParams]="{'ret':'ov'}">Add new Key-Value</a>
       </li>

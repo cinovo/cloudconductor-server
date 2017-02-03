@@ -1,10 +1,7 @@
 <div class="row">
   <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-user-circle fa-fw"></i> Agent behaviour
-      </div>
-      <div class="panel-body">
+    <cc-panel title="Agent behaviour" icon="fa-user-circle" [collapsable]="true" [collapseBody]="true">
+      <div cc-panel-body>
         <div class="form-horizontal">
           <div class="form-group" [class.has-error]="!noGtEqZero(options.aliveTimer)">
             <label class="col-sm-4 control-label" for="alivetimer" style="text-align:left">Send "alive" message
@@ -109,6 +106,6 @@
           </button>
         </div>
       </div>
-    </div>
+    </cc-panel>
   </div>
 </div>

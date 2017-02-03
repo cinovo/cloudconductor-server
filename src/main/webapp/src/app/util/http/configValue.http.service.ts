@@ -5,7 +5,7 @@
  * Created by psigloch on 03.11.2016.
  */
 import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
+import { Http, Headers } from "@angular/http";
 import { HTTPService } from "./abstract.http.service";
 import { Validator } from "../../util/validator.util";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -76,5 +76,15 @@ export class ConfigValueHttpService extends HTTPService {
       return this._get(template + "/null/" + key);
     }
     return this._get(template + "/" + service + "/" + key);
+  }
+
+  public getPreview(template: string, service: string, mode: string):Observable<any> {
+    let additionalheaders: Headers = new Headers(
+      {'Accept': mode}
+    );
+    if (Validator.notEmpty(service)) {
+      return this._get(template + "/" + service, additionalheaders);
+    }
+    return this._get(template, additionalheaders);
   }
 }

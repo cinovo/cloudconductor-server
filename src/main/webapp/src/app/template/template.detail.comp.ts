@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from "@angular/core";
-import { TemplateHttpService, Template } from "../services/http/template.http.service";
+import { TemplateHttpService, Template } from "../util/http/template.http.service";
 import { ActivatedRoute } from "@angular/router";
 import { Validator } from "../util/validator.util";
 import { BehaviorSubject, Observable } from "rxjs";

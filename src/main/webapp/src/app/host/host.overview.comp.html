@@ -1,29 +1,13 @@
-<div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header">
-      <a (click)="reloadHosts()" class="pull-right" role="button" title="Reload template">
-        <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
-      </a>
-      <i class="fa fa-laptop fa-fw"></i> Hosts
-    </h1>
-  </div>
-</div>
+<cc-title title="Hosts" titleIcon="fa-laptop" [reloadable]="true" (onReload)="reloadHosts()"></cc-title>
+
 
 <div class="row">
   <div class="col-md-4">
-    <div class="form-group input-group">
-      <label class="input-group-addon" for="search">Search </label>
-      <input type="text" class="form-control" [(ngModel)]="searchQuery" id="search">
-    </div>
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-2">
-    <div class="form-group input-group">
-      <label class="input-group-addon" for="searchTemplate">Template </label>
-      <select class="form-control" [(ngModel)]="searchTemplateQuery" id="searchTemplate">
-        <option value=""></option>
-        <option *ngFor="let template of templates" value="{{template.name}}">{{template.name}}</option>
-      </select>
-    </div>
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
+               [dataField]="'name'"></cc-filter>
   </div>
 </div>
 
@@ -67,13 +51,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="isAlive(host)" [class.danger]="!isAlive(host)">
+        <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="isAlive(host)"
+            [class.danger]="!isAlive(host)">
           <td class="word-break" *ngIf="!host.agent">
-              {{host.name}}
+            {{host.name}}
           </td>
           <td class="word-break" *ngIf="host.agent">
-              {{host.agent}} -
-              <small>{{host.name}}</small>
+            {{host.agent}} -
+            <small>{{host.name}}</small>
           </td>
           <td>
             {{host.template}}

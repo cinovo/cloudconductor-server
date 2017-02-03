@@ -1,8 +1,8 @@
 import { Component, AfterViewInit } from "@angular/core";
 import { Sorter } from "../util/sorters.util";
 import { Validator } from "../util/validator.util";
-import { Repo, RepoHttpService } from "../services/http/repo.http.service";
-import { RepoMirrorHttpService, RepoMirror } from "../services/http/repomirror.http.service";
+import { Repo, RepoHttpService } from "../util/http/repo.http.service";
+import { RepoMirrorHttpService, RepoMirror } from "../util/http/repomirror.http.service";
 import { Router } from "@angular/router";
 
 /**
