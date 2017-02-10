@@ -4,3 +4,4 @@ static/yum/
 cloudconductor.properties
 .idea
 *.iml
+/out/
