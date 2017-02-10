@@ -67,11 +67,11 @@ export class HostOverview implements AfterViewInit {
   private loadData() {
     this.hostHttp.getHosts().subscribe(
       (result) => this.hosts = result
-    )
+    );
 
     this.templateHttp.getTemplates().subscribe(
       (result) => this.templates = result
-    )
+    );
   }
 
   protected reloadHosts(): void {

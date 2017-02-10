@@ -48,7 +48,7 @@ export abstract class HTTPService {
       .put(this.target(pathUrl), JSON.stringify(data), {headers: this.headers})
       .map((response) => {
         let result = this.extractData(response);
-        if (Object.keys(result).length === 0) {
+        if (result && Object.keys(result).length === 0) {
           return data;
         }
         return result;

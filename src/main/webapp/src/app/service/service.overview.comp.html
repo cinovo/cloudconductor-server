@@ -45,17 +45,21 @@
         <tr>
           <th width="30%">Name</th>
           <th>Description</th>
+          <th class="text-center"># Packages</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)">
+        <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)" [class.danger]="service.packages.length < 1">
           <td>
             {{service.name}}
           </td>
           <td class="word-break">
             {{service.description}}
+          </td>
+          <td class="text-center">
+            {{service.packages.length}}
           </td>
           <td>
             <a [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>

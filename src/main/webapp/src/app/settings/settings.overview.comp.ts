@@ -45,7 +45,7 @@ export class SettingsOverview implements AfterViewInit {
   protected saveSettings():void {
     this.settingHttp.save(this.settings).subscribe(
       (result) => this.alerts.success("The settings have been successfully saved."),
-      (error) =>  this.alerts.danger("The settings has failed to save.")
+      (error) =>  {this.alerts.danger("The settings has failed to save."); console.log(error);}
     )
   }
 

@@ -46,6 +46,14 @@
   padding-left: 52px;
 }
 
+.nav .nav-divider {
+  height: 1px;
+  padding: 9px 0;
+  margin: 0;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
 @media(min-width:768px) {
   .sidebar {
     z-index: 1;
@@ -60,3 +68,4 @@
     margin-left: auto;
   }
 }
+

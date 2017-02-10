@@ -22,7 +22,7 @@ export class CCFilter implements AfterViewInit {
 
   @Output() onQueryChange: EventEmitter<string> = new EventEmitter();
 
-  private _query: string;
+  private _query: string ="";
 
   constructor() {
   };

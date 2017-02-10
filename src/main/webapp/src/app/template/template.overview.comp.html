@@ -53,7 +53,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)">
+        <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)"
+            [class.warning]="template.hosts.length < 1"
+            [class.danger]="template.hosts.length < 1 &&countVersion(template.versions) < 1">
           <td>
             {{template.name}}
           </td>
@@ -65,7 +67,8 @@
           </td>
           <td>
             <template ngFor let-repo [ngForOf]="template.repos" let-last="last">
-              {{repo}}<template [ngIf]="!last"><br /></template>
+              {{repo}}
+              <template [ngIf]="!last"><br/></template>
             </template>
           </td>
           <td>

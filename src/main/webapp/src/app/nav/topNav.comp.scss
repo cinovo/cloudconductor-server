@@ -1,6 +1,5 @@
 @import "../../glob/_variables";
 
-
 .navbar-top-links {
   margin-right: 0;
 }
@@ -57,4 +56,9 @@
 .navbar-top-links .dropdown-user {
   right: 0;
   left: auto;
+}
+
+.nav-clock {
+  font-size: 14px;
+  color: #d9534f;
 }
