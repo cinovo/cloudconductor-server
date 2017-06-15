@@ -57,6 +57,7 @@ public class EHost implements IEntity<Long>, INamed {
 	private boolean executedFiles = false;
 	private boolean executedPkg = false;
 	private EAgent agent;
+	private String uuid;
 	
 	
 	@Override
@@ -232,5 +233,19 @@ public class EHost implements IEntity<Long>, INamed {
 	 */
 	public void setAgent(EAgent agent) {
 		this.agent = agent;
+	}
+
+	/**
+	 * @return the Hosts UUID
+	 */
+	public String getUuid() {
+		return this.uuid;
+	}
+
+	/**
+	 * @param uuid the Hosts uuid
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }

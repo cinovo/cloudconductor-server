@@ -31,7 +31,7 @@ public class AgentTest extends APITest {
 	public void testPackagesBasic() throws CloudConductorException {
 		AgentHandler agent = new AgentHandler(this.getCSApi());
 		{
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), AgentTest.HOST_C);
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
@@ -43,30 +43,30 @@ public class AgentTest extends APITest {
 		AgentHandler agent = new AgentHandler(this.getCSApi());
 		{
 			// block the second host on update
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled());
-			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), AgentTest.HOST_A);
+			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), AgentTest.HOST_B);
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on host a
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), AgentTest.HOST_A);
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
-			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()));
+			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()),AgentTest.HOST_A );
 		}
 		{
 			// finally start update on host b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), AgentTest.HOST_B);
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), AgentTest.HOST_B);
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());

@@ -64,7 +64,7 @@ public class HostTest extends APITest {
 			Assert.assertEquals(HostTest.HOST1, host.getName());
 		}
 		{
-			Host host = new Host(HostTest.HOST22, HostTest.HOST22, "dev", null);
+			Host host = new Host(HostTest.HOST22, HostTest.HOST22, "dev", null, null);
 			h.save(host);
 			Set<Host> hosts = h.get();
 			Assert.assertEquals(2, hosts.size());

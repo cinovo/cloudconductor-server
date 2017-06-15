@@ -136,7 +136,7 @@ public class MAConverter {
 				services.add(ss.getService().getName());
 			}
 		}
-		return new Host(model.getName(), model.getDescription(), model.getTemplate().getName(), services);
+		return new Host(model.getName(), model.getDescription(), model.getTemplate().getName(), services, model.getUuid());
 	}
 	
 	/**
@@ -165,6 +165,6 @@ public class MAConverter {
 	 * @return the api object
 	 */
 	public static AgentOptions fromModel(EAgentOption model) {
-		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit(), model.getTemplate().getName());
+		return new AgentOptions(model.getAliveTimer(), model.getAliveTimerUnit(), model.getDoSshKeys(), model.getSshKeysTimer(), model.getSshKeysTimerUnit(), model.getDoPackageManagement(), model.getPackageManagementTimer(), model.getPackageManagementTimerUnit(), model.getDoFileManagement(), model.getFileManagementTimer(), model.getFileManagementTimerUnit(), model.getTemplate().getName(), null);
 	}
 }

@@ -716,4 +716,11 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	<changeSet id="NSWDEV-6033" author="jawe09">
+		<addColumn  schemaName="cloudconductor" tableName="host">
+			<column name="uuid" type="varchar(255)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

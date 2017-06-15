@@ -17,15 +17,13 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
+import de.cinovo.cloudconductor.server.util.AuthTokenGenerator;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,6 +108,9 @@ public class AgentImpl implements IAgent {
 	private IServerOptionsDAO dserveroptions;
 	@Autowired
 	private IAgentDAO dAgent;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AgentImpl.class);
+
 	
 	
 	@Override
@@ -131,16 +132,13 @@ public class AgentImpl implements IAgent {
 	
 	@Override
 	@Transactional
-	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState) {
+	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState, String huuid) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
-		EHost host = this.dhost.findByName(hname);
+		EHost host = this.getHost(hname, tname, huuid);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		
-		if (host == null) {
-			host = this.createNewHost(hname, template);
-		}
+
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
 		List<EPackage> packages = this.dpkg.findList();
@@ -201,7 +199,6 @@ public class AgentImpl implements IAgent {
 	/**
 	 * @param template
 	 * @param host
-	 * @param now
 	 */
 	private boolean sendPackageChanges(ETemplate template, EHost host) {
 		DateTime now = DateTime.now();
@@ -331,15 +328,12 @@ public class AgentImpl implements IAgent {
 	
 	@Override
 	@Transactional
-	public ServiceStatesChanges notifyServiceState(String tname, String hname, ServiceStates serviceState) {
+	public ServiceStatesChanges notifyServiceState(String tname, String hname, ServiceStates serviceState, String huuid) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
-		EHost host = this.dhost.findByName(hname);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		if (host == null) {
-			host = this.createNewHost(hname, template);
-		}
+		EHost host = this.getHost(hname, tname, huuid);
 		if (this.asserHostServices(template, host)) {
 			host = this.dhost.findByName(hname);
 		}
@@ -419,18 +413,22 @@ public class AgentImpl implements IAgent {
 	
 	@Override
 	@Transactional
-	public AgentOptions heartBeat(String tname, String hname, String agentN) {
+	public AgentOptions heartBeat(String tname, String hname, String agentN, String huuid) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
 		RESTAssert.assertNotEmpty(agentN);
+		RESTAssert.assertNotEmpty(huuid);
 		EAgent agent = this.dAgent.findAgentByName(agentN);
 		if (agent == null) {
 			agent = this.createNewAgent(agentN, null);
 		}
-		EHost host = this.dhost.findByName(hname);
-		if (host == null) {
+		EHost host = this.getHost(hname, tname, huuid);
+		if(host == null){
 			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
+			String uuid = UUID.randomUUID().toString();
+			host.setUuid(uuid);
 		}
+
 		DateTime now = new DateTime();
 		host.setLastSeen(now.getMillis());
 		host.setAgent(agent);
@@ -472,6 +470,7 @@ public class AgentImpl implements IAgent {
 		if (onceExecuted) {
 			this.dhost.save(host);
 		}
+		result.setUuid(host.getUuid());
 		return result;
 	}
 	
@@ -517,7 +516,21 @@ public class AgentImpl implements IAgent {
 			}
 		}
 		toErase.removeAll(keep);
-		
+
+		// remove dependencies from erase list
+		Set<EPackageVersion> dependencies = new HashSet<>();
+		for (EPackageVersion i : nominal){
+			for (EDependency d : i.getDependencies()) {
+				for(EPackageVersion e : toErase) {
+					if(e.getPkg().getName().equals(d.getName())){
+						dependencies.add(e);
+					}
+				}
+			}
+		}
+		toErase.removeAll(dependencies);
+
+
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
 		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
 		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
@@ -542,5 +555,24 @@ public class AgentImpl implements IAgent {
 	@Transactional
 	public boolean isServerAlive() {
 		return true;
+	}
+
+	private EHost getHost(String name, String tname, String uuid){
+		EHost host = this.dhost.findByUuid(uuid);
+		if(name.equals(uuid)) {
+			host = this.dhost.findByName(name);
+			if(host == null){
+				host = this.createNewHost(name, this.dtemplate.findByName(tname));
+				String newuuid = UUID.randomUUID().toString();
+				host.setUuid(newuuid);
+			}
+
+		}
+		if(host == null){
+			host = this.createNewHost(name, this.dtemplate.findByName(tname));
+			String newuuid = UUID.randomUUID().toString();
+			host.setUuid(newuuid);
+		}
+		return host;
 	}
 }

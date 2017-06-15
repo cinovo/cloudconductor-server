@@ -42,5 +42,7 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	public EHost findByName(String name) {
 		return this.findByQuery("FROM EHost h WHERE h.name = ?1", name);
 	}
+
+	public EHost findByUuid(String uuid) { return this.findByQuery("FROM EHost h where h.uuid = ?1", uuid); }
 	
 }
