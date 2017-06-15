@@ -61,7 +61,7 @@ public class AuthTokenGenerator {
 	protected String generateToken(int tokenLength) {
 		String generatedToken = new BigInteger(tokenLength * 5, new SecureRandom()).toString(32);
 		generatedToken = this.generatePartialUppercasedToken(tokenLength, generatedToken);
-		return this.shuffleWithFisherYates(generatedToken);
+		return this.shuffleWithFisherYates(generatedToken).replaceAll("[O0Il]", "A");
 	}
 	
 	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
