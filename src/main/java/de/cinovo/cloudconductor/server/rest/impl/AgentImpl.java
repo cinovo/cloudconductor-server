@@ -541,7 +541,6 @@ public class AgentImpl implements IAgent {
 		}
 		toErase.removeAll(dependencies);
 
-
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
 		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
 		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
