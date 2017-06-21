@@ -28,5 +28,7 @@ import de.taimos.dao.IEntityDAO;
  * 
  */
 public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
-	// nothing to add
+
+    // nothing to add
+    EHost findByUuid(String uuid);
 }
