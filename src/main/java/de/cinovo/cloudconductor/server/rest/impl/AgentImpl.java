@@ -135,7 +135,10 @@ public class AgentImpl implements IAgent {
 	public PackageStateChanges notifyPackageState(String tname, String hname, PackageState rpmState, String huuid) {
 		RESTAssert.assertNotEmpty(hname);
 		RESTAssert.assertNotEmpty(tname);
-		EHost host = this.getHost(hname, tname, huuid);
+		EHost host = this.dhost.findByUuid(huuid);
+		if(host == null){
+			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
+		}
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
 
@@ -192,6 +195,8 @@ public class AgentImpl implements IAgent {
 		host = new EHost();
 		host.setName(hname);
 		host.setTemplate(template);
+		String newuuid = UUID.randomUUID().toString();
+		host.setUuid(newuuid);
 		host = this.dhost.save(host);
 		return host;
 	}
@@ -333,7 +338,10 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotEmpty(tname);
 		ETemplate template = this.dtemplate.findByName(tname);
 		RESTAssert.assertNotNull(template);
-		EHost host = this.getHost(hname, tname, huuid);
+		EHost host = this.dhost.findByUuid(huuid);
+		if(host == null){
+			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
+		}
 		if (this.asserHostServices(template, host)) {
 			host = this.dhost.findByName(hname);
 		}
@@ -422,7 +430,10 @@ public class AgentImpl implements IAgent {
 		if (agent == null) {
 			agent = this.createNewAgent(agentN, null);
 		}
-		EHost host = this.getHost(hname, tname, huuid);
+		EHost host = this.dhost.findByUuid(huuid);
+		if(host == null){
+			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
+		}
 		if(host == null){
 			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
 			String uuid = UUID.randomUUID().toString();
@@ -557,22 +568,4 @@ public class AgentImpl implements IAgent {
 		return true;
 	}
 
-	private EHost getHost(String name, String tname, String uuid){
-		EHost host = this.dhost.findByUuid(uuid);
-		if(name.equals(uuid)) {
-			host = this.dhost.findByName(name);
-			if(host == null){
-				host = this.createNewHost(name, this.dtemplate.findByName(tname));
-				String newuuid = UUID.randomUUID().toString();
-				host.setUuid(newuuid);
-			}
-
-		}
-		if(host == null){
-			host = this.createNewHost(name, this.dtemplate.findByName(tname));
-			String newuuid = UUID.randomUUID().toString();
-			host.setUuid(newuuid);
-		}
-		return host;
-	}
 }
