@@ -17,18 +17,7 @@ package de.cinovo.cloudconductor.server.rest.impl;
  * #L%
  */
 
-import java.util.*;
-
-import de.cinovo.cloudconductor.server.util.AuthTokenGenerator;
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.ArrayListMultimap;
-
 import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IAgent;
 import de.cinovo.cloudconductor.api.model.AgentOptions;
@@ -71,6 +60,20 @@ import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.rest.helper.MAConverter;
 import de.taimos.restutils.RESTAssert;
 import de.taimos.springcxfdaemon.JaxRsComponent;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -343,7 +346,7 @@ public class AgentImpl implements IAgent {
 			host = this.createNewHost(hname, this.dtemplate.findByName(tname));
 		}
 		if (this.asserHostServices(template, host)) {
-			host = this.dhost.findByName(hname);
+			host = this.dhost.findById(host.getId());
 		}
 		
 		Set<String> toStop = new HashSet<>();
