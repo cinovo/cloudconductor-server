@@ -17,9 +17,9 @@ package de.cinovo.cloudconductor.server.web.interfaces;
  * #L%
  */
 
-import javax.ws.rs.core.Context;
-
 import org.apache.cxf.jaxrs.ext.MessageContext;
+
+import javax.ws.rs.core.Context;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,7 +31,7 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
 public interface IContextAware {
 	
 	/**
-	 * @param ctx
+	 * @param ctx the message context
 	 */
 	@Context
 	void setMessageContext(MessageContext ctx);

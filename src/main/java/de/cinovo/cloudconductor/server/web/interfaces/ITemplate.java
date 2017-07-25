@@ -43,25 +43,25 @@ import de.taimos.cxf_renderer.model.RenderedUI;
 public interface ITemplate {
 	
 	/** the root */
-	public static final String ROOT = "/templates";
+	String ROOT = "/templates";
 	
 	/** */
-	public static final String UPDATE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
+	String UPDATE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_UPDATE;
 	/** */
-	public static final String REMOVE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REMOVE;
+	String REMOVE_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_REMOVE;
 	
 	/** */
-	public static final String EDIT_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
+	String EDIT_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_EDIT;
 	/** */
-	public static final String ADD_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}/package" + IWebPath.ACTION_ADD;
+	String ADD_PACKAGE_ACTION = "/{" + IWebPath.VAR_NAME + "}/package" + IWebPath.ACTION_ADD;
 	/** */
-	public static final String DELETE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
+	String DELETE_TEMPLATE_ACTION = "/{" + IWebPath.VAR_NAME + "}" + IWebPath.ACTION_DELETE;
 	
 	/** */
-	public static final String DEFAULT_SERVICE_STATE = "/{" + IWebPath.VAR_NAME + "}/services/default";
+	String DEFAULT_SERVICE_STATE = "/{" + IWebPath.VAR_NAME + "}/services/default";
 	
 	/** */
-	public static final String EDIT_TEMPLATE_AGENT_CONFIG_ACTION = "/{" + IWebPath.VAR_NAME + "}/agentconfig" + IWebPath.ACTION_EDIT;
+	String EDIT_TEMPLATE_AGENT_CONFIG_ACTION = "/{" + IWebPath.VAR_NAME + "}/agentconfig" + IWebPath.ACTION_EDIT;
 	
 	
 	/**
@@ -70,7 +70,7 @@ public interface ITemplate {
 	@GET
 	@Path(IWebPath.DEFAULTVIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI view();
+	RenderedUI view();
 	
 	/**
 	 * @param tname the template name
@@ -80,7 +80,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.UPDATE_PACKAGE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer updatePackages(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("updatePackage") List<String> updatePackages);
+	AjaxAnswer updatePackages(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("updatePackage") List<String> updatePackages);
 	
 	/**
 	 * @param tname the template name
@@ -90,7 +90,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.REMOVE_PACKAGE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer changeTemplateState(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("deletePackage") List<String> deletePackages);
+	AjaxAnswer changeTemplateState(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("deletePackage") List<String> deletePackages);
 	
 	/**
 	 * @return the view
@@ -98,7 +98,7 @@ public interface ITemplate {
 	@GET
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI addTemplateView();
+	RenderedUI addTemplateView();
 	
 	/**
 	 * @param templatename the template name
@@ -112,7 +112,7 @@ public interface ITemplate {
 	@POST
 	@Path(IWebPath.ACTION_ADD)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer addTemplate(@FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManager, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
+	AjaxAnswer addTemplate(@FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManager, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
 	
 	/**
 	 * @param tname the tempalte name
@@ -121,7 +121,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI editTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
+	RenderedUI editTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the old template name
@@ -136,7 +136,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.EDIT_TEMPLATE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer editTemplate(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManagerId, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
+	AjaxAnswer editTemplate(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("templatename") String templatename, @FormParam("packageManager") Long packageManagerId, @FormParam("description") String description, @FormParam("autoupdate") String autoupdate, @FormParam("smoothupdate") String smoothupdate) throws FormErrorException;
 	
 	/**
 	 * @param tname the template name
@@ -145,7 +145,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.ADD_PACKAGE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI addPackageView(@PathParam(IWebPath.VAR_NAME) String tname);
+	RenderedUI addPackageView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name
@@ -156,7 +156,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.ADD_PACKAGE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer addPackage(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("pkg") String[] pkgs) throws FormErrorException;
+	AjaxAnswer addPackage(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("pkg") String[] pkgs) throws FormErrorException;
 	
 	/**
 	 * @param tname the package names
@@ -165,7 +165,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.DELETE_TEMPLATE_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
+	RenderedUI deleteTemplateView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name
@@ -175,7 +175,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.DELETE_TEMPLATE_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer deleteTemplate(@PathParam(IWebPath.VAR_NAME) String tname) throws FormErrorException;
+	AjaxAnswer deleteTemplate(@PathParam(IWebPath.VAR_NAME) String tname) throws FormErrorException;
 	
 	/**
 	 * @param tname the template name
@@ -184,7 +184,7 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.DEFAULT_SERVICE_STATE)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI defaultServiceStatesView(@PathParam(IWebPath.VAR_NAME) String tname);
+	RenderedUI defaultServiceStatesView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the template name
@@ -195,7 +195,7 @@ public interface ITemplate {
 	@POST
 	@Path(ITemplate.DEFAULT_SERVICE_STATE)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer changeDefaultServiceStates(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("startService") List<String> startService, @FormParam("stopService") List<String> stopService);
+	AjaxAnswer changeDefaultServiceStates(@PathParam(IWebPath.VAR_NAME) String tname, @FormParam("startService") List<String> startService, @FormParam("stopService") List<String> stopService);
 	
 	/**
 	 * @param tname the template name
@@ -204,27 +204,17 @@ public interface ITemplate {
 	@GET
 	@Path(ITemplate.EDIT_TEMPLATE_AGENT_CONFIG_ACTION)
 	@Produces(MediaType.TEXT_HTML)
-	public abstract RenderedUI editTemplateAgentConfigView(@PathParam(IWebPath.VAR_NAME) String tname);
+	RenderedUI editTemplateAgentConfigView(@PathParam(IWebPath.VAR_NAME) String tname);
 	
 	/**
 	 * @param tname the old template name
-	 * @param aliveTimer alive timer
-	 * @param aliveTimerUnit alive timer unit
-	 * @param doSshKeys do ssh keys
-	 * @param sshKeysTimer ssh key timer
-	 * @param sshKeysTimerUnit ssh key timer unit
-	 * @param doPackageManagement do package management
-	 * @param packageManagementTimer package management timer
-	 * @param packageManagementTimerUnit package management timer unit
-	 * @param doFileManagement do file management
-	 * @param fileManagementTimer file management timer
-	 * @param fileManagementTimerUnit file management timer unit
+	 * @param form the form
 	 * @return an ajax answer
 	 * @throws FormErrorException on error
 	 */
 	@POST
 	@Path(ITemplate.EDIT_TEMPLATE_AGENT_CONFIG_ACTION)
 	@Produces(MediaType.APPLICATION_JSON)
-	public abstract AjaxAnswer editTemplateAgentConfig(@PathParam(IWebPath.VAR_NAME) String tname, MultivaluedMap<String, String> form) throws FormErrorException;
+	AjaxAnswer editTemplateAgentConfig(@PathParam(IWebPath.VAR_NAME) String tname, MultivaluedMap<String, String> form) throws FormErrorException;
 	
 }
