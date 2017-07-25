@@ -1,27 +1,17 @@
 package de.cinovo.cloudconductor.server.web.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import de.cinovo.cloudconductor.server.model.*;
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.ServiceState;
 import de.cinovo.cloudconductor.server.comparators.StateComparator;
 import de.cinovo.cloudconductor.server.comparators.StringMapComparator;
 import de.cinovo.cloudconductor.server.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EDependency;
+import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EPackageState;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.EServiceState;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.web.CSViewModel;
 import de.cinovo.cloudconductor.server.web.helper.AWebPage;
 import de.cinovo.cloudconductor.server.web.helper.AjaxAnswer;
@@ -29,6 +19,20 @@ import de.cinovo.cloudconductor.server.web.interfaces.IHost;
 import de.cinovo.cloudconductor.server.web.interfaces.IWebPath;
 import de.taimos.cxf_renderer.model.RenderedUI;
 import de.taimos.restutils.RESTAssert;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -91,56 +95,69 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public RenderedUI view(String hname) {
-		EHost eHosts = this.dHost.findByName(hname);
-		Collections.sort(eHosts.getServices(), new StateComparator());
+	public RenderedUI view(String huuid) {
+		RESTAssert.assertNotEmpty(huuid);
+		EHost host = this.dHost.findByUuid(huuid);
+		if(host == null) {
+			host = this.dHost.findByName(huuid);
+		}
+		RESTAssert.assertNotNull(host);
+		Collections.sort(host.getServices(), new StateComparator());
 		CSViewModel modal = this.createModal("mSingleView");
-		modal.addModel(HostImpl.HOST, eHosts);
-		modal.addModel(HostImpl.DIFFERENCES, this.createHostTemplateDiff(eHosts));
+		modal.addModel(HostImpl.HOST, host);
+		modal.addModel(HostImpl.DIFFERENCES, this.createHostTemplateDiff(host));
 		return modal.render();
 	}
 	
 	@Override
 	@Transactional
-	public AjaxAnswer changeServiceStates(String hname, String[] start, String[] stop, String[] restart) {
-		RESTAssert.assertNotEmpty(hname);
+	public AjaxAnswer changeServiceStates(String huuid, String[] start, String[] stop, String[] restart) {
+		RESTAssert.assertNotEmpty(huuid);
 		if ((start.length < 1) && (stop.length < 1) && (restart.length < 1)) {
 			new AjaxAnswer(IWebPath.WEBROOT + IHost.ROOT);
 		}
-		EHost host = this.dHost.findByName(hname);
-		for (String service : start) {
-			for (EServiceState eservice : host.getServices()) {
-				if (eservice.getService().getName().equals(service)) {
-					eservice.setState(ServiceState.STARTING);
-					break;
+		EHost host = this.dHost.findByUuid(huuid);
+		if(host == null) {
+			host = this.dHost.findByName(huuid);
+		}
+		if(host != null) {
+			for(String service : start) {
+				for(EServiceState eservice : host.getServices()) {
+					if(eservice.getService().getName().equals(service)) {
+						eservice.setState(ServiceState.STARTING);
+						break;
+					}
 				}
 			}
-		}
-		for (String service : stop) {
-			for (EServiceState eservice : host.getServices()) {
-				if (eservice.getService().getName().equals(service)) {
-					eservice.setState(ServiceState.STOPPING);
-					break;
+			for(String service : stop) {
+				for(EServiceState eservice : host.getServices()) {
+					if(eservice.getService().getName().equals(service)) {
+						eservice.setState(ServiceState.STOPPING);
+						break;
+					}
 				}
 			}
-		}
-		for (String service : restart) {
-			for (EServiceState eservice : host.getServices()) {
-				if (eservice.getService().getName().equals(service)) {
-					eservice.setState(ServiceState.RESTARTING_STOPPING);
-					break;
+			for(String service : restart) {
+				for(EServiceState eservice : host.getServices()) {
+					if(eservice.getService().getName().equals(service)) {
+						eservice.setState(ServiceState.RESTARTING_STOPPING);
+						break;
+					}
 				}
 			}
+			this.dHost.save(host);
 		}
-		this.dHost.save(host);
 		return new AjaxAnswer(IWebPath.WEBROOT + IHost.ROOT);
 	}
 	
 	@Override
 	@Transactional
-	public RenderedUI deleteHostView(String hname) {
-		RESTAssert.assertNotEmpty(hname);
-		EHost host = this.dHost.findByName(hname);
+	public RenderedUI deleteHostView(String huuid) {
+		RESTAssert.assertNotEmpty(huuid);
+		EHost host = this.dHost.findByUuid(huuid);
+		if(host == null) {
+			host = this.dHost.findByName(huuid);
+		}
 		RESTAssert.assertNotNull(host);
 		CSViewModel modal = this.createModal("mDeleteHost");
 		modal.addModel(HostImpl.HOST, host);
@@ -149,9 +166,12 @@ public class HostImpl extends AWebPage implements IHost {
 	
 	@Override
 	@Transactional
-	public AjaxAnswer deleteHost(String hname) {
-		RESTAssert.assertNotEmpty(hname);
-		EHost host = this.dHost.findByName(hname);
+	public AjaxAnswer deleteHost(String huuid) {
+		RESTAssert.assertNotEmpty(huuid);
+		EHost host = this.dHost.findByUuid(huuid);
+		if(host == null) {
+			host = this.dHost.findByName(huuid);
+		}
 		if ((host != null)) {
 			this.dHost.delete(host);
 		}

@@ -67,8 +67,8 @@
 				#end
 				#foreach($host in ${template.getHosts()})
 					<tr class="success">
-						<td>${host.getName()}</td>
-						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" data-ref="/web/hosts/${host.getName()}" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Jump to host"></button></td>
+						<td>${host.getName()} - <small>uuid: ${host.uuid}</small></td>
+						<td class="actionButton"><button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-link" data-ref="/web/hosts/${host.uuid}" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-left" title="Jump to host"></button></td>
 					</tr>
 				#end
 				</tbody>

@@ -7,19 +7,20 @@
 	<div class="panel panel-$pannelType">
 		<div class="panel-heading panel-toggle" >
 			<h3 class="panel-title">
-				#if (${host.name} == ${host.agent.name})
+				#if (${host.name} == ${host.agent.name} || !${host.agent.name} )
 				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">$host.name</span>
 				#else
 				<span class="copy-button" data-clipboard-text="$host.name" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.agent.name} : $host.name</span>
 				#end
-				<small><span class="copy-button" data-clipboard-text="${host.getTemplate().name}" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.getTemplate().name}</span></small>
+                <small>uuid: <span class="copy-button" data-clipboard-text="${host.uuid}" rel="tooltip-down" title="Click to copy uuid to clipboard">${host.uuid}</span></small>
+				<small>template: <span class="copy-button" data-clipboard-text="${host.getTemplate().name}" rel="tooltip-down" title="Click to copy templatename to clipboard">${host.getTemplate().name}</span></small>
 				<span class="pull-right toggle-dropdown glyphicon glyphicon-chevron-up" data-toggle="collapse" data-target="#${host.name.replace(".", "-")}-hide"></span>
 			</h3>
 			<span class="pull-right">
 				<span class="btn-group">
 					<button type="button" class="btn btn-default glyphicon glyphicon-edit" data-ref="${host.id}/edit" data-toggle="modal" data-target="#popModal" data-call-type="POST" rel="tooltip-down" title="Edit host template"></button>
 					<a type="button" class="btn btn-default glyphicon glyphicon-folder-open" href="templates#${host.getTemplate().name}" rel="tooltip-down" title="Goto template ${host.getTemplate().name}"></a>
-					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${host.name}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete host"></button>
+					<button type="button" class="btn btn-default glyphicon glyphicon-trash" data-ref="${host.uuid}/delete" data-toggle="modal" data-target="#popModal" data-call-type="GET" rel="tooltip-down" title="Delete host"></button>
 				</span>
 			</span>			
 		</div>
@@ -83,7 +84,7 @@
 							<td></td>
 							<td></td>
 							<td colspan="3" class="actionButton">
-								<button type="button" class="btn btn-default btn-block" data-ref="${host.name}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
+								<button type="button" class="btn btn-default btn-block" data-ref="${host.uuid}/update" data-call-type="POST" data-form="${host.name.replace(".", "-")}-form" data-toggle='ajax' rel="tooltip-down" title="Apply">Apply</button>
 							</td>
 						</tr>
 					</tbody>
