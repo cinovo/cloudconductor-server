@@ -198,6 +198,7 @@ public class AgentImpl implements IAgent {
 		host = new EHost();
 		host.setName(hname);
 		host.setTemplate(template);
+		host.setLastSeen(DateTime.now().getMillis());
 		String newuuid = UUID.randomUUID().toString();
 		host.setUuid(newuuid);
 		host = this.dhost.save(host);
