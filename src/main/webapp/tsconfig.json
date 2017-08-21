@@ -1,72 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-    "outDir": "dist"
-  },
-  "filesGlob": [
-    "src/**/*.ts",
-    "typings/index.d.ts"
-  ],
-  "atom": {
-    "rewriteTsconfig": true
-  },
-  "files": [
-    "typings/index.d.ts",
-    "src/app.module.ts",
-    "src/app/app.comp.ts",
-    "src/app/app.routing.ts",
-    "src/app/configvalues/cs.edit.comp.ts",
-    "src/app/configvalues/cv.overview.comp.ts",
-    "src/app/configvalues/cv.preview.comp.ts",
-    "src/app/home/home.comp.ts",
-    "src/app/host/host.detail.comp.ts",
-    "src/app/host/host.overview.comp.ts",
-    "src/app/host/host.package.comp.ts",
-    "src/app/host/host.service.comp.ts",
-    "src/app/links/links.edit.comp.ts",
-    "src/app/nav/nav.comp.ts",
-    "src/app/nav/topNav.comp.ts",
-    "src/app/packages/package.detail.comp.ts",
-    "src/app/packages/package.overview.comp.ts",
-    "src/app/repo/mirror.edit.comp.ts",
-    "src/app/repo/repo.edit.comp.ts",
-    "src/app/repo/repo.overview.comp.ts",
-    "src/app/service/service.detail.comp.ts",
-    "src/app/service/service.overview.comp.ts",
-    "src/app/settings/settings.overview.comp.ts",
-    "src/app/template/template.agentoption.comp.ts",
-    "src/app/template/template.detail.comp.ts",
-    "src/app/template/template.metadata.comp.ts",
-    "src/app/template/template.new.comp.ts",
-    "src/app/template/template.overview.comp.ts",
-    "src/app/template/template.package.comp.ts",
-    "src/app/util/alert/alert.comp.ts",
-    "src/app/util/alert/alert.service.ts",
-    "src/app/util/ccfilter/ccfilter.comp.ts",
-    "src/app/util/ccpanel/ccpanel.comp.ts",
-    "src/app/util/cctitle/cctitle.comp.ts",
-    "src/app/util/enums.util.ts",
-    "src/app/util/http/abstract.http.service.ts",
-    "src/app/util/http/additionalLinks.http.service.ts",
-    "src/app/util/http/configValue.http.service.ts",
-    "src/app/util/http/host.http.service.ts",
-    "src/app/util/http/package.http.service.ts",
-    "src/app/util/http/repo.http.service.ts",
-    "src/app/util/http/repomirror.http.service.ts",
-    "src/app/util/http/service.http.service.ts",
-    "src/app/util/http/setting.http.service.ts",
-    "src/app/util/http/template.http.service.ts",
-    "src/app/util/sorters.util.ts",
-    "src/app/util/validator.util.ts",
-    "src/environment.ts",
-    "src/main.ts",
-    "src/rxjs-extensions.ts"
-  ]
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  }
 }

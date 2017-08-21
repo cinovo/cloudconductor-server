@@ -12,9 +12,8 @@ import { Mode } from "../util/enums.util";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'template-detail',
-  templateUrl: 'html/template.detail.comp.html'
+  templateUrl: './template.detail.comp.html'
 })
 export class TemplateDetail implements AfterViewInit {
 

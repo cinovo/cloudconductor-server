@@ -7,9 +7,8 @@
 import { Component, Input, EventEmitter, Output, AfterViewInit } from "@angular/core";
 
 @Component({
-  moduleId: module.id,
   selector: 'cc-filter',
-  templateUrl: 'html/ccfilter.comp.html'
+  templateUrl: './ccfilter.comp.html'
 })
 export class CCFilter implements AfterViewInit {
 

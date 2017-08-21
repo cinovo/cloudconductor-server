@@ -15,9 +15,8 @@ import { Sorter } from "../util/sorters.util";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'repo-edit',
-  templateUrl: 'html/repo.edit.comp.html'
+  templateUrl: './repo.edit.comp.html'
 })
 export class RepoEdit implements AfterViewInit {
 

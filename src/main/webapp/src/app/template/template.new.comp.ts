@@ -9,9 +9,8 @@ import { Mode } from "../util/enums.util";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'template-new',
-  templateUrl: 'html/template.new.comp.html'
+  templateUrl: './template.new.comp.html'
 })
 export class TemplateNew implements AfterViewInit {
 

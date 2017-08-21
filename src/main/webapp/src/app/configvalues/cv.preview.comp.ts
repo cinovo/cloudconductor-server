@@ -10,9 +10,8 @@ import { TemplateHttpService } from "../util/http/template.http.service";
 import { ServiceHttpService } from "../util/http/service.http.service";
 
 @Component({
-  moduleId: module.id,
   selector: 'cs.preview.comp',
-  templateUrl: 'html/cv.preview.comp.html'
+  templateUrl: './cv.preview.comp.html'
 })
 export class ConfigValuePreview implements AfterViewInit {
 

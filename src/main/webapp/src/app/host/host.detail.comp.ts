@@ -13,9 +13,8 @@ import { Validator } from "../util/validator.util";
 
 
 @Component({
-  moduleId: module.id,
   selector: 'host.detail.comp',
-  templateUrl: 'html/host.detail.comp.html'
+  templateUrl: './host.detail.comp.html'
 })
 export class HostDetail implements AfterViewInit {
   private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: "", template: ""});

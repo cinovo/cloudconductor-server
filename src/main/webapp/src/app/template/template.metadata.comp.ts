@@ -16,9 +16,8 @@ import { Mode } from "../util/enums.util";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'template-metadata',
-  templateUrl: 'html/template.metadata.comp.html'
+  templateUrl: './template.metadata.comp.html'
 })
 export class TemplateMetaData implements AfterViewInit {
 

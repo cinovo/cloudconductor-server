@@ -7,8 +7,7 @@ import { Component } from "@angular/core";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
-  templateUrl: 'html/home.comp.html'
+  templateUrl: './home.comp.html'
 })
 export class HomeComponent {
 

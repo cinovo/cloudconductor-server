@@ -10,9 +10,8 @@ import { Validator } from "../util/validator.util";
   * @author psigloch
   */
 @Component({
-  moduleId: module.id,
   selector: 'service-overview',
-  templateUrl: 'html/service.overview.comp.html'
+  templateUrl: './service.overview.comp.html'
 })
 export class ServiceOverview implements AfterViewInit {
 

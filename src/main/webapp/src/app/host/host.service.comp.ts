@@ -21,9 +21,8 @@ interface ServiceStateElement {
 type ServiceActionType =  "start"|"stop"|"restart";
 
 @Component({
-  moduleId: module.id,
   selector: 'host-services',
-  templateUrl: 'html/host.service.comp.html'
+  templateUrl: './host.service.comp.html'
 })
 export class HostServices implements AfterViewInit {
 

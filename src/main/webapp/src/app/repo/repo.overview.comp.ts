@@ -12,9 +12,8 @@ import { Router } from "@angular/router";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'repo-overview',
-  templateUrl: 'html/repo.overview.comp.html'
+  templateUrl: './repo.overview.comp.html'
 })
 export class RepoOverview implements AfterViewInit {
 

@@ -2,6 +2,8 @@ import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
 import { AdditionalLinkHttpService, AdditionalLink } from "../util/http/additionalLinks.http.service";
 import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 
+declare let $: any;
+
 /// <reference path="../../../typings/globals/jquery/index.d.ts" />;
 
 /**
@@ -11,10 +13,9 @@ import { ConfigValueHttpService } from "../util/http/configValue.http.service";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'main-navbar',
-  styleUrls: ['css/nav.comp.css'],
-  templateUrl: 'html/nav.comp.html',
+  styleUrls: ['./nav.comp.scss'],
+  templateUrl: './nav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
 export class NavComponent implements AfterViewInit {

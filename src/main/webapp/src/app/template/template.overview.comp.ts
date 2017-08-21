@@ -11,9 +11,8 @@ import { AlertService } from "../util/alert/alert.service";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'template-overview',
-  templateUrl: 'html/template.overview.comp.html'
+  templateUrl: './template.overview.comp.html'
 })
 export class TemplateOverview implements AfterViewInit {
 

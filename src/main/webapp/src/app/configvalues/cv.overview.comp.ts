@@ -19,9 +19,8 @@ interface ConfigValueTreeNode {
 }
 
 @Component({
-  moduleId: module.id,
   selector: 'cv-overview',
-  templateUrl: 'html/cv.overview.comp.html'
+  templateUrl: './cv.overview.comp.html'
 })
 export class ConfigValueOverview implements AfterViewInit {
 

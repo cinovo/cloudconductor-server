@@ -15,9 +15,8 @@ import {
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'cc-panel',
-  templateUrl: 'html/ccpanel.comp.html',
+  templateUrl: './ccpanel.comp.html',
   encapsulation: ViewEncapsulation.None
 })
 export class CCPanel implements AfterViewInit {

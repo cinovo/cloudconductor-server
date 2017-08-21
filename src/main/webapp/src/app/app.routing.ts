@@ -17,6 +17,7 @@ import { TemplateNew } from "./template/template.new.comp";
 import { HostOverview } from "./host/host.overview.comp";
 import { HostDetail } from "./host/host.detail.comp";
 import { ConfigValuePreview } from "./configvalues/cv.preview.comp";
+import { Type } from "@angular/core";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -66,6 +67,7 @@ export const APP_ROUTES: Routes = [
 
 export const ROUTED_COMPONENTS = () => {
   let res = [];
+  
   for (let route of APP_ROUTES) {
     if (route.component) {
       res.push(route.component);

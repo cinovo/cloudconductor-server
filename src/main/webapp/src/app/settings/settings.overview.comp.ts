@@ -12,9 +12,8 @@ import { Validator } from "../util/validator.util";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'settings-overview',
-  templateUrl: 'html/settings.overview.comp.html'
+  templateUrl: './settings.overview.comp.html'
 })
 
 export class SettingsOverview implements AfterViewInit {

@@ -7,9 +7,8 @@
 import { Component, Input, EventEmitter, Output } from "@angular/core";
 
 @Component({
-  moduleId: module.id,
   selector: 'cc-title',
-  templateUrl: 'html/cctitle.comp.html'
+  templateUrl: './cctitle.comp.html'
 })
 export class CCTitle {
 

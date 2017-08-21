@@ -13,9 +13,8 @@ import { Repo, RepoHttpService } from "../util/http/repo.http.service";
   * @author psigloch
   */
 @Component({
-  moduleId: module.id,
   selector: 'mirror-edit',
-  templateUrl: 'html/mirror.edit.comp.html'
+  templateUrl: './mirror.edit.comp.html'
 })
 export class MirrorEdit implements AfterViewInit {
 

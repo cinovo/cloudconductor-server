@@ -12,9 +12,8 @@ import { AlertService } from "../util/alert/alert.service";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'links-edit',
-  templateUrl: 'html/links.edit.comp.html'
+  templateUrl: './links.edit.comp.html'
 })
 
 export class LinksEdit implements AfterViewInit {

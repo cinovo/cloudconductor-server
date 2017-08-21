@@ -1,6 +1,8 @@
 import { Component, HostListener, AfterViewInit } from "@angular/core";
 /// <reference path="../../typings/globals/jquery/index.d.ts" />;
 
+import * as $ from 'jquery';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -8,9 +10,8 @@ import { Component, HostListener, AfterViewInit } from "@angular/core";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'app-component',
-  templateUrl: 'html/app.comp.html'
+  templateUrl: './app.comp.html'
 })
 export class AppComponent implements AfterViewInit{
 

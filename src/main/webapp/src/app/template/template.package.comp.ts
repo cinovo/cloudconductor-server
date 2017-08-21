@@ -18,9 +18,8 @@ interface TemplatePackageVersion {
 }
 
 @Component({
-  moduleId: module.id,
   selector: 'template-packages',
-  templateUrl: 'html/template.package.comp.html'
+  templateUrl: './template.package.comp.html'
 })
 export class TemplatePackages implements AfterViewInit {
 

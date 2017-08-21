@@ -7,10 +7,9 @@ import { AlertService } from "./alert.service";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'alert-area',
-  templateUrl: 'html/alert.comp.html',
-  styleUrls: ["css/alert.comp.css"]
+  templateUrl: './alert.comp.html',
+  styleUrls: ["./alert.comp.scss"]
 })
 export class AlertComponent {
 

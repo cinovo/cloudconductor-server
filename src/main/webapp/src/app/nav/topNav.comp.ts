@@ -8,10 +8,9 @@ import { SettingHttpService, Settings } from "../util/http/setting.http.service"
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'top-navbar',
-  styleUrls: ['css/topNav.comp.css'],
-  templateUrl: 'html/topNav.comp.html',
+  styleUrls: ['./topNav.comp.scss'],
+  templateUrl: './topNav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
 export class TopNavComponent implements AfterViewInit {

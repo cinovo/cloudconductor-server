@@ -11,9 +11,8 @@ import { Template, TemplateHttpService } from "../util/http/template.http.servic
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'host.overview.comp',
-  templateUrl: 'html/host.overview.comp.html'
+  templateUrl: './host.overview.comp.html'
 })
 export class HostOverview implements AfterViewInit {
 

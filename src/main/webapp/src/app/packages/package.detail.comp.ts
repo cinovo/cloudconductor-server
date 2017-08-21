@@ -19,9 +19,8 @@ interface RepoVersionTree {
 }
 
 @Component({
-  moduleId: module.id,
   selector: 'package-detail',
-  templateUrl: 'html/package.detail.comp.html'
+  templateUrl: './package.detail.comp.html'
 })
 export class PackageDetail implements AfterViewInit {
 

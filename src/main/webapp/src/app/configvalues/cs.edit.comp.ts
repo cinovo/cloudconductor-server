@@ -11,9 +11,8 @@ import { ServiceHttpService } from "../util/http/service.http.service";
  * @author psigloch
  */
 @Component({
-  moduleId: module.id,
   selector: 'cs-edit',
-  templateUrl: 'html/cs.edit.comp.html'
+  templateUrl: './cs.edit.comp.html'
 })
 export class ConfigValueEdit implements AfterViewInit {
 

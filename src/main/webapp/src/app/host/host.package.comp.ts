@@ -11,9 +11,8 @@ import { Host } from "../util/http/host.http.service";
 import { Sorter } from "../util/sorters.util";
 
 @Component({
-  moduleId: module.id,
   selector: 'host-packages',
-  templateUrl: 'html/host.package.comp.html'
+  templateUrl: './host.package.comp.html'
 })
 export class HostPackages {
   @Input() obsHost: Observable<Host>;

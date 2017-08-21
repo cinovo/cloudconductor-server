@@ -11,9 +11,8 @@ import { PackageHttpService, Package } from "../util/http/package.http.service";
   * @author psigloch
   */
 @Component({
-  moduleId: module.id,
   selector: 'package-overview',
-  templateUrl: 'html/package.overview.comp.html'
+  templateUrl: './package.overview.comp.html'
 })
 export class PackageOverview implements AfterViewInit {
 
