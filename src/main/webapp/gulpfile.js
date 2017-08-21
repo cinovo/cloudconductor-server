@@ -126,7 +126,7 @@ gulp.task('serve', function (callback) {
 // Run browsersync for development
 gulp.task('serve:plain', function () {
 
-  var proxyOptions = url.parse('http://localhost:8099/api');
+  var proxyOptions = url.parse('http://localhost:8080/api');
   proxyOptions.route = '/api';
 
   browserSync({

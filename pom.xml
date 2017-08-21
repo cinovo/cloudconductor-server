@@ -67,7 +67,7 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.1</dvalin.version>
+        <dvalin.version>1.22</dvalin.version>
     </properties>
 
     <dependencies>
@@ -79,6 +79,14 @@
                 <exclusion>
                     <artifactId>jackson-core</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-datatype-joda</artifactId>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-datatype-guava</artifactId>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -96,12 +104,6 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.10.37</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.taimos</groupId>
-            <artifactId>cxf-jaxrs-renderer</artifactId>
-            <version>1.7</version>
         </dependency>
 
         <!-- Database drivers -->
