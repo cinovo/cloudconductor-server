@@ -17,10 +17,17 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.taimos.dvalin.jpa.IEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import javax.persistence.*;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,7 +38,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "sshkey", schema = "cloudconductor")
-public class ESSHKey implements IEntity<Long>, INamed {
+public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -116,5 +123,16 @@ public class ESSHKey implements IEntity<Long>, INamed {
 		int val = (this.getOwner() == null) ? 0 : this.getOwner().hashCode();
 		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
 		return val * idVal;
+	}
+	
+	@Override
+	@Transient
+	public Class<SSHKey> getApiClass() {
+		return SSHKey.class;
+	}
+	
+	@Override
+	public SSHKey toApi() {
+		return new SSHKey(this.owner, this.keycontent);
 	}
 }

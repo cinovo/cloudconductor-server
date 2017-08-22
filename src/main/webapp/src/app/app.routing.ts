@@ -1,23 +1,24 @@
 ///<reference path="host/host.overview.comp.ts"/>
-import { Routes } from "@angular/router";
+import { Routes } from '@angular/router';
 
-import { HomeComponent } from "./home/home.comp";
-import { ConfigValueOverview } from "./configvalues/cv.overview.comp";
-import { ConfigValueEdit } from "./configvalues/cs.edit.comp";
-import { ServiceOverview } from "./service/service.overview.comp";
-import { ServiceDetail } from "./service/service.detail.comp";
-import { SettingsOverview } from "./settings/settings.overview.comp";
-import { PackageOverview } from "./packages/package.overview.comp";
-import { PackageDetail } from "./packages/package.detail.comp";
-import { RepoOverview } from "./repo/repo.overview.comp";
-import { RepoEdit } from "./repo/repo.edit.comp";
-import { MirrorEdit } from "./repo/mirror.edit.comp";
-import { TemplateOverview } from "./template/template.overview.comp";
-import { TemplateDetail } from "./template/template.detail.comp";
-import { TemplateNew } from "./template/template.new.comp";
-import { HostOverview } from "./host/host.overview.comp";
-import { HostDetail } from "./host/host.detail.comp";
-import { ConfigValuePreview } from "./configvalues/cv.preview.comp";
+import { HomeComponent } from './home/home.comp';
+import { ConfigValueOverview } from './configvalues/cv.overview.comp';
+import { ConfigValueEdit } from './configvalues/cs.edit.comp';
+import { ServiceOverview } from './service/service.overview.comp';
+import { ServiceDetail } from './service/service.detail.comp';
+import { SettingsOverview } from './settings/settings.overview.comp';
+import { PackageOverview } from './packages/package.overview.comp';
+import { PackageDetail } from './packages/package.detail.comp';
+import { RepoOverview } from './repo/repo.overview.comp';
+import { RepoEdit } from './repo/repo.edit.comp';
+import { MirrorEdit } from './repo/mirror.edit.comp';
+import { TemplateOverview } from './template/template.overview.comp';
+import { TemplateDetail } from './template/template.detail.comp';
+import { TemplateNew } from './template/template.new.comp';
+import { HostOverview } from './host/host.overview.comp';
+import { HostDetail } from './host/host.detail.comp';
+import { ConfigValuePreview } from './configvalues/cv.preview.comp';
+import { SSHComponent } from './ssh/ssh.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -58,7 +59,7 @@ export const APP_ROUTES: Routes = [
   {path: 'repo/:repoName/mirror/new', component: MirrorEdit},
   {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit},
 
-  {path: 'ssh', component: HomeComponent},
+  {path: 'ssh', component: SSHComponent },
 
   {path: 'settings', component: SettingsOverview},
 

@@ -1,0 +1,45 @@
+<cc-title title="SSH Keys"></cc-title>
+
+<div class="row" *ngIf="sshKeys.length < 1">
+    <div class="col-sm-12">
+        <div class="alert alert-warning">
+            There are currently no ssh keys known.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <cc-panel [icon]="'fa-key'" [title]="'All ssh keys'">
+      <table class="table table-responsive table-striped table-hover" cc-panel-body>
+        <thead>
+          <th>Owner</th>
+          <th>Templates</th>
+          <th>Last Modified</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sshKey of sshKeys">
+            <td>{{sshKey.owner}}</td>
+            <td>
+              <ul>
+                <li *ngFor="let template of sshKey.templates">{{template}}</li>
+              </ul>
+            </td>
+            <td>{{sshKey.lastModified}}</td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteKey(sshKey)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

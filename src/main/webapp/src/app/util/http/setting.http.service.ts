@@ -1,7 +1,9 @@
-import { HTTPService } from "./abstract.http.service";
-import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+
+import { Observable, BehaviorSubject } from 'rxjs';
+
+import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -38,12 +40,12 @@ export class SettingHttpService extends HTTPService {
   }
 
   public getSettings(): Observable<Settings> {
-    return this._get("");
+    return this._get('');
   }
 
   public save(settings: Settings): Observable<boolean> {
     settings['@class'] = 'de.cinovo.cloudconductor.api.model.Settings';
-    let res = this._put("", settings).share();
+    let res = this._put('', settings).share();
     res.subscribe(() => this.reloadSettings(), () =>{});
     return res;
   }
