@@ -1,16 +1,18 @@
+import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
+import { Host, HostHttpService } from '../util/http/host.http.service';
+import { ServiceState } from '../util/enums.util';
+import { Sorter } from '../util/sorters.util';
+import { AlertService } from '../util/alert/alert.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-import { Component, Input, EventEmitter, Output, AfterViewInit } from "@angular/core";
-import { Observable } from "rxjs";
-import { Host, HostHttpService } from "../util/http/host.http.service";
-import { ServiceState } from "../util/enums.util";
-import { Sorter } from "../util/sorters.util";
-import { AlertService } from "../util/alert/alert.service";
-
 interface ServiceStateElement {
   name: string;
   state: ServiceState;
@@ -18,7 +20,7 @@ interface ServiceStateElement {
   selected?: boolean;
 }
 
-type ServiceActionType =  "start"|"stop"|"restart";
+type ServiceActionType =  'start'|'stop'|'restart';
 
 @Component({
   selector: 'host-services',
@@ -29,10 +31,10 @@ export class HostServices implements AfterViewInit {
   @Input() obsHost: Observable<Host>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
-  private services: Array<ServiceStateElement> = [];
-  private host: Host = {name: "", template: ""};
+  public services: Array<ServiceStateElement> = [];
+  public host: Host = {name: '', template: ''};
 
-  private _allSelected: boolean = false;
+  private _allSelected = false;
 
   constructor(private hostHTTP: HostHttpService, private alerts: AlertService) {
   };
@@ -55,7 +57,7 @@ export class HostServices implements AfterViewInit {
         let selected = this.allSelected;
         if (!selected && old && old.length > 0) {
           for (let oldElement of old) {
-            if (oldElement.name == index) {
+            if (oldElement.name === index) {
               selected = oldElement.selected;
             }
           }
@@ -76,7 +78,7 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  private handleSelected(type: ServiceActionType, index: number = 0) {
+  private handleSelected(type: ServiceActionType, index = 0) {
     while (index < this.services.length && !this.services[index].selected) {
       index++;
     }
@@ -97,19 +99,19 @@ export class HostServices implements AfterViewInit {
 
   private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: () => void): void {
     switch (type) {
-      case "start":
+      case 'start':
         this.hostHTTP.startService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
         break;
-      case "stop":
+      case 'stop':
         this.hostHTTP.stopService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
         break;
-      case "restart":
+      case 'restart':
         this.hostHTTP.restartService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
         break;
     }
   }
 
-  private startSelected(index: number = 0): void {
+  private startSelected(index = 0): void {
     while (index < this.services.length && !this.services[index].selected) {
       index++;
     }
@@ -129,10 +131,10 @@ export class HostServices implements AfterViewInit {
     )
   }
 
-  private isServiceStarted(service: ServiceStateElement, includeTrannsient: boolean = false): boolean {
-    let ret: boolean = service.state.toString() == ServiceState[ServiceState.STARTED] || service.state.toString() == ServiceState[ServiceState.IN_SERVICE];
+  private isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
+    let ret: boolean = service.state.toString() === ServiceState[ServiceState.STARTED] || service.state.toString() === ServiceState[ServiceState.IN_SERVICE];
     if (includeTrannsient && !ret) {
-      ret = service.state.toString() == ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service);
+      ret = service.state.toString() === ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service);
     }
     return ret;
   }
@@ -141,16 +143,16 @@ export class HostServices implements AfterViewInit {
     return !this.isServiceStarted(service) && !this.isServiceStoped(service)
   }
 
-  private isServiceStoped(service: ServiceStateElement, includeTrannsient: boolean = false): boolean {
-    let ret: boolean = service.state.toString() == ServiceState[ServiceState.STOPPED];
+  private isServiceStoped(service: ServiceStateElement, includeTrannsient = false): boolean {
+    let ret: boolean = service.state.toString() === ServiceState[ServiceState.STOPPED];
     if (includeTrannsient && !ret) {
-      ret = service.state.toString() == ServiceState[ServiceState.STOPPING] || this.isServiceRestarting(service);
+      ret = service.state.toString() === ServiceState[ServiceState.STOPPING] || this.isServiceRestarting(service);
     }
     return ret;
   }
 
   private isServiceRestarting(service: ServiceStateElement): boolean {
-    return service.state.toString() == ServiceState[ServiceState.RESTARTING_STARTING] || service.state.toString() == ServiceState[ServiceState.RESTARTING_STOPPING];
+    return service.state.toString() === ServiceState[ServiceState.RESTARTING_STARTING] || service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING];
   }
 
   get allSelected(): boolean {
@@ -175,17 +177,17 @@ export class HostServices implements AfterViewInit {
     for (let service of this.services) {
       if (service.selected) {
         switch (type) {
-          case "start":
+          case 'start':
             if (!this.isServiceStarted(service, true)) {
               return true;
             }
             break;
-          case "stop":
+          case 'stop':
             if (!this.isServiceStoped(service, true)) {
               return true;
             }
             break;
-          case "restart":
+          case 'restart':
             if (!this.isServiceStoped(service, true)) {
               return true;
             }

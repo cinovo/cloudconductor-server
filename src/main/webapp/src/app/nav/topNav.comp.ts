@@ -1,5 +1,6 @@
-import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
-import { SettingHttpService, Settings } from "../util/http/setting.http.service";
+import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
+
+import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -15,9 +16,8 @@ import { SettingHttpService, Settings } from "../util/http/setting.http.service"
 })
 export class TopNavComponent implements AfterViewInit {
 
-  protected settings: Settings = {};
-
-  private currentTime: number = Date.now();
+  public settings: Settings = {};
+  public currentTime: number = Date.now();
 
   constructor(private settingHttp: SettingHttpService) {
   };

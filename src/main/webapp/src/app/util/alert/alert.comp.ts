@@ -1,5 +1,7 @@
-import { Component, ViewEncapsulation } from "@angular/core";
-import { AlertService } from "./alert.service";
+import { Component, ViewEncapsulation } from '@angular/core';
+
+import { AlertService } from './alert.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -9,11 +11,11 @@ import { AlertService } from "./alert.service";
 @Component({
   selector: 'alert-area',
   templateUrl: './alert.comp.html',
-  styleUrls: ["./alert.comp.scss"]
+  styleUrls: ['./alert.comp.scss']
 })
 export class AlertComponent {
 
-  constructor(private alertService: AlertService) {
+  constructor(public alertService: AlertService) {
   };
 
 }

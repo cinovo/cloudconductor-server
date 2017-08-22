@@ -1,10 +1,12 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../util/alert/alert.service";
-import { Observable } from "rxjs";
-import { Validator } from "../util/validator.util";
-import { RepoMirror, RepoMirrorHttpService } from "../util/http/repomirror.http.service";
-import { Repo, RepoHttpService } from "../util/http/repo.http.service";
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable } from 'rxjs';
+
+import { AlertService } from '../util/alert/alert.service';
+import { Validator } from '../util/validator.util';
+import { RepoMirror, RepoMirrorHttpService } from '../util/http/repomirror.http.service';
+import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 
 /**
   * Copyright 2017 Cinovo AG<br>
@@ -18,18 +20,18 @@ import { Repo, RepoHttpService } from "../util/http/repo.http.service";
 })
 export class MirrorEdit implements AfterViewInit {
 
-  private mode: string = "edit";
-  private returnToOverview: boolean = false;
-  private mirror: RepoMirror = {
-    path: "",
-    basePath: "",
-    description: "",
-    indexerType: "NONE",
-    providerType: "NONE",
-    repo: ""
+  public mode = 'edit';
+  public returnToOverview = false;
+  public mirror: RepoMirror = {
+    path: '',
+    basePath: '',
+    description: '',
+    indexerType: 'NONE',
+    providerType: 'NONE',
+    repo: ''
   };
 
-  private repo: Repo = {name: "", mirrors: [], primaryMirror: 0};
+  public repo: Repo = {name: '', mirrors: [], primaryMirror: 0};
 
   constructor(private repoHttp: RepoHttpService, private mirrorHttp: RepoMirrorHttpService,
               private route: ActivatedRoute, private alerts: AlertService, private router: Router) {
@@ -37,7 +39,7 @@ export class MirrorEdit implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.route.url.subscribe((value) => {
-        if (value[value.length - 1].path == 'new') {
+        if (value[value.length - 1].path === 'new') {
           this.mode = 'new'
         }
       }
@@ -49,7 +51,7 @@ export class MirrorEdit implements AfterViewInit {
     });
 
     this.route.queryParams.subscribe((params) => {
-      if (params['ret'] && params['ret'] == "ov") {
+      if (params['ret'] && params['ret'] === 'ov') {
         this.returnToOverview = true;
       }
     });
@@ -70,13 +72,13 @@ export class MirrorEdit implements AfterViewInit {
       (result) => {
         this.mirror = result;
         if (this.returnToOverview) {
-          this.router.navigate(["repo"]);
+          this.router.navigate(['repo']);
         } else {
-          this.router.navigate(["repo", this.repo.name])
+          this.router.navigate(['repo', this.repo.name])
         }
       },
       (error) => {
-        this.alerts.danger("Failed to save the mirror");
+        this.alerts.danger('Failed to save the mirror');
       }
     );
   }
@@ -84,21 +86,21 @@ export class MirrorEdit implements AfterViewInit {
   private fieldValidation() {
     let error = false;
     if (!this.isDescriptionValid()) {
-      this.alerts.danger("Please insert a description.");
+      this.alerts.danger('Please insert a description.');
       error = true;
     }
     if (!this.isPathValid()) {
-      this.alerts.danger("Please insert a path.");
+      this.alerts.danger('Please insert a path.');
       error = true;
     }
     return error;
   }
 
-  private isDescriptionValid(): boolean {
+  public isDescriptionValid(): boolean {
     return Validator.notEmpty(this.mirror.description);
   }
 
-  private isPathValid(): boolean {
+  public isPathValid(): boolean {
     return Validator.notEmpty(this.mirror.path);
   }
 

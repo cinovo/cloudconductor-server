@@ -6,7 +6,7 @@ import {
   EventEmitter,
   ViewChildren,
   AfterContentInit, ViewChild, AfterContentChecked, AfterViewInit
-} from "@angular/core";
+} from '@angular/core';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -26,14 +26,14 @@ export class CCPanel implements AfterViewInit {
   @Input() title: string;
 
   @Input() subTitle: string;
-  @Input() subTitleCondition:boolean = true;
+  @Input() subTitleCondition = true;
 
-  @Input() collapsable: boolean = false;
-  @Input() collapseBody: boolean = false;
-  @Input() dropDownLabel: string = "Actions";
+  @Input() collapsable = false;
+  @Input() collapseBody = false;
+  @Input() dropDownLabel = 'Actions';
   @Output() onHeaderDblClick: EventEmitter<any> = new EventEmitter();
 
-  private showDropDown:boolean = false;
+  public showDropDown = false;
 
   constructor() {
   };
@@ -45,13 +45,13 @@ export class CCPanel implements AfterViewInit {
   }
 
   @ViewChild('dropdownmenu')
-  set dropDownElements(element:any) {
-    if(element) {
+  set dropDownElements(element: any) {
+    if (element) {
       this.showDropDown = element.nativeElement.childElementCount > 0;
     }
   }
 
-  private doHeaderDblClick(): void {
+  public doHeaderDblClick(): void {
     this.onHeaderDblClick.emit();
   }
 }

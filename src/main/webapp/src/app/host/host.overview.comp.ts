@@ -1,9 +1,10 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { Host, HostHttpService } from "../util/http/host.http.service";
-import { Sorter } from "../util/sorters.util";
-import { Validator } from "../util/validator.util";
-import { Router } from "@angular/router";
-import { Template, TemplateHttpService } from "../util/http/template.http.service";
+import { Component, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { Host, HostHttpService } from '../util/http/host.http.service';
+import { Sorter } from '../util/sorters.util';
+import { Validator } from '../util/validator.util';
+import { Template, TemplateHttpService } from '../util/http/template.http.service';
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -21,9 +22,9 @@ export class HostOverview implements AfterViewInit {
 
   private _hosts: Array<Host> = [];
 
-  private autorefresh: boolean = false;
+  private autorefresh = false;
 
-  private templates: Array<Template> = []
+  public templates: Array<Template> = []
 
   constructor(private hostHttp: HostHttpService, private router: Router,
               private templateHttp: TemplateHttpService) {
@@ -73,7 +74,7 @@ export class HostOverview implements AfterViewInit {
     );
   }
 
-  protected reloadHosts(): void {
+  public reloadHosts(): void {
     this.loadData();
   }
 
@@ -103,4 +104,5 @@ export class HostOverview implements AfterViewInit {
     }
     return true;
   }
+  
 }

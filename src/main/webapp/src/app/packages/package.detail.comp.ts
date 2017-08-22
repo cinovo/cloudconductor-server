@@ -1,10 +1,11 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../util/alert/alert.service";
-import { PackageHttpService, Package, PackageVersion } from "../util/http/package.http.service";
-import { Validator } from "../util/validator.util";
-import { ServiceHttpService, Service } from "../util/http/service.http.service";
-import { Sorter } from "../util/sorters.util";
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { AlertService } from '../util/alert/alert.service';
+import { PackageHttpService, Package, PackageVersion } from '../util/http/package.http.service';
+import { Validator } from '../util/validator.util';
+import { ServiceHttpService, Service } from '../util/http/service.http.service';
+import { Sorter } from '../util/sorters.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,18 +25,18 @@ interface RepoVersionTree {
 })
 export class PackageDetail implements AfterViewInit {
 
-  private pkg: Package = {name: "", description: "", versions: []};
+  public pkg: Package = {name: '', description: '', versions: []};
 
-  protected templateRefs: Array<{template: string, version: string}> = [];
+  public templateRefs: Array<{template: string, version: string}> = [];
 
-  private services: Array<Service>;
+  public services: Array<Service>;
   protected addableServices: Array<Service> = [];
-  private showAddService: boolean = false;
+  public showAddService = false;
   private newService: Service;
 
   private back: any;
 
-  private repos:Array<RepoVersionTree> = [];
+  public repos: Array<RepoVersionTree> = [];
 
   constructor(private packageHttp: PackageHttpService,
               private serviceHttp: ServiceHttpService,
@@ -56,7 +57,7 @@ export class PackageDetail implements AfterViewInit {
   }
 
   private loadPackage(packageName: string) {
-    if (Validator.notEmpty(packageName) && packageName != 'new') {
+    if (Validator.notEmpty(packageName) && packageName !== 'new') {
       this.packageHttp.getPackage(packageName).subscribe(
         (result) => {
           this.pkg = result;
@@ -66,7 +67,7 @@ export class PackageDetail implements AfterViewInit {
           this.loadRepoProvision();
         },
         () => {
-          this.alerts.danger("The package you are looking for doesn't not exists.");
+          this.alerts.danger('The package you are looking for doesn\'t not exists.');
           this.router.navigate(['package']);
         }
       );
@@ -79,8 +80,8 @@ export class PackageDetail implements AfterViewInit {
     )
   }
 
-  private loadTemplateUsage():void {
-    if(!this.pkg) {
+  private loadTemplateUsage(): void {
+    if (!this.pkg) {
       return;
     }
 
@@ -94,8 +95,8 @@ export class PackageDetail implements AfterViewInit {
       });
   }
 
-  private loadRepoProvision():void {
-    if(!this.pkg) {
+  private loadRepoProvision(): void {
+    if (!this.pkg) {
       return;
     }
     this.packageHttp.getVersions(this.pkg).subscribe(
@@ -103,8 +104,8 @@ export class PackageDetail implements AfterViewInit {
 
         let temp: {[repoName: string]: Array<PackageVersion>; } = {};
         for (let pv of result) {
-          for(let repo of pv.repos) {
-            if(!temp[repo]) {
+          for (let repo of pv.repos) {
+            if (!temp[repo]) {
               temp[repo] = [];
             }
             temp[repo].push(pv);
@@ -120,21 +121,21 @@ export class PackageDetail implements AfterViewInit {
     )
   }
 
-  protected removeService(service: Service):void {
+  protected removeService(service: Service): void {
     if (Validator.idIsSet(service.id)) {
       let index = this.services.indexOf(service);
       service.packages.splice(service.packages.indexOf(this.pkg.name), 1);
       this.serviceHttp.save(service).subscribe(
         () => {
           this.services.splice(index, 1);
-          this.alerts.success("You successfully removed the package from the service!")
+          this.alerts.success('You successfully removed the package from the service!')
         },
-        () => this.alerts.danger("The package remove failed!")
+        () => this.alerts.danger('The package remove failed!')
       );
     }
   }
 
-  protected saveNewService():void {
+  protected saveNewService(): void {
     if (this.newService) {
       this.newService.packages.push(this.pkg.name);
       this.serviceHttp.save(this.newService).subscribe(
@@ -143,20 +144,20 @@ export class PackageDetail implements AfterViewInit {
           this.newService = null;
           this.showAddService = false;
 
-          this.alerts.success("You successfully added the package to the service!")
+          this.alerts.success('You successfully added the package to the service!')
         },
-        () => this.alerts.danger("The connection of service and package failed!")
+        () => this.alerts.danger('The connection of service and package failed!')
       );
     }
   }
 
-  protected goToBack(): void {
+  public goToBack(): void {
     if (this.back) {
-      if (this.back.ret == 'serviceDetail') {
+      if (this.back.ret === 'serviceDetail') {
         this.gotoService(this.back.id, true);
         return;
       }
-      if (this.back.ret == 'repoDetail') {
+      if (this.back.ret === 'repoDetail') {
         this.gotoRepo(this.back.id, true);
         return;
       }
@@ -168,8 +169,8 @@ export class PackageDetail implements AfterViewInit {
     this.router.navigate(['template', templateName]);
   }
 
-  private gotoService(service: string, back?:boolean): void {
-    if(back) {
+  private gotoService(service: string, back?: boolean): void {
+    if (back) {
       this.router.navigate(['service', service]);
     }else {
       this.router.navigate(['service', service], {queryParams: {ret: 'packageDetail', id: this.pkg.name}});
@@ -177,7 +178,7 @@ export class PackageDetail implements AfterViewInit {
   }
 
   private gotoRepo(repo: string, back?: boolean) {
-    if(back) {
+    if (back) {
       this.router.navigate(['repo', repo]);
     }else {
       this.router.navigate(['repo', repo], {queryParams: {ret: 'packageDetail', id: this.pkg.name}});

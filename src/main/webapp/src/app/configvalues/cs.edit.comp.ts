@@ -1,9 +1,11 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { ConfigValueHttpService, ConfigValue } from "../util/http/configValue.http.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { AlertService } from "../util/alert/alert.service";
-import { Validator } from "../util/validator.util";
-import { ServiceHttpService } from "../util/http/service.http.service";
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
+import { AlertService } from '../util/alert/alert.service';
+import { Validator } from '../util/validator.util';
+import { ServiceHttpService } from '../util/http/service.http.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -16,10 +18,10 @@ import { ServiceHttpService } from "../util/http/service.http.service";
 })
 export class ConfigValueEdit implements AfterViewInit {
 
-  private cv: ConfigValue = {template: "", service: "", key: "", value: ""};
-  private mode: string = 'new';
-  protected templates: Array<String> = [];
-  protected services: Array<String> = [];
+  public cv: ConfigValue = {template: '', service: '', key: '', value: ''};
+  public mode = 'new';
+  public templates: Array<String> = [];
+  public services: Array<String> = [];
 
   constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
               private alerts: AlertService, private router: Router,
@@ -28,8 +30,8 @@ export class ConfigValueEdit implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.route.params.subscribe((params) => {
-      this.cv = {template: params['template'], service: params['service'], key: params['key'], value: ""};
-      if (this.cv.template == 'newTemplate') {
+      this.cv = {template: params['template'], service: params['service'], key: params['key'], value: ''};
+      if (this.cv.template === 'newTemplate') {
         this.cv.template = '';
       }
       if (Validator.notEmpty(this.cv.key)) {
@@ -50,44 +52,43 @@ export class ConfigValueEdit implements AfterViewInit {
       });
   }
 
-  protected save(): void {
+  public save(): void {
     if (this.fieldValidation()) {
       return;
     }
     this.configHttp.save(this.cv).subscribe(
       () => {
-        this.router.navigate(["config", this.cv.template])
+        this.router.navigate(['config', this.cv.template])
       }
     );
   }
 
-
   private fieldValidation() {
     let error = false;
     if (!this.isKeyValid()) {
-      this.alerts.danger("Please insert a key.");
+      this.alerts.danger('Please insert a key.');
       error = true;
     }
     if (!this.isValueValid()) {
-      this.alerts.danger("Please insert a value.");
+      this.alerts.danger('Please insert a value.');
       error = true;
     }
     if (!this.isTemplateValid()) {
-      this.alerts.danger("Please insert a template.");
+      this.alerts.danger('Please insert a template.');
       error = true;
     }
     return error;
   }
 
-  private isKeyValid(): boolean {
+  public isKeyValid(): boolean {
     return Validator.notEmpty(this.cv.key);
   }
 
-  private isValueValid(): boolean {
+  public isValueValid(): boolean {
     return Validator.notEmpty(this.cv.value);
   }
 
-  private isTemplateValid(): boolean {
+  public isTemplateValid(): boolean {
     return Validator.notEmpty(this.cv.template);
   }
 

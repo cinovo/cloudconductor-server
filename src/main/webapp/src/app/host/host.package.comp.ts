@@ -1,27 +1,28 @@
+import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
+import { TemplateHttpService } from '../util/http/template.http.service';
+import { Host } from '../util/http/host.http.service';
+import { Sorter } from '../util/sorters.util';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-import { Component, Input, EventEmitter, Output } from "@angular/core";
-import { Observable } from "rxjs";
-import { TemplateHttpService } from "../util/http/template.http.service";
-import { Host } from "../util/http/host.http.service";
-import { Sorter } from "../util/sorters.util";
-
 @Component({
   selector: 'host-packages',
   templateUrl: './host.package.comp.html'
 })
-export class HostPackages {
+export class HostPackages implements AfterViewInit {
   @Input() obsHost: Observable<Host>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
-
   private packages: Array<{name: string, hostVersion: string, templateVersion?: string, state?: string}> = [];
-  private packageChanges: boolean = false;
-  private host: Host = {name: "", template: ""};
+  public packageChanges = false;
+  public host: Host = {name: '', template: ''};
 
   constructor(private templateHttp: TemplateHttpService) {
   };
@@ -46,7 +47,7 @@ export class HostPackages {
               name: index,
               hostVersion: host.packages[index],
               templateVersion: result.versions[index],
-              state: "ok"
+              state: 'ok'
             };
             element = this.updateState(element);
             this.packages.push(element);
@@ -59,19 +60,19 @@ export class HostPackages {
 
   private updateState(element: {name: string; hostVersion: string; templateVersion: string; state: string}) {
     if (!element.templateVersion) {
-      element['state'] = "uninstalling";
+      element['state'] = 'uninstalling';
       this.packageChanges = true;
     } else if (!element.hostVersion) {
-      element['state'] = "installing";
+      element['state'] = 'installing';
       this.packageChanges = true;
     } else {
       let comp = Sorter.versionComp(element.hostVersion, element.templateVersion);
       if (comp < 0) {
-        element['state'] = "upgrading";
+        element['state'] = 'upgrading';
         this.packageChanges = true;
       }
       if (comp > 0) {
-        element['state'] = "downgrading";
+        element['state'] = 'downgrading';
         this.packageChanges = true;
       }
     }

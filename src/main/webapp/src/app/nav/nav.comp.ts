@@ -20,8 +20,8 @@ declare let $: any;
 })
 export class NavComponent implements AfterViewInit {
 
-  protected links: Array<AdditionalLink> = [];
-  protected templates: Array<string> = [];
+  public links: Array<AdditionalLink> = [];
+  public templates: Array<string> = [];
 
   constructor(private linksHttp: AdditionalLinkHttpService,
               private confHttp: ConfigValueHttpService) {

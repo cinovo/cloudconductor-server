@@ -1,9 +1,11 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { TemplateHttpService, Template } from "../util/http/template.http.service";
-import { ActivatedRoute } from "@angular/router";
-import { Validator } from "../util/validator.util";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Mode } from "../util/enums.util";
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+import { BehaviorSubject, Observable } from 'rxjs';
+
+import { TemplateHttpService, Template } from '../util/http/template.http.service';
+import { Validator } from '../util/validator.util';
+import { Mode } from '../util/enums.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -17,12 +19,12 @@ import { Mode } from "../util/enums.util";
 })
 export class TemplateDetail implements AfterViewInit {
 
-  private _template: BehaviorSubject<Template> = new BehaviorSubject({name: "", description: ""});
+  private _template: BehaviorSubject<Template> = new BehaviorSubject({name: '', description: ''});
   public template: Observable<Template> = this._template.asObservable();
-  private currentTemplate: Template = {name: "", description: "", hosts:[]};
-  protected autorefesh: boolean = false;
+  public currentTemplate: Template = {name: '', description: '', hosts: []};
+  protected autorefesh = false;
 
-  protected modes = Mode;
+  public modes = Mode;
 
   constructor(private templateHttp: TemplateHttpService,
               private route: ActivatedRoute) {
@@ -38,7 +40,7 @@ export class TemplateDetail implements AfterViewInit {
   }
 
   private loadTemplate(templateName: string) {
-    if (Validator.notEmpty(templateName) && templateName != 'new') {
+    if (Validator.notEmpty(templateName) && templateName !== 'new') {
       this.templateHttp.getTemplate(templateName).subscribe(
         (result) => {
           result.repos.sort();
@@ -48,11 +50,10 @@ export class TemplateDetail implements AfterViewInit {
     }
   }
 
-  protected reloadTemplate(): void {
+  public reloadTemplate(): void {
     if (this.currentTemplate) {
       this.loadTemplate(this.currentTemplate.name);
     }
   }
-
 
 }

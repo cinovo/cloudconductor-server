@@ -1,9 +1,10 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { AdditionalLinkHttpService, AdditionalLink } from "../util/http/additionalLinks.http.service";
-import { SettingHttpService, Settings } from "../util/http/setting.http.service";
-import { Validator } from "../util/validator.util";
-import { AlertService } from "../util/alert/alert.service";
+import { Component, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
+import { SettingHttpService, Settings } from '../util/http/setting.http.service';
+import { Validator } from '../util/validator.util';
+import { AlertService } from '../util/alert/alert.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -18,9 +19,9 @@ import { AlertService } from "../util/alert/alert.service";
 
 export class LinksEdit implements AfterViewInit {
 
-  protected links: Array<AdditionalLink> = [];
+  public links: Array<AdditionalLink> = [];
+  public newLink: AdditionalLink;
 
-  private newLink: AdditionalLink;
   private editLink: AdditionalLink;
 
   constructor(private linksHttp: AdditionalLinkHttpService,
@@ -46,7 +47,7 @@ export class LinksEdit implements AfterViewInit {
       () => {
         this.abortEditLink();
       },
-      (error) => this.alerts.danger("The choosen label already exists. Please choose an unused label name.")
+      (error) => this.alerts.danger('The choosen label already exists. Please choose an unused label name.')
     );
   }
 
@@ -56,7 +57,7 @@ export class LinksEdit implements AfterViewInit {
     }
     this.linksHttp.newLink(this.newLink).subscribe(
       () => this.abortNewLink(),
-      (error) => this.alerts.danger("The choosen label already exists. Please choose an unused label name.")
+      (error) => this.alerts.danger('The choosen label already exists. Please choose an unused label name.')
     );
   }
 
@@ -85,11 +86,11 @@ export class LinksEdit implements AfterViewInit {
   private editLinkFieldValidation(): boolean {
     let error = false;
     if (!this.isEditLinkLabelValid()) {
-      this.alerts.danger("Please insert a link label.");
+      this.alerts.danger('Please insert a link label.');
       error = true;
     }
     if (!this.isEditLinkUrlValid()) {
-      this.alerts.danger("Please insert a link url.");
+      this.alerts.danger('Please insert a link url.');
       error = true;
     }
     return error;
@@ -98,11 +99,11 @@ export class LinksEdit implements AfterViewInit {
   private newLinkFieldValidation(): boolean {
     let error = false;
     if (!this.isNewLinkLabelValid()) {
-      this.alerts.danger("Please insert a link label.");
+      this.alerts.danger('Please insert a link label.');
       error = true;
     }
     if (!this.isNewLinkUrlValid()) {
-      this.alerts.danger("Please insert a link url.");
+      this.alerts.danger('Please insert a link url.');
       error = true;
     }
     return error;

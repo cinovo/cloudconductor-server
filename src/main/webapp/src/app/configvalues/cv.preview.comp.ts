@@ -1,29 +1,29 @@
+import { Component, AfterViewInit } from '@angular/core';
+
+import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
+import { TemplateHttpService } from '../util/http/template.http.service';
+import { ServiceHttpService } from '../util/http/service.http.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-import { Component, AfterViewInit } from "@angular/core";
-import { ConfigValueHttpService, ConfigValue } from "../util/http/configValue.http.service";
-import { TemplateHttpService } from "../util/http/template.http.service";
-import { ServiceHttpService } from "../util/http/service.http.service";
-
 @Component({
   selector: 'cs.preview.comp',
   templateUrl: './cv.preview.comp.html'
 })
 export class ConfigValuePreview implements AfterViewInit {
 
-  private templates: Array<string> = [];
-  private services: Array<string> = [];
-  private modes: Array<string> = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
-
+  public templates: Array<string> = [];
+  public services: Array<string> = [];
+  public modes: Array<string> = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
+  public preview: any;
 
   private _templateQuery: string;
   private _serviceQuery: string;
   private _modeQuery: string = this.modes[0];
-  private preview: any;
 
   constructor(private configHttp: ConfigValueHttpService,
               private templateHttp: TemplateHttpService,
@@ -55,9 +55,9 @@ export class ConfigValuePreview implements AfterViewInit {
     this.preview = null;
     this.configHttp.getPreview(this.templateQuery, this.serviceQuery, this.modeQuery).subscribe(
       (result) => {
-        if(result instanceof Array) {
+        if (result instanceof Array) {
           this.preview = result;
-        }else if(result._body) {
+        }else if (result._body) {
           this.preview = result._body;
         }
       }

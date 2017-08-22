@@ -1,8 +1,10 @@
-import { Component, AfterViewInit, Input, Output, EventEmitter } from "@angular/core";
-import { Template, TemplateHttpService, AgentOption } from "../util/http/template.http.service";
-import { Observable } from "rxjs";
-import { AlertService } from "../util/alert/alert.service";
-import { Validator } from "../util/validator.util";
+import { Component, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
+import { Template, TemplateHttpService, AgentOption } from '../util/http/template.http.service';
+import { AlertService } from '../util/alert/alert.service';
+import { Validator } from '../util/validator.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -18,9 +20,8 @@ export class TemplateAgentOptions implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
-  private options: AgentOption = {};
-
-  private noGtEqZero = Validator.noGtEqZero;
+  public options: AgentOption = {};
+  public noGtEqZero = Validator.noGtEqZero;
 
   constructor(private templateHttp: TemplateHttpService,
               private alerts: AlertService) {
@@ -42,13 +43,14 @@ export class TemplateAgentOptions implements AfterViewInit {
     }
   }
 
-  protected saveOptions(): void {
+  public saveOptions(): void {
     this.templateHttp.saveAgentOptions(this.options).subscribe(
       (result) => {
         this.options = result;
-        this.alerts.success("Successfully saved the agent behaviour.")
+        this.alerts.success('Successfully saved the agent behaviour.')
       },
-      () => this.alerts.danger("Failed to save the agent behaviour.")
+      () => this.alerts.danger('Failed to save the agent behaviour.')
     )
   }
+
 }

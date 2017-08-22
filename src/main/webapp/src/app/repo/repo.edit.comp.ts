@@ -1,12 +1,14 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
-import { Observable } from "rxjs";
-import { AlertService } from "../util/alert/alert.service";
-import { Validator } from "../util/validator.util";
-import { Repo, RepoHttpService } from "../util/http/repo.http.service";
-import { RepoMirrorHttpService } from "../util/http/repomirror.http.service";
-import { PackageHttpService, PackageVersion } from "../util/http/package.http.service";
-import { Sorter } from "../util/sorters.util";
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable } from 'rxjs';
+
+import { AlertService } from '../util/alert/alert.service';
+import { Validator } from '../util/validator.util';
+import { Repo, RepoHttpService } from '../util/http/repo.http.service';
+import { RepoMirrorHttpService } from '../util/http/repomirror.http.service';
+import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
+import { Sorter } from '../util/sorters.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -20,10 +22,10 @@ import { Sorter } from "../util/sorters.util";
 })
 export class RepoEdit implements AfterViewInit {
 
-  private mode: string = "edit";
-  private repo: Repo = {name: "", mirrors: [], primaryMirror: 0};
+  public mode = 'edit';
+  public repo: Repo = {name: '', mirrors: [], primaryMirror: 0};
 
-  protected packages: Array<PackageVersion> = [];
+  public packages: Array<PackageVersion> = [];
 
   constructor(private repoHttp: RepoHttpService, private mirrorHttp: RepoMirrorHttpService,
               private packageHttp: PackageHttpService,
@@ -32,7 +34,7 @@ export class RepoEdit implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.route.url.subscribe((value) => {
-        if (value[value.length - 1].path == 'new') {
+        if (value[value.length - 1].path === 'new') {
           this.mode = 'new'
         }
       }
@@ -43,7 +45,7 @@ export class RepoEdit implements AfterViewInit {
   }
 
   private loadRepo(repoName: string): void {
-    if (Validator.notEmpty(repoName) && this.mode == "edit") {
+    if (Validator.notEmpty(repoName) && this.mode === 'edit') {
       this.repoHttp.getRepo(repoName).subscribe((result) => {
         this.repo = result;
         this.loadPackages();
@@ -61,21 +63,21 @@ export class RepoEdit implements AfterViewInit {
 
   save(): void {
     this.doSave(() => {
-      this.alerts.success("Successfully saved your repository");
-      if (this.mode == "new") {
-        this.router.navigate(["repo"]);
+      this.alerts.success('Successfully saved your repository');
+      if (this.mode === 'new') {
+        this.router.navigate(['repo']);
       }
     });
   }
 
   addMirror(): void {
     this.doSave(() => {
-      this.router.navigate(["repo", this.repo.name, "mirror", "new"]);
+      this.router.navigate(['repo', this.repo.name, 'mirror', 'new']);
     });
   }
 
   editMirror(id: number): void {
-    this.doSave(() => this.router.navigate(["repo", this.repo.name, "mirror", id]));
+    this.doSave(() => this.router.navigate(['repo', this.repo.name, 'mirror', id]));
   }
 
   deleteMirror(id: number): void {
@@ -104,13 +106,13 @@ export class RepoEdit implements AfterViewInit {
   private fieldValidation(): boolean {
     let error = false;
     if (!this.isNameValid()) {
-      this.alerts.danger("Please insert a repo name.");
+      this.alerts.danger('Please insert a repo name.');
       error = true;
     }
     return error;
   }
 
-  private isNameValid(): boolean {
+  public isNameValid(): boolean {
     return Validator.notEmpty(this.repo.name);
   }
 
@@ -131,7 +133,7 @@ export class RepoEdit implements AfterViewInit {
         }
       },
       (error) => {
-        this.alerts.danger("Failed to save the repository");
+        this.alerts.danger('Failed to save the repository');
       }
     );
   }

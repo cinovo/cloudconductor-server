@@ -1,28 +1,30 @@
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+import { BehaviorSubject, Observable } from 'rxjs';
+
+import { Host, HostHttpService } from '../util/http/host.http.service';
+import { AlertService } from '../util/alert/alert.service';
+import { Validator } from '../util/validator.util';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-import { Component, AfterViewInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Host, HostHttpService } from "../util/http/host.http.service";
-import { AlertService } from "../util/alert/alert.service";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Validator } from "../util/validator.util";
-
-
 @Component({
   selector: 'host.detail.comp',
   templateUrl: './host.detail.comp.html'
 })
 export class HostDetail implements AfterViewInit {
-  private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: "", template: ""});
+
+  private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: '', template: ''});
   public obsHost: Observable<Host> = this._behavHost.asObservable();
-  private host: Host = {name: "", template: ""};
+  public host: Host = {name: '', template: ''};
 
   private back: {ret: string; id: string};
-  private autorefresh: boolean = false;
+  private autorefresh = false;
 
   constructor(private route: ActivatedRoute,
               private hostHttp: HostHttpService,
@@ -49,12 +51,12 @@ export class HostDetail implements AfterViewInit {
         (result) => {
           this._behavHost.next(result);
         },
-        (error) => this.alerts.danger("The host does not exist!")
+        (error) => this.alerts.danger('The host does not exist!')
       )
     }
   }
 
-  private reloadHost(): void {
+  public reloadHost(): void {
     this.loadData(this.host.name);
   }
 
