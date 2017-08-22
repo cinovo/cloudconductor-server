@@ -1,5 +1,6 @@
 ///<reference path="host/host.overview.comp.ts"/>
 import { Routes } from "@angular/router";
+
 import { HomeComponent } from "./home/home.comp";
 import { ConfigValueOverview } from "./configvalues/cv.overview.comp";
 import { ConfigValueEdit } from "./configvalues/cs.edit.comp";
@@ -17,7 +18,6 @@ import { TemplateNew } from "./template/template.new.comp";
 import { HostOverview } from "./host/host.overview.comp";
 import { HostDetail } from "./host/host.detail.comp";
 import { ConfigValuePreview } from "./configvalues/cv.preview.comp";
-import { Type } from "@angular/core";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -64,14 +64,3 @@ export const APP_ROUTES: Routes = [
 
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
-
-export const ROUTED_COMPONENTS = () => {
-  let res = [];
-  
-  for (let route of APP_ROUTES) {
-    if (route.component) {
-      res.push(route.component);
-    }
-  }
-  return res;
-};

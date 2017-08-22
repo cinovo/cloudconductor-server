@@ -1,7 +1,7 @@
 import { Component, HostListener, AfterViewInit } from "@angular/core";
 /// <reference path="../../typings/globals/jquery/index.d.ts" />;
 
-import * as $ from 'jquery';
+declare let $:any;
 
 /**
  * Copyright 2017 Cinovo AG<br>

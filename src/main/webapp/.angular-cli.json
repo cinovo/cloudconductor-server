@@ -19,10 +19,17 @@
       "prefix": "app",
       "styles": [
         "glob/index.scss",
-        "../node_modules/metismenu/dist/metisMenu.min.css"
+        "../node_modules/metismenu/dist/metisMenu.min.css",
+        "../node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
+        "../node_modules/datatables.net-responsive-bs/css/responsive.bootstrap.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js",
+        "../node_modules/datatables.net/js/jquery.dataTables.js",
+        "../node_modules/datatables.net-bs/js/dataTables.bootstrap.js",
+        "../node_modules/datatables.net-responsive/js/dataTables.responsive.js",
+        "../node_modules/datatables.net-responsive-bs/js/responsive.bootstrap.js",
         "../node_modules/metismenu/dist/metisMenu.js"
       ],
       "environmentSource": "environments/environment.ts",
