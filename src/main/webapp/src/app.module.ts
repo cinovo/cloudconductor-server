@@ -17,8 +17,7 @@ import { TopNavComponent } from './app/nav/topNav.comp';
 import { AlertComponent } from './app/util/alert/alert.comp';
 import './rxjs-extensions';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ConfirmOptions, Position, ConfirmModule } from 'angular2-bootstrap-confirm';
-import { Positioning } from 'angular2-bootstrap-confirm/position';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { AdditionalLinkHttpService } from './app/util/http/additionalLinks.http.service';
 import { ConfigValueHttpService } from './app/util/http/configValue.http.service';
 import { ServiceHttpService } from './app/util/http/service.http.service';
@@ -63,7 +62,7 @@ import { ConfigValuePreview } from './app/configvalues/cv.preview.comp';
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
-    ConfirmModule
+    ConfirmationPopoverModule.forRoot()
   ],
   declarations: [
     AppComponent,
@@ -107,9 +106,7 @@ import { ConfigValuePreview } from './app/configvalues/cv.preview.comp';
     PackageHttpService,
     SettingHttpService,
     TemplateHttpService,
-    HostHttpService,
-    ConfirmOptions,
-    {provide: Position, useClass: Positioning}
+    HostHttpService
   ],
   bootstrap: [AppComponent]
 })

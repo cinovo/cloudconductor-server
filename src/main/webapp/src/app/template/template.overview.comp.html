@@ -31,7 +31,7 @@
       <li class="divider" cc-panel-dropdown></li>
 
       <li cc-panel-dropdown>
-        <a href="javascript:void(0)" mwlConfirm
+        <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
            [message]="'Are you sure you want to delete <strong>all<strong> templates?'"
            confirmButtonType="danger"
@@ -66,16 +66,16 @@
             {{countVersion(template.versions)}}
           </td>
           <td>
-            <template ngFor let-repo [ngForOf]="template.repos" let-last="last">
+            <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
               {{repo}}
-              <template [ngIf]="!last"><br/></template>
-            </template>
+              <ng-template [ngIf]="!last"><br/></ng-template>
+            </ng-template>
           </td>
           <td>
             <a [routerLink]="[template.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
-            <a href="javascript:void(0)" mwlConfirm
+            <a href="javascript:void(0)" mwlConfirmationPopover
                [title]="'Please verify!'"
                [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
                placement="left"

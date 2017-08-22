@@ -19,7 +19,7 @@
     </tr>
 
     <tr *ngFor="let link of links" (dblclick)="goToEditLink(link)">
-      <template [ngIf]="!editLink || editLink.id != link.id">
+      <ng-template [ngIf]="!editLink || editLink.id != link.id">
         <td>
           {{link.label}}
         </td>
@@ -33,7 +33,7 @@
           <a (click)="goToEditLink(link)" role="button"><i class="fa fa-edit fa-fw" title="Edit"></i></a>
         </td>
         <td>
-          <a href="javascript:void(0)" mwlConfirm
+          <a href="javascript:void(0)" mwlConfirmationPopover
              [title]="'Please verify!'"
              [message]="'Are you sure you want to remove the following external link: '+ link.label +'?'"
              placement="left"
@@ -42,9 +42,9 @@
             <i class="fa fa-bitbucket fa-fw" title="Delete"></i>
           </a>
         </td>
-      </template>
+      </ng-template>
 
-      <template [ngIf]="editLink && editLink.id == link.id">
+      <ng-template [ngIf]="editLink && editLink.id == link.id">
         <td colspan="5">
           <div class="form-group input-group inline-form" [class.has-error]="!isEditLinkLabelValid()">
             <label class="input-group-addon" for="editLinkLabel">Label </label>
@@ -62,7 +62,7 @@
             </button>
           </div>
         </td>
-      </template>
+      </ng-template>
     </tr>
 
     <tr *ngIf="newLink">

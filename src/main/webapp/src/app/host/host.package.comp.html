@@ -19,7 +19,7 @@
           </tr>
           </thead>
           <tbody>
-          <template ngFor let-pkg [ngForOf]="packages">
+          <ng-template ngFor let-pkg [ngForOf]="packages">
             <tr *ngIf="pkg.state != 'ok'">
               <td>
                 <span class="label label-default label-as-badge"
@@ -32,7 +32,7 @@
               <td>{{pkg.hostVersion}}</td>
               <td>{{pkg.templateVersion}}</td>
             </tr>
-          </template>
+          </ng-template>
           </tbody>
         </table>
 

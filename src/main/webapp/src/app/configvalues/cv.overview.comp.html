@@ -1,5 +1,5 @@
 <cc-title title="Configuration Key-Value-Pairs" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
-  <a cc-subtitle-addition *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirm
+  <a cc-subtitle-addition *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirmationPopover
      [title]="'Please verify!'"
      [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>'+ template+'</strong>?'"
      confirmButtonType="danger"
@@ -38,7 +38,7 @@
       </li>
       <li class="divider" cc-panel-dropdown></li>
       <li cc-panel-dropdown>
-        <a href="javascript:void(0)" mwlConfirm
+        <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
            [message]="'Are you sure you want to delete all key-value-pairs for the following service: <strong>'+ service.name+'</strong>?'"
            confirmButtonType="danger"
@@ -70,7 +70,7 @@
               <a [routerLink]="['/config', kv.template, kv.service, kv.key]"><i class="fa fa-edit fa-fw"></i></a>
             </td>
             <td>
-              <a href="javascript:void(0)" mwlConfirm
+              <a href="javascript:void(0)" mwlConfirmationPopover
                  [title]="'Please verify!'"
                  [message]="'Are you sure you want to delete the following key-value-pair: '+ kv.key+'?'"
                  placement="left"

@@ -63,10 +63,10 @@
                 {{repo.name}}
               </td>
               <td>
-                <template ngFor let-version [ngForOf]="repo.versions" let-last="last">
+                <ng-template ngFor let-version [ngForOf]="repo.versions" let-last="last">
                   {{version.version}}
-                  <template [ngIf]="!last">,</template>
-                </template>
+                  <ng-template [ngIf]="!last">,</ng-template>
+                </ng-template>
               </td>
               <td>
                 <a [routerLink]="['/repo', repo.name]"><i
@@ -109,7 +109,7 @@
                   class="fa fa-external-link fa-fw"></i></a>
               </td>
               <td>
-                <a href="javascript:void(0)" mwlConfirm
+                <a href="javascript:void(0)" mwlConfirmationPopover
                    [title]="'Please verify!'"
                    [message]="'Are you sure you want to remove the following service link from the package: '+ service.name+'?'"
                    placement="left"

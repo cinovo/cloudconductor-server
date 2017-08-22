@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, ViewEncapsulation, AfterViewInit, AfterContentInit } from '@angular/core';
 
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 
@@ -14,7 +14,7 @@ import { SettingHttpService, Settings } from '../util/http/setting.http.service'
   templateUrl: './topNav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
-export class TopNavComponent implements AfterViewInit {
+export class TopNavComponent implements AfterViewInit, AfterContentInit {
 
   public settings: Settings = {};
   public currentTime: number = Date.now();
@@ -25,7 +25,11 @@ export class TopNavComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.settingHttp.settings.subscribe(
       (result) => this.settings = result
-    )
+    );
+
+  }
+
+  ngAfterContentInit(): void {
     this.workClock();
   }
 

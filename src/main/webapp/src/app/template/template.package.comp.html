@@ -29,9 +29,9 @@
             {{pv.version}}
           </td>
           <td>
-            <template [ngIf]="packageTree[pv.pkg]">
+            <ng-template [ngIf]="packageTree[pv.pkg]">
               {{packageTree[pv.pkg].newestVersion.version}}
-            </template>
+            </ng-template>
           </td>
           <td *ngIf="!isPkgLatest(pv)">
             <a (click)="updatePackage(pv)" role="button" title="Update pacakge to newest"><i

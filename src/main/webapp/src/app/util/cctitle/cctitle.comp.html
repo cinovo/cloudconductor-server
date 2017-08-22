@@ -2,11 +2,11 @@
   <div class="col-lg-12">
 
     <h1 class="page-header">
-      <template [ngIf]="reloadable">
+      <ng-template [ngIf]="reloadable">
         <a (click)="reload()" class="pull-right" role="button" title="Reload">
           <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
         </a>
-      </template>
+      </ng-template>
       <i class="fa {{titleIcon}} fa-fw" *ngIf="titleIcon"></i> {{title}}
       <h4 *ngIf="subtitle">{{subtitle}}
         <ng-content select="[cc-subtitle-addition]"></ng-content>
