@@ -869,4 +869,10 @@
         <dropTable tableName="taggedfiles" schemaName="cloudconductor"/>
         <dropTable tableName="filetag" schemaName="cloudconductor"/>
     </changeSet>
+    <changeSet id="25" author="mweise">
+    	<addColumn tableName="sshkey" schemaName="cloudconductor">
+    		<column name="lastchangeddate" type="bigint"></column>
+    		<column name="username" type="varchar(255)"></column>
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>

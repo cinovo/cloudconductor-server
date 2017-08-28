@@ -1,0 +1,95 @@
+<cc-title title="SSH Keys"></cc-title>
+
+<div class="row">
+  <div class="col-md-4">
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
+  </div>
+</div>
+
+<div class="row" *ngIf="keysLoaded && sshKeys.length < 1">
+    <div class="col-sm-12">
+        <div class="alert alert-warning">
+            There are currently no ssh keys known.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <cc-panel [icon]="'fa-key'" [title]="'All ssh keys'">
+      <table class="table table-responsive table-striped table-hover" cc-panel-body>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>User Name</th>
+            <th>Templates</th>
+            <th>Last Modified</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sshKey of sshKeys">
+            <td>{{sshKey.owner}}</td>
+            <td>{{sshKey.username}}</td>
+            <td>
+              <ul>
+                <li *ngFor="let template of sshKey.templates">{{template}}</li>
+              </ul>
+            </td>
+            <td>{{sshKey.lastChanged | date:'dd.MM.yyyy HH:mm'}}</td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteKey(sshKey)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+
+              <a><i class="fa fa-edit fa-fw"></i></a>
+            </td>
+          </tr>
+
+          <tr *ngIf="showAddKey">
+            <td colspan="5">
+              <div class="form-group">
+                <label for="owner" class="control-label">Owner</label>
+                <input id="owner" type="text" class="form-control" [(ngModel)]="newKey.owner" placeholder="name@company">
+
+                <label for="username" class="control-label">User</label>
+                <input id="username" type="text" class="form-control" [(ngModel)]="newKey.username">
+
+                <label class="control-label" for="key">Key</label>
+                <textarea class="form-control" [(ngModel)]="newKey.key" id="key" cols="30" rows="10"></textarea>
+
+                <label for="templates" class="control-label">Templates</label>
+                <div *ngFor="let template of templateSelection" class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="template.selected" (change)="template.selected = !template.selected"> {{ template.name }}
+                    </label>
+                </div>
+              </div>
+
+              <div class="pull-right">
+                <button class="btn btn-default" (click)="showAddKey = false">
+                  Cancel
+                </button>
+                <button class="btn btn-success" (click)="addKey()" [disabled]="!newKey.owner && !newKey.key">
+                  Add
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!showAddKey" (click)="goToAddKey()">
+            <td colspan="5" role="button">
+              <i class="fa fa-plus fa-fw"></i>
+              Add new SSH Key
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

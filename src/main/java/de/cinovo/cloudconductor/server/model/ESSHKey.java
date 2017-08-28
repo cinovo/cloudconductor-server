@@ -17,11 +17,20 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -44,6 +53,10 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 	private Long id;
 	private String keycontent;
 	private String owner;
+	private String username;
+	private Long lastChangedDate;
+	
+	private List<ETemplate> templates;
 	
 	
 	@Override
@@ -90,6 +103,20 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 		this.owner = owner;
 	}
 	
+	/**
+	 * @return the user name of this ssh key
+	 */
+	public String getUsername() {
+		return this.username;
+	}
+	
+	/**
+	 * @param username the user name for this ssh key to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	@Transient
 	@Override
 	public String getName() {
@@ -101,6 +128,37 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 	 */
 	public void setName(String name) {
 		this.setOwner(name);
+	}
+	
+	/**
+	 * @return timestamp of the last change
+	 */
+	public Long getLastChangedDate() {
+		return this.lastChangedDate;
+	}
+	
+	/**
+	 * @param lastChangedDate the timestamp of the last change to set
+	 */
+	public void setLastChangedDate(Long lastChangedDate) {
+		this.lastChangedDate = lastChangedDate;
+	}
+	
+	/**
+	 * @return list of templates this ssh key belongs to
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "mappingtemplatesshkey", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "sshkeyid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
+	public List<ETemplate> getTemplates() {
+		return this.templates;
+	}
+	
+	/**
+	 * @param templates list of templates to set
+	 */
+	public void setTemplates(List<ETemplate> templates) {
+		this.templates = templates;
 	}
 	
 	@Override
@@ -133,6 +191,20 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 	
 	@Override
 	public SSHKey toApi() {
-		return new SSHKey(this.owner, this.keycontent);
+		SSHKey apiKey = new SSHKey(this.owner, this.keycontent);
+		
+		if (this.lastChangedDate != null) {
+			apiKey.setLastChanged(new Date(this.lastChangedDate));
+		}
+		
+		apiKey.setUsername(this.username);
+		
+		ArrayList<String> templateNames = new ArrayList<>();
+		for (ETemplate t : this.getTemplates()) {
+			templateNames.add(t.getName());
+		}
+		apiKey.setTemplates(templateNames);
+		
+		return apiKey;
 	}
 }

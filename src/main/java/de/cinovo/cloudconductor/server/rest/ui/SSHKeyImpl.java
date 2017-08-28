@@ -55,12 +55,14 @@ public class SSHKeyImpl implements ISSHKey {
 	@Transactional
 	public void saveKey(SSHKey key) {
 		RESTAssert.assertNotNull(key);
-		ESSHKey modelKey = this.sshDAO.findByName(key.getOwner());
+		RESTAssert.assertNotEmpty(key.getOwner());
+		RESTAssert.assertNotEmpty(key.getKey());
 		
-		if (modelKey == null) {
+		ESSHKey eKey = this.sshDAO.findByName(key.getOwner());
+		if (eKey == null) {
 			this.sshHandler.createEntity(key);
 		} else {
-			this.sshHandler.updateEntity(key);
+			this.sshHandler.updateEntity(eKey, key);
 		}
 	}
 	

@@ -53,8 +53,8 @@ import { TemplateNew } from './app/template/template.new.comp';
 import { HostOverview } from './app/host/host.overview.comp';
 import { HostDetail } from './app/host/host.detail.comp';
 import { ConfigValuePreview } from './app/configvalues/cv.preview.comp';
-import { SSHComponent } from './app/ssh/ssh.comp';
-import { SSHKeyHttpService } from "./app/util/http/sshKey.http.service";
+import { SSHOverviewComponent } from './app/ssh/ssh.overview.comp';
+import { SSHKeyHttpService } from './app/util/http/sshKey.http.service';
 
 @NgModule({
   imports: [
@@ -97,7 +97,7 @@ import { SSHKeyHttpService } from "./app/util/http/sshKey.http.service";
     HostPackages,
     NavComponent,
     TopNavComponent,
-    SSHComponent
+    SSHOverviewComponent
   ],
   providers: [
     AlertService,

@@ -7,8 +7,10 @@ import { HTTPService } from './abstract.http.service';
 
 export interface SSHKey {
   owner: string,
+  username: string,
   key: string,
-  lastModified: Date
+  lastChanged?: Date
+  templates: string[]
 }
 
 @Injectable()
@@ -28,6 +30,7 @@ export class SSHKeyHttpService extends HTTPService {
   }
 
   public updateKey(sshKey: SSHKey): Observable<boolean> {
+    sshKey['@class'] = 'de.cinovo.cloudconductor.api.model.SSHKey';
     return this._put('', sshKey);
   }
 

@@ -1,11 +1,15 @@
-import { ConfigValue } from "./http/configValue.http.service";
-import { Package, PackageVersion } from "./http/package.http.service";
-import { Service } from "./http/service.http.service";
-import { AdditionalLink } from "./http/additionalLinks.http.service";
-import { Repo } from "./http/repo.http.service";
-import { RepoMirror } from "./http/repomirror.http.service";
-import { Template } from "./http/template.http.service";
-import { Host } from "./http/host.http.service";
+import { ConfigValue } from './http/configValue.http.service';
+import { Package, PackageVersion } from './http/package.http.service';
+import { Service } from './http/service.http.service';
+import { AdditionalLink } from './http/additionalLinks.http.service';
+import { Repo } from './http/repo.http.service';
+import { RepoMirror } from './http/repomirror.http.service';
+import { Template } from './http/template.http.service';
+import { Host } from './http/host.http.service';
+import { SSHKey } from './http/sshKey.http.service';
+
+/* tslint:disable:curly */
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -14,43 +18,43 @@ import { Host } from "./http/host.http.service";
  */
 export class Sorter {
 
-  public static byField(a: any, b: any, field:string):number {
+  public static byField(a: any, b: any, field: string): number {
     if (a[field] < b[field]) return -1;
     if (a[field] > b[field]) return 1;
     return 0;
   }
 
-  public static nameField(a: any, b: any):number {
+  public static nameField(a: any, b: any): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static configValue(a: ConfigValue, b: ConfigValue):number {
+  public static configValue(a: ConfigValue, b: ConfigValue): number {
     if (a.key < b.key) return -1;
     if (a.key > b.key) return 1;
     return 0;
   }
 
-  public static repo(a: Repo, b: Repo):number {
+  public static repo(a: Repo, b: Repo): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static mirror(a: RepoMirror, b: RepoMirror):number {
+  public static mirror(a: RepoMirror, b: RepoMirror): number {
     if (a.description < b.description) return -1;
     if (a.description > b.description) return 1;
     return 0;
   }
 
-  public static packages(a: Package, b: Package):number {
+  public static packages(a: Package, b: Package): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static packageVersion(a: PackageVersion, b: PackageVersion):number {
+  public static packageVersion(a: PackageVersion, b: PackageVersion): number {
     if (!a && b) return -1;
     if (a && !b) return 1;
     if (a.name < b.name) return -1;
@@ -58,37 +62,43 @@ export class Sorter {
     return Sorter.versionComp(a.version, b.version);
   }
 
-  public static stringReverse(a: string, b: string):number {
+  public static stringReverse(a: string, b: string): number {
     if (a < b) return 1;
     if (a > b) return -1;
     return 0;
   }
 
-  public static service(a: Service, b: Service):number {
+  public static service(a: Service, b: Service): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static host(a: Host, b: Host):number {
+  public static sshKey(a: SSHKey, b: SSHKey): number {
+    if (a.owner < b.owner) return -1;
+    if (a.owner > b.owner) return 1;
+    return 0;
+  }
+
+  public static host(a: Host, b: Host): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static template(a: Template, b: Template):number {
+  public static template(a: Template, b: Template): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return 0;
   }
 
-  public static links(a: AdditionalLink, b: AdditionalLink):number {
+  public static links(a: AdditionalLink, b: AdditionalLink): number {
     if (a.label < b.label) return -1;
     if (a.label > b.label) return 1;
     return 0;
   }
 
-  public static versionComp(a: string, b: string):number {
+  public static versionComp(a: string, b: string): number {
     let aNumbers: Array<any> = Sorter.versionToArray(a);
     let bNumbers: Array<any> = Sorter.versionToArray(b);
     for (let i = 0; i < aNumbers.length; i++) {
@@ -98,7 +108,7 @@ export class Sorter {
       } else {
         res = aNumbers[i] - bNumbers[i];
       }
-      if (res != 0) {
+      if (res !== 0) {
         return res;
       }
     }
@@ -107,8 +117,8 @@ export class Sorter {
 
   private static versionToArray(version: string): Array<string> {
     let res = [];
-    for (let element of  version.split(".")) {
-      for(let sub of element.split("-")) {
+    for (let element of  version.split('.')) {
+      for (let sub of element.split('-')) {
         res.push(sub);
       }
     }

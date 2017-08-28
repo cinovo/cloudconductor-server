@@ -21,6 +21,13 @@ export class ServiceOverview implements AfterViewInit {
 
   private _services: Array<Service> = [];
 
+  private static filterData(service: Service, query: string): boolean {
+    if (Validator.notEmpty(query)) {
+      return service.name.indexOf(query.trim()) >= 0;
+    }
+    return true;
+  }
+
   constructor(private serviceHttp: ServiceHttpService, private router: Router) {
   };
 
@@ -66,10 +73,4 @@ export class ServiceOverview implements AfterViewInit {
     }
   }
 
-  private static filterData(service: Service, query: string): boolean {
-    if (Validator.notEmpty(query)) {
-      return service.name.indexOf(query.trim()) >= 0;
-    }
-    return true;
-  }
 }

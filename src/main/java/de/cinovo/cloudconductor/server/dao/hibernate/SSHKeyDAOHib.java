@@ -17,11 +17,11 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import org.springframework.stereotype.Repository;
+
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
-import de.cinovo.cloudconductor.server.model.enums.AuditCategory;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
-import org.springframework.stereotype.Repository;
 
 /**
  * Copyright 2013 Cinovo AG<br>

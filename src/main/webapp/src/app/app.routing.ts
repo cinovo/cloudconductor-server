@@ -18,7 +18,7 @@ import { TemplateNew } from './template/template.new.comp';
 import { HostOverview } from './host/host.overview.comp';
 import { HostDetail } from './host/host.detail.comp';
 import { ConfigValuePreview } from './configvalues/cv.preview.comp';
-import { SSHComponent } from './ssh/ssh.comp';
+import { SSHOverviewComponent } from './ssh/ssh.overview.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -59,7 +59,7 @@ export const APP_ROUTES: Routes = [
   {path: 'repo/:repoName/mirror/new', component: MirrorEdit},
   {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit},
 
-  {path: 'ssh', component: SSHComponent },
+  {path: 'ssh', component: SSHOverviewComponent },
 
   {path: 'settings', component: SettingsOverview},
 
