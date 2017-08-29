@@ -20,6 +20,8 @@ import { HostDetail } from './host/host.detail.comp';
 import { ConfigValuePreview } from './configvalues/cv.preview.comp';
 import { SSHOverviewComponent } from './ssh/ssh.overview.comp';
 import { SSHDetailComponent } from './ssh/ssh.detail.comp';
+import { FileOverviewComponent } from './files/file.overview.comp';
+import { FileDetailComponent } from './files/file.detail.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -43,9 +45,8 @@ export const APP_ROUTES: Routes = [
   {path: 'config/:template/:service/new', component: ConfigValueEdit},
   {path: 'config/:template/:service/:key', component: ConfigValueEdit},
 
-  {path: 'file', component: HomeComponent},
-
-  {path: 'directory', component: HomeComponent},
+  {path: 'files', component: FileOverviewComponent},
+  {path: 'files/new', component: FileDetailComponent},
 
   {path: 'service', component: ServiceOverview},
   {path: 'service/:serviceName', component: ServiceDetail},

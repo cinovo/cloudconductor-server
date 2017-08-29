@@ -56,7 +56,10 @@ import { ConfigValuePreview } from './app/configvalues/cv.preview.comp';
 import { SSHOverviewComponent } from './app/ssh/ssh.overview.comp';
 import { SSHKeyHttpService } from './app/util/http/sshKey.http.service';
 import { SSHDetailComponent } from './app/ssh/ssh.detail.comp';
-import { SSHEditComponent } from "./app/ssh/ssh.edit.comp";
+import { SSHEditComponent } from './app/ssh/ssh.edit.comp';
+import { FileOverviewComponent } from './app/files/file.overview.comp';
+import { FileHttpService } from './app/util/http/file.http.service';
+import { FileDetailComponent } from './app/files/file.detail.comp';
 
 @NgModule({
   imports: [
@@ -101,7 +104,9 @@ import { SSHEditComponent } from "./app/ssh/ssh.edit.comp";
     TopNavComponent,
     SSHOverviewComponent,
     SSHDetailComponent,
-    SSHEditComponent
+    SSHEditComponent,
+    FileOverviewComponent,
+    FileDetailComponent
   ],
   providers: [
     AlertService,
@@ -114,7 +119,8 @@ import { SSHEditComponent } from "./app/ssh/ssh.edit.comp";
     SettingHttpService,
     TemplateHttpService,
     HostHttpService,
-    SSHKeyHttpService
+    SSHKeyHttpService,
+    FileHttpService
   ],
   bootstrap: [AppComponent]
 })

@@ -17,12 +17,25 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
-import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -47,6 +60,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private boolean isReloadable;
 	private String checksum;
 	private List<EService> dependentServices;
+	private List<ETemplate> templates;
 	
 	private Long version;
 	private boolean deleted = false;
@@ -201,6 +215,23 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	}
 	
 	/**
+	 * @return list of templates this file is used in
+	 */
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
+	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
+	public List<ETemplate> getTemplates() {
+		return this.templates;
+	}
+	
+	/**
+	 * @param templates the list of templates to set
+	 */
+	public void setTemplates(List<ETemplate> templates) {
+		this.templates = templates;
+	}
+	
+	/**
 	 * @return the name
 	 */
 	@Override
@@ -216,7 +247,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		this.name = name;
 	}
 	
-
 	@Override
 	public boolean isDeleted() {
 		return this.deleted;
@@ -255,11 +285,11 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof EFile)) {
+		if (!(obj instanceof EFile)) {
 			return false;
 		}
 		EFile other = (EFile) obj;
-		return this.getName() != null && this.getName().equals(other.getName());
+		return (this.getName() != null) && this.getName().equals(other.getName());
 	}
 	
 	@Override
@@ -285,18 +315,19 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		r.setVersion(this.version);
 		return r;
 	}
-
+	
 	@Override
 	@Transient
 	public Class<ConfigFile> getApiClass() {
 		return ConfigFile.class;
 	}
-
+	
 	@Override
 	@Transient
 	public ConfigFile toApi() {
 		ConfigFile configFile = super.toApi();
 		configFile.setDependentServices(this.namedModelToStringSet(this.dependentServices));
+		configFile.setTemplates(this.namedModelToStringSet(this.templates));
 		return configFile;
 	}
 }

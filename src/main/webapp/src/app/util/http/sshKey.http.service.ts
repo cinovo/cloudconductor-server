@@ -5,6 +5,12 @@ import { Observable } from 'rxjs/';
 
 import { HTTPService } from './abstract.http.service';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 export interface SSHKey {
   owner: string,
   username: string,

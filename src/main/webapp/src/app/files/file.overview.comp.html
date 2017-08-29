@@ -1,0 +1,78 @@
+<cc-title [title]="'Files and Directories'" [titleIcon]="'fa-file-text'"></cc-title>
+
+<div class="row">
+  <div class="col-md-4">
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-8">
+    <a class="btn btn-success pull-right" role="button" [routerLink]="['new']">
+      <i class="fa fa-plus fa-fw"></i>
+      Create
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <cc-panel [title]="'All Files and Directories'" [icon]="'fa-file-text'">
+      <table class="table table-responsive table-striped table-hover" cc-panel-body>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Path</th>
+            <th>Owner</th>
+            <th>File Mode</th>
+            <th>Is Template</th>
+            <th>Reloadable</th>
+            <th>Services</th>
+            <th>Templates</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let file of files | async">
+            <td>
+              <i *ngIf="file.isDirectory" class="fa fa-folder-open fa-fw" title="directory"></i>
+              <i *ngIf="!file.isDirectory" class="fa fa-file-text fa-fw" title="file"></i>
+            </td>
+            <td>{{ file.name }}</td>
+            <td>{{ file.targetPath }}</td>
+            <td>{{ file.owner }}:{{ file.group }} </td>
+            <td>{{ file.fileMode }}</td>
+            <td><input disabled type="checkbox" [checked]="file.isTemplate"></td>
+            <td><input disabled type="checkbox" [checked]="file.isReloadable"></td>
+            <td>
+              <ul>
+                <li *ngFor="let serviceName of file.dependentServices">
+                  {{ serviceName }}
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li *ngFor="let templateName of file.templates">{{ templateName }}</li>
+              </ul>
+            </td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the file ' + file.name + '?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteFile(file)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+            </td>
+            <td>
+              <a [routerLink]="['/files', file.name]">
+                <i class="fa fa-edit fa-fw" title="Edit Entry"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>
