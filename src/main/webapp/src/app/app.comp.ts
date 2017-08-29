@@ -1,7 +1,6 @@
-import { Component, HostListener, AfterViewInit } from "@angular/core";
-/// <reference path="../../typings/globals/jquery/index.d.ts" />;
+import { Component, HostListener, AfterViewInit } from '@angular/core';
 
-declare let $:any;
+declare let $: any;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -13,18 +12,7 @@ declare let $:any;
   selector: 'app-component',
   templateUrl: './app.comp.html'
 })
-export class AppComponent implements AfterViewInit{
-
-  @HostListener('window:resize') onResize() {
-    AppComponent.handleTheme();
-  }
-
-  constructor() {
-  };
-
-  ngAfterViewInit(): void {
-    AppComponent.handleTheme();
-  }
+export class AppComponent implements AfterViewInit {
 
   private static handleTheme() {
     let topOffset = 50;
@@ -38,9 +26,22 @@ export class AppComponent implements AfterViewInit{
 
     let height = ((window.innerHeight > 0) ? window.innerHeight : screen.height) - 1;
     height = height - topOffset;
-    if (height < 1) height = 1;
+    if (height < 1) {
+      height = 1;
+    }
     if (height > topOffset) {
-      (<any>$("#page-wrapper")).css("min-height", (height) + "px");
+      (<any>$('#page-wrapper')).css('min-height', (height) + 'px');
     }
   }
+
+  @HostListener('window:resize') onResize() {
+    AppComponent.handleTheme();
+  }
+
+  constructor() { };
+
+  ngAfterViewInit(): void {
+    AppComponent.handleTheme();
+  }
+
 }

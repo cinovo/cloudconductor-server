@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Observable } from 'rxjs/Observable';
+
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKey, SSHKeyHttpService } from '../util/http/sshKey.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
-
+import { TemplateSelection } from './ssh.edit.comp';
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
-
-interface TemplateSelection {
-  name: string,
-  selected: boolean
-}
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -32,7 +29,7 @@ export class SSHOverviewComponent implements OnInit {
 
   public newKey: SSHKey = { owner: '', username: 'root', key: '', templates: [] };
 
-  public templateSelection: TemplateSelection[] = [];
+  public templateNames: Observable<String[]>;
 
   private static filterSSHKeys(key: SSHKey, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -48,9 +45,7 @@ export class SSHOverviewComponent implements OnInit {
   ngOnInit(): void {
     this.loadData();
 
-    this.templateHttp.getTemplates().subscribe((templates) => {
-      this.templateSelection = templates.map((template) => { return { name: template.name, selected: false }});
-    })
+    this.templateNames = this.templateHttp.getTemplateNames();
   }
 
   private loadData() {
@@ -94,10 +89,19 @@ export class SSHOverviewComponent implements OnInit {
     this.showAddKey = true;
   }
 
-  public addKey() {
-    this.newKey.templates = this.templateSelection.filter((ts) => ts.selected).map((ts) => ts.name);
+  public addKey(newKey: SSHKey) {
+    // first check whether key does already exist
+    this.sshKeyHttp.existsKey(newKey.owner).subscribe((exists) => {
+      if (exists) {
+        this.alertService.danger('SSH Key with same owner does already exist!');
+      } else {
+        this.createKey(newKey);
+      }
+    });
+  }
 
-    this.sshKeyHttp.updateKey(this.newKey).subscribe(() => {
+  private createKey(newKey: SSHKey) {
+    this.sshKeyHttp.updateKey(newKey).subscribe(() => {
       this.alertService.success(`Successfully created new SSH key for '${this.newKey.owner}'!`)
       this.newKey = { owner: '', username: 'root', key: '', templates: [] };
       this.loadData();

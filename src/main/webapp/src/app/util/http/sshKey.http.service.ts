@@ -38,4 +38,12 @@ export class SSHKeyHttpService extends HTTPService {
     return this._delete(owner);
   }
 
+  public existsKey(owner: string): Observable<boolean> {
+    return this._get(owner).map((sshKey: SSHKey) => {
+      return (sshKey !== undefined);
+    }).catch(() => {
+      return Observable.of(false);
+    });
+  }
+
 }

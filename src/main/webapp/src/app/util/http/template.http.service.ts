@@ -79,5 +79,12 @@ export class TemplateHttpService extends HTTPService {
     agentOption['@class'] = 'de.cinovo.cloudconductor.api.model.AgentOption';
     return this._put(agentOption.templateName + '/agentoption', agentOption);
   }
+
+  public getTemplateNames(): Observable<string[]> {
+    return this.getTemplates().map((templates) => {
+      return templates.map((template) => template.name);
+    });
+  }
+
 }
 

@@ -55,6 +55,8 @@ import { HostDetail } from './app/host/host.detail.comp';
 import { ConfigValuePreview } from './app/configvalues/cv.preview.comp';
 import { SSHOverviewComponent } from './app/ssh/ssh.overview.comp';
 import { SSHKeyHttpService } from './app/util/http/sshKey.http.service';
+import { SSHDetailComponent } from './app/ssh/ssh.detail.comp';
+import { SSHEditComponent } from "./app/ssh/ssh.edit.comp";
 
 @NgModule({
   imports: [
@@ -97,7 +99,9 @@ import { SSHKeyHttpService } from './app/util/http/sshKey.http.service';
     HostPackages,
     NavComponent,
     TopNavComponent,
-    SSHOverviewComponent
+    SSHOverviewComponent,
+    SSHDetailComponent,
+    SSHEditComponent
   ],
   providers: [
     AlertService,

@@ -1,0 +1,32 @@
+<div class="form-group">
+    <label for="owner" class="control-label">Owner</label>
+    <input id="owner" type="text" class="form-control" [(ngModel)]="key.owner" placeholder="name@company" [readonly]="!isCreate">
+</div>
+
+<div class="form-group">
+    <label for="username" class="control-label">User</label>
+    <input id="username" type="text" class="form-control" [(ngModel)]="key.username">
+</div>
+
+<div class="form-group">
+    <label class="control-label" for="key">Key</label>
+    <textarea class="form-control" [(ngModel)]="key.key" id="key" cols="30" rows="10"></textarea>
+</div>
+
+<div class="form-group">
+    <label for="templates" class="control-label">Templates</label>
+    <div *ngFor="let template of templateSelection" class="checkbox">
+        <label>
+          <input type="checkbox" [checked]="template.selected" (change)="template.selected = !template.selected"> {{ template.name }}
+        </label>
+    </div>
+</div>
+
+<div class="pull-right">
+  <button class="btn btn-default" role="button" (click)="cancel()">
+    Cancel
+  </button>
+  <button class="btn" [ngClass]="isCreate ? 'btn-success' : 'btn-primary'" role="button" (click)="save()" [disabled]="!key.owner && !key.key">
+    Save
+  </button>
+</div>

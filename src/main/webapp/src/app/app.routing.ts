@@ -19,6 +19,7 @@ import { HostOverview } from './host/host.overview.comp';
 import { HostDetail } from './host/host.detail.comp';
 import { ConfigValuePreview } from './configvalues/cv.preview.comp';
 import { SSHOverviewComponent } from './ssh/ssh.overview.comp';
+import { SSHDetailComponent } from './ssh/ssh.detail.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -60,6 +61,7 @@ export const APP_ROUTES: Routes = [
   {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit},
 
   {path: 'ssh', component: SSHOverviewComponent },
+  {path: 'ssh/:owner', component: SSHDetailComponent },
 
   {path: 'settings', component: SettingsOverview},
 

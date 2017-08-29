@@ -1,0 +1,15 @@
+<cc-title title="SSH Key Detail"></cc-title>
+
+<div *ngIf="loaded && !key" class="alert alert-danger">
+  No SSH Key of '{{owner}}' was found!
+</div>
+
+<div *ngIf="key" class="row">
+  <div class="col-md-12">
+    <cc-panel [icon]="'fa-key'" [title]="'Edit SSH Key'">
+      <div cc-panel-body>
+        <app-ssh-edit [key]="key" [templateNames]="templateNames" (onSave)="saveKey()" (onCancel)="cancelEdit()"></app-ssh-edit>
+      </div>
+    </cc-panel>
+  </div>
+</div>

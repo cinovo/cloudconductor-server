@@ -3,6 +3,8 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +49,7 @@ public class SSHKeyImpl implements ISSHKey {
 	public SSHKey getKey(String owner) {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey modelKey = this.sshDAO.findByName(owner);
-		RESTAssert.assertNotNull(modelKey);
+		RESTAssert.assertNotNull(modelKey, Response.Status.NOT_FOUND);
 		return modelKey.toApi();
 	}
 	
