@@ -20,6 +20,8 @@ package de.cinovo.cloudconductor.api.model;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,9 +48,10 @@ public class ConfigFile implements INamed {
 	private String fileMode;
 	private boolean isTemplate;
 	private boolean isReloadable;
+	private boolean isDirectory;
 	private String checksum;
 	private Set<String> dependentServices;
-	private Set<String> templates;
+	private List<String> templates = new ArrayList<>();
 	
 	
 	/**
@@ -153,6 +156,21 @@ public class ConfigFile implements INamed {
 	}
 	
 	/**
+	 * @return the isDirectory
+	 */
+	@JsonProperty("isDirectory")
+	public boolean isDirectory() {
+		return this.isDirectory;
+	}
+	
+	/**
+	 * @param isDirectory the isDirectory to set
+	 */
+	public void setDirectory(boolean isDirectory) {
+		this.isDirectory = isDirectory;
+	}
+	
+	/**
 	 * @return the checksum
 	 */
 	public String getChecksum() {
@@ -197,14 +215,14 @@ public class ConfigFile implements INamed {
 	/**
 	 * @return the templates
 	 */
-	public Set<String> getTemplates() {
+	public List<String> getTemplates() {
 		return this.templates;
 	}
 	
 	/**
 	 * @param templates the templates to set
 	 */
-	public void setTemplates(Set<String> templates) {
+	public void setTemplates(List<String> templates) {
 		this.templates = templates;
 	}
 }

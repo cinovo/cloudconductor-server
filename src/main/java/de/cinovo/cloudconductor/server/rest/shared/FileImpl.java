@@ -17,6 +17,14 @@ package de.cinovo.cloudconductor.server.rest.shared;
  * #L%
  */
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.core.Response;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import de.cinovo.cloudconductor.api.interfaces.IFile;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
@@ -28,11 +36,6 @@ import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -42,51 +45,50 @@ import java.util.Set;
  */
 @JaxRsComponent
 public class FileImpl implements IFile {
-
+	
 	@Autowired
 	private IFileDAO fileDAO;
 	@Autowired
 	private IFileDataDAO fileDataDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-
 	@Autowired
 	private FileHandler fileHandler;
-
+	
+	
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
 		Set<ConfigFile> result = new HashSet<>();
-		for(EFile m : this.fileDAO.findList()) {
+		for (EFile m : this.fileDAO.findList()) {
 			result.add(m.toApi());
 		}
 		return result.toArray(new ConfigFile[result.size()]);
 	}
-
-
+	
 	@Override
 	@Transactional
 	public void save(ConfigFile configFile) {
 		RESTAssert.assertNotNull(configFile);
 		RESTAssert.assertNotNull(configFile.getName());
-
+		
 		EFile efile = this.fileDAO.findByName(configFile.getName());
-		if(efile == null) {
+		if (efile == null) {
 			this.fileHandler.createEntity(configFile);
 		} else {
 			this.fileHandler.updateEntity(efile, configFile);
 		}
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigFile get(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile model = this.fileDAO.findByName(name);
-		RESTAssert.assertNotNull(model);
+		RESTAssert.assertNotNull(model, Response.Status.NOT_FOUND);
 		return model.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public String getData(String name) {
@@ -97,28 +99,27 @@ public class FileImpl implements IFile {
 		RESTAssert.assertNotNull(data);
 		return data.getData();
 	}
-
+	
 	@Override
 	@Transactional
 	public void saveData(String name, String data) {
 		RESTAssert.assertNotEmpty(name);
 		RESTAssert.assertNotEmpty(data);
-
+		
 		EFile model = this.fileDAO.findByName(name);
 		RESTAssert.assertNotNull(model);
-
+		
 		model.setChecksum(this.fileHandler.createChecksum(data));
 		model = this.fileDAO.save(model);
-
+		
 		EFileData edata = this.fileDataDAO.findDataByFile(model);
-		if(edata == null) {
+		if (edata == null) {
 			this.fileHandler.createEntity(model, data);
 		} else {
 			this.fileHandler.updateEntity(edata, data);
 		}
-
 	}
-
+	
 	@Override
 	@Transactional
 	public void delete(String name) {
@@ -127,19 +128,19 @@ public class FileImpl implements IFile {
 		RESTAssert.assertNotNull(model);
 		this.fileDAO.delete(model);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigFile[] getConfigFiles(String template) {
 		RESTAssert.assertNotEmpty(template);
 		Set<ConfigFile> result = new HashSet<>();
 		ETemplate eTemplate = this.templateDAO.findByName(template);
-		if((eTemplate != null) && (eTemplate.getConfigFiles() != null)) {
-			for(EFile m : eTemplate.getConfigFiles()) {
+		if ((eTemplate != null) && (eTemplate.getConfigFiles() != null)) {
+			for (EFile m : eTemplate.getConfigFiles()) {
 				result.add(m.toApi());
 			}
 		}
 		return result.toArray(new ConfigFile[result.size()]);
 	}
-
+	
 }

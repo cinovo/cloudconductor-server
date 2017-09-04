@@ -1,102 +1,124 @@
-<cc-title [title]="'New File'" [titleIcon]="'fa-plus'"></cc-title>
+<cc-title [title]="formTitle" [titleIcon]="'fa-plus'"></cc-title>
 
 <div class="row">
-  <div class="col-md-12 col-lg-6">
-    <cc-panel [title]="'New File'" [icon]="'fa-plus'">
-      <div class="form-horizontal" cc-panel-body>
-
-        <div class="form-group">
-          <label for="type" class="col-md-2 control-label">Type</label>
-          <div class="col-md-10">
-            <div class="radio">
-              <label>
-                <input type="radio" name="type" id="typeFile" value="File" aria-label="File" [checked]="!file.isDirectory"
-                  (change)="file.isDirectory = !file.isDirectory">
-                File
-              </label>
+  <div class="col-lg-12">
+    <cc-panel [title]="formTitle" [icon]="'fa-plus'">
+      <form class="form-horizontal" [formGroup]="fileForm" novalidate (ngSubmit)="saveFile(fileForm.value)" cc-panel-body>
+        <div class="col-md-12 col-lg-6">
+          <div class="form-group">
+            <label for="name" class="col-md-2 control-label">Name</label>
+            <div class="col-md-10">
+              <input id="name" type="text" formControlName="name" class="form-control" placeholder="SomeFile">
             </div>
-            <div class="radio">
-              <label>
-                <input type="radio" name="type" id="typeDirectory" value="Directory" aria-label="directory" [checked]="file.isDirectory"
-                  (change)="file.isDirectory = !file.isDirectory">
-                Directory
-              </label>
+          </div>
+
+          <div class="form-group">
+            <label for="type" class="col-md-2 control-label">Type</label>
+            <div class="col-md-10">
+              <div class="radio">
+                <label>
+                  <input type="radio" id="typeFile" value="File" aria-label="File" formControlName="type"
+                    (change)="file.isDirectory = !file.isDirectory">
+                  File
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input type="radio" id="typeDirectory" value="Directory" aria-label="directory" formControlName="type"
+                    (change)="file.isDirectory = !file.isDirectory">
+                  Directory
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+              <label for="owner" class="col-md-2 control-label">Owner</label>
+              <div class="col-md-2">
+                <input id="owner" type="text" class="form-control" formControlName="owner" placeholder="root">
+              </div>
+
+              <label for="group" class="col-md-2 control-label">Group</label>
+              <div class="col-md-2">
+                <input id="group" type="text" class="form-control" formControlName="group" placeholder="root">
+              </div>
+
+              <label for="group" class="col-md-2 control-label">File Mode</label>
+              <div class="col-md-2">
+                <input id="fileMode" type="text" class="form-control" formControlName="fileMode">
+              </div>
+          </div>
+
+          <div class="form-group">
+            <label for="isTemplate" class="col-md-2 control-label">Is Template</label>
+            <div class="col-md-10">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="isTemplate" aria-label="Is Template" formControlName="isTemplate">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+              <label for="targetPath" class="col-md-2 control-label">Target Path</label>
+              <div class="col-md-10">
+                <input id="targetPath" type="text" class="form-control" formControlName="targetPath" placeholder="/opt/somepath/filename.ending">
+              </div>
+          </div>
+
+          <div class="form-group">
+              <label for="serviceDep" class="col-md-2 control-label">Service Dependencies</label>
+              <div class="col-md-10">
+                <select id="servicesDep" multiple class="form-control" formControlName="dependentServices">
+                  <option *ngFor="let serviceDep of serviceNames | async" [value]="serviceDep">{{ serviceDep }}</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <label for="servicesReload" class="col-md-2 control-label">Service to reload</label>
+              <div class="col-md-10">
+                <select id="servicesReload" multiple class="form-control" formControlName="servicesReload">
+                  <option *ngFor="let serviceRel of serviceNames | async">{{ serviceRel }}</option>
+                </select>
+              </div>
+          </div>
+
+        </div>
+
+        <div class="col-md-12 col-lg-6">
+          <div *ngIf="fileForm.value.type !== 'Directory'" class="form-group">
+              <label for="fileContent" class="col-md-2 control-label">File Content</label>
+              <div class="col-md-10">
+                <textarea id="fileContent" class="form-control" cols="30" rows="16" formControlName="fileContent"></textarea>
+              </div>
+          </div>
+
+          <div class="form-group">
+              <label for="templates" class="col-md-2 control-label">Used by</label>
+              <div class="col-md-10">
+                <select id="templates" multiple class="form-control" formControlName="templates">
+                  <option *ngFor="let template of templateNames | async">{{ template }}</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-md-12">
+              <div class="pull-right">
+                <a class="btn btn-default" role="button" [routerLink]="['/files']">
+                  Cancel
+                </a>
+                <button type="submit" class="btn btn-primary" role="button" [disabled]="fileForm.invalid">
+                  <span *ngIf="createMode">Create</span>
+                  <span *ngIf="!createMode">Save</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="form-group">
-          <label for="name" class="col-md-2 control-label">Name</label>
-          <div class="col-md-10">
-            <input id="name" type="text" [(ngModel)]="file.name" class="form-control">
-          </div>
-        </div>
-
-        <div class="form-group">
-            <label for="owner" class="col-md-2 control-label">Owner</label>
-            <div class="col-md-4">
-              <input id="owner" type="text" class="form-control" [(ngModel)]="file.owner">
-            </div>
-            <label for="group" class="col-md-2 control-label">Group</label>
-            <div class="col-md-4">
-              <input id="group" type="text" class="form-control" [(ngModel)]="file.group">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="targetPath" class="col-md-2 control-label">Target Path</label>
-            <div class="col-md-10">
-              <input id="targetPath" type="text" class="form-control" [(ngModel)]="file.targetPath">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="services" class="col-md-2 control-label">Service Dependencies</label>
-            <div class="col-md-10">
-              <select id="services" multiple class="form-control">
-                <option *ngFor="let service of serviceNames | async">{{ service }}</option>
-              </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="servicesReload" class="col-md-2 control-label">Service to reload</label>
-            <div class="col-md-10">
-              <select id="servicesReload" multiple class="form-control">
-                <option *ngFor="let service of serviceNames | async">{{ service }}</option>
-              </select>
-            </div>
-        </div>
-
-        <div *ngIf="!file.isDirectory" class="form-group">
-            <label for="fileContent" class="col-md-2 control-label">File Content</label>
-            <div class="col-md-10">
-              <textarea id="fileContent" class="form-control" cols="30" rows="10"></textarea>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="templates" class="col-md-2 control-label">Used by</label>
-            <div class="col-md-10">
-              <select id="templates" multiple class="form-control">
-                <option *ngFor="let template of templateNames | async">{{ template }}</option>
-              </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-          <div class="col-md-12">
-            <div class="pull-right">
-              <a class="btn btn-default" role="button" [routerLink]="['/files']">
-                Cancel
-              </a>
-              <button class="btn btn-success" role="button" (click)="createFile()">
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      </form>
     </cc-panel>
   </div>
 </div>

@@ -17,15 +17,27 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Template;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -49,8 +61,8 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	private List<ESSHKey> sshkeys;
 	
-	private List<EFile> configFiles;
-
+	private List<EFile> configFiles = new ArrayList<>();
+	
 	private List<EDirectory> directories;
 	
 	private List<ERepo> repos = new ArrayList<>();
@@ -112,13 +124,13 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	public List<EFile> getConfigFiles() {
 		return this.configFiles;
 	}
-
+	
 	/**
 	 * @return the directories
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingdirectorytemplate", schema = "cloudconductor", //
-			joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "directoryid"))
+	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "directoryid"))
 	public List<EDirectory> getDirectory() {
 		return this.directories;
 	}
@@ -129,7 +141,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	public void setConfigFiles(List<EFile> configFiles) {
 		this.configFiles = configFiles;
 	}
-
+	
 	/**
 	 * @param directories the configFiles to set
 	 */
@@ -216,11 +228,11 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof ETemplate)) {
+		if (!(obj instanceof ETemplate)) {
 			return false;
 		}
 		ETemplate other = (ETemplate) obj;
-		return this.getName() != null && this.getName().equals(other.getName());
+		return (this.getName() != null) && this.getName().equals(other.getName());
 	}
 	
 	@Override
@@ -244,21 +256,21 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	public void setRepos(List<ERepo> repos) {
 		this.repos = repos;
 	}
-
+	
 	@Override
 	@Transient
 	public Class<Template> getApiClass() {
 		return Template.class;
 	}
-
+	
 	@Override
 	public Template toApi() {
 		Template template = super.toApi();
 		template.setHosts(this.namedModelToStringSet(this.hosts));
 		template.setRepos(this.namedModelToStringSet(this.repos));
-
+		
 		Map<String, String> versions = new HashMap<>();
-		for(EPackageVersion pv : this.packageVersions) {
+		for (EPackageVersion pv : this.packageVersions) {
 			versions.put(pv.getPkg().getName(), pv.getVersion());
 		}
 		template.setVersions(versions);

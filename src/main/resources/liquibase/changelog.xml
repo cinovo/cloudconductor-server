@@ -875,4 +875,10 @@
     		<column name="username" type="varchar(255)"></column>
     	</addColumn>
     </changeSet>
+    <changeSet id="26" author="mweise">
+    	<addColumn schemaName="cloudconductor" tableName="file">
+    		<column name="directory" type="boolean"></column>
+    	</addColumn>
+    	<addNotNullConstraint schemaName="cloudconductor" tableName="file" columnName="directory" columnDataType="boolean" defaultNullValue="false"/>
+    </changeSet>
 </databaseChangeLog>

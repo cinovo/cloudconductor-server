@@ -60,6 +60,7 @@ import { SSHEditComponent } from './app/ssh/ssh.edit.comp';
 import { FileOverviewComponent } from './app/files/file.overview.comp';
 import { FileHttpService } from './app/util/http/file.http.service';
 import { FileDetailComponent } from './app/files/file.detail.comp';
+import { FileResolver } from './app/files/file.resolve';
 
 @NgModule({
   imports: [
@@ -120,7 +121,8 @@ import { FileDetailComponent } from './app/files/file.detail.comp';
     TemplateHttpService,
     HostHttpService,
     SSHKeyHttpService,
-    FileHttpService
+    FileHttpService,
+    FileResolver
   ],
   bootstrap: [AppComponent]
 })

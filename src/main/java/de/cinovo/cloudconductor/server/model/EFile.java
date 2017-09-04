@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -58,9 +59,10 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private String fileMode;
 	private boolean isTemplate;
 	private boolean isReloadable;
+	private boolean isDirectory;
 	private String checksum;
-	private List<EService> dependentServices;
-	private List<ETemplate> templates;
+	private List<EService> dependentServices = new ArrayList<>();
+	private List<ETemplate> templates = new ArrayList<>();
 	
 	private Long version;
 	private boolean deleted = false;
@@ -184,6 +186,20 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	}
 	
 	/**
+	 * @return the isDirectory
+	 */
+	public boolean isDirectory() {
+		return this.isDirectory;
+	}
+	
+	/**
+	 * @param isDirectory the isDirectory to set
+	 */
+	public void setDirectory(boolean isDirectory) {
+		this.isDirectory = isDirectory;
+	}
+	
+	/**
 	 * @return the checksum
 	 */
 	public String getChecksum() {
@@ -302,6 +318,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		EFile r = new EFile();
 		r.setChecksum(this.checksum);
 		r.setDeleted(this.deleted);
+		r.setTemplates(this.templates);
 		r.setDependentServices(this.dependentServices);
 		r.setFileMode(this.fileMode);
 		r.setGroup(this.group);
@@ -327,7 +344,13 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	public ConfigFile toApi() {
 		ConfigFile configFile = super.toApi();
 		configFile.setDependentServices(this.namedModelToStringSet(this.dependentServices));
-		configFile.setTemplates(this.namedModelToStringSet(this.templates));
+		
+		ArrayList<String> templateNames = new ArrayList<String>();
+		for (ETemplate template : this.templates) {
+			templateNames.add(template.getName());
+		}
+		
+		configFile.setTemplates(templateNames);
 		return configFile;
 	}
 }

@@ -22,6 +22,7 @@ import { SSHOverviewComponent } from './ssh/ssh.overview.comp';
 import { SSHDetailComponent } from './ssh/ssh.detail.comp';
 import { FileOverviewComponent } from './files/file.overview.comp';
 import { FileDetailComponent } from './files/file.detail.comp';
+import { FileResolver } from './files/file.resolve';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -47,6 +48,7 @@ export const APP_ROUTES: Routes = [
 
   {path: 'files', component: FileOverviewComponent},
   {path: 'files/new', component: FileDetailComponent},
+  {path: 'files/:fileName', component: FileDetailComponent, resolve: { fileForm: FileResolver }},
 
   {path: 'service', component: ServiceOverview},
   {path: 'service/:serviceName', component: ServiceDetail},
