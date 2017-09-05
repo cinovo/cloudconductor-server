@@ -881,4 +881,9 @@
     	</addColumn>
     	<addNotNullConstraint schemaName="cloudconductor" tableName="file" columnName="directory" columnDataType="boolean" defaultNullValue="false"/>
     </changeSet>
+    <changeSet id="27" author="mweise">
+    	<dropTable schemaName="cloudconductor" tableName="mappingdirectoryservice" />
+    	<dropTable schemaName="cloudconductor" tableName="mappingdirectorytemplate" />
+    	<dropTable schemaName="cloudconductor" tableName="directory" />
+    </changeSet>
 </databaseChangeLog>

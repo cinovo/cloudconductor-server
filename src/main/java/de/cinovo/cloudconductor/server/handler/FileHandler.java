@@ -11,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.cinovo.cloudconductor.api.model.Directory;
-import de.cinovo.cloudconductor.server.dao.IDirectoryDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.model.EDirectory;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -38,8 +35,6 @@ public class FileHandler {
 	private IFileDAO fileDAO;
 	@Autowired
 	private IFileDataDAO fileDataDAO;
-	@Autowired
-	private IDirectoryDAO directoryDAO;
 	@Autowired
 	private IPackageDAO packageDAO;
 	@Autowired
@@ -70,30 +65,6 @@ public class FileHandler {
 		ef = this.fillFields(ef, cf);
 		RESTAssert.assertNotNull(ef);
 		return this.fileDAO.save(ef);
-	}
-	
-	/**
-	 * @param dir the directory
-	 * @return the saved dir entity
-	 * @throws WebApplicationException on error
-	 */
-	public EDirectory createEntity(Directory dir) throws WebApplicationException {
-		EDirectory edir = new EDirectory();
-		edir = this.fillFields(edir, dir);
-		RESTAssert.assertNotNull(edir);
-		return this.directoryDAO.save(edir);
-	}
-	
-	/**
-	 * @param edir the directory entity to update
-	 * @param dir the directory used to update the entity
-	 * @return the updated, saved directory entity
-	 * @throws WebApplicationException on error
-	 */
-	public EDirectory updateEntity(EDirectory edir, Directory dir) throws WebApplicationException {
-		edir = this.fillFields(edir, dir);
-		RESTAssert.assertNotNull(edir);
-		return this.directoryDAO.save(edir);
 	}
 	
 	/**
@@ -149,23 +120,6 @@ public class FileHandler {
 			}
 		}
 		return ef;
-	}
-	
-	private EDirectory fillFields(EDirectory edir, Directory dir) {
-		edir.setName(dir.getName());
-		edir.setFileMode(dir.getFileMode());
-		edir.setGroup(dir.getGroup());
-		edir.setOwner(dir.getOwner());
-		edir.setTargetPath(dir.getTargetPath());
-		edir.setPkg(this.packageDAO.findByName(dir.getPkg()));
-		edir.setDependentServices(new ArrayList<EService>());
-		for (String serviceDep : dir.getDependentServices()) {
-			EService service = this.serviceDAO.findByName(serviceDep);
-			if (service != null) {
-				edir.getDependentServices().add(service);
-			}
-		}
-		return edir;
 	}
 	
 	private EFileData fillFields(EFileData edata, String data) {

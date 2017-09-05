@@ -63,8 +63,6 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	private List<EFile> configFiles = new ArrayList<>();
 	
-	private List<EDirectory> directories;
-	
 	private List<ERepo> repos = new ArrayList<>();
 	
 	private Boolean autoUpdate;
@@ -126,27 +124,10 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	}
 	
 	/**
-	 * @return the directories
-	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingdirectorytemplate", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "directoryid"))
-	public List<EDirectory> getDirectory() {
-		return this.directories;
-	}
-	
-	/**
 	 * @param configFiles the configFiles to set
 	 */
 	public void setConfigFiles(List<EFile> configFiles) {
 		this.configFiles = configFiles;
-	}
-	
-	/**
-	 * @param directories the configFiles to set
-	 */
-	public void setDirectory(List<EDirectory> directories) {
-		this.directories = directories;
 	}
 	
 	/**
