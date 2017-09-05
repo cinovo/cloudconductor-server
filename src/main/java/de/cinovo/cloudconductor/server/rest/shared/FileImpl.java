@@ -96,8 +96,10 @@ public class FileImpl implements IFile {
 		EFile model = this.fileDAO.findByName(name);
 		RESTAssert.assertNotNull(model);
 		EFileData data = this.fileDataDAO.findDataByFile(model);
-		RESTAssert.assertNotNull(data);
-		return data.getData();
+		if (data != null) {
+			return data.getData();
+		}
+		return "";
 	}
 	
 	@Override

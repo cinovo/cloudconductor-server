@@ -62,7 +62,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private boolean isDirectory;
 	private String checksum;
 	private List<EService> dependentServices = new ArrayList<>();
-	private List<ETemplate> templates = new ArrayList<>();
+	private List<ETemplate> templates;
 	
 	private Long version;
 	private boolean deleted = false;
@@ -218,7 +218,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfileservice", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
+	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "origid"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
 	public List<EService> getDependentServices() {
 		return this.dependentServices;
 	}
@@ -235,7 +235,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
+	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "origid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
 	public List<ETemplate> getTemplates() {
 		return this.templates;
 	}

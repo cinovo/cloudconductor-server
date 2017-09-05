@@ -49,7 +49,9 @@ export class FileDetailComponent implements OnInit {
 
   public fileForm: FormGroup;
 
-  public formTitle = 'Edit File';
+  public formVerb = 'Edit';
+  public formObj = 'File';
+
   public _createMode = false;
 
   constructor(private alertService: AlertService,
@@ -80,9 +82,9 @@ export class FileDetailComponent implements OnInit {
     this.templateNames = this.templateHttpService.getTemplateNames();
     this.route.data.subscribe((data) => {
       if (data.fileForm) {
-
         this.fileForm.setValue(data.fileForm);
         this.createMode = false;
+        this.formObj = data.fileForm.type;
       } else {
         this.createMode = true;
       }
@@ -95,7 +97,15 @@ export class FileDetailComponent implements OnInit {
 
   set createMode(value: boolean) {
     this._createMode = value;
-    this.formTitle = (this._createMode) ? 'New File' : 'Edit File';
+    this.formVerb = (this._createMode) ? 'Create' : 'Edit';
+  }
+
+  get formTitle() {
+    return `${this.formVerb} ${this.formObj}`;
+  }
+
+  public toggleFileMode() {
+    this.formObj = this.fileForm.value.type;
   }
 
   public saveFile(fv: FileForm): void {

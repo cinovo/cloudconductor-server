@@ -18,14 +18,14 @@
               <div class="radio">
                 <label>
                   <input type="radio" id="typeFile" value="File" aria-label="File" formControlName="type"
-                    (change)="file.isDirectory = !file.isDirectory">
+                    (change)="toggleFileMode()">
                   File
                 </label>
               </div>
               <div class="radio">
                 <label>
                   <input type="radio" id="typeDirectory" value="Directory" aria-label="directory" formControlName="type"
-                    (change)="file.isDirectory = !file.isDirectory">
+                    (change)="toggleFileMode()">
                   Directory
                 </label>
               </div>
@@ -71,7 +71,7 @@
               <label for="serviceDep" class="col-md-2 control-label">Service Dependencies</label>
               <div class="col-md-10">
                 <select id="servicesDep" multiple class="form-control" formControlName="dependentServices">
-                  <option *ngFor="let serviceDep of serviceNames | async" [value]="serviceDep">{{ serviceDep }}</option>
+                  <option *ngFor="let serviceDep of serviceNames | async" [ngValue]="serviceDep">{{ serviceDep }}</option>
                 </select>
               </div>
           </div>
@@ -80,7 +80,7 @@
               <label for="servicesReload" class="col-md-2 control-label">Service to reload</label>
               <div class="col-md-10">
                 <select id="servicesReload" multiple class="form-control" formControlName="servicesReload">
-                  <option *ngFor="let serviceRel of serviceNames | async">{{ serviceRel }}</option>
+                  <option *ngFor="let serviceRel of serviceNames | async" [ngValue]="serviceRel">{{ serviceRel }}</option>
                 </select>
               </div>
           </div>
@@ -99,7 +99,7 @@
               <label for="templates" class="col-md-2 control-label">Used by</label>
               <div class="col-md-10">
                 <select id="templates" multiple class="form-control" formControlName="templates">
-                  <option *ngFor="let template of templateNames | async">{{ template }}</option>
+                  <option *ngFor="let template of templateNames | async" [ngValue]="template">{{ template }}</option>
                 </select>
               </div>
           </div>

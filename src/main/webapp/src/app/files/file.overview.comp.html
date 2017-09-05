@@ -4,10 +4,15 @@
   <div class="col-md-4">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-8">
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
+      [dataField]="'name'">
+    </cc-filter>
+  </div>
+  <div class="col-md-5">
     <a class="btn btn-success pull-right" role="button" [routerLink]="['new']">
       <i class="fa fa-plus fa-fw"></i>
-      Create
+      New
     </a>
   </div>
 </div>
@@ -34,8 +39,8 @@
         <tbody>
           <tr *ngFor="let file of files | async">
             <td>
-              <i *ngIf="file.isDirectory" class="fa fa-folder-open fa-fw" title="directory"></i>
-              <i *ngIf="!file.isDirectory" class="fa fa-file-text fa-fw" title="file"></i>
+              <i *ngIf="file.isDirectory" class="fa fa-folder-open fa-fw" title="Directory"></i>
+              <i *ngIf="!file.isDirectory" class="fa fa-file-text fa-fw" title="File"></i>
             </td>
             <td>{{ file.name }}</td>
             <td>{{ file.targetPath }}</td>
@@ -62,12 +67,12 @@
               placement="left"
               confirmButtonType="danger"
               (confirm)="deleteFile(file)">
-                <i class="fa fa-trash-o fa-fw"></i>
+                <i class="fa fa-trash-o fa-fw" title="Delete"></i>
               </a>
             </td>
             <td>
               <a [routerLink]="['/files', file.name]">
-                <i class="fa fa-edit fa-fw" title="Edit Entry"></i>
+                <i class="fa fa-edit fa-fw" title="Edit"></i>
               </a>
             </td>
           </tr>

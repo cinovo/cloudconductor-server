@@ -4,6 +4,8 @@ import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { FileHttpService, ConfigFile } from '../util/http/file.http.service';
+import { Sorter } from '../util/sorters.util';
+import { TemplateHttpService, Template } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
 
 @Component({
@@ -12,11 +14,14 @@ import { Validator } from '../util/validator.util';
 export class FileOverviewComponent implements OnInit, OnDestroy {
 
   private _searchQuery = '';
+  private _searchTemplateQuery = '';
 
   private _filesSub: Subject<ConfigFile[]> = new BehaviorSubject<ConfigFile[]>([]);
   public files: Observable<ConfigFile[]> = this._filesSub.asObservable();
+  public templates: Template[] = [];
 
   private filesSub: Subscription;
+  private templateSub: Subscription;
 
   private static filterData(file: ConfigFile, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -25,8 +30,16 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  private static filterTemplateData(file: ConfigFile, templateQuery: string) {
+    if (Validator.notEmpty(templateQuery)) {
+      return file.templates.some(t => t === templateQuery);
+    }
+    return true;
+  }
+
   constructor(private alertService: AlertService,
-              private fileHttp: FileHttpService) { }
+              private fileHttp: FileHttpService,
+              private templateHttp: TemplateHttpService) { }
 
   ngOnInit(): void {
     this.reloadData();
@@ -36,13 +49,10 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
     if (this.filesSub) {
       this.filesSub.unsubscribe();
     }
-  }
 
-  private reloadData(): void {
-    this.filesSub = this.fileHttp.getFiles().subscribe((files) => {
-      const filteredFiles = files.filter(f => FileOverviewComponent.filterData(f, this._searchQuery));
-      this._filesSub.next(filteredFiles);
-    });
+    if (this.templateSub) {
+      this.templateSub.unsubscribe();
+    }
   }
 
   get searchQuery() {
@@ -52,6 +62,28 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
   set searchQuery(value: string) {
     this._searchQuery = value;
     this.reloadData();
+  }
+
+  get searchTemplateQuery() {
+    return this._searchTemplateQuery;
+  }
+
+  set searchTemplateQuery(value: string) {
+    this._searchTemplateQuery = value;
+    this.reloadData();
+  }
+
+  private reloadData(): void {
+    this.filesSub = this.fileHttp.getFiles().subscribe((files) => {
+      const filteredFiles = files.filter(f => FileOverviewComponent.filterData(f, this._searchQuery))
+                                  .filter(f => FileOverviewComponent.filterTemplateData(f, this._searchTemplateQuery))
+                                  .sort(Sorter.files);
+      this._filesSub.next(filteredFiles);
+    });
+
+    this.templateSub = this.templateHttp.getTemplates().subscribe((result) => {
+      this.templates = result;
+    });
   }
 
   public deleteFile(fileToDelete: ConfigFile) {

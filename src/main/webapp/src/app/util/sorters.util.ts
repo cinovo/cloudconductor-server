@@ -7,6 +7,7 @@ import { RepoMirror } from './http/repomirror.http.service';
 import { Template } from './http/template.http.service';
 import { Host } from './http/host.http.service';
 import { SSHKey } from './http/sshKey.http.service';
+import { ConfigFile } from "./http/file.http.service";
 
 /* tslint:disable:curly */
 
@@ -77,6 +78,12 @@ export class Sorter {
   public static sshKey(a: SSHKey, b: SSHKey): number {
     if (a.owner < b.owner) return -1;
     if (a.owner > b.owner) return 1;
+    return 0;
+  }
+
+  public static files(a: ConfigFile, b: ConfigFile) {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
     return 0;
   }
 

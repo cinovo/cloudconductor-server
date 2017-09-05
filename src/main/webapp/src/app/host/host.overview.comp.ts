@@ -24,7 +24,25 @@ export class HostOverview implements AfterViewInit {
 
   private autorefresh = false;
 
-  public templates: Array<Template> = []
+  public templates: Array<Template> = [];
+
+  private static filterData(host: Host, query: string) {
+    if (Validator.notEmpty(query)) {
+      let res = host.name.indexOf(query.trim()) >= 0;
+      if (host.agent && !res) {
+        res = host.agent.indexOf(query.trim()) >= 0;
+      }
+      return res;
+    }
+    return true;
+  }
+
+  private static filterTemplateData(host: Host, templateQuery: string) {
+    if (Validator.notEmpty(templateQuery)) {
+      return host.template === templateQuery;
+    }
+    return true;
+  }
 
   constructor(private hostHttp: HostHttpService, private router: Router,
               private templateHttp: TemplateHttpService) {
@@ -87,22 +105,4 @@ export class HostOverview implements AfterViewInit {
     return now.getMilliseconds() - host.lastSeen < 30 * 1000 * 60;
   }
 
-  private static filterData(host: Host, query: string) {
-    if (Validator.notEmpty(query)) {
-      let res = host.name.indexOf(query.trim()) >= 0;
-      if (host.agent && !res) {
-        res = host.agent.indexOf(query.trim()) >= 0;
-      }
-      return res;
-    }
-    return true;
-  }
-
-  private static filterTemplateData(host: Host, templateQuery: string) {
-    if (Validator.notEmpty(templateQuery)) {
-      return host.template == templateQuery;
-    }
-    return true;
-  }
-  
 }
