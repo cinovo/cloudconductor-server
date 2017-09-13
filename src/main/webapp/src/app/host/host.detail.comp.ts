@@ -46,7 +46,7 @@ export class HostDetail implements AfterViewInit {
 
 
   private loadData(hostName: string): void {
-    if (Validator.notEmpty(hostName)) {
+    if (Validator.notEmpty(hostName) && hostName !== 'new') {
       this.hostHttp.getHost(hostName).subscribe(
         (result) => {
           this._behavHost.next(result);

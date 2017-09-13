@@ -61,6 +61,8 @@ import { FileOverviewComponent } from './app/files/file.overview.comp';
 import { FileHttpService } from './app/util/http/file.http.service';
 import { FileDetailComponent } from './app/files/file.detail.comp';
 import { FileResolver } from './app/files/file.resolve';
+import { WebSocketService } from "./app/util/websockets/websocket.service";
+import { WSConfigHttpService } from "./app/util/http/wsconfig.http.service";
 
 @NgModule({
   imports: [
@@ -122,7 +124,9 @@ import { FileResolver } from './app/files/file.resolve';
     HostHttpService,
     SSHKeyHttpService,
     FileHttpService,
-    FileResolver
+    FileResolver,
+    WSConfigHttpService,
+    WebSocketService
   ],
   bootstrap: [AppComponent]
 })

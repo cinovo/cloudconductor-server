@@ -1,9 +1,10 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { Service, ServiceHttpService } from "../util/http/service.http.service";
-import { Router } from "@angular/router";
-import { Sorter } from "../util/sorters.util";
-import { Validator } from "../util/validator.util";
-import { PackageHttpService, Package } from "../util/http/package.http.service";
+import { Component, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { Service, ServiceHttpService } from '../util/http/service.http.service';
+import { Sorter } from '../util/sorters.util';
+import { Validator } from '../util/validator.util';
+import { PackageHttpService, Package } from '../util/http/package.http.service';
 /**
   * Copyright 2017 Cinovo AG<br>
   * <br>
@@ -20,6 +21,13 @@ export class PackageOverview implements AfterViewInit {
 
   private _packages: Array<Package> = [];
 
+  private static filterData(pkg: Package, query: string): boolean {
+    if (Validator.notEmpty(query)) {
+      return pkg.name.indexOf(query.trim()) >= 0;
+    }
+    return true;
+  }
+
   constructor(private packageHttp: PackageHttpService, private router: Router) {
   };
 
@@ -33,7 +41,6 @@ export class PackageOverview implements AfterViewInit {
     )
   }
 
-
   get packages(): Array<Package> {
     return this._packages;
   }
@@ -44,7 +51,7 @@ export class PackageOverview implements AfterViewInit {
       .sort(Sorter.packages);
 
     for (let pkg of this._packages) {
-      pkg.versions.sort((a,b) => Sorter.versionComp(a,b)*-1);
+      pkg.versions.sort((a, b) => Sorter.versionComp(a, b) * -1);
     }
   }
 
@@ -63,10 +70,4 @@ export class PackageOverview implements AfterViewInit {
     }
   }
 
-  private static filterData(pkg: Package, query: string): boolean {
-    if (Validator.notEmpty(query)) {
-      return pkg.name.indexOf(query.trim()) >= 0;
-    }
-    return true;
-  }
 }

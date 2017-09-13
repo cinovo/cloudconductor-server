@@ -1,7 +1,9 @@
-import { HTTPService } from "./abstract.http.service";
-import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+
+import { Observable } from 'rxjs';
+
+import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -38,7 +40,7 @@ export class PackageHttpService extends HTTPService {
   }
 
   public getPackages(): Observable<Array<Package>> {
-    return this._get("");
+    return this._get('');
   }
 
   public getPackage(pkgName: string): Observable<Package> {
@@ -54,7 +56,7 @@ export class PackageHttpService extends HTTPService {
   }
 
   public getVersionsOfRepo(repoName: string): Observable<Array<PackageVersion>> {
-    return this._get("versions/repo/"+repoName);
+    return this._get('versions/repo/' + repoName);
   }
 
 }

@@ -57,7 +57,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	private List<EPackageVersion> packageVersions;
 	
-	private List<EHost> hosts;
+	private List<EHost> hosts = new ArrayList<>();
 	
 	private List<ESSHKey> sshkeys;
 	

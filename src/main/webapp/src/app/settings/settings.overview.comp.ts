@@ -27,7 +27,9 @@ export class SettingsOverview implements AfterViewInit {
 
   public noGtEqZero = Validator.noGtEqZero;
 
-  constructor(private settingHttp: SettingHttpService, private packageHttp: PackageHttpService, private alerts: AlertService) {
+  constructor(private settingHttp: SettingHttpService,
+              private packageHttp: PackageHttpService,
+              private alerts: AlertService) {
   };
 
   ngAfterViewInit(): void {

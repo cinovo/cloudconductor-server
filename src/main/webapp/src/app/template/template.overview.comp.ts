@@ -1,9 +1,17 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { TemplateHttpService, Template } from "../util/http/template.http.service";
-import { Sorter } from "../util/sorters.util";
-import { Validator } from "../util/validator.util";
-import { Router } from "@angular/router";
-import { AlertService } from "../util/alert/alert.service";
+import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+import { AlertService } from '../util/alert/alert.service';
+import { Sorter } from '../util/sorters.util';
+import { TemplateHttpService, Template } from '../util/http/template.http.service';
+import { Validator } from '../util/validator.util';
+import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
+import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -14,17 +22,82 @@ import { AlertService } from "../util/alert/alert.service";
   selector: 'template-overview',
   templateUrl: './template.overview.comp.html'
 })
-export class TemplateOverview implements AfterViewInit {
+export class TemplateOverview implements OnInit, OnDestroy {
 
   private _searchQuery: string = null;
 
+  private _webSocket: Subject<MessageEvent | Heartbeat>;
+
   private _templates: Array<Template> = [];
 
-  constructor(private templateHttp: TemplateHttpService, private router: Router, private alerts: AlertService) {
-  };
+  private _webSocketSub: Subscription;
+  private _heartBeatSub: Subscription;
 
-  ngAfterViewInit(): void {
+  private static filterData(template: Template, query: string): boolean {
+    if (Validator.notEmpty(query)) {
+      return template.name.indexOf(query.trim()) >= 0;
+    }
+    return true;
+  }
+
+  constructor(private templateHttp: TemplateHttpService,
+              private router: Router,
+              private alerts: AlertService,
+              private wsService: WebSocketService) {  };
+
+  ngOnInit(): void {
     this.loadTemplates();
+
+    this.wsService.connect('template').subscribe((webSocket) => {
+      this._webSocket = webSocket;
+
+      this._webSocketSub = this._webSocket.subscribe((event) => {
+        const data: WSChangeEvent<Template> = JSON.parse(event.data);
+
+        let updatedTemplates = this._templates;
+        switch (data.type) {
+          case 'ADDED':
+            updatedTemplates = this._templates.concat(data.content)
+            break;
+
+          case 'UPDATED':
+            const updatedTemplate = data.content;
+            const indexToUpdate = this._templates.findIndex((t) => t.name === updatedTemplate.name);
+
+            updatedTemplates.splice(indexToUpdate, 1, updatedTemplate);
+            break;
+
+          case 'DELETED':
+            const deletedTemplate = data.content;
+            const indexToDelete = this._templates.findIndex((t) => t.name === deletedTemplate.name);
+
+            updatedTemplates.splice(indexToDelete, 1);
+            break;
+
+          default:
+            console.error('Unknown WS message type!');
+            break;
+        }
+
+        this.templates = updatedTemplates;
+      });
+
+      this._heartBeatSub = Observable.interval(10000).subscribe(() => {
+        // send heart beat message via WebSockets
+        this._webSocket.next({ data: 'Alive!' });
+      });
+    },
+    (err) => console.error(err));
+  }
+
+  ngOnDestroy(): void {
+    if (this._webSocketSub) {
+      this._webSocketSub.unsubscribe();
+    }
+
+    if (this._heartBeatSub) {
+      this._heartBeatSub.unsubscribe();
+    }
   }
 
   private loadTemplates(): void {
@@ -60,7 +133,7 @@ export class TemplateOverview implements AfterViewInit {
     this.templateHttp.deleteTemplate(template).subscribe(
       () => {
         this._templates.splice(this._templates.indexOf(template), 1);
-        this.alerts.success("The template " + template.name + " has been deleted.")
+        this.alerts.success('The template ' + template.name + ' has been deleted.')
       }
     )
   }
@@ -77,11 +150,4 @@ export class TemplateOverview implements AfterViewInit {
     }
   }
 
-
-  private static filterData(template: Template, query: string): boolean {
-    if (Validator.notEmpty(query)) {
-      return template.name.indexOf(query.trim()) >= 0;
-    }
-    return true;
-  }
 }

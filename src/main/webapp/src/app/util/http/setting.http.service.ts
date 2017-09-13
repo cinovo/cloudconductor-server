@@ -31,7 +31,7 @@ export class SettingHttpService extends HTTPService {
   private _settings: BehaviorSubject<Settings> = new BehaviorSubject({});
   public settings: Observable<Settings> = this._settings.asObservable();
 
-  private reloading: boolean = false;
+  private reloading = false;
 
   constructor(protected http: Http) {
     super(http);
@@ -46,7 +46,7 @@ export class SettingHttpService extends HTTPService {
   public save(settings: Settings): Observable<boolean> {
     settings['@class'] = 'de.cinovo.cloudconductor.api.model.Settings';
     let res = this._put('', settings).share();
-    res.subscribe(() => this.reloadSettings(), () =>{});
+    res.subscribe(() => this.reloadSettings(), () => {});
     return res;
   }
 

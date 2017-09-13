@@ -1,10 +1,13 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { Observable } from 'rxjs/Observable';
+
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
+import { WebSocketService } from '../util/websockets/websocket.service';
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -44,8 +47,10 @@ export class HostOverview implements AfterViewInit {
     return true;
   }
 
-  constructor(private hostHttp: HostHttpService, private router: Router,
-              private templateHttp: TemplateHttpService) {
+  constructor(private hostHttp: HostHttpService,
+              private router: Router,
+              private templateHttp: TemplateHttpService,
+              private webSocketService: WebSocketService) {
   };
 
   ngAfterViewInit(): void {
@@ -62,7 +67,6 @@ export class HostOverview implements AfterViewInit {
       .filter(repo => HostOverview.filterTemplateData(repo,  this._searchTemplateQuery))
       .sort(Sorter.host);
   }
-
 
   get searchQuery(): string {
     return this._searchQuery;

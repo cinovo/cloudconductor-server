@@ -1,7 +1,8 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { Template } from "../util/http/template.http.service";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Mode } from "../util/enums.util";
+import { Component, AfterViewInit } from '@angular/core';
+import { Template } from '../util/http/template.http.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Mode } from '../util/enums.util';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -14,7 +15,7 @@ import { Mode } from "../util/enums.util";
 })
 export class TemplateNew implements AfterViewInit {
 
-  private _template: BehaviorSubject<Template> = new BehaviorSubject({name: "", description: ""});
+  private _template: BehaviorSubject<Template> = new BehaviorSubject({name: '', description: ''});
   public template: Observable<Template> = this._template.asObservable();
 
   modes = Mode;
@@ -23,7 +24,7 @@ export class TemplateNew implements AfterViewInit {
   };
 
   ngAfterViewInit(): void {
-    this._template.next({name: "", description: "", repos:[], versions:{}, autoUpdate:false, smoothUpdate:false});
+    this._template.next({name: '', description: '', repos: [], versions: {}, autoUpdate: false, smoothUpdate: false});
   }
 
 }

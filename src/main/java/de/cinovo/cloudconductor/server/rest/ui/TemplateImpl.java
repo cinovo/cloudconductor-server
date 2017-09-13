@@ -1,5 +1,12 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.Template;
@@ -8,13 +15,11 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.websockets.TemplateWebSocketHandler;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,38 +29,42 @@ import java.util.Set;
  */
 @JaxRsComponent
 public class TemplateImpl implements ITemplate {
-
+	
 	@Autowired
 	private ITemplateDAO templateDAO;
 	@Autowired
 	private TemplateHandler templateHandler;
 	@Autowired
 	private IAgentOptionsDAO agentOptionsDAO;
-
+	@Autowired
+	private TemplateWebSocketHandler wsHandler;
+	
+	
 	@Override
 	@Transactional
 	public Set<Template> get() {
 		Set<Template> result = new HashSet<>();
-		for(ETemplate template : this.templateDAO.findList()) {
+		for (ETemplate template : this.templateDAO.findList()) {
 			result.add(template.toApi());
 		}
 		return result;
 	}
-
+	
 	@Override
 	@Transactional
 	public void save(Template template) {
 		RESTAssert.assertNotNull(template);
 		RESTAssert.assertNotEmpty(template.getName());
 		ETemplate eTemplate = this.templateDAO.findByName(template.getName());
-		if(eTemplate == null) {
-			this.templateHandler.createEntity(template);
+		if (eTemplate == null) {
+			eTemplate = this.templateHandler.createEntity(template);
+			this.wsHandler.broadcast(new WSChangeEvent<Template>(ChangeType.ADDED, eTemplate.toApi()));
 		} else {
-			this.templateHandler.updateEntity(eTemplate, template);
+			eTemplate = this.templateHandler.updateEntity(eTemplate, template);
+			this.wsHandler.broadcast(new WSChangeEvent<Template>(ChangeType.UPDATED, eTemplate.toApi()));
 		}
 	}
-
-
+	
 	@Override
 	@Transactional
 	public void delete(String templateName) {
@@ -63,8 +72,9 @@ public class TemplateImpl implements ITemplate {
 		ETemplate eTemplate = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(eTemplate);
 		this.templateDAO.delete(eTemplate);
+		this.wsHandler.broadcast(new WSChangeEvent<Template>(ChangeType.DELETED, eTemplate.toApi()));
 	}
-
+	
 	@Override
 	@Transactional
 	public Template get(String templateName) {
@@ -73,7 +83,7 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotNull(template);
 		return template.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public Template updatePackage(String templateName, String packageName) {
@@ -85,7 +95,7 @@ public class TemplateImpl implements ITemplate {
 		this.templateDAO.save(template);
 		return template.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public Template deletePackage(String templateName, String packageName) {
@@ -97,25 +107,25 @@ public class TemplateImpl implements ITemplate {
 		this.templateDAO.save(template);
 		return template.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public AgentOption getAgentOption(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(templateName);
-		if(options == null) {
+		if (options == null) {
 			options = this.templateHandler.createAgentOptions(templateName);
 		}
 		return options.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public AgentOption saveAgentOption(String templateName, AgentOption option) {
 		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotNull(option);
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(templateName);
-		if(options == null) {
+		if (options == null) {
 			options = this.templateHandler.createAgentOptions(templateName);
 		}
 		options = this.templateHandler.updateEntity(options, option);
