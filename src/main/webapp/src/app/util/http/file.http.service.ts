@@ -3,6 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { ConfigFile, FileForm, FileType } from './config-file.model';
 import { HTTPService } from './abstract.http.service';
 
 /**
@@ -11,21 +12,6 @@ import { HTTPService } from './abstract.http.service';
  *
  * @author mweise
  */
-export interface ConfigFile {
-  name: string,
-  pkg: string,
-  targetPath: string,
-  owner: string,
-  group: string,
-  fileMode: string,
-  isDirectory: boolean,
-  isTemplate: boolean,
-  isReloadable: boolean,
-  checksum?: string,
-  dependentServices: string[]
-  templates: string[]
-}
-
 @Injectable()
 export class FileHttpService extends HTTPService {
 

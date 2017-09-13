@@ -5,7 +5,8 @@ import { Router, ActivatedRoute } from '@angular/router/';
 import { Observable } from 'rxjs/Observable';
 
 import { AlertService } from '../util/alert/alert.service';
-import { ConfigFile, FileHttpService } from '../util/http/file.http.service';
+import { ConfigFile, FileForm, FileType  } from '../util/http/config-file.model';
+import { FileHttpService } from '../util/http/file.http.service';
 import { ServiceHttpService } from '../util/http/service.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 
@@ -15,34 +16,12 @@ import { TemplateHttpService } from '../util/http/template.http.service';
  *
  * @author mweise
  */
-export interface FileForm {
-  name: string,
-  owner: string,
-  group: string,
-  fileMode: string,
-  isTemplate: boolean,
-  targetPath: string,
-  dependentServices: string[],
-  servicesReload: string[],
-  templates: string[],
-  fileContent: string,
-  type: FileType
-}
-
-export enum FileType {
-  File = 'File',
-  Directory = 'Directory'
-}
-
 @Component({
   templateUrl: './file.detail.comp.html'
 })
 export class FileDetailComponent implements OnInit {
 
-  public file: ConfigFile = {
-    name: '', pkg: '', targetPath: '', owner: '', group: '', fileMode: '644',
-    isTemplate: false, isReloadable: false, isDirectory: false, dependentServices: [], templates: []
-  };
+  public file = new ConfigFile();
 
   public serviceNames: Observable<string[]>;
   public templateNames: Observable<string[]>;
@@ -109,34 +88,22 @@ export class FileDetailComponent implements OnInit {
   }
 
   public saveFile(fv: FileForm): void {
-
-    console.log({fv});
-
-    const updatedFile: ConfigFile = {
-      name: fv.name,
-      pkg: '',
-      targetPath: fv.targetPath,
-      owner: fv.owner,
-      group: fv.group,
-      fileMode: fv.fileMode,
-      isDirectory: (fv.type === FileType.Directory),
-      isTemplate: false,
-      isReloadable: fv.servicesReload.length > 0,
-      dependentServices: fv.dependentServices,
-      templates: fv.templates
-    }
-
-    console.log({updatedFile});
+    const updatedFile: ConfigFile = fv.toConfigFile();
 
     this.fileHttpService.updateFile(updatedFile).flatMap(() => {
-      console.log('Update file content...');
-      return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
+      if (updatedFile.isDirectory) {
+        // updating content is useless here
+        return Observable.of(true);
+      } else {
+        console.log('Update file content...');
+        return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
+      }
     }).subscribe(() => {
-      this.alertService.success(`Successfully saved file '${updatedFile.name}'!`);
+      this.alertService.success(`Successfully saved ${this.formObj} '${updatedFile.name}'!`);
       this.router.navigate(['/files']);
     },
     (err) => {
-      this.alertService.danger(`Error saving file '${updatedFile.name}'!`);
+      this.alertService.danger(`Error saving ${this.formObj} '${updatedFile.name}'!`);
       console.error(err);
     });
   }

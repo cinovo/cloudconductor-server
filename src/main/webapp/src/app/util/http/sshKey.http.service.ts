@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/';
 
 import { HTTPService } from './abstract.http.service';
+import { SSHKey } from './sshkey.model';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -11,14 +12,6 @@ import { HTTPService } from './abstract.http.service';
  *
  * @author mweise
  */
-export interface SSHKey {
-  owner: string,
-  username: string,
-  key: string,
-  lastChanged?: Date
-  templates: string[]
-}
-
 @Injectable()
 export class SSHKeyHttpService extends HTTPService {
 

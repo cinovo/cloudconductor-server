@@ -106,7 +106,7 @@ public class FileImpl implements IFile {
 	@Transactional
 	public void saveData(String name, String data) {
 		RESTAssert.assertNotEmpty(name);
-		RESTAssert.assertNotEmpty(data);
+		RESTAssert.assertNotNull(data);
 		
 		EFile model = this.fileDAO.findByName(name);
 		RESTAssert.assertNotNull(model);

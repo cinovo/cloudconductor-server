@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
-import { SSHKey, SSHKeyHttpService } from '../util/http/sshKey.http.service';
+import { SSHKey } from '../util/http/sshkey.model';
+import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 
 /**

@@ -6,8 +6,8 @@ import { Repo } from './http/repo.http.service';
 import { RepoMirror } from './http/repomirror.http.service';
 import { Template } from './http/template.http.service';
 import { Host } from './http/host.http.service';
-import { SSHKey } from './http/sshKey.http.service';
-import { ConfigFile } from "./http/file.http.service";
+import { ConfigFile } from './http/config-file.model';
+import { SSHKey } from './http/sshkey.model';
 
 /* tslint:disable:curly */
 

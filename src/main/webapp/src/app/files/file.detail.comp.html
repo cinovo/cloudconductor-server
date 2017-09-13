@@ -5,6 +5,7 @@
     <cc-panel [title]="formTitle" [icon]="'fa-plus'">
       <form class="form-horizontal" [formGroup]="fileForm" novalidate (ngSubmit)="saveFile(fileForm.value)" cc-panel-body>
         <div class="col-md-12 col-lg-6">
+
           <div class="form-group">
             <label for="name" class="col-md-2 control-label">Name</label>
             <div class="col-md-10">

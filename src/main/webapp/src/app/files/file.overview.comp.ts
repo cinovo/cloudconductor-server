@@ -3,7 +3,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
-import { FileHttpService, ConfigFile } from '../util/http/file.http.service';
+import { ConfigFile } from '../util/http/config-file.model';
+import { FileHttpService } from '../util/http/file.http.service';
 import { Sorter } from '../util/sorters.util';
 import { TemplateHttpService, Template } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';

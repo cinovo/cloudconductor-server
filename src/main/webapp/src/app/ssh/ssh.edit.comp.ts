@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
 
 import { Observable } from 'rxjs';
-
-import { SSHKey } from '../util/http/sshKey.http.service';
+import { SSHKey } from '../util/http/sshkey.model';
 
 export interface TemplateSelection {
   name: string,

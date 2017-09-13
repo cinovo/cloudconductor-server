@@ -1,7 +1,7 @@
 <cc-title [title]="'Files and Directories'" [titleIcon]="'fa-file-text'"></cc-title>
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-3">
@@ -9,7 +9,7 @@
       [dataField]="'name'">
     </cc-filter>
   </div>
-  <div class="col-md-5">
+  <div class="col-md-6">
     <a class="btn btn-success pull-right" role="button" [routerLink]="['new']">
       <i class="fa fa-plus fa-fw"></i>
       New
@@ -74,6 +74,14 @@
               <a [routerLink]="['/files', file.name]">
                 <i class="fa fa-edit fa-fw" title="Edit"></i>
               </a>
+            </td>
+          </tr>
+          <tr>
+            <td role="button" [routerLink]="['new']">
+                <i class="fa fa-plus fa-fw"></i>
+            </td>
+            <td colspan="10" role="button" [routerLink]="['new']">
+                Create File or Directory
             </td>
           </tr>
         </tbody>

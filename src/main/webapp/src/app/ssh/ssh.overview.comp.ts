@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { AlertService } from '../util/alert/alert.service';
-import { SSHKey, SSHKeyHttpService } from '../util/http/sshKey.http.service';
+import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 import { TemplateSelection } from './ssh.edit.comp';
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
+import { SSHKey } from '../util/http/sshkey.model';
 
 /**
  * Copyright 2017 Cinovo AG<br>
