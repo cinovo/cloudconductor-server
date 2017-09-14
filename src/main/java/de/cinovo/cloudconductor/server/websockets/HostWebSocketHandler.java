@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 
 /**
@@ -66,7 +66,7 @@ public class HostWebSocketHandler {
 	 * @param hostName the host which has changed
 	 * @param event the event to be broadcasted
 	 */
-	public void broadcastChange(String hostName, WSChangeEvent<Template> event) {
+	public void broadcastChange(String hostName, WSChangeEvent<Host> event) {
 		List<HostWebSocketAdapter> list = this.connectedSockets.get(hostName);
 		
 		if (list != null) {

@@ -132,7 +132,8 @@ export class HostServices implements AfterViewInit {
   }
 
   private isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
-    let ret: boolean = service.state.toString() === ServiceState[ServiceState.STARTED] || service.state.toString() === ServiceState[ServiceState.IN_SERVICE];
+    let ret: boolean = (service.state.toString() === ServiceState[ServiceState.STARTED] ||
+                        service.state.toString() === ServiceState[ServiceState.IN_SERVICE]);
     if (includeTrannsient && !ret) {
       ret = service.state.toString() === ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service);
     }
@@ -152,7 +153,8 @@ export class HostServices implements AfterViewInit {
   }
 
   private isServiceRestarting(service: ServiceStateElement): boolean {
-    return service.state.toString() === ServiceState[ServiceState.RESTARTING_STARTING] || service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING];
+    return (service.state.toString() === ServiceState[ServiceState.RESTARTING_STARTING] ||
+           service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING]);
   }
 
   get allSelected(): boolean {

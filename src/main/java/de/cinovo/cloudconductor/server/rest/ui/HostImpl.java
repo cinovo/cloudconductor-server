@@ -13,6 +13,7 @@ import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.websockets.HostWebSocketHandler;
 import de.cinovo.cloudconductor.server.websockets.HostsWebSocketHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
@@ -34,6 +35,8 @@ public class HostImpl implements IHost {
 	private HostHandler hostHandler;
 	@Autowired
 	private HostsWebSocketHandler hostsWsHandler;
+	@Autowired
+	private HostWebSocketHandler hostDetailWsHandler;
 	
 	
 	@Override
@@ -72,6 +75,7 @@ public class HostImpl implements IHost {
 		RESTAssert.assertNotNull(newState);
 		EHost eHost = this.hostDAO.findByName(hostName);
 		this.hostHandler.changeServiceState(eHost, serviceName, newState);
-		this.hostDAO.save(eHost);
+		eHost = this.hostDAO.save(eHost);
+		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, eHost.toApi()));
 	}
 }

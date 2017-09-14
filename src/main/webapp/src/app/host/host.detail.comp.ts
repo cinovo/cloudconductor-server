@@ -7,8 +7,8 @@ import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
 import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
-import { Template } from "../util/http/template.http.service";
-import { WSChangeEvent } from "../util/websockets/ws-change-event.model";
+import { Template } from '../util/http/template.http.service';
+import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -31,6 +31,7 @@ export class HostDetail implements OnInit, OnDestroy {
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
   private _webSocketSub: Subscription;
+  private _heartBeatSub: Subscription;
 
   constructor(private route: ActivatedRoute,
               private hostHttp: HostHttpService,
@@ -60,7 +61,21 @@ export class HostDetail implements OnInit, OnDestroy {
       this._webSocketSub = this._webSocket.subscribe((event) => {
         const data: WSChangeEvent<Host> = JSON.parse(event.data);
 
-        // TODO handle change events
+        switch (data.type) {
+          case 'UPDATED':
+            const updatedHost = data.content;
+            this._behavHost.next(updatedHost);
+            break;
+          default:
+            console.error('Unknown type of WS message!');
+            break;
+        }
+      });
+
+      const iv = (this.wsService.timeout * 0.4);
+      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+        // send heart beat message via WebSockets
+        this._webSocket.next({ data: 'Alive!' });
       });
     });
   }

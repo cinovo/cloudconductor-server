@@ -8,8 +8,9 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
-import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSHeartbeat;
 import de.taimos.dvalin.jaxrs.websocket.ServerJSONWebSocketAdapter;
@@ -31,6 +32,9 @@ public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat
 	@Autowired
 	private HostWebSocketHandler wsHandler;
 	
+	@Value("${ws.timeout:60000}")
+	private long websocketTimeout;
+	
 	private List<String> hostNames = new ArrayList<>();
 	
 	
@@ -47,6 +51,7 @@ public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat
 	@Override
 	public void onWebSocketConnect(Session sess) {
 		super.onWebSocketConnect(sess);
+		sess.setIdleTimeout(this.websocketTimeout);
 		
 		Map<String, List<String>> parameters = sess.getUpgradeRequest().getParameterMap();
 		if ((parameters != null) && (parameters.get("name") != null)) {
@@ -75,7 +80,7 @@ public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat
 	/**
 	 * @param event the event to be sent via WS
 	 */
-	public void sendChangeEvent(WSChangeEvent<Template> event) {
+	public void sendChangeEvent(WSChangeEvent<Host> event) {
 		this.sendObjectToSocket(event);
 		HostWebSocketAdapter.LOGGER.info("Send change event {}", event);
 	}
