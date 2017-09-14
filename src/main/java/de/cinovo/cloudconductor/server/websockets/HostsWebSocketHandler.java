@@ -2,10 +2,9 @@ package de.cinovo.cloudconductor.server.websockets;
 
 import org.springframework.stereotype.Service;
 
-import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.api.model.Host;
 
 /**
- * 
  * Copyright 2017 Cinovo AG<br>
  * <br>
  * 
@@ -13,6 +12,6 @@ import de.cinovo.cloudconductor.api.model.Template;
  *
  */
 @Service
-public class TemplateWebSocketHandler extends AWebSocketHandler<TemplateWebSocketAdapter, Template> {
+public class HostsWebSocketHandler extends AWebSocketHandler<HostsWebSocketAdapter, Host> {
 	//
 }

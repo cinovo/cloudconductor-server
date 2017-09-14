@@ -36,8 +36,8 @@ export class HostServices implements AfterViewInit {
 
   private _allSelected = false;
 
-  constructor(private hostHTTP: HostHttpService, private alerts: AlertService) {
-  };
+  constructor(private hostHTTP: HostHttpService,
+              private alerts: AlertService) { };
 
   ngAfterViewInit(): void {
     this.obsHost.subscribe(

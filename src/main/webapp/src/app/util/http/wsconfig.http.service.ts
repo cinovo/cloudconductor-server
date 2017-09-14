@@ -6,7 +6,8 @@ import { Observable } from 'rxjs/Observable';
 import { HTTPService } from './abstract.http.service';
 
 export interface WSConfig {
-  basePath: string
+  basePath: string,
+  timeout: number
 }
 
 /**

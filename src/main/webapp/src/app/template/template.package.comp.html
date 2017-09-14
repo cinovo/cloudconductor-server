@@ -34,13 +34,15 @@
             </ng-template>
           </td>
           <td *ngIf="!isPkgLatest(pv)">
-            <a (click)="updatePackage(pv)" role="button" title="Update pacakge to newest"><i
-              class="fa fa-refresh fa-fw"></i></a>
+            <a (click)="updatePackage(pv)" role="button" title="Update package to newest">
+              <i class="fa fa-refresh fa-fw"></i>
+            </a>
           </td>
           <td *ngIf="isPkgLatest(pv)"></td>
           <td>
-            <a (click)="removePackage(pv)" role="button" title="Remove package from template"><i
-              class="fa fa-bitbucket fa-fw"></i></a>
+            <a (click)="removePackage(pv)" role="button" title="Remove package from template">
+              <i class="fa fa-trash-o fa-fw"></i>
+            </a>
           </td>
         </tr>
 
@@ -90,7 +92,7 @@
           <i class="fa fa-refresh fa-fw"></i> Update selected
         </button>
         <button (click)="removeSelected()" class="btn btn-danger" [disabled]="!isPkgSelected()">
-          <i class="fa fa-bitbucket fa-fw"></i> Remove selected
+          <i class="fa fa-trash-o fa-fw"></i> Remove selected
         </button>
       </div>
     </cc-panel>

@@ -1,11 +1,14 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, Observable } from 'rxjs';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
+import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
+import { Template } from "../util/http/template.http.service";
+import { WSChangeEvent } from "../util/websockets/ws-change-event.model";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -17,7 +20,7 @@ import { Validator } from '../util/validator.util';
   selector: 'host.detail.comp',
   templateUrl: './host.detail.comp.html'
 })
-export class HostDetail implements AfterViewInit {
+export class HostDetail implements OnInit, OnDestroy {
 
   private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: '', template: ''});
   public obsHost: Observable<Host> = this._behavHost.asObservable();
@@ -26,14 +29,20 @@ export class HostDetail implements AfterViewInit {
   private back: {ret: string; id: string};
   private autorefresh = false;
 
+  private _webSocket: Subject<MessageEvent | Heartbeat>;
+  private _webSocketSub: Subscription;
+
   constructor(private route: ActivatedRoute,
               private hostHttp: HostHttpService,
-              private alerts: AlertService) {
-  };
+              private alerts: AlertService,
+              private wsService: WebSocketService) { };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.loadData(params['hostName']);
+      const hostName = params['hostName'];
+
+      this.loadData(hostName);
+      this.connectWS(hostName);
     });
     this.obsHost.subscribe(
       (result) => this.host = result
@@ -44,6 +53,21 @@ export class HostDetail implements AfterViewInit {
     });
   }
 
+  connectWS(hostName: string): void {
+    this.wsService.connect('host', hostName).subscribe((webSocket) => {
+      this._webSocket = webSocket;
+
+      this._webSocketSub = this._webSocket.subscribe((event) => {
+        const data: WSChangeEvent<Host> = JSON.parse(event.data);
+
+        // TODO handle change events
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.disconnect();
+  }
 
   private loadData(hostName: string): void {
     if (Validator.notEmpty(hostName) && hostName !== 'new') {

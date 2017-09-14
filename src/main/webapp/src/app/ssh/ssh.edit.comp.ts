@@ -21,7 +21,7 @@ export class SSHEditComponent implements OnInit {
   @Output() onSave: EventEmitter<SSHKey> = new EventEmitter();
   @Output() onCancel: EventEmitter<String> = new EventEmitter();
 
-  private templateSelection: TemplateSelection[];
+  public templateSelection: TemplateSelection[];
 
   ngOnInit(): void {
     if (this.templateNames) {

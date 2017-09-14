@@ -1,10 +1,15 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
+import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
+
 /**
   * Copyright 2017 Cinovo AG<br>
   * <br>
@@ -15,11 +20,15 @@ import { PackageHttpService, Package } from '../util/http/package.http.service';
   selector: 'package-overview',
   templateUrl: './package.overview.comp.html'
 })
-export class PackageOverview implements AfterViewInit {
+export class PackageOverview implements OnInit {
 
   private _searchQuery: string = null;
 
   private _packages: Array<Package> = [];
+
+  private _webSocket: Subject<MessageEvent | Heartbeat>;
+
+  private _webSocketSub: Subscription;
 
   private static filterData(pkg: Package, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -28,10 +37,11 @@ export class PackageOverview implements AfterViewInit {
     return true;
   }
 
-  constructor(private packageHttp: PackageHttpService, private router: Router) {
-  };
+  constructor(private packageHttp: PackageHttpService,
+              private router: Router,
+              private wsService: WebSocketService) { };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.loadPackages();
   }
 

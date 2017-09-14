@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { Http, Response } from "@angular/http";
+import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
 
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 
-import { HTTPService } from "./abstract.http.service";
-import { ServiceState } from "../../util/enums.util";
+import { HTTPService } from './abstract.http.service';
+import { ServiceState } from '../../util/enums.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -17,7 +17,7 @@ export interface Host {
   template: string;
   agent?: string;
   description?: string;
-  lastSeen?:number;
+  lastSeen?: number;
   services?: {[serviceName: string]: ServiceState};
   packages?: {[pkgName: string]: string};
 }
@@ -31,7 +31,7 @@ export class HostHttpService extends HTTPService {
   }
 
   public getHosts(): Observable<Array<Host>> {
-    return this._get("");
+    return this._get('');
   }
 
   public getHost(hostName: string): Observable<Host> {
@@ -43,16 +43,15 @@ export class HostHttpService extends HTTPService {
   }
 
   public startService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + "/" + serviceName, ServiceState.STARTING);
+    return this._put(hostName + '/' + serviceName, ServiceState.STARTING);
   }
 
 
   public stopService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + "/" + serviceName, ServiceState.STOPPING);
+    return this._put(hostName + '/' + serviceName, ServiceState.STOPPING);
   }
 
-
   public restartService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + "/" + serviceName, ServiceState.RESTARTING_STOPPING);
+    return this._put(hostName + '/' + serviceName, ServiceState.RESTARTING_STOPPING);
   }
 }

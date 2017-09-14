@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 public class WebSocketConfig {
 	
 	private String basePath;
+	private long timeout;
 	
 	
 	/**
@@ -29,9 +30,11 @@ public class WebSocketConfig {
 	 * Creates a new configuration for WebSockets with a given base path.
 	 * 
 	 * @param basePath the base path to be set
+	 * @param timeout the timeout in millis to set
 	 */
-	public WebSocketConfig(String basePath) {
+	public WebSocketConfig(String basePath, long timeout) {
 		this.basePath = basePath;
+		this.setTimeout(timeout);
 	}
 	
 	/**
@@ -46,6 +49,20 @@ public class WebSocketConfig {
 	 */
 	public void setBasePath(String basePath) {
 		this.basePath = basePath;
+	}
+	
+	/**
+	 * @return the timeout
+	 */
+	public long getTimeout() {
+		return this.timeout;
+	}
+	
+	/**
+	 * @param timeout the timeout to set
+	 */
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 	
 }

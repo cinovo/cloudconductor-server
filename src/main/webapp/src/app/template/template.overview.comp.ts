@@ -82,7 +82,9 @@ export class TemplateOverview implements OnInit, OnDestroy {
         this.templates = updatedTemplates;
       });
 
-      this._heartBeatSub = Observable.interval(10000).subscribe(() => {
+      const iv = (this.wsService.timeout * 0.4);
+
+      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
         // send heart beat message via WebSockets
         this._webSocket.next({ data: 'Alive!' });
       });
@@ -98,6 +100,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
     if (this._heartBeatSub) {
       this._heartBeatSub.unsubscribe();
     }
+
+    this.wsService.disconnect();
   }
 
   private loadTemplates(): void {

@@ -27,12 +27,15 @@ public class WebSocketConfigImpl implements IWebSocketConfig {
 	@Value("${websocket.baseuri:/websocket}")
 	private String baseURI;
 	
+	@Value("${ws.timeout:60000}")
+	private long websocketTimeout;
+	
 	
 	@Override
 	public WebSocketConfig getConfig() {
 		SplitURL split = URLUtils.splitURL(this.context.getServerURL());
 		String webSocketBasePath = "ws://" + split.getHost() + ":" + split.getPort() + this.baseURI;
-		return new WebSocketConfig(webSocketBasePath);
+		return new WebSocketConfig(webSocketBasePath, this.websocketTimeout);
 	}
 	
 }
