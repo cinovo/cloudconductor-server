@@ -16,7 +16,7 @@ import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
  * @param <A> the type of WS adapter
  * @param <T> the type of the objects to transfer
  */
-public abstract class AWebSocketHandler<A extends AWebSocketAdapter<?, T>, T> {
+public abstract class ASimpleWSHandler<A extends ASimpleWSAdapter<?, T>, T> {
 	
 	private Set<A> connectedWS = new ConcurrentHashSet<>();
 	

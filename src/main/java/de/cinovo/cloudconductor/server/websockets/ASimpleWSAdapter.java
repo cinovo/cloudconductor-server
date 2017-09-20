@@ -15,7 +15,7 @@ import de.taimos.dvalin.jaxrs.websocket.ServerJSONWebSocketAdapter;
  * @param <R> the type of objects to receive
  * @param <S> the type of objects to send
  */
-public abstract class AWebSocketAdapter<R, S> extends ServerJSONWebSocketAdapter<R> {
+public abstract class ASimpleWSAdapter<R, S> extends ServerJSONWebSocketAdapter<R> {
 	
 	@Value("${ws.timeout:60000}")
 	protected long websocketTimeout;

@@ -13,6 +13,6 @@ import de.cinovo.cloudconductor.api.model.Template;
  *
  */
 @Service
-public class TemplateWebSocketHandler extends AWebSocketHandler<TemplateWebSocketAdapter, Template> {
+public class TemplateWSHandler extends ASimpleWSHandler<TemplateWSAdapter, Template> {
 	//
 }

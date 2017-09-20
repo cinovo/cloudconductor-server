@@ -13,8 +13,8 @@ import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.websockets.HostWebSocketHandler;
-import de.cinovo.cloudconductor.server.websockets.HostsWebSocketHandler;
+import de.cinovo.cloudconductor.server.websockets.HostDetailWSHandler;
+import de.cinovo.cloudconductor.server.websockets.HostsWSHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
@@ -34,9 +34,9 @@ public class HostImpl implements IHost {
 	@Autowired
 	private HostHandler hostHandler;
 	@Autowired
-	private HostsWebSocketHandler hostsWsHandler;
+	private HostsWSHandler hostsWsHandler;
 	@Autowired
-	private HostWebSocketHandler hostDetailWsHandler;
+	private HostDetailWSHandler hostDetailWsHandler;
 	
 	
 	@Override

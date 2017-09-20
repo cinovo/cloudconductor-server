@@ -1,6 +1,5 @@
 package de.cinovo.cloudconductor.server.websockets;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,12 +7,9 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import de.cinovo.cloudconductor.api.model.Host;
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSHeartbeat;
-import de.taimos.dvalin.jaxrs.websocket.ServerJSONWebSocketAdapter;
 import de.taimos.dvalin.jaxrs.websocket.WebSocket;
 
 /**
@@ -25,17 +21,12 @@ import de.taimos.dvalin.jaxrs.websocket.WebSocket;
  *
  */
 @WebSocket(pathSpec = "/host")
-public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat> {
+public class HostDetailWSAdapter extends AParamWSAdapter<Host> {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(HostWebSocketAdapter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HostDetailWSAdapter.class);
 	
 	@Autowired
-	private HostWebSocketHandler wsHandler;
-	
-	@Value("${ws.timeout:60000}")
-	private long websocketTimeout;
-	
-	private List<String> hostNames = new ArrayList<>();
+	private HostDetailWSHandler wsHandler;
 	
 	
 	@Override
@@ -57,12 +48,9 @@ public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat
 		if ((parameters != null) && (parameters.get("name") != null)) {
 			
 			for (String name : parameters.get("name")) {
-				this.hostNames.add(name);
+				this.names.add(name);
 				this.wsHandler.addSocket(name, this);
-				HostWebSocketAdapter.LOGGER.info("WebSocket connected for name {}", name);
 			}
-		} else {
-			HostWebSocketAdapter.LOGGER.error("Error on WS connect: Missing parameters!");
 		}
 	}
 	
@@ -70,18 +58,11 @@ public class HostWebSocketAdapter extends ServerJSONWebSocketAdapter<WSHeartbeat
 	public void onWebSocketClose(int statuscode, String reason) {
 		super.onWebSocketClose(0, reason);
 		
-		for (String hostName : this.hostNames) {
+		for (String hostName : this.names) {
 			this.wsHandler.removeSocket(hostName, this);
 		}
 		
-		HostWebSocketAdapter.LOGGER.info("WebSocket disconnected: Status {} Reason {}", statuscode, reason);
+		HostDetailWSAdapter.LOGGER.info("WebSocket disconnected: Status {} Reason {}", statuscode, reason);
 	}
 	
-	/**
-	 * @param event the event to be sent via WS
-	 */
-	public void sendChangeEvent(WSChangeEvent<Host> event) {
-		this.sendObjectToSocket(event);
-		HostWebSocketAdapter.LOGGER.info("Send change event {}", event);
-	}
 }

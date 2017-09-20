@@ -15,7 +15,7 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.websockets.TemplateWebSocketHandler;
+import de.cinovo.cloudconductor.server.websockets.TemplateWSHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
@@ -37,7 +37,7 @@ public class TemplateImpl implements ITemplate {
 	@Autowired
 	private IAgentOptionsDAO agentOptionsDAO;
 	@Autowired
-	private TemplateWebSocketHandler wsHandler;
+	private TemplateWSHandler wsHandler;
 	
 	
 	@Override

@@ -12,6 +12,6 @@ import de.cinovo.cloudconductor.api.model.Host;
  *
  */
 @Service
-public class HostsWebSocketHandler extends AWebSocketHandler<HostsWebSocketAdapter, Host> {
+public class HostsWSHandler extends ASimpleWSHandler<HostsWSAdapter, Host> {
 	//
 }
