@@ -58,6 +58,7 @@ public class SSHKeyImpl implements ISSHKey {
 	public void saveKey(SSHKey key) {
 		RESTAssert.assertNotNull(key);
 		RESTAssert.assertNotEmpty(key.getOwner());
+		RESTAssert.assertNotEmpty(key.getUsername());
 		RESTAssert.assertNotEmpty(key.getKey());
 		
 		ESSHKey eKey = this.sshDAO.findByName(key.getOwner());

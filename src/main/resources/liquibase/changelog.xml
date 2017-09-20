@@ -886,4 +886,7 @@
     	<dropTable schemaName="cloudconductor" tableName="mappingdirectorytemplate" />
     	<dropTable schemaName="cloudconductor" tableName="directory" />
     </changeSet>
+    <changeSet id="28" author="mweise">
+    	<addNotNullConstraint schemaName="cloudconductor" tableName="sshkey" columnName="username" columnDataType="varchar(255)" defaultNullValue="root"/>
+    </changeSet>
 </databaseChangeLog>

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
-import { TemplateSelection } from './ssh.edit.comp';
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { SSHKey } from '../util/http/sshkey.model';
@@ -28,7 +27,7 @@ export class SSHOverviewComponent implements OnInit {
   public showAddKey = false;
   public keysLoaded = false;
 
-  public newKey: SSHKey = { owner: '', username: 'root', key: '', templates: [] };
+  public newKey: Observable<SSHKey> = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
 
   public templateNames: Observable<String[]>;
 
@@ -103,8 +102,8 @@ export class SSHOverviewComponent implements OnInit {
 
   private createKey(newKey: SSHKey) {
     this.sshKeyHttp.updateKey(newKey).subscribe(() => {
-      this.alertService.success(`Successfully created new SSH key for '${this.newKey.owner}'!`)
-      this.newKey = { owner: '', username: 'root', key: '', templates: [] };
+      this.alertService.success(`Successfully created new SSH key for '${newKey.owner}'!`)
+      this.newKey = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
       this.loadData();
     },
     (err) => {

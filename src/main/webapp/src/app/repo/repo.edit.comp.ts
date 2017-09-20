@@ -27,10 +27,12 @@ export class RepoEdit implements AfterViewInit {
 
   public packages: Array<PackageVersion> = [];
 
-  constructor(private repoHttp: RepoHttpService, private mirrorHttp: RepoMirrorHttpService,
+  constructor(private repoHttp: RepoHttpService,
+              private mirrorHttp: RepoMirrorHttpService,
               private packageHttp: PackageHttpService,
-              private route: ActivatedRoute, private alerts: AlertService, private router: Router) {
-  };
+              private route: ActivatedRoute,
+              private alerts: AlertService,
+              private router: Router) { };
 
   ngAfterViewInit(): void {
     this.route.url.subscribe((value) => {
@@ -54,11 +56,11 @@ export class RepoEdit implements AfterViewInit {
   }
 
   private loadPackages(): void {
-    if (this.repo && Validator.notEmpty(this.repo.name))
+    if (this.repo && Validator.notEmpty(this.repo.name)) {
       this.packageHttp.getVersionsOfRepo(this.repo.name).subscribe(
         (result) => this.packages = result.sort(Sorter.packageVersion)
       );
-
+    }
   }
 
   save(): void {

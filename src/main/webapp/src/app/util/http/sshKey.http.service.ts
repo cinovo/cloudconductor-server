@@ -25,7 +25,11 @@ export class SSHKeyHttpService extends HTTPService {
   }
 
   public getKey(owner: string): Observable<SSHKey> {
-    return this._get(owner);
+    return this._get(owner).map((k) => {
+      delete k['@class'];
+      delete k['lastChanged'];
+      return k;
+    });
   }
 
   public updateKey(sshKey: SSHKey): Observable<boolean> {

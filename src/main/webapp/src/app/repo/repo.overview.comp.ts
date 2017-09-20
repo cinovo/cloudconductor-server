@@ -1,9 +1,10 @@
-import { Component, AfterViewInit } from "@angular/core";
-import { Sorter } from "../util/sorters.util";
-import { Validator } from "../util/validator.util";
-import { Repo, RepoHttpService } from "../util/http/repo.http.service";
-import { RepoMirrorHttpService, RepoMirror } from "../util/http/repomirror.http.service";
-import { Router } from "@angular/router";
+import { Component, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { Sorter } from '../util/sorters.util';
+import { Validator } from '../util/validator.util';
+import { Repo, RepoHttpService } from '../util/http/repo.http.service';
+import { RepoMirrorHttpService, RepoMirror } from '../util/http/repomirror.http.service';
 
 /**
  * Copyright 2016 Cinovo AG<br>
@@ -20,6 +21,13 @@ export class RepoOverview implements AfterViewInit {
   private _searchQuery: string = null;
 
   private _repos: Array<Repo> = [];
+
+  private static filterData(repo: Repo, query: string) {
+    if (Validator.notEmpty(query)) {
+      return repo.name.indexOf(query.trim()) >= 0;
+    }
+    return true;
+  }
 
   constructor(private repoHttp: RepoHttpService, private mirrorHttp: RepoMirrorHttpService,
               private router: Router) {
@@ -80,14 +88,6 @@ export class RepoOverview implements AfterViewInit {
     if (repo) {
       this.router.navigate(['repo', repo.name]);
     }
-  }
-
-
-  private static filterData(repo: Repo, query: string) {
-    if (Validator.notEmpty(query)) {
-      return repo.name.indexOf(query.trim()) >= 0;
-    }
-    return true;
   }
 
 }

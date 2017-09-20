@@ -65,7 +65,8 @@
 
   <div *ngIf="showAddKey" class="col-lg-6 col-md-12">
     <cc-panel [icon]="'fa-plus'" [title]="'New SSH Key'">
-      <app-ssh-edit cc-panel-body [key]="newKey" [templateNames]="templateNames" [isCreate]="true" (onSave)="addKey($event)" (onCancel)="showAddKey = false"></app-ssh-edit>
+      <app-ssh-edit cc-panel-body [key]="newKey" [templateNames]="templateNames" [isCreate]="true" (onSave)="addKey($event)" (onCancel)="showAddKey = false">
+      </app-ssh-edit>
     </cc-panel>
   </div>
 </div>

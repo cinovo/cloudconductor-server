@@ -20,9 +20,8 @@ import { TemplateHttpService } from '../util/http/template.http.service';
 })
 export class SSHDetailComponent implements OnInit, OnDestroy {
 
-  public loaded = false;
   public owner: string;
-  public key: SSHKey;
+  public key: Observable<SSHKey>;
   public templateNames: Observable<string[]>;
 
   private paraSub: Subscription;
@@ -36,13 +35,7 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.paraSub = this.route.paramMap.subscribe((paraMap) => {
       this.owner = paraMap.get('owner');
-      this.sshHttp.getKey(this.owner).subscribe((key) => {
-        this.key = key;
-        this.loaded = true;
-      },
-      (err) => {
-        this.loaded = true;
-      });
+      this.key = this.sshHttp.getKey(this.owner);
     });
 
     this.templateNames = this.templateHttp.getTemplateNames();
@@ -55,12 +48,12 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
   }
 
   public saveKey(newSSHKey: SSHKey) {
-    this.sshHttp.updateKey(this.key).subscribe(() => {
-      this.alertService.success(`SSH Key of ${this.key.owner} was successfully updated!`);
+    this.sshHttp.updateKey(newSSHKey).subscribe(() => {
+      this.alertService.success(`SSH Key of ${newSSHKey.owner} was successfully updated!`);
       this.router.navigate(['/ssh']);
     },
     (err) => {
-      this.alertService.danger(`Error updating SSH key of ${this.key.owner}!`);
+      this.alertService.danger(`Error updating SSH key of ${newSSHKey.owner}!`);
       console.error(err);
     });
   }
