@@ -92,8 +92,10 @@ public class TemplateImpl implements ITemplate {
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
 		template = this.templateHandler.updatePackage(template, packageName);
-		this.templateDAO.save(template);
-		return template.toApi();
+		template = this.templateDAO.save(template);
+		Template aTemplate = template.toApi();
+		this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		return aTemplate;
 	}
 	
 	@Override
@@ -104,8 +106,10 @@ public class TemplateImpl implements ITemplate {
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
 		template = this.templateHandler.removePackage(template, packageName);
-		this.templateDAO.save(template);
-		return template.toApi();
+		template = this.templateDAO.save(template);
+		Template aTemplate = template.toApi();
+		this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		return aTemplate;
 	}
 	
 	@Override
