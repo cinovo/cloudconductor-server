@@ -13,11 +13,11 @@
 </div>
 
 <div class="row" *ngIf="keysLoaded && sshKeys.length < 1">
-    <div class="col-sm-12">
-        <div class="alert alert-warning">
-            There are currently no ssh keys known.
-        </div>
+  <div class="col-sm-12">
+    <div class="alert alert-warning">
+        There are currently no ssh keys known.
     </div>
+  </div>
 </div>
 
 <div class="row">
@@ -30,8 +30,8 @@
             <th>User Name</th>
             <th>Templates</th>
             <th>Last Modified</th>
-            <th></th>
-            <th></th>
+            <th width="15px"></th>
+            <th width="15px"></th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +45,9 @@
             </td>
             <td>{{sshKey.lastChanged | date:'dd.MM.yyyy HH:mm'}}</td>
             <td>
+              <a [routerLink]="['/ssh', sshKey.owner]"><i class="fa fa-edit fa-fw"></i></a>
+            </td>
+            <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
               [title]="'Please verify!'"
               [message]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
@@ -53,9 +56,6 @@
               (confirm)="deleteKey(sshKey)">
                 <i class="fa fa-trash-o fa-fw"></i>
               </a>
-            </td>
-            <td>
-              <a [routerLink]="['/ssh', sshKey.owner]"><i class="fa fa-edit fa-fw"></i></a>
             </td>
           </tr>
         </tbody>

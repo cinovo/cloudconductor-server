@@ -32,8 +32,8 @@
             <th>Reloadable</th>
             <th>Services</th>
             <th>Templates</th>
-            <th></th>
-            <th></th>
+            <th width="15px"></th>
+            <th width="15px"></th>
           </tr>
         </thead>
         <tbody>
@@ -61,6 +61,11 @@
               </ul>
             </td>
             <td>
+              <a [routerLink]="['/files', file.name]">
+                <i class="fa fa-edit fa-fw" title="Edit"></i>
+              </a>
+            </td>
+            <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
               [title]="'Please verify!'"
               [message]="'Are you sure you want to delete the file ' + file.name + '?'"
@@ -68,11 +73,6 @@
               confirmButtonType="danger"
               (confirm)="deleteFile(file)">
                 <i class="fa fa-trash-o fa-fw" title="Delete"></i>
-              </a>
-            </td>
-            <td>
-              <a [routerLink]="['/files', file.name]">
-                <i class="fa fa-edit fa-fw" title="Edit"></i>
               </a>
             </td>
           </tr>
