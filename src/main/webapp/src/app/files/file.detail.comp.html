@@ -6,10 +6,13 @@
       <form class="form-horizontal" [formGroup]="fileForm" novalidate (ngSubmit)="saveFile(fileForm.value)" cc-panel-body>
         <div class="col-md-12 col-lg-6">
 
-          <div class="form-group">
+          <div class="form-group" [ngClass]="{ 'has-error': !fileForm.controls.name.pristine && !fileForm.controls.name.valid }">
             <label for="name" class="col-md-2 control-label">Name</label>
             <div class="col-md-10">
               <input id="name" type="text" formControlName="name" class="form-control" placeholder="SomeFile">
+              <span *ngIf="!fileForm.controls.name.pristine && !fileForm.controls.name.valid" class="help-block">
+                This field is required.
+              </span>
             </div>
           </div>
 
@@ -34,20 +37,26 @@
           </div>
 
           <div class="form-group">
+            <div [ngClass]="{ 'has-error': !fileForm.controls.owner.pristine && !fileForm.controls.owner.valid }">
               <label for="owner" class="col-md-2 control-label">Owner</label>
               <div class="col-md-2">
                 <input id="owner" type="text" class="form-control" formControlName="owner" placeholder="root">
               </div>
+            </div>
 
+            <div [ngClass]="{ 'has-error': !fileForm.controls.group.pristine && !fileForm.controls.group.valid }">
               <label for="group" class="col-md-2 control-label">Group</label>
               <div class="col-md-2">
                 <input id="group" type="text" class="form-control" formControlName="group" placeholder="root">
               </div>
+            </div>
 
+            <div [ngClass]="{ 'has-error': !fileForm.controls.fileMode.pristine && !fileForm.controls.fileMode.valid }">
               <label for="group" class="col-md-2 control-label">File Mode</label>
               <div class="col-md-2">
-                <input id="fileMode" type="text" class="form-control" formControlName="fileMode">
+                <input id="fileMode" type="text" class="form-control" formControlName="fileMode" maxlength=3>
               </div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -61,10 +70,13 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" [ngClass]="{ 'has-error': !fileForm.controls.targetPath.pristine && !fileForm.controls.targetPath.valid }">
               <label for="targetPath" class="col-md-2 control-label">Target Path</label>
               <div class="col-md-10">
                 <input id="targetPath" type="text" class="form-control" formControlName="targetPath" placeholder="/opt/somepath/filename.ending">
+                <span *ngIf="!fileForm.controls.targetPath.pristine && !fileForm.controls.targetPath.valid" class="help-block">
+                  Please enter a valid absolute path starting with '/'.
+                </span>
               </div>
           </div>
 

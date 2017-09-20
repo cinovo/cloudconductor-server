@@ -34,7 +34,7 @@ export class FileHttpService extends HTTPService {
   }
 
   public getFile(fileName: string): Observable<ConfigFile> {
-    return this._get(fileName);
+    return this._get(fileName).map((obj) => Object.assign(new ConfigFile(), obj));
   }
 
   public deleteFile(fileName: string): Observable<boolean> {

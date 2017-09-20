@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/Rx';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router/';
 
@@ -19,7 +20,7 @@ import { TemplateHttpService } from '../util/http/template.http.service';
 @Component({
   templateUrl: './file.detail.comp.html'
 })
-export class FileDetailComponent implements OnInit {
+export class FileDetailComponent implements OnInit, OnDestroy {
 
   public file = new ConfigFile();
 
@@ -31,7 +32,9 @@ export class FileDetailComponent implements OnInit {
   public formVerb = 'Edit';
   public formObj = 'File';
 
-  public _createMode = false;
+  private _createMode = false;
+
+  private _dataSub: Subscription;
 
   constructor(private alertService: AlertService,
               private fileHttpService: FileHttpService,
@@ -45,9 +48,9 @@ export class FileDetailComponent implements OnInit {
       name: [this.file.name, Validators.required],
       owner: [this.file.owner, Validators.required],
       group: [this.file.group, Validators.required],
-      fileMode: [this.file.fileMode, Validators.required],
+      fileMode: [this.file.fileMode, [Validators.required, Validators.pattern(/^[0-7]{3}$/)]],
       isTemplate: this.file.isTemplate,
-      targetPath: [this.file.targetPath, Validators.required],
+      targetPath: [this.file.targetPath, [Validators.required, Validators.pattern(/^(\/[^/ ]+)+\/?$/)]],
       dependentServices: [this.file.dependentServices],
       servicesReload: [['']],
       templates: [this.file.templates],
@@ -59,7 +62,8 @@ export class FileDetailComponent implements OnInit {
   ngOnInit(): void {
     this.serviceNames = this.serviceHttpService.getServiceNames();
     this.templateNames = this.templateHttpService.getTemplateNames();
-    this.route.data.subscribe((data) => {
+
+    this._dataSub = this.route.data.subscribe((data) => {
       if (data.fileForm) {
         this.fileForm.setValue(data.fileForm);
         this.createMode = false;
@@ -68,6 +72,12 @@ export class FileDetailComponent implements OnInit {
         this.createMode = true;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this._dataSub) {
+      this._dataSub.unsubscribe();
+    }
   }
 
   get createMode() {
@@ -87,8 +97,9 @@ export class FileDetailComponent implements OnInit {
     this.formObj = this.fileForm.value.type;
   }
 
-  public saveFile(fv: FileForm): void {
-    const updatedFile: ConfigFile = fv.toConfigFile();
+  public saveFile(fv: any): void {
+    const fileForm = Object.assign(new FileForm(), fv);
+    const updatedFile: ConfigFile = fileForm.toConfigFile();
 
     this.fileHttpService.updateFile(updatedFile).flatMap(() => {
       if (updatedFile.isDirectory) {
