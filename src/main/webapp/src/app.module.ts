@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { FooterComponent } from './app/footer/footer.comp';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -109,7 +110,8 @@ import { WSConfigHttpService } from "./app/util/http/wsconfig.http.service";
     SSHDetailComponent,
     SSHEditComponent,
     FileOverviewComponent,
-    FileDetailComponent
+    FileDetailComponent,
+    FooterComponent
   ],
   providers: [
     AlertService,
