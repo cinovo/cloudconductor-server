@@ -72,15 +72,16 @@
             </ng-template>
           </td>
           <td>
-            <a [routerLink]="[template.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+            <a title="Edit Template" [routerLink]="[template.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
-               [title]="'Please verify!'"
-               [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
-               placement="left"
-               confirmButtonType="danger"
-               (confirm)="deleteTemplate(template)">
+              title="Delete Template"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteTemplate(template)">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>

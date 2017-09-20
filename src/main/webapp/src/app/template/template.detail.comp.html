@@ -15,7 +15,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <cc-panel title="Hosts" icon="fa-laptop" [collapsable]="true">
+        <cc-panel [title]="'Hosts'" icon="fa-laptop" [collapsable]="true">
           <div cc-panel-body>
             <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
               There are currently no host using this template.

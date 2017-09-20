@@ -3,7 +3,7 @@
 <div class="row">
 
   <div class="col-md-6">
-    <cc-panel title="Service-Details" icon="fa-flask">
+    <cc-panel [title]="'Service-Details'" icon="fa-flask">
       <div cc-panel-body>
         <div class="form-group" [class.has-error]="!isNameValid()">
           <label class="control-label" for="name">Name</label>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="col-md-6">
-    <cc-panel title="Provided by" icon="fa-book" [collapsable]="true">
+    <cc-panel [title]="'Provided by'" icon="fa-book" [collapsable]="true">
       <table class="table-responsive table table-striped table-hover" cc-panel-body>
         <thead>
         <tr>
@@ -95,7 +95,7 @@
   </div>
 
   <div class="col-md-6">
-    <cc-panel title="Template references" icon="fa-institution" [collapsable]="true">
+    <cc-panel [title]="'Template references'" icon="fa-institution" [collapsable]="true">
       <table class="table-responsive table table-striped table-hover" cc-panel-body>
         <thead>
         <tr>

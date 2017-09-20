@@ -1,6 +1,5 @@
 <cc-title title="Hosts" titleIcon="fa-laptop" [reloadable]="true" (onReload)="reloadHosts()"></cc-title>
 
-
 <div class="row">
   <div class="col-md-4">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
@@ -67,18 +66,19 @@
             {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
           </td>
           <td>
-            <a [routerLink]="[host.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+            <a title="Edit Host" [routerLink]="[host.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                 [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following host: ' + host.name + '?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deleteHost(host)">
-                <i class="fa fa-trash-o fa-fw"></i>
-              </a>
-            </td>
+            <a href="javascript:void(0)" mwlConfirmationPopover
+              title="Delete Host"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the following host: ' + host.name + '?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteHost(host)">
+              <i class="fa fa-trash-o fa-fw"></i>
+            </a>
+          </td>
         </tr>
         </tbody>
       </table>

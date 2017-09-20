@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <cc-panel title="Agent behaviour" icon="fa-user-circle" [collapsable]="true" [collapseBody]="true">
+    <cc-panel [title]="'Agent behaviour'" icon="fa-user-circle" [collapsable]="true" [collapseBody]="true">
       <div cc-panel-body>
         <div class="form-horizontal">
           <div class="form-group" [class.has-error]="!noGtEqZero(options.aliveTimer)">

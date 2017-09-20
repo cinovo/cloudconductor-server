@@ -66,21 +66,23 @@
             {{mirror.path}}
           </td>
           <td width="15px">
-            <a [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}"><i
-              class="fa fa-edit fa-fw"></i></a>
+            <a title="Edit Mirror" [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}">
+              <i class="fa fa-edit fa-fw"></i>
+            </a>
           </td>
           <td width="15px">
             <a href="javascript:void(0)" mwlConfirmationPopover
-               [title]="'Please verify!'"
-               [message]="'Are you sure you want to delete the following mirror: '+ mirror.description+'?'"
-               placement="left"
-               confirmButtonType="danger"
-               (confirm)="deleteMirror(mirror.id)">
+              title="Delete Mirror"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the following mirror: '+ mirror.description+'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteMirror(mirror.id)">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>
         </tr>
-        <tr [routerLink]="[this.repo.name, 'mirror', 'new']" role="button">
+        <tr title="Add Mirror" [routerLink]="[this.repo.name, 'mirror', 'new']" role="button">
           <td><i class="fa fa-plus fa-fw"></i></td>
           <td colspan="5">Add a new mirror</td>
         </tr>

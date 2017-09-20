@@ -1,10 +1,9 @@
 <cc-title title="Edit Configuration Key-Value-Pair" titleIcon="fa-code-fork" *ngIf="mode == 'edit'"></cc-title>
 <cc-title title="New Configuration Key-Value-Pair" titleIcon="fa-code-fork" *ngIf="mode == 'new'"></cc-title>
 
-
 <div class="row">
-  <div class="col-md-12">
-    <cc-panel title="Key-Value-Pair" icon="fa-list-alt">
+  <div class="col-md-12 col-lg-6">
+    <cc-panel [title]="'Key-Value-Pair'" icon="fa-list-alt">
 
       <div cc-panel-body>
         <div class="form-group" [class.has-error]="!isKeyValid()">
@@ -30,18 +29,14 @@
           </select>
         </div>
 
-
         <div class="pull-right">
           <button [routerLink]="['/config',cv.template]" class="btn btn-default">Back</button>
-          <button (click)="save()" class="btn btn-info"
-                  [disabled]="!isKeyValid() || !isValueValid() || !isTemplateValid() ">Save
+          <button (click)="save()" class="btn btn-info" [disabled]="!isKeyValid() || !isValueValid() || !isTemplateValid()">
+            Save
           </button>
         </div>
       </div>
 
     </cc-panel>
   </div>
-
 </div>
-
-

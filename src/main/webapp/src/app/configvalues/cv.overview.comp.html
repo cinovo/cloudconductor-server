@@ -67,15 +67,18 @@
               {{kv.value}}
             </td>
             <td>
-              <a [routerLink]="['/config', kv.template, kv.service, kv.key]"><i class="fa fa-edit fa-fw"></i></a>
+              <a title="Edit" [routerLink]="['/config', kv.template, kv.service, kv.key]">
+                <i class="fa fa-edit fa-fw"></i>
+              </a>
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
-                 [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following key-value-pair: '+ kv.key+'?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deleteKey(kv)">
+                title="Delete"
+                [title]="'Please verify!'"
+                [message]="'Are you sure you want to delete the following key-value-pair: '+ kv.key+'?'"
+                placement="left"
+                confirmButtonType="danger"
+                (confirm)="deleteKey(kv)">
                 <i class="fa fa-trash-o fa-fw"></i>
               </a>
             </td>

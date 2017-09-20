@@ -45,10 +45,11 @@
             </td>
             <td>{{sshKey.lastChanged | date:'dd.MM.yyyy HH:mm'}}</td>
             <td>
-              <a [routerLink]="['/ssh', sshKey.owner]"><i class="fa fa-edit fa-fw"></i></a>
+              <a title="Edit SSH Key" [routerLink]="['/ssh', sshKey.owner]"><i class="fa fa-edit fa-fw"></i></a>
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
+              title="Delete SSH Key"
               [title]="'Please verify!'"
               [message]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
               placement="left"

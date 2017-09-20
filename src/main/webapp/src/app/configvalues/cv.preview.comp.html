@@ -15,7 +15,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <cc-panel title="Preview" icon="fa-list-alt">
+    <cc-panel [title]="'Preview'" icon="fa-list-alt">
     <div cc-panel-body>
         <pre *ngIf="preview && preview != null && modeQuery == modes[0]"><span *ngFor="let obj of preview">{{obj | json}}<br/></span>
         </pre>

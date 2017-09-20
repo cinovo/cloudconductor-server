@@ -1,4 +1,4 @@
-<cc-panel title="External Links" icon="fa-external-link">
+<cc-panel [title]="'External Links'" icon="fa-external-link">
 
   <table class="table-responsive table table-striped table-hover" cc-panel-body>
     <thead>
@@ -27,7 +27,7 @@
           {{link.url}}
         </td>
         <td>
-          <a href="{{link.url}}" target="_blank"><i class="fa fa-external-link fa-fw" title="Url öffnen"></i></a>
+          <a href="{{link.url}}" target="_blank"><i class="fa fa-external-link fa-fw" title="Open Url"></i></a>
         </td>
         <td>
           <a (click)="goToEditLink(link)" role="button"><i class="fa fa-edit fa-fw" title="Edit"></i></a>

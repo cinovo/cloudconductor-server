@@ -62,15 +62,16 @@
             {{service.packages.length}}
           </td>
           <td>
-            <a [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+            <a title="Edit Service" [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
-               [title]="'Please verify!'"
-               [message]="'Are you sure you want to delete the following service: '+ service.name+'?'"
-               placement="left"
-               confirmButtonType="danger"
-               (confirm)="deleteService(service)">
+              title="Delete Service"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the following service: '+ service.name+'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteService(service)">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>

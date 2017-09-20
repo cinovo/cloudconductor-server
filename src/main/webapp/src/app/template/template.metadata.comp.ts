@@ -30,13 +30,13 @@ export class TemplateMetaData implements AfterViewInit {
   public modes = Mode;
   public template: Template = {name: '', description: ''};
 
-  private existingTemplateNames: Array<string> = [];
+  public existingTemplateNames: Array<string> = [];
 
   public settings: Settings = {};
 
   protected allRepos: Array<Repo> = [];
-  private newRepo = '';
-  private showNewRepo = false;
+  public newRepo = '';
+  public showNewRepo = false;
 
   public copyFrom = '';
 
@@ -107,11 +107,11 @@ export class TemplateMetaData implements AfterViewInit {
   protected deleteTemplate(): void {
     this.templateHttp.deleteTemplate(this.template).subscribe(
       () => {
-        this.alerts.success('Successfully delete the template: ' + this.template.name);
+        this.alerts.success(`Successfully deleted template '${this.template.name}'`);
         this.router.navigate(['template']);
       },
       () => {
-        this.alerts.danger('Failed to delete the template: ' + this.template.name);
+        this.alerts.danger(`Failed to delete template '${this.template.name}'`);
       }
     )
   }

@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <cc-panel title="Services" icon="fa-flask" subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}} Uhr">
+    <cc-panel [title]="'Services'" icon="fa-flask" subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}} Uhr">
 
       <div cc-panel-body>
         <div class="alert alert-warning" *ngIf="!services || services.length <= 0">

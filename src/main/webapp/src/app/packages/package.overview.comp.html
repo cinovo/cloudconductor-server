@@ -17,7 +17,7 @@
 
 <div class="row" *ngIf="packages && packages.length > 0">
   <div class="col-md-12">
-    <cc-panel title="All available packages" icon="fa-book">
+    <cc-panel [title]="'All available packages'" icon="fa-book">
       <table class="table-responsive table table-striped table-hover" cc-panel-body>
         <thead>
         <tr>
@@ -39,7 +39,7 @@
             {{pkg.versions[0]}}
           </td>
           <td>
-            <a [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
+            <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
           </td>
         </tr>
         </tbody>

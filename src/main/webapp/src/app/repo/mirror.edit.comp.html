@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <cc-panel title="Mirror" icon="fa-desktop">
+    <cc-panel [title]="'Mirror'" icon="fa-desktop">
       <div cc-panel-body>
         <div class="form-group" [class.has-error]="!isDescriptionValid()">
           <label class="control-label" for="description">Description</label>
@@ -63,10 +63,14 @@
           </div>
         </div>
         <div class="pull-right">
-          <button *ngIf="returnToOverview" [routerLink]="['/repo']" class="btn btn-default">Back</button>
-          <button *ngIf="!returnToOverview" [routerLink]="['/repo',repo.name]" class="btn btn-default">Back
+          <button *ngIf="returnToOverview" [routerLink]="['/repo']" class="btn btn-default" title="Back to Overview">
+            Back
           </button>
-          <button (click)="save()" class="btn btn-info" [disabled]="!isDescriptionValid() || !isPathValid()">Save
+          <button *ngIf="!returnToOverview" [routerLink]="['/repo',repo.name]" class="btn btn-default" title="Back to Repository">
+            Back
+          </button>
+          <button title="Save Mirror" (click)="save()" class="btn btn-info" [disabled]="!isDescriptionValid() || !isPathValid()">
+            Save
           </button>
         </div>
       </div>

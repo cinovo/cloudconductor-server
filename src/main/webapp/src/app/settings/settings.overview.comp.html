@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-6">
-    <cc-panel title="Settings" icon="fa-gear">
+    <cc-panel [title]="'Settings'" icon="fa-gear">
       <div cc-panel-body>
         <div class="form-group" [class.has-error]="!settings.name">
           <label class="control-label" for="servername">Server-Name</label>
@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <cc-panel title="Deinstall-Protected packages:" icon="fa-book">
+        <cc-panel [title]="'Deinstall-Protected packages:'" icon="fa-book">
           <table class="table-responsive table table-striped table-hover" cc-panel-body>
             <tbody>
             <tr *ngIf="!settings.disallowUninstall || settings.disallowUninstall.length <= 0" class="warning">
