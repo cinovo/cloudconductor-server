@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="tree && tree.length >0">
+<div class="row" *ngIf="tree && tree.length > 0">
   <div class="col-md-6" *ngFor="let service of tree">
     <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
       <li cc-panel-dropdown>

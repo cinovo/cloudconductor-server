@@ -54,7 +54,7 @@ export class HostDetail implements OnInit, OnDestroy {
     });
   }
 
-  connectWS(hostName: string): void {
+  private connectWS(hostName: string): void {
     this.wsService.connect('host', hostName).subscribe((webSocket) => {
       this._webSocket = webSocket;
 
@@ -66,6 +66,7 @@ export class HostDetail implements OnInit, OnDestroy {
             const updatedHost = data.content;
             this._behavHost.next(updatedHost);
             break;
+
           default:
             console.error('Unknown type of WS message!');
             break;

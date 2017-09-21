@@ -15,9 +15,10 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.websockets.TemplateWSHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
+import de.cinovo.cloudconductor.server.ws.template.TemplatesWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 
@@ -37,7 +38,9 @@ public class TemplateImpl implements ITemplate {
 	@Autowired
 	private IAgentOptionsDAO agentOptionsDAO;
 	@Autowired
-	private TemplateWSHandler wsHandler;
+	private TemplatesWSHandler templatesWSHandler;
+	@Autowired
+	private TemplateDetailWSHandler templateDetailWSHandler;
 	
 	
 	@Override
@@ -58,10 +61,12 @@ public class TemplateImpl implements ITemplate {
 		ETemplate eTemplate = this.templateDAO.findByName(template.getName());
 		if (eTemplate == null) {
 			eTemplate = this.templateHandler.createEntity(template);
-			this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.ADDED, eTemplate.toApi()));
+			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.ADDED, eTemplate.toApi()));
 		} else {
 			eTemplate = this.templateHandler.updateEntity(eTemplate, template);
-			this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, eTemplate.toApi()));
+			Template aTemplate = eTemplate.toApi();
+			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+			this.templateDetailWSHandler.broadcastChange(eTemplate.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 		}
 	}
 	
@@ -72,7 +77,7 @@ public class TemplateImpl implements ITemplate {
 		ETemplate eTemplate = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(eTemplate);
 		this.templateDAO.delete(eTemplate);
-		this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.DELETED, eTemplate.toApi()));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.DELETED, eTemplate.toApi()));
 	}
 	
 	@Override
@@ -94,7 +99,8 @@ public class TemplateImpl implements ITemplate {
 		template = this.templateHandler.updatePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
-		this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 		return aTemplate;
 	}
 	
@@ -108,7 +114,8 @@ public class TemplateImpl implements ITemplate {
 		template = this.templateHandler.removePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
-		this.wsHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 		return aTemplate;
 	}
 	

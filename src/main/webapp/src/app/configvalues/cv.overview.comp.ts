@@ -12,7 +12,6 @@ import { AlertService } from '../util/alert/alert.service';
   *
   * @author psigloch
   */
-
 interface ConfigValueTreeNode {
   name: string;
   kvs: Array<ConfigValue>;
@@ -30,9 +29,22 @@ export class ConfigValueOverview implements AfterViewInit {
 
   public tree: Array<ConfigValueTreeNode> = [];
 
-  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
-              private router: Router, private alerts: AlertService) {
-  };
+  private static filterData(cf: ConfigValue, query: string): boolean {
+    if (Validator.notEmpty(query)) {
+      for (let field in cf) {
+        if (cf[field].indexOf(query.trim()) >= 0) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  constructor(private configHttp: ConfigValueHttpService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private alerts: AlertService) { };
 
   ngAfterViewInit(): void {
     this.route.params.subscribe((params) => {
@@ -52,8 +64,10 @@ export class ConfigValueOverview implements AfterViewInit {
 
   protected deleteCurrentTemplate() {
     for (let index in this.tree) {
-      for (let kv of this.tree[index].kvs) {
-        this.deleteKey(kv);
+      if (this.tree.hasOwnProperty(index)) {
+        for (let kv of this.tree[index].kvs) {
+          this.deleteKey(kv);
+        }
       }
     }
     this.alerts.success('The template "' + this.template + '" was deleted successfully!');
@@ -111,8 +125,10 @@ export class ConfigValueOverview implements AfterViewInit {
 
     this.tree = [];
     for (let key in temp) {
-      temp[key] = temp[key].sort(Sorter.configValue);
-      this.tree.push({name: key, kvs: temp[key], icon: key.trim() === '' ? 'fa-institution' : 'fa-flask'});
+      if (temp.hasOwnProperty(key)) {
+        temp[key] = temp[key].sort(Sorter.configValue);
+        this.tree.push({name: key, kvs: temp[key], icon: key.trim() === '' ? 'fa-institution' : 'fa-flask'});
+      }
     }
 
     this.tree = this.tree.sort(Sorter.nameField);
@@ -129,15 +145,4 @@ export class ConfigValueOverview implements AfterViewInit {
     }
   }
 
-  private static filterData(cf: ConfigValue, query: string): boolean {
-    if (Validator.notEmpty(query)) {
-      for (let field in cf) {
-        if (cf[field].indexOf(query.trim()) >= 0) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
 }

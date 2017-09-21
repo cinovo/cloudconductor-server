@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.websockets;
+package de.cinovo.cloudconductor.server.ws;
 
 import java.util.ArrayList;
 import java.util.HashMap;

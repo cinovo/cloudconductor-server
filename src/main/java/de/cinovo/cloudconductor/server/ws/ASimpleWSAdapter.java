@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.server.websockets;
+package de.cinovo.cloudconductor.server.ws;
 
 import org.springframework.beans.factory.annotation.Value;
 

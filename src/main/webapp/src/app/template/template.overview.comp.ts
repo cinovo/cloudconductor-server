@@ -48,7 +48,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadTemplates();
 
-    this.wsService.connect('template').subscribe((webSocket) => {
+    this.wsService.connect('templates').subscribe((webSocket) => {
       this._webSocket = webSocket;
 
       this._webSocketSub = this._webSocket.subscribe((event) => {

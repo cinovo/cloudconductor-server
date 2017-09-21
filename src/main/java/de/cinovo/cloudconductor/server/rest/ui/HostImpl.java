@@ -13,10 +13,10 @@ import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.websockets.HostDetailWSHandler;
-import de.cinovo.cloudconductor.server.websockets.HostsWSHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
+import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 

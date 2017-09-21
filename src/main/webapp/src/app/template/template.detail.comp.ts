@@ -1,8 +1,10 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/Rx';
 
+import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { TemplateHttpService, Template } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
 import { Mode } from '../util/enums.util';
@@ -17,7 +19,7 @@ import { Mode } from '../util/enums.util';
   selector: 'template-detail',
   templateUrl: './template.detail.comp.html'
 })
-export class TemplateDetail implements AfterViewInit {
+export class TemplateDetail implements OnInit, OnDestroy {
 
   private _template: BehaviorSubject<Template> = new BehaviorSubject({name: '', description: ''});
   public template: Observable<Template> = this._template.asObservable();
@@ -26,17 +28,55 @@ export class TemplateDetail implements AfterViewInit {
 
   public modes = Mode;
 
-  constructor(private templateHttp: TemplateHttpService,
-              private route: ActivatedRoute) {
-  };
+  private _webSocket: Subject<MessageEvent | Heartbeat>;
+  private _webSocketSub: Subscription;
+  private _heartBeatSub: Subscription;
 
-  ngAfterViewInit(): void {
+  constructor(private templateHttp: TemplateHttpService,
+              private route: ActivatedRoute,
+              private wsService: WebSocketService) { };
+
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.loadTemplate(params['templateName']);
+      const templateName = params['templateName'];
+
+      this.loadTemplate(templateName);
+      this.connectWS(templateName);
     });
-    this.template.subscribe(
-      (result) => this.currentTemplate = result
-    )
+    this.template.subscribe((result) => this.currentTemplate = result);
+  }
+
+  private connectWS(hostName: string): void {
+    this.wsService.connect('template', hostName).subscribe((webSocket) => {
+      this._webSocket = webSocket;
+
+      this._webSocketSub = this._webSocket.subscribe((event) => {
+        const data: WSChangeEvent<Template> = JSON.parse(event.data);
+
+        switch (data.type) {
+          case 'UPDATED':
+            const updatedTemplate = data.content;
+            this._template.next(updatedTemplate);
+            break;
+
+          default:
+            console.error('Unknown type of WS message!');
+            break;
+        }
+      });
+
+      const iv = (this.wsService.timeout * 0.4);
+      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+        this._webSocket.next({ data: 'Alive!' });
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.wsService.disconnect();
+    if (this._heartBeatSub) {
+      this._heartBeatSub.unsubscribe();
+    }
   }
 
   private loadTemplate(templateName: string) {
