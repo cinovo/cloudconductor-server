@@ -1,4 +1,5 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { AuthTokenOverviewComponent } from './authtoken/authtoken.overview.comp';
 import { Routes } from '@angular/router';
 
 import { HomeComponent } from './home/home.comp';
@@ -67,6 +68,8 @@ export const APP_ROUTES: Routes = [
   {path: 'ssh/:owner', component: SSHDetailComponent },
 
   {path: 'settings', component: SettingsOverview},
+
+  {path: 'token', component: AuthTokenOverviewComponent},
 
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];

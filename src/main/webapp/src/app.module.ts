@@ -4,6 +4,8 @@
  *
  * @author psigloch
  */
+import { AuthTokenHttpService } from './app/util/http/authtoken.http.service';
+import { AuthTokenOverviewComponent } from './app/authtoken/authtoken.overview.comp';
 import { FooterComponent } from './app/footer/footer.comp';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -62,8 +64,8 @@ import { FileOverviewComponent } from './app/files/file.overview.comp';
 import { FileHttpService } from './app/util/http/file.http.service';
 import { FileDetailComponent } from './app/files/file.detail.comp';
 import { FileResolver } from './app/files/file.resolve';
-import { WebSocketService } from "./app/util/websockets/websocket.service";
-import { WSConfigHttpService } from "./app/util/http/wsconfig.http.service";
+import { WebSocketService } from './app/util/websockets/websocket.service';
+import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
 
 @NgModule({
   imports: [
@@ -111,7 +113,8 @@ import { WSConfigHttpService } from "./app/util/http/wsconfig.http.service";
     SSHEditComponent,
     FileOverviewComponent,
     FileDetailComponent,
-    FooterComponent
+    FooterComponent,
+    AuthTokenOverviewComponent
   ],
   providers: [
     AlertService,
@@ -128,7 +131,8 @@ import { WSConfigHttpService } from "./app/util/http/wsconfig.http.service";
     FileHttpService,
     FileResolver,
     WSConfigHttpService,
-    WebSocketService
+    WebSocketService,
+    AuthTokenHttpService
   ],
   bootstrap: [AppComponent]
 })

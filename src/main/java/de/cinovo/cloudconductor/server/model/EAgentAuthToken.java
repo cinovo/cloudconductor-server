@@ -1,8 +1,16 @@
 package de.cinovo.cloudconductor.server.model;
 
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import de.cinovo.cloudconductor.api.model.AgentAuthToken;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2016 Cinovo AG<br>
@@ -13,7 +21,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "agentauthtoken", schema = "cloudconductor")
-public class EAgentAuthToken implements IEntity<Long>, Comparable<EAgentAuthToken> {
+public class EAgentAuthToken extends AModelApiConvertable<AgentAuthToken> implements IEntity<Long>, Comparable<EAgentAuthToken> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -116,4 +124,20 @@ public class EAgentAuthToken implements IEntity<Long>, Comparable<EAgentAuthToke
 		}
 	}
 	
+	@Override
+	@Transient
+	public AgentAuthToken toApi() {
+		AgentAuthToken aToken = super.toApi();
+		aToken.setCreationDate(new Date(this.creationDate));
+		if (this.revoked != null) {
+			aToken.setRevoked(new Date(this.revoked));
+		}
+		return aToken;
+	}
+	
+	@Override
+	@Transient
+	public Class<AgentAuthToken> getApiClass() {
+		return AgentAuthToken.class;
+	}
 }
