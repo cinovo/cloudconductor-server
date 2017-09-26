@@ -7,6 +7,7 @@ import { PackageHttpService, PackageVersion } from '../util/http/package.http.se
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -19,6 +20,15 @@ interface TemplatePackageVersion {
   selected: boolean
 }
 
+type PackageTree = {
+  [pkgName: string]: {
+    pkgName: string,
+    inUse: boolean,
+    versions: Array<PackageVersion>,
+    newestVersion?: PackageVersion
+  }
+}
+
 @Component({
   selector: 'template-packages',
   templateUrl: './template.package.comp.html'
@@ -26,18 +36,18 @@ interface TemplatePackageVersion {
 export class TemplatePackages implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
-  @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
   private template: Template = {name: '', description: ''};
   public packageVersions: Array<TemplatePackageVersion> = [];
 
-  private packageTree: {[pkgName: string]: {pkgName: string, inUse: boolean, versions: Array<PackageVersion>, newestVersion?: PackageVersion}} = {};
+  private packageTree: PackageTree = {};
   public newPackage: {pkg: string, version: string} = null;
 
   private _allSelected = false;
 
-  constructor(private packageHttp: PackageHttpService, private templateHttp: TemplateHttpService, private alerts: AlertService) {
-  };
+  constructor(private packageHttp: PackageHttpService,
+              private templateHttp: TemplateHttpService,
+              private alerts: AlertService) { };
 
   ngAfterViewInit(): void {
     this.obsTemplate.subscribe((result) => {
@@ -72,7 +82,7 @@ export class TemplatePackages implements AfterViewInit {
       let selected = this.allSelected;
       if (!selected) {
         for (let old of oldPackageVersions) {
-          if (old.pkg == key) {
+          if (old.pkg === key) {
             selected = old.selected;
             break;
           }
@@ -108,7 +118,6 @@ export class TemplatePackages implements AfterViewInit {
     if (pv) {
       this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
         () => {
-          this.reloadTrigger.emit(true);
           this.alerts.success('The package ' + pv.pkg + ' has been successfully updated.');
         },
         (error) => this.alerts.danger('The package update of ' + pv.pkg + ' failed.')
@@ -121,7 +130,6 @@ export class TemplatePackages implements AfterViewInit {
       index++;
     }
     if (index >= this.packageVersions.length) {
-      this.reloadTrigger.emit(true);
       this.allSelected = false;
       return;
     }
@@ -146,7 +154,6 @@ export class TemplatePackages implements AfterViewInit {
     if (pv) {
       this.templateHttp.deletePackage(this.template, pv.pkg).subscribe(
         () => {
-          this.reloadTrigger.emit(true);
           this.alerts.success('The package ' + pv.pkg + ' has been successfully removed.');
         },
         () => this.alerts.danger('The package removal of ' + pv.pkg + ' failed.')
@@ -159,7 +166,6 @@ export class TemplatePackages implements AfterViewInit {
       index++;
     }
     if (index >= this.packageVersions.length) {
-      this.reloadTrigger.emit(true);
       this.allSelected = false;
       return;
     }
@@ -221,7 +227,6 @@ export class TemplatePackages implements AfterViewInit {
             () => {
               this.alerts.success('Successfully added the package to the template.');
               this.newPackage = null;
-              this.reloadTrigger.emit(true);
             },
             () => {
               this.alerts.danger('Failed to add the new package to the template.');

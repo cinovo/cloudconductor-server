@@ -29,7 +29,6 @@ type ServiceActionType =  'start'|'stop'|'restart';
 export class HostServices implements AfterViewInit {
 
   @Input() obsHost: Observable<Host>;
-  @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
   public services: Array<ServiceStateElement> = [];
   public host: Host = {name: '', template: ''};
@@ -71,9 +70,8 @@ export class HostServices implements AfterViewInit {
   protected handleService(type: ServiceActionType, service: ServiceStateElement): void {
     if (service) {
       this.httpServiceCall(type, service.name,
-        () => {
-          this.reloadTrigger.emit(true);
-        }
+        () => { },
+        (err) => console.error(err)
       );
     }
   }
@@ -84,7 +82,6 @@ export class HostServices implements AfterViewInit {
     }
     if (index >= this.services.length) {
       this.allSelected = false;
-      this.reloadTrigger.emit(true);
       return;
     }
     this.httpServiceCall(type, this.services[index].name,
@@ -97,7 +94,7 @@ export class HostServices implements AfterViewInit {
     )
   }
 
-  private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: () => void): void {
+  private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: (err) => void): void {
     switch (type) {
       case 'start':
         this.hostHTTP.startService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
@@ -117,7 +114,6 @@ export class HostServices implements AfterViewInit {
     }
     if (index >= this.services.length) {
       this.allSelected = false;
-      this.reloadTrigger.emit(true);
       return;
     }
 

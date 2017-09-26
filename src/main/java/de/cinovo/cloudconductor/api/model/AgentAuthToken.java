@@ -17,11 +17,26 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonTypeInfo(include = As.PROPERTY, use = Id.CLASS)
 public class AgentAuthToken {
 	
+	private Long id;
 	private String token;
 	private Date creationDate;
 	private Date revoked;
 	private String revokeComment;
 	
+	
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return this.id;
+	}
+	
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
 	/**
 	 * @return the token

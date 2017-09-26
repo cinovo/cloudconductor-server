@@ -96,8 +96,4 @@ export class HostDetail implements OnInit, OnDestroy {
     }
   }
 
-  public reloadHost(): void {
-    this.loadData(this.host.name);
-  }
-
 }

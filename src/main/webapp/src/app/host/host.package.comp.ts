@@ -17,6 +17,7 @@ import { Sorter } from '../util/sorters.util';
   templateUrl: './host.package.comp.html'
 })
 export class HostPackages implements AfterViewInit {
+
   @Input() obsHost: Observable<Host>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 

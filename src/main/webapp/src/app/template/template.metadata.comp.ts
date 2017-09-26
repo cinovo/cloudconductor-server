@@ -25,7 +25,6 @@ export class TemplateMetaData implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Input() mode: Mode = Mode.EDIT;
-  @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
   public modes = Mode;
   public template: Template = {name: '', description: ''};
@@ -94,7 +93,6 @@ export class TemplateMetaData implements AfterViewInit {
         () => {
           this.alerts.success('Successfully saved the template ' + this.template.name);
           if (this.mode === Mode.EDIT) {
-            this.reloadTrigger.emit(true);
             return;
           }
           this.router.navigate(['template', this.template.name]);

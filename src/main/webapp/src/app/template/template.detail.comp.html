@@ -3,15 +3,13 @@
 
 <div class="row">
   <div class="col-md-8">
-    <template-packages [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></template-packages>
-
-    <template-agentoptions [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"></template-agentoptions>
+    <template-packages [obsTemplate]="template"></template-packages>
+    <template-agentoptions [obsTemplate]="template"></template-agentoptions>
   </div>
 
   <div class="col-md-4">
 
-    <template-metadata [obsTemplate]="template" (reloadTrigger)="reloadTemplate()"
-                       [mode]="modes.EDIT"></template-metadata>
+    <template-metadata [obsTemplate]="template" [mode]="modes.EDIT"></template-metadata>
 
     <div class="row">
       <div class="col-md-12">

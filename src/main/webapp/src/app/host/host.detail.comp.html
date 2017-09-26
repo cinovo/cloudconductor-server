@@ -1,9 +1,8 @@
-<cc-title title="Host-Details" titleIcon="fa-laptop" [subtitle]="host.name" [reloadable]="true"
-          (onReload)="reloadHost()"></cc-title>
+<cc-title title="Host-Details" titleIcon="fa-laptop" [subtitle]="host.name"></cc-title>
 
 <div class="row">
   <div class="col-md-6">
-    <host-services [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-services>
+    <host-services [obsHost]="obsHost"></host-services>
   </div>
 
   <div class="col-md-6">
@@ -25,7 +24,7 @@
               <label class="control-label" for="template">
                 <i class="fa fa-institution fa-fw"></i>
                 Template
-                <a [routerLink]="['/template',host.template]">
+                <a [routerLink]="['/template', host.template]">
                   <i class="fa fa-external-link fa-fw" title="Jump to template"></i>
                 </a>
               </label>
@@ -37,7 +36,7 @@
   </div>
 
 
-  <host-packages [obsHost]="obsHost" (reloadTrigger)="reloadHost()"></host-packages>
+  <host-packages [obsHost]="obsHost"></host-packages>
 
 </div>
 

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { HTTPService } from './abstract.http.service';
 
 export interface AuthToken {
+  id: number,
   token: string,
   creationDate: Date,
   revoked: Date,
@@ -32,6 +33,10 @@ export class AuthTokenHttpService extends HTTPService {
 
   public generateToken(): Observable<AuthToken> {
     return this._put('generate', []);
+  }
+
+  public revokeToken(tokenId: number, comment: string) {
+    return this._put(`${tokenId}/revoke`, comment);
   }
 
 }

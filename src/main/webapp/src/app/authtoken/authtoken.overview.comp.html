@@ -16,7 +16,7 @@
         <table class="table table-responsive table-striped table-hover" >
           <thead>
             <tr>
-              <th><input type="checkbox" title="Select All Tokens"></th>
+              <th><input type="checkbox" [(ngModel)]="allSelected" title="Select All Tokens"></th>
               <th>Token</th>
               <th>Created</th>
               <th>Revoked</th>
@@ -24,9 +24,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let token of tokens | async">
+            <tr *ngFor="let token of tokens | async" [ngClass]="{success: !token.revoked}">
               <td>
-                <input type="checkbox" title="Select Token">
+                <input type="checkbox" title="Select Token" [(ngModel)]="token.selected" [disabled]="token.revoked" (change)="updateSelectionCount()">
               </td>
               <td>{{ token.token }}</td>
               <td>{{ token.creationDate | date:'dd.MM.yyyy HH:mm' }}</td>
@@ -36,12 +36,12 @@
           </tbody>
         </table>
 
-        <form class="form-inline">
+        <form class="form-inline" [formGroup]="revokeForm" novalidate (ngSubmit)="revokeSelectedTokens(revokeForm.value)">
           <div class="form-group">
             <label for="revokeComment" class="control-label">Comment</label>
-            <input id="revokeComment" type="text" class="form-control">
+            <input formControlName="revokeComment" id="revokeComment" type="text" class="form-control">
           </div>
-          <button class="btn btn-danger" role="button" (click)="revokeSelectedTokens()">
+          <button type="submit" class="btn btn-danger" role="button" [disabled]="selectionCount < 1">
             <i class="fa fa-times" aria-hidden="true"></i>
             Revoke selected
           </button>

@@ -19,7 +19,6 @@ import { Validator } from '../util/validator.util';
 export class TemplateAgentOptions implements AfterViewInit {
 
   @Input() obsTemplate: Observable<Template>;
-  @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
   public options: AgentOption = {};
   public noGtEqZero = Validator.noGtEqZero;
 
