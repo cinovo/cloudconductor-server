@@ -100,6 +100,9 @@
         </cc-panel>
 
         <div class="pull-right">
+          <a *ngIf="mode == modes.NEW" class="btn btn-default" [routerLink]="['/template']" role="button">
+            Cancel
+          </a>
           <button (click)="saveTemplateMetadata()" class="btn btn-info" title="Save Template"
                   [disabled]="!isNameValid()">Save
           </button>

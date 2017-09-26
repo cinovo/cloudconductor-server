@@ -5,37 +5,49 @@
   <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'Key-Value-Pair'" icon="fa-list-alt">
 
-      <div cc-panel-body>
-        <div class="form-group" [class.has-error]="!isKeyValid()">
+      <form [formGroup]="kvForm" novalidate cc-panel-body (ngSubmit)="save(kvForm.value)">
+        <div class="form-group" [ngClass]="{ 'has-error': !kvForm.controls.key.pristine && !kvForm.controls.key.valid }">
           <label class="control-label" for="key">Key</label>
-          <input type="text" class="form-control" [(ngModel)]="cv.key" id="key" [disabled]="mode == 'edit'">
+          <input type="text" class="form-control" formControlName="key" id="key" [readOnly]="mode === 'edit'">
+          <span *ngIf="!kvForm.controls.key.pristine && !kvForm.controls.key.valid" class="help-block">
+            This field is required
+          </span>
         </div>
-        <div class="form-group" [class.has-error]="!isValueValid()">
+
+        <div class="form-group" [ngClass]="{ 'has-error': !kvForm.controls.value.pristine && !kvForm.controls.value.valid }">
           <label class="control-label" for="value">Value</label>
-          <input type="text" class="form-control" [(ngModel)]="cv.value" id="value">
+          <input type="text" class="form-control" formControlName="value" id="value">
+          <span *ngIf="!kvForm.controls.value.pristine && !kvForm.controls.value.valid" class="help-block">
+            This field is required
+          </span>
         </div>
-        <div class="form-group" [class.has-error]="!isTemplateValid()">
+
+        <div class="form-group">
           <label class="control-label" for="template">Template</label>
-          <input type="text" class="form-control" [(ngModel)]="cv.template" id="template" [disabled]="mode == 'edit'"
-                 list="tempalteList">
+          <input type="text" class="form-control" formControlName="template" id="template" [readOnly]="mode === 'edit'"
+            list="tempalteList">
           <datalist id="tempalteList">
             <option *ngFor="let template of templates" value="{{template}}"></option>
           </datalist>
         </div>
+
         <div class="form-group">
           <label class="control-label" for="service">Service</label>
-          <select class="form-control" [(ngModel)]="cv.service" id="service" [disabled]="mode == 'edit'">
+          <select *ngIf="mode !== 'edit'" class="form-control" formControlName="service" id="service">
             <option *ngFor="let service of services" [value]="service">{{service}}</option>
           </select>
+          <input *ngIf="mode === 'edit'" class="form-control" formControlName="service" readonly>
         </div>
 
         <div class="pull-right">
-          <button [routerLink]="['/config',cv.template]" class="btn btn-default">Back</button>
-          <button (click)="save()" class="btn btn-info" [disabled]="!isKeyValid() || !isValueValid() || !isTemplateValid()">
+          <button type="button" class="btn btn-default" [routerLink]="['/config', template]">
+            Back
+          </button>
+          <button type="submit" class="btn btn-info" [disabled]="kvForm.invalid">
             Save
           </button>
         </div>
-      </div>
+      </form>
 
     </cc-panel>
   </div>

@@ -1,4 +1,5 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
@@ -16,80 +17,68 @@ import { ServiceHttpService } from '../util/http/service.http.service';
   selector: 'cs-edit',
   templateUrl: './cs.edit.comp.html'
 })
-export class ConfigValueEdit implements AfterViewInit {
+export class ConfigValueEdit implements OnInit {
 
-  public cv: ConfigValue = {template: '', service: '', key: '', value: ''};
+  public kvForm: FormGroup;
+
+  public template: string;
   public mode = 'new';
   public templates: Array<String> = [];
   public services: Array<String> = [];
 
-  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute,
-              private alerts: AlertService, private router: Router,
-              private serviceHttp: ServiceHttpService) {
+  constructor(private configHttp: ConfigValueHttpService,
+              private route: ActivatedRoute,
+              private alerts: AlertService,
+              private router: Router,
+              private serviceHttp: ServiceHttpService,
+              private fb: FormBuilder) {
+    this.kvForm = this.fb.group({
+      key: ['', Validators.required],
+      value: ['', Validators.required],
+      template: '',
+      service: ''
+    });
   };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.cv = {template: params['template'], service: params['service'], key: params['key'], value: ''};
-      if (this.cv.template === 'newTemplate') {
-        this.cv.template = '';
+      let template = params['template'] || '';
+      const service = params['service'] || '';
+      const key = params['key'] || '';
+      const value = params['value'] || '';
+
+      this.template = template;
+
+      if (template === 'newTemplate') {
+        template = '';
       }
-      if (Validator.notEmpty(this.cv.key)) {
+      const formObj = {key, value, template, service};
+      this.kvForm.setValue(formObj);
+
+      if (Validator.notEmpty(key)) {
         this.mode = 'edit';
-        this.configHttp.getConfigValue(this.cv.template, this.cv.service, this.cv.key)
-          .subscribe(
-            (result) =>
-              this.cv.value = result,
-            () => {
-            }
-          );
+        this.configHttp.getConfigValue(template, service, key)
+          .subscribe((result) => {
+            formObj.value = result;
+            this.kvForm.setValue(formObj);
+          }, (err) => console.error(err));
       }
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
-    this.serviceHttp.getServices().subscribe(
-      (result) => {
+    this.serviceHttp.getServices().subscribe((result) => {
         this.services = result.map((val) => {return val.name});
       });
   }
 
-  public save(): void {
-    if (this.fieldValidation()) {
-      return;
-    }
-    this.configHttp.save(this.cv).subscribe(
-      () => {
-        this.router.navigate(['config', this.cv.template])
+  public save(newConfigPair): void {
+    this.configHttp.save(newConfigPair).subscribe(() => {
+        this.alerts.success('Successfully created new key-value pair!');
+        this.router.navigate(['config', newConfigPair.template])
+      }, (err) => {
+        this.alerts.danger('Error creating new key-value pair!');
+        console.error(err);
       }
     );
-  }
-
-  private fieldValidation() {
-    let error = false;
-    if (!this.isKeyValid()) {
-      this.alerts.danger('Please insert a key.');
-      error = true;
-    }
-    if (!this.isValueValid()) {
-      this.alerts.danger('Please insert a value.');
-      error = true;
-    }
-    if (!this.isTemplateValid()) {
-      this.alerts.danger('Please insert a template.');
-      error = true;
-    }
-    return error;
-  }
-
-  public isKeyValid(): boolean {
-    return Validator.notEmpty(this.cv.key);
-  }
-
-  public isValueValid(): boolean {
-    return Validator.notEmpty(this.cv.value);
-  }
-
-  public isTemplateValid(): boolean {
-    return Validator.notEmpty(this.cv.template);
   }
 
 }

@@ -20,8 +20,7 @@ export class TemplateNew implements AfterViewInit {
 
   modes = Mode;
 
-  constructor() {
-  };
+  constructor() { };
 
   ngAfterViewInit(): void {
     this._template.next({name: '', description: '', repos: [], versions: {}, autoUpdate: false, smoothUpdate: false});

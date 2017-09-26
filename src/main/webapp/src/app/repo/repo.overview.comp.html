@@ -19,10 +19,9 @@
 </div>
 
 
-<div class="row" *ngIf="repos.length > 0">
-  <div class="col-md-12" *ngIf="repos && repos.length >0">
-    <cc-panel *ngFor="let repo of repos" [icon]="'fa-server'" [title]="repo.name"
-              (onHeaderDblClick)="goToDetail(repo)">
+<div class="row" *ngIf="repos && repos.length > 0">
+  <div *ngFor="let repo of repos" class="col-md-12 col-lg-6">
+    <cc-panel [icon]="'fa-server'" [title]="repo.name" (onHeaderDblClick)="goToDetail(repo)">
 
       <li cc-panel-dropdown>
         <a [routerLink]="[repo.id,'mirror','new']" [queryParams]="{'ret':'ov'}">New Repository</a>
@@ -45,6 +44,16 @@
       </li>
 
       <table class="table-responsive table table-striped table-hover" cc-panel-body>
+        <thead>
+          <tr>
+            <th width="30px"></th>
+            <th width="30px"></th>
+            <th>Description</th>
+            <th>Path</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
+        </thead>
         <tbody>
         <tr *ngIf="!repo.mirrors || repo.mirrors.length <= 0" class="warning">
           <td colspan="6" class="text-center">
@@ -53,10 +62,10 @@
         </tr>
         <tr *ngFor="let mirror of repo.mirrors" [class.info]="mirror.id == repo.primaryMirror"
             (dblclick)="goToMirror(mirror)">
-          <td width="30px">
+          <td>
             <i class="fa fa-desktop fa-fw"></i>
           </td>
-          <td width="30px">
+          <td>
             <i class="fa fa-check fa-fw" *ngIf="mirror.id === repo.primaryMirror"></i>
           </td>
           <td>
@@ -65,12 +74,12 @@
           <td>
             {{mirror.path}}
           </td>
-          <td width="15px">
+          <td>
             <a title="Edit Mirror" [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}">
               <i class="fa fa-edit fa-fw"></i>
             </a>
           </td>
-          <td width="15px">
+          <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
               title="Delete Mirror"
               [title]="'Please verify!'"
@@ -83,8 +92,8 @@
           </td>
         </tr>
         <tr title="Add Mirror" [routerLink]="[this.repo.name, 'mirror', 'new']" role="button">
-          <td><i class="fa fa-plus fa-fw"></i></td>
-          <td colspan="5">Add a new mirror</td>
+          <td colspan="2"><i class="fa fa-plus fa-fw"></i></td>
+          <td colspan="4">Add a new mirror</td>
         </tr>
         </tbody>
       </table>
