@@ -1,7 +1,9 @@
-import { Injectable } from "@angular/core";
-import { Http } from "@angular/http";
-import { HTTPService } from "./abstract.http.service";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
+
+import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -31,7 +33,7 @@ export class RepoMirrorHttpService extends HTTPService {
     this.basePathURL = 'repomirror/';
   }
 
-  public getMirror(id:string): Observable<RepoMirror> {
+  public getMirror(id: string): Observable<RepoMirror> {
     return this._get(id);
   }
 
@@ -39,14 +41,13 @@ export class RepoMirrorHttpService extends HTTPService {
     return this._delete(id);
   }
 
-  public newMirror(mirror: RepoMirror):Observable<RepoMirror> {
-    mirror['@class'] = "de.cinovo.cloudconductor.api.model.RepoMirror";
-    return this._post("", mirror);
+  public newMirror(mirror: RepoMirror): Observable<RepoMirror> {
+    mirror['@class'] = 'de.cinovo.cloudconductor.api.model.RepoMirror';
+    return this._post('', mirror);
   }
 
-
-  public editMirror(mirror: RepoMirror):Observable<RepoMirror> {
-    mirror['@class'] = "de.cinovo.cloudconductor.api.model.RepoMirror";
-    return this._put("", mirror);
+  public editMirror(mirror: RepoMirror): Observable<RepoMirror> {
+    mirror['@class'] = 'de.cinovo.cloudconductor.api.model.RepoMirror';
+    return this._put('', mirror);
   }
 }

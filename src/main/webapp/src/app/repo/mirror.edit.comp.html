@@ -4,24 +4,33 @@
 <div class="row">
   <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'Mirror'" icon="fa-desktop">
-      <div cc-panel-body>
-        <div class="form-group" [class.has-error]="!isDescriptionValid()">
+      <form [formGroup]="mirrorForm" novalidate (ngSubmit)="save(mirrorForm.value)" cc-panel-body>
+        <input type="hidden" formControlName="id">
+
+        <div class="form-group" [ngClass]="{ 'has-error': !mirrorForm.controls.description.pristine && !mirrorForm.controls.description.valid }">
           <label class="control-label" for="description">Description</label>
-          <input type="text" class="form-control" [(ngModel)]="mirror.description" id="description">
+          <input type="text" class="form-control" formControlName="description" id="description">
+          <span *ngIf="!mirrorForm.controls.description.pristine && !mirrorForm.controls.description.valid" class="help-block">
+            This field is required
+          </span>
         </div>
-        <div class="form-group" [class.has-error]="!isPathValid()">
+
+        <div class="form-group" [ngClass]="{ 'has-error': !mirrorForm.controls.path.pristine && !mirrorForm.controls.path.valid }">
           <label class="control-label" for="path">Path</label>
-          <input type="text" class="form-control" [(ngModel)]="mirror.path" id="path">
+          <input type="text" class="form-control" formControlName="path" id="path">
+          <span *ngIf="!mirrorForm.controls.path.pristine && !mirrorForm.controls.path.valid" class="help-block">
+            This field is required
+          </span>
         </div>
 
         <div class="form-group">
           <label class="control-label" for="repo">Repo</label>
-          <input type="text" class="form-control" [(ngModel)]="repo.name" id="repo" disabled>
+          <input type="text" class="form-control" formControlName="repoName" id="repo" readonly>
         </div>
 
         <div class="form-group">
           <label class="control-label" for="indexertype">Indexer</label>
-          <select class="form-control" [(ngModel)]="mirror.indexerType" id="indexertype">
+          <select class="form-control" formControlName="indexerType" id="indexertype">
             <option value="NONE">NONE</option>
             <option value="FILE">FILE</option>
             <option value="RPM">RPM</option>
@@ -30,7 +39,7 @@
 
         <div class="form-group">
           <label class="control-label" for="indextype">Index Type</label>
-          <select class="form-control" [(ngModel)]="mirror.providerType" id="indextype">
+          <select class="form-control" formControlName="providerType" id="indextype">
             <option value="NONE">NONE</option>
             <option value="HTTP">HTTP</option>
             <option value="AWSS3">AWSS3</option>
@@ -38,42 +47,42 @@
           </select>
         </div>
 
-        <div class="form-group" *ngIf="mirror.providerType == 'HTTP' || mirror.providerType == 'FILE'">
-          <label *ngIf="mirror.providerType == 'HTTP'" class="control-label" for="basepath">URL</label>
-          <label *ngIf="mirror.providerType == 'FILE'" class="control-label" for="basepath">File-Path</label>
-          <input type="text" class="form-control" [(ngModel)]="mirror.basePath" id="basepath">
+        <div class="form-group" *ngIf="providerType === 'HTTP' || providerType === 'FILE'">
+          <label *ngIf="providerType === 'HTTP'" class="control-label" for="basepath">URL</label>
+          <label *ngIf="providerType === 'FILE'" class="control-label" for="basepath">File-Path</label>
+          <input type="text" class="form-control" formControlName="basePath" id="basepath">
         </div>
 
-        <div *ngIf="mirror.providerType == 'AWSS3'">
+        <div *ngIf="providerType === 'AWSS3'">
           <div class="form-group">
             <label class="control-label" for="s3bucketname">S3 Bucketname</label>
-            <input type="text" class="form-control" [(ngModel)]="mirror.bucketName" id="s3bucketname">
+            <input type="text" class="form-control" formControlName="bucketName" id="s3bucketname">
           </div>
           <div class="form-group">
             <label class="control-label" for="s3region">AWS Region</label>
-            <input type="text" class="form-control" [(ngModel)]="mirror.awsRegion" id="s3region">
+            <input type="text" class="form-control" formControlName="awsRegion" id="s3region">
           </div>
           <div class="form-group">
             <label class="control-label" for="s3accesskey">S3 Access Key</label>
-            <input type="text" class="form-control" [(ngModel)]="mirror.accessKeyId" id="s3accesskey">
+            <input type="text" class="form-control" formControlName="accessKeyId" id="s3accesskey">
           </div>
           <div class="form-group">
             <label class="control-label" for="s3secret">S3 Secret Key</label>
-            <input type="text" class="form-control" [(ngModel)]="mirror.secretKey" id="s3secret">
+            <input type="text" class="form-control" formControlName="secretKey" id="s3secret">
           </div>
         </div>
         <div class="pull-right">
-          <button *ngIf="returnToOverview" [routerLink]="['/repo']" class="btn btn-default" title="Back to Overview">
+          <button *ngIf="returnToOverview" type="button" [routerLink]="['/repo']" class="btn btn-default" title="Back to Overview">
             Back
           </button>
-          <button *ngIf="!returnToOverview" [routerLink]="['/repo',repo.name]" class="btn btn-default" title="Back to Repository">
+          <button *ngIf="!returnToOverview" type="button" [routerLink]="['/repo', repoName]" class="btn btn-default" title="Back to Repository">
             Back
           </button>
-          <button title="Save Mirror" (click)="save()" class="btn btn-info" [disabled]="!isDescriptionValid() || !isPathValid()">
+          <button type="submit" title="Save Mirror" class="btn btn-info" [disabled]="mirrorForm.invalid">
             Save
           </button>
         </div>
-      </div>
+      </form>
     </cc-panel>
   </div>
 </div>

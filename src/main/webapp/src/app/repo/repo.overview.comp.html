@@ -72,7 +72,8 @@
             {{mirror.description}}
           </td>
           <td>
-            {{mirror.path}}
+            {{ mirror.path }}
+            <a title="Go to Mirror" target="_blank" [href]="mirror.path"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
             <a title="Edit Mirror" [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}">

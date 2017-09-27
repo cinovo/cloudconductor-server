@@ -15,7 +15,7 @@
 
         <div class="space-20"></div>
 
-        <cc-panel [title]="'Mirrors'" icon="fa-desktop">
+        <cc-panel *ngIf="repoForm.controls.name.valid" [title]="'Mirrors'" icon="fa-desktop">
           <div class="table-responsive" cc-panel-body="">
             <table class="table table-striped table-hover">
               <tbody>
@@ -36,7 +36,10 @@
                   <input type="radio" name="primaryMirror" (click)="setPrimary(mirror.id)"
                          title="Set as primary mirror">
                 </td>
-                <td>{{mirror.description}} -- {{mirror.path}}</td>
+                <td>
+                  {{mirror.description}} -- {{mirror.path}}
+                  <a title="Go to Mirror" target="_blank" [href]="mirror.path"><i class="fa fa-external-link fa-fw"></i></a>
+                </td>
                 <td width="30px">
                   <a role="button" title="Edit Mirror" (click)="editMirror(mirror.id)">
                     <i class="fa fa-edit fa-fw"></i>
