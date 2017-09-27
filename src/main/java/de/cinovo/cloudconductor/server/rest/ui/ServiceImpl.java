@@ -17,6 +17,17 @@ package de.cinovo.cloudconductor.server.rest.ui;
  * #L%
  */
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.core.Response;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import de.cinovo.cloudconductor.api.interfaces.IService;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
@@ -27,10 +38,6 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -40,72 +47,72 @@ import java.util.*;
  */
 @JaxRsComponent
 public class ServiceImpl implements IService {
-
+	
 	@Autowired
 	private IServiceDAO serviceDAO;
 	@Autowired
 	private ITemplateDAO dtemplate;
-
+	
 	@Autowired
 	private ServiceHandler serviceHandler;
-
-
+	
+	
 	@Override
 	@Transactional
 	public Service[] get() {
 		Set<Service> result = new HashSet<>();
-		for(EService m : this.serviceDAO.findList()) {
+		for (EService m : this.serviceDAO.findList()) {
 			result.add(m.toApi());
 		}
 		return result.toArray(new Service[result.size()]);
 	}
-
+	
 	@Override
 	@Transactional
 	public void save(Service apiObject) {
 		RESTAssert.assertNotNull(apiObject);
 		EService model = this.serviceDAO.findByName(apiObject.getName());
-		if(model == null) {
+		if (model == null) {
 			this.serviceHandler.createEntity(apiObject);
-		}else {
+		} else {
 			this.serviceHandler.updateEntity(model, apiObject);
 		}
 	}
-
+	
 	@Override
 	@Transactional
 	public Service get(String name) {
 		RESTAssert.assertNotEmpty(name);
-		EService model = this.serviceDAO.findByName( name);
-		RESTAssert.assertNotNull(model);
+		EService model = this.serviceDAO.findByName(name);
+		RESTAssert.assertNotNull(model, Response.Status.NOT_FOUND);
 		return model.toApi();
 	}
-
+	
 	@Override
 	@Transactional
 	public Map<String, String> getUsage(String service) {
 		RESTAssert.assertNotEmpty(service);
 		EService model = this.serviceDAO.findByName(service);
 		RESTAssert.assertNotNull(model);
-
+		
 		Map<String, String> result = new HashMap<>();
-		for(EPackage pkg : model.getPackages()) {
+		for (EPackage pkg : model.getPackages()) {
 			List<ETemplate> templates = this.dtemplate.findByPackage(pkg);
-			for(ETemplate template : templates) {
+			for (ETemplate template : templates) {
 				result.put(template.getName(), pkg.getName());
 			}
 		}
-
+		
 		return result;
 	}
-
+	
 	@Override
 	@Transactional
 	public void delete(String name) {
 		RESTAssert.assertNotEmpty(name);
-		EService model = this.serviceDAO.findByName( name);
+		EService model = this.serviceDAO.findByName(name);
 		RESTAssert.assertNotNull(model);
 		this.serviceDAO.delete(model);
 	}
-
+	
 }

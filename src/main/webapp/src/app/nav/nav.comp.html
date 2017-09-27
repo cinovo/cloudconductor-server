@@ -14,7 +14,7 @@
       <li role="presentation" class="nav-divider"></li>
 
       <li>
-        <a><i class="fa fa-code-fork fa-fw"></i> Config<i class="fa arrow"></i></a>
+        <a role="button"><i class="fa fa-code-fork fa-fw"></i> Config<i class="fa arrow"></i></a>
         <ul class="nav nav-second-level">
           <li *ngFor="let template of templates">
             <a [routerLink]="['config',template]" routerLinkActive="active">{{template}}</a>
@@ -62,7 +62,7 @@
         <a [routerLink]="['settings']" routerLinkActive="active"><i class="fa fa-gear fa-fw"></i> Settings</a>
       </li>
       <li>
-        <a><i class="fa fa-external-link fa-fw"></i> External Links<i class="fa arrow"></i></a>
+        <a role="button"><i class="fa fa-external-link fa-fw"></i> External Links<i class="fa arrow"></i></a>
         <ul class="nav nav-second-level">
           <li *ngFor="let link of links"><a href="{{link.url}}" target="_blank">{{link.label}}</a></li>
         </ul>

@@ -1,4 +1,5 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { AlertService } from '../util/alert/alert.service';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
@@ -15,7 +16,7 @@ import { Validator } from '../util/validator.util';
   selector: 'service-overview',
   templateUrl: './service.overview.comp.html'
 })
-export class ServiceOverview implements AfterViewInit {
+export class ServiceOverview implements OnInit {
 
   private _searchQuery: string = null;
 
@@ -28,19 +29,19 @@ export class ServiceOverview implements AfterViewInit {
     return true;
   }
 
-  constructor(private serviceHttp: ServiceHttpService, private router: Router) {
-  };
+  constructor(private serviceHttp: ServiceHttpService,
+              private router: Router,
+              private alerts: AlertService) { };
 
-  ngAfterViewInit(): void {
-    this.loadData();
+  public ngOnInit(): void {
+      this.loadData();
   }
 
   private loadData() {
     this.serviceHttp.getServices().subscribe(
       (result) => this.services = result
-    )
+    );
   }
-
 
   get services(): Array<Service> {
     return this._services;
@@ -69,7 +70,15 @@ export class ServiceOverview implements AfterViewInit {
 
   protected deleteService(service: Service): void {
     if (service) {
-      this.serviceHttp.deleteService(service);
+      this.serviceHttp.deleteService(service)
+        .subscribe(() =>  {
+          this.alerts.success(`Successfully deleted service ${service.name}!`);
+          this.loadData();
+        },
+        (err) => {
+          this.alerts.danger(`Error deleting service ${service.name}!`);
+          console.error(err);
+        });
     }
   }
 

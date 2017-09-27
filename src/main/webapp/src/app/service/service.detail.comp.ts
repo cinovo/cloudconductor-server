@@ -1,11 +1,16 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable } from 'rxjs/Observable';
 
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
+
+type Mode = 'new' | 'edit';
 
 /**
  * Copyright 2016 Cinovo AG<br>
@@ -17,7 +22,7 @@ import { Validator } from '../util/validator.util';
   selector: 'service-detail',
   templateUrl: './service.detail.comp.html'
 })
-export class ServiceDetail implements AfterViewInit {
+export class ServiceDetail implements OnInit {
 
   public service: Service = {id: -1, name: '', description: '', initScript: '', packages: []};
   public templateRefs: Array<{template: string, pkg: string}> = [];
@@ -26,15 +31,31 @@ export class ServiceDetail implements AfterViewInit {
   protected allPackages: Array<Package> = [];
   private back: any;
 
-  constructor(private serviceHttp: ServiceHttpService, private packageHttp: PackageHttpService,
-              private route: ActivatedRoute, private router: Router,
-              private alerts: AlertService) {
+  public mode: Mode = 'edit';
+  public serviceForm: FormGroup;
+
+  constructor(private serviceHttp: ServiceHttpService,
+              private packageHttp: PackageHttpService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private alerts: AlertService,
+              private fb: FormBuilder) {
+    this.serviceForm = fb.group({
+      name: ['', Validators.required],
+      initScript: ['', Validators.required],
+      description: ['']
+    });
   };
 
-
-  ngAfterViewInit(): void {
+  public ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.loadData(params['serviceName']);
+      const serviceName = params['serviceName'];
+
+      if (serviceName === 'new') {
+        this.mode = 'new';
+      } else {
+        this.loadData(serviceName);
+      }
     });
     this.route.queryParams.subscribe((params) => {
       this.back = {ret: params['ret'], id: params['id']};
@@ -47,6 +68,10 @@ export class ServiceDetail implements AfterViewInit {
         (result) => {
           this.service = result;
           this.service.packages.sort();
+
+          this.serviceForm.setValue({name: this.service.name,
+            initScript: this.service.initScript,
+            description: this.service.description});
         },
         () => {
           this.alerts.danger('The service you are looking for doesn\'t not exists.');
@@ -65,13 +90,21 @@ export class ServiceDetail implements AfterViewInit {
     }
   }
 
-  public save(): void {
-    if (this.fieldValidation()) {
-      return;
-    }
-    this.serviceHttp.save(this.service).subscribe(
-      (result) => this.alerts.success('You successfully saved the service!'),
-      (error) => this.alerts.danger('The save Failed!')
+  public save(formValue): void {
+    this.service.name = formValue.name;
+    this.service.initScript = formValue.initScript;
+    this.service.description = formValue.description;
+
+    const check = (this.mode === 'new') ? this.serviceHttp.existsService(this.service.name) : Observable.of(false);
+    check.flatMap((exists) => {
+      if (exists) {
+        return Observable.throw(`Service named '${this.service.name}' already exists!`);
+      }
+
+      return this.serviceHttp.save(this.service)
+    }).subscribe(
+      (result) => this.alerts.success(`Successfully saved service '${this.service.name}'!`),
+      (err) => this.alerts.danger(`Error saving service: ${err}`)
     );
   }
 
@@ -142,27 +175,6 @@ export class ServiceDetail implements AfterViewInit {
 
   }
 
-  private fieldValidation() {
-    let error = false;
-    if (!this.isNameValid()) {
-      this.alerts.danger('Please insert a valid service name.');
-      error = true;
-    }
-    if (!this.isScriptValid()) {
-      this.alerts.danger('Please insert a valid start-script.');
-      error = true;
-    }
-    return error;
-  }
-
-  public isNameValid() {
-    return Validator.notEmpty(this.service.name);
-  }
-
-  public isScriptValid() {
-    return Validator.notEmpty(this.service.initScript);
-  }
-
   public goToBack(): void {
     if (this.back) {
       if (this.back.ret === 'packageDetail') {
@@ -188,4 +200,5 @@ export class ServiceDetail implements AfterViewInit {
   private filterUsedPackages(pkg: Package): boolean {
     return !this.service.packages.includes(pkg.name);
   }
+
 }

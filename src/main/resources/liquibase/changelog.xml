@@ -889,4 +889,7 @@
     <changeSet id="28" author="mweise">
     	<addNotNullConstraint schemaName="cloudconductor" tableName="sshkey" columnName="username" columnDataType="varchar(255)" defaultNullValue="root"/>
     </changeSet>
+    <changeSet id="29" author="mweise">
+    	<addUniqueConstraint columnNames="name" constraintName="service_name_key" schemaName="cloudconductor" tableName="service"/>
+    </changeSet>
 </databaseChangeLog>

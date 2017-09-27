@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { HTTPService } from './abstract.http.service';
 
@@ -36,6 +36,11 @@ export class ServiceHttpService extends HTTPService {
     return this._get(serviceName);
   }
 
+  public existsService(serviceName: string): Observable<boolean> {
+    return this._get(serviceName)
+      .map((service: Service) => (service !== undefined))
+      .catch(() => Observable.of(false));
+  }
 
   public getServiceUsage(serviceName: string): Observable<any> {
     return this._get(serviceName + '/usage');
