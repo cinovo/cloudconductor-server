@@ -1,13 +1,13 @@
-import { Subscription } from 'rxjs/Rx';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router/';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { AlertService } from '../util/alert/alert.service';
 import { ConfigFile, FileForm, FileType  } from '../util/http/config-file.model';
 import { FileHttpService } from '../util/http/file.http.service';
+import { forbiddenNameValidator } from '../util/validator.util';
 import { ServiceHttpService } from '../util/http/service.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 
@@ -45,7 +45,7 @@ export class FileDetailComponent implements OnInit, OnDestroy {
               private templateHttpService: TemplateHttpService) {
 
     this.fileForm = this.formBuilder.group({
-      name: [this.file.name, Validators.required],
+      name: [this.file.name, [Validators.required, forbiddenNameValidator('new')]],
       owner: [this.file.owner, Validators.required],
       group: [this.file.group, Validators.required],
       fileMode: [this.file.fileMode, [Validators.required, Validators.pattern(/^[0-7]{3}$/)]],

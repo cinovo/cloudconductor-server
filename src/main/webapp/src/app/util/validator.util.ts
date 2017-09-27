@@ -1,3 +1,5 @@
+import { AbstractControl, ValidatorFn } from '@angular/forms';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -20,4 +22,12 @@ export class Validator {
   public static noGtEqZero(obj: number): boolean {
     return obj >= 0;
   }
+
+}
+
+export function forbiddenNameValidator(forbiddenName: string): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} => {
+    const forbidden = (control.value === forbiddenName);
+    return forbidden ? { 'forbiddenName': { value: control.value } } : null;
+  };
 }

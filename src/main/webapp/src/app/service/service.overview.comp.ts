@@ -1,7 +1,7 @@
-import { AlertService } from '../util/alert/alert.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AlertService } from '../util/alert/alert.service';
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
@@ -72,11 +72,11 @@ export class ServiceOverview implements OnInit {
     if (service) {
       this.serviceHttp.deleteService(service)
         .subscribe(() =>  {
-          this.alerts.success(`Successfully deleted service ${service.name}!`);
+          this.alerts.success(`Successfully deleted service '${service.name}'!`);
           this.loadData();
         },
         (err) => {
-          this.alerts.danger(`Error deleting service ${service.name}!`);
+          this.alerts.danger(`Error deleting service '${service.name}'!`);
           console.error(err);
         });
     }

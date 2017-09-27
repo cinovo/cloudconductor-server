@@ -8,7 +8,7 @@ import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
-import { Validator } from '../util/validator.util';
+import { forbiddenNameValidator, Validator } from '../util/validator.util';
 
 type Mode = 'new' | 'edit';
 
@@ -41,7 +41,7 @@ export class ServiceDetail implements OnInit {
               private alerts: AlertService,
               private fb: FormBuilder) {
     this.serviceForm = fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, forbiddenNameValidator('new')]],
       initScript: ['', Validators.required],
       description: ['']
     });

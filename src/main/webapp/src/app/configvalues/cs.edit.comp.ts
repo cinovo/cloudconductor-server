@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
 import { AlertService } from '../util/alert/alert.service';
-import { Validator } from '../util/validator.util';
+import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { ServiceHttpService } from '../util/http/service.http.service';
 
 /**
@@ -33,7 +33,7 @@ export class ConfigValueEdit implements OnInit {
               private serviceHttp: ServiceHttpService,
               private fb: FormBuilder) {
     this.kvForm = this.fb.group({
-      key: ['', Validators.required],
+      key: ['', [Validators.required, forbiddenNameValidator('new')]],
       value: ['', Validators.required],
       template: '',
       service: ''
