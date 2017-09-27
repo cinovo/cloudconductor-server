@@ -2,15 +2,15 @@
   <div class="col-md-12">
     <cc-panel [title]="'Template details'" icon="fa-institution" [collapsable]="true">
       <div cc-panel-body>
-
         <div class="form-group" [class.has-error]="!isNameValid()">
           <label class="control-label" for="name">Name</label>
           <input type="text" class="form-control" [(ngModel)]="template.name" id="name" [disabled]="mode == modes.EDIT">
         </div>
+
         <div class="form-group">
           <label class="control-label" for="description">Description</label>
-          <textarea type="text" class="form-control" [(ngModel)]="template.description" id="description"
-                    rows="3"></textarea>
+          <textarea type="text" class="form-control" [(ngModel)]="template.description" id="description" rows="3">
+          </textarea>
         </div>
 
         <div class="form-group" *ngIf="settings.allowautoupdate">

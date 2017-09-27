@@ -1,10 +1,11 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { AlertService } from '../util/alert/alert.service';
-import { Validator } from '../util/validator.util';
+import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 import { RepoMirrorHttpService } from '../util/http/repomirror.http.service';
 import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
@@ -20,21 +21,28 @@ import { Sorter } from '../util/sorters.util';
   selector: 'repo-edit',
   templateUrl: './repo.edit.comp.html'
 })
-export class RepoEdit implements AfterViewInit {
+export class RepoEdit implements OnInit {
 
   public mode = 'edit';
   public repo: Repo = {name: '', mirrors: [], primaryMirror: 0};
 
   public packages: Array<PackageVersion> = [];
 
+  public repoForm: FormGroup;
+
   constructor(private repoHttp: RepoHttpService,
               private mirrorHttp: RepoMirrorHttpService,
               private packageHttp: PackageHttpService,
               private route: ActivatedRoute,
               private alerts: AlertService,
-              private router: Router) { };
+              private router: Router,
+              private fb: FormBuilder) {
+    this.repoForm = fb.group({
+      name: ['', [Validators.required, forbiddenNameValidator('new')]]
+    });
+  };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.route.url.subscribe((value) => {
         if (value[value.length - 1].path === 'new') {
           this.mode = 'new'
@@ -50,6 +58,7 @@ export class RepoEdit implements AfterViewInit {
     if (Validator.notEmpty(repoName) && this.mode === 'edit') {
       this.repoHttp.getRepo(repoName).subscribe((result) => {
         this.repo = result;
+        this.repoForm.controls.name.setValue(result.name);
         this.loadPackages();
       });
     }
@@ -63,9 +72,11 @@ export class RepoEdit implements AfterViewInit {
     }
   }
 
-  save(): void {
-    this.doSave(() => {
-      this.alerts.success('Successfully saved your repository');
+  save(formValue): void {
+    const repo = this.repo;
+    repo.name = formValue.name;
+    this.doSave(repo).subscribe(() => {
+      this.alerts.success(`Successfully saved repository '${repo.name}' ` );
       if (this.mode === 'new') {
         this.router.navigate(['repo']);
       }
@@ -73,13 +84,17 @@ export class RepoEdit implements AfterViewInit {
   }
 
   addMirror(): void {
-    this.doSave(() => {
+    const repo = this.repo;
+    repo.name = this.repoForm.controls.name.value;
+    this.doSave(repo).subscribe(() => {
       this.router.navigate(['repo', this.repo.name, 'mirror', 'new']);
     });
   }
 
   editMirror(id: number): void {
-    this.doSave(() => this.router.navigate(['repo', this.repo.name, 'mirror', id]));
+    const repo = this.repo;
+    repo.name = this.repoForm.controls.name.value;
+    this.doSave(repo).subscribe(() => this.router.navigate(['repo', this.repo.name, 'mirror', id]));
   }
 
   deleteMirror(id: number): void {
@@ -105,38 +120,14 @@ export class RepoEdit implements AfterViewInit {
     }
   }
 
-  private fieldValidation(): boolean {
-    let error = false;
-    if (!this.isNameValid()) {
-      this.alerts.danger('Please insert a repo name.');
-      error = true;
-    }
-    return error;
-  }
-
-  public isNameValid(): boolean {
-    return Validator.notEmpty(this.repo.name);
-  }
-
-  private doSave(successCallback: (repo: Repo) => any): void {
-    if (this.fieldValidation()) {
-      return;
-    }
+  private doSave(repo: Repo): Observable<Repo> {
     let call: Observable<Repo>;
-    if (Validator.idIsSet(this.repo.id)) {
-      call = this.repoHttp.editRepo(this.repo);
+    if (Validator.idIsSet(repo.id)) {
+      call = this.repoHttp.editRepo(repo);
     } else {
-      call = this.repoHttp.newRepo(this.repo);
+      call = this.repoHttp.newRepo(repo);
     }
-    call.subscribe(
-      (result) => {
-        if (successCallback) {
-          successCallback(result);
-        }
-      },
-      (error) => {
-        this.alerts.danger('Failed to save the repository');
-      }
-    );
+
+    return call;
   }
 }

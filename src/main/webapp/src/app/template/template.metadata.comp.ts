@@ -63,7 +63,7 @@ export class TemplateMetaData implements AfterViewInit {
           this.existingTemplateNames.push(t.name);
         }
         this.existingTemplateNames.sort();
-      })
+      });
     }
   }
 

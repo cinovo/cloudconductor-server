@@ -4,10 +4,13 @@
 <div class="row">
   <div class="col-md-6">
     <cc-panel [title]="'Repository'" icon="fa-server">
-      <div cc-panel-body>
-        <div class="form-group" [class.has-error]="!isNameValid()">
+      <form [formGroup]="repoForm" novalidate (ngSubmit)="save(repoForm.value)" cc-panel-body>
+        <div class="form-group" [ngClass]="{ 'has-error': !repoForm.controls.name.pristine && !repoForm.controls.name.valid }">
           <label class="control-label" for="reponame">Repository Name</label>
-          <input type="text" class="form-control" [(ngModel)]="repo.name" id="reponame">
+          <input type="text" class="form-control" formControlName="name" id="reponame">
+          <span *ngIf="!repoForm.controls.name.pristine && !repoForm.controls.name.valid" class="help-block">
+            This field is required
+          </span>
         </div>
 
         <div class="space-20"></div>
@@ -35,16 +38,20 @@
                 </td>
                 <td>{{mirror.description}} -- {{mirror.path}}</td>
                 <td width="30px">
-                  <a (click)="editMirror(mirror.id)"><i class="fa fa-edit fa-fw"></i></a>
+                  <a role="button" title="Edit Mirror" (click)="editMirror(mirror.id)">
+                    <i class="fa fa-edit fa-fw"></i>
+                  </a>
                 </td>
                 <td width="30px">
-                  <a (click)="deleteMirror(mirror.id)"><i class="fa fa-trash-o fa-fw"></i></a>
+                  <a role="button" title="Delete Mirror" (click)="deleteMirror(mirror.id)">
+                    <i class="fa fa-trash-o fa-fw"></i>
+                  </a>
                 </td>
               </tr>
 
               <tr (click)="addMirror()" role="button">
                 <td width="30px"><i class="fa fa-plus fa-fw"></i></td>
-                <td colspan="4">Add a new Mirror</td>
+                <td colspan="4">Add new Mirror</td>
               </tr>
               </tbody>
             </table>
@@ -52,10 +59,14 @@
         </cc-panel>
 
         <div class="pull-right">
-          <button [routerLink]="['/repo']" class="btn btn-default">Back</button>
-          <button (click)="save()" class="btn btn-info" [disabled]="!isNameValid()">Save</button>
+          <button type="button" class="btn btn-default" [routerLink]="['/repo']">
+            Back
+          </button>
+          <button type="submit" class="btn btn-info" [disabled]="repoForm.invalid">
+            Save
+          </button>
         </div>
-      </div>
+      </form>
     </cc-panel>
 
   </div>
