@@ -19,7 +19,9 @@ export class FileResolver implements Resolve<FileForm> {
     if (fileName && fileName.length > 0) {
       return this.fileHttpService.getFile(fileName).flatMap((file) => {
         return this.fileHttpService.getFileData(file.name).map((data) => {
-          return file.toForm();
+          const fileForm = file.toForm();
+          fileForm.fileContent = data;
+          return fileForm;
         });
       });
     } else {
