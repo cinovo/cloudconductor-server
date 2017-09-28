@@ -1,33 +1,36 @@
 <div class="row">
   <div class="col-md-12">
     <cc-panel [title]="'Template details'" icon="fa-institution" [collapsable]="true">
-      <div cc-panel-body>
-        <div class="form-group" [class.has-error]="!isNameValid()">
+      <form [formGroup]="templateForm" novalidate (ngSubmit)="saveTemplateMetadata(templateForm.value)" cc-panel-body>
+        <div class="form-group" [ngClass]="{ 'has-error': !templateForm.controls.name.pristine && !templateForm.controls.name.valid }">
           <label class="control-label" for="name">Name</label>
-          <input type="text" class="form-control" [(ngModel)]="template.name" id="name" [disabled]="mode == modes.EDIT">
+          <input type="text" class="form-control" formControlName="name" id="name" [readOnly]="mode == modes.EDIT">
+          <span *ngIf="!templateForm.controls.name.pristine && !templateForm.controls.name.valid" class="help-block">
+            This field is required
+          </span>
         </div>
 
         <div class="form-group">
           <label class="control-label" for="description">Description</label>
-          <textarea type="text" class="form-control" [(ngModel)]="template.description" id="description" rows="3">
+          <textarea type="text" class="form-control" formControlName="description" id="description" rows="3">
           </textarea>
         </div>
 
         <div class="form-group" *ngIf="settings.allowautoupdate">
           <label for="autoupdate">
-            <input type="checkbox" id="autoupdate" [(ngModel)]="template.autoUpdate">
+            <input type="checkbox" id="autoupdate" formControlName="autoUpdate">
             Allow automated package updates for this template</label>
         </div>
 
         <div class="form-group">
           <label for="smoothupdates">
-            <input type="checkbox" id="smoothupdates" [(ngModel)]="template.smoothUpdate">
+            <input type="checkbox" id="smoothupdates" formControlName="smoothUpdate">
             Minimize overall downtime on package changes </label>
         </div>
 
         <div class="form-group" *ngIf="mode == modes.NEW">
           <label for="copypackages">Copy behaviour from </label>
-          <select class="form-control" [(ngModel)]="copyFrom" id="copypackages">
+          <select class="form-control" formControlName="copyFrom" id="copypackages">
             <option value="" selected>None</option>
             <option *ngFor="let existingTemplate of existingTemplateNames" value="{{existingTemplate}}">
               {{existingTemplate}}
@@ -68,17 +71,19 @@
               <td colspan="3">
                 <div class="form-group">
                   <label class="control-label" for="addrepo"><i class="fa fa-plus fa-fw"></i> Add a repository</label>
-                  <select class="form-control" [(ngModel)]="newRepo" id="addrepo" [disabled]="allRepos.length <= 0">
-                    <option value="" selected *ngIf="allRepos.length <= 0">There are currently no more repositories
-                      available
+                  <div *ngIf="allRepos.length < 1" class="alert alert-warning">
+                    There are currently no more repositories available
+                  </div>
+                  <select *ngIf="allRepos.length > 0" class="form-control" formControlName="newRepo" id="addrepo">
+                    <option value="" selected>
                     </option>
                     <option *ngFor="let rep of allRepos" value="{{rep.name}}">{{rep.name}}</option>
                   </select>
                 </div>
 
                 <div class="pull-right">
-                  <button (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
-                  <button (click)="addNewRepo()" class="btn btn-success"
+                  <button type="button" (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
+                  <button type="button" (click)="addNewRepo(templateForm.controls.newRepo.value)" class="btn btn-success"
                           [disabled]="!newRepo || allRepos.length < 1">Add
                   </button>
                 </div>
@@ -94,7 +99,7 @@
             </tbody>
           </table>
 
-          <div class="alert alert-warning" cc-panel-body *ngIf="mode == modes.NEW && copyFrom">
+          <div class="alert alert-warning" cc-panel-body *ngIf="mode == modes.NEW && copyFrom.value !== ''">
             The repositories will be copied from the template {{copyFrom}}
           </div>
         </cc-panel>
@@ -103,10 +108,10 @@
           <a *ngIf="mode == modes.NEW" class="btn btn-default" [routerLink]="['/template']" role="button">
             Cancel
           </a>
-          <button (click)="saveTemplateMetadata()" class="btn btn-info" title="Save Template"
-                  [disabled]="!isNameValid()">Save
+          <button type="submit" class="btn btn-info" title="Save Template" [disabled]="templateForm.invalid">
+            Save
           </button>
-          <button *ngIf="mode == modes.EDIT" class="btn btn-danger" mwlConfirmationPopover
+          <button *ngIf="mode == modes.EDIT" type="button" class="btn btn-danger" mwlConfirmationPopover
                   title="Delete Template"
                   [title]="'Please verify!'"
                   [message]="'Are you sure you want to remove this template and its configuration?'"
@@ -116,7 +121,7 @@
           </button>
         </div>
 
-      </div>
+      </form>
     </cc-panel>
   </div>
 </div>

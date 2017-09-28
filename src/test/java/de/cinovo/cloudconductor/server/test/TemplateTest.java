@@ -17,18 +17,23 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
-import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
-import de.cinovo.cloudconductor.api.lib.manager.TemplateHandler;
-import de.cinovo.cloudconductor.api.model.*;
-import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.HashSet;
-import java.util.Set;
+import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
+import de.cinovo.cloudconductor.api.lib.manager.TemplateHandler;
+import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.server.APITest;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 
 /**
  * 
@@ -64,7 +69,7 @@ public class TemplateTest extends APITest {
 			t.setName("template2");
 			t.setDescription("new template");
 			t.setHosts(servers);
-
+			
 			h.save(t);
 			Set<Template> set = h.get();
 			Assert.assertEquals(3, set.size());

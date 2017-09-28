@@ -54,6 +54,14 @@ export class TemplateHttpService extends HTTPService {
     return this._get(templateName);
   }
 
+  public existsTemplate(templateName: string): Observable<boolean> {
+    return this._get(templateName).map((template: Template) => {
+      return (template !== undefined);
+    }).catch(() => {
+      return Observable.of(false);
+    });
+  }
+
   public deleteTemplate(template: Template): Observable<boolean> {
     return this._delete(template.name);
   }

@@ -1,12 +1,13 @@
-import { Component, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
 import { Settings, SettingHttpService } from '../util/http/setting.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
-import { Validator } from '../util/validator.util';
+import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Mode } from '../util/enums.util';
@@ -21,7 +22,7 @@ import { Mode } from '../util/enums.util';
   selector: 'template-metadata',
   templateUrl: './template.metadata.comp.html'
 })
-export class TemplateMetaData implements AfterViewInit {
+export class TemplateMetaData implements OnInit {
 
   @Input() obsTemplate: Observable<Template>;
   @Input() mode: Mode = Mode.EDIT;
@@ -37,17 +38,39 @@ export class TemplateMetaData implements AfterViewInit {
   public newRepo = '';
   public showNewRepo = false;
 
-  public copyFrom = '';
-
   private back: any;
 
-  constructor(private route: ActivatedRoute, private settingsHttp: SettingHttpService,
-              private templateHttp: TemplateHttpService, private repoHttp: RepoHttpService,
-              private alerts: AlertService, private router: Router) {
-  };
+  public templateForm: FormGroup;
+  public copyFrom: FormControl;
 
-  ngAfterViewInit(): void {
-    this.obsTemplate.subscribe((result) => this.template = result);
+  constructor(private route: ActivatedRoute,
+              private settingsHttp: SettingHttpService,
+              private templateHttp: TemplateHttpService,
+              private repoHttp: RepoHttpService,
+              private alerts: AlertService,
+              private router: Router,
+              private fb: FormBuilder) {
+    this.copyFrom = fb.control('');
+    this.templateForm = fb.group({
+      name: ['', [Validators.required, forbiddenNameValidator('new')]],
+      description: [''],
+      autoUpdate: false,
+      smoothUpdate: false,
+      copyFrom: this.copyFrom,
+      newRepo: ''
+    });
+  }
+
+  ngOnInit(): void {
+    this.obsTemplate.subscribe((result) => {
+      this.template = result;
+
+      // update metadata form
+      this.templateForm.controls.name.setValue(result.name);
+      this.templateForm.controls.description.setValue(result.description);
+      this.templateForm.controls.autoUpdate.setValue(result.autoUpdate);
+      this.templateForm.controls.smoothUpdate.setValue(result.smoothUpdate);
+    });
 
     this.route.queryParams.subscribe((params) => {
       this.back = {ret: params['ret'], id: params['id']};
@@ -67,38 +90,65 @@ export class TemplateMetaData implements AfterViewInit {
     }
   }
 
-  public saveTemplateMetadata(): void {
-    if (!this.isNameValid()) {
-      this.alerts.danger('There already exists a template with the name ' + this.template.name);
-      return;
+  public saveTemplateMetadata(formValue): void {
+    console.log({formValue});
+
+    const templateToSave: Template = {
+      name: formValue.name,
+      description: formValue.description || '',
+      repos: this.template.repos,
+      versions: this.template.versions,
+      hosts: this.template.hosts,
+      autoUpdate: formValue.autoUpdate,
+      smoothUpdate: formValue.smoothUpdate
     }
 
-    if (this.mode === Mode.NEW && Validator.notEmpty(this.copyFrom)) {
-      this.templateHttp.getTemplate(this.copyFrom).subscribe(
-        (result) => {
-          this.template.repos = result.repos;
-          this.template.versions = result.versions;
-          this.templateHttp.save(this.template).subscribe(
-            () => {
-              this.alerts.success('Successfully saved the template ' + this.template.name);
-              this.router.navigate(['template', this.template.name]);
-            },
-            () => this.alerts.danger('Failed to save template ' + this.copyFrom)
-          )
-        },
-        () => this.alerts.danger('Failed to copy repositories and packages from template ' + this.copyFrom)
-      )
+    if (this.mode === Mode.NEW) {
+      let templateObs: Observable<any>;
+
+      if (Validator.notEmpty(formValue.copyFrom)) {
+        templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
+      } else {
+        templateObs = Observable.of({});
+      }
+
+      templateObs.flatMap((result) => {
+          // first overwrite repos and versions with template to be copied
+          if (result.repos && result.repos.length > 0) {
+            templateToSave.repos = result.repos;
+          }
+          if (result.versions) {
+            templateToSave.versions = result.versions;
+          }
+
+          // then check whether name is already in use
+          return this.templateHttp.existsTemplate(templateToSave.name);
+        }).flatMap((exists) => {
+          if (!exists) {
+            // alright, try to save template...
+            return this.templateHttp.save(templateToSave);
+          } else {
+            return Observable.throw(`template named ${templateToSave.name} does already exist!`);
+          }
+        }).subscribe(() => {
+          this.alerts.success('Successfully saved the template ' + templateToSave.name);
+          this.router.navigate(['template', templateToSave]);
+        }, (err) => {
+          this.alerts.danger('Failed to save template!');
+          console.error(err);
+        }
+      );
     } else {
-      this.templateHttp.save(this.template).subscribe(
-        () => {
-          this.alerts.success('Successfully saved the template ' + this.template.name);
+      this.templateHttp.save(templateToSave).subscribe(() => {
+          this.alerts.success('Successfully saved the template ' + templateToSave.name);
           if (this.mode === Mode.EDIT) {
             return;
           }
-          this.router.navigate(['template', this.template.name]);
-        },
-        () => this.alerts.danger('Failed to save template ' + this.copyFrom)
-      )
+          this.router.navigate(['template', templateToSave.name]);
+        }, (err) =>  {
+          this.alerts.danger('Failed to save template ' + formValue.copyFrom);
+          console.error(err);
+        });
     }
   }
 
@@ -111,11 +161,11 @@ export class TemplateMetaData implements AfterViewInit {
       () => {
         this.alerts.danger(`Failed to delete template '${this.template.name}'`);
       }
-    )
+    );
   }
 
-  protected addNewRepo(): void {
-    if (this.newRepo) {
+  protected addNewRepo(newRepo: string): void {
+    if (newRepo) {
       this.template.repos.push(this.newRepo);
       this.template.repos.sort();
       this.settings.disallowUninstall.sort();
@@ -147,20 +197,7 @@ export class TemplateMetaData implements AfterViewInit {
           this.newRepo = this.allRepos[0].name;
         }
       }
-    )
+    );
   }
 
-  public isNameValid(): boolean {
-    if (!Validator.notEmpty(this.template.name)) {
-      return false;
-    }
-    if (this.template.name.trim() === 'new') {
-      return false;
-    }
-    if (this.mode === Mode.EDIT) {
-      return true;
-    }
-    return this.existingTemplateNames.indexOf(this.template.name.trim()) < 0;
-
-  }
 }

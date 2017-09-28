@@ -1,1 +1,0 @@
-java -jar de.cinovo.cloudconductor.cloudconductor-server.jar

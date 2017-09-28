@@ -1,4 +1,4 @@
-package de.cinovo.cloudconductor.api.enums;
+package de.cinovo.cloudconductor.api.lib.exceptions;
 
 /*
  * #%L
@@ -24,15 +24,40 @@ package de.cinovo.cloudconductor.api.enums;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * Enumeration for dependency types.
+ * Exception for problems related to serialization or deserialization.
  * 
  * @author mhilbert
  */
-public enum DependencyType {
-	/** requires */
-	REQUIRES,
-	/** provides */
-	PROVIDES,
-	/** conflicts */
-	CONFLICTS
+public class SerializationException extends CloudConductorException {
+	
+	/** version UID for serialization */
+	private static final long serialVersionUID = 1L;
+	
+	
+	/**
+	 * Class constructor.
+	 */
+	public SerializationException() {
+		super();
+	}
+	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param message the detail message
+	 * @param cause the cause
+	 */
+	public SerializationException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param message the detail message
+	 */
+	public SerializationException(String message) {
+		super(message);
+	}
+	
 }

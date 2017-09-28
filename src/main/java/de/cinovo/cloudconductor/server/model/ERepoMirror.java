@@ -17,9 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.enums.RepoIndexerType;
+import de.cinovo.cloudconductor.api.enums.RepoProviderType;
 import de.cinovo.cloudconductor.api.model.RepoMirror;
-import de.cinovo.cloudconductor.server.repo.indexer.RepoIndexerType;
-import de.cinovo.cloudconductor.server.repo.provider.RepoProviderType;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.*;

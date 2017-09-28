@@ -1,14 +1,17 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
+import de.cinovo.cloudconductor.api.enums.RepoProviderType;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.WS;
 import de.taimos.httputils.WSConstants;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;

@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
+import de.cinovo.cloudconductor.api.enums.RepoProviderType;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 

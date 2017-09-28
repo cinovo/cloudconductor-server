@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -85,7 +86,7 @@ public class TemplateImpl implements ITemplate {
 	public Template get(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
+		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
 		return template.toApi();
 	}
 	
