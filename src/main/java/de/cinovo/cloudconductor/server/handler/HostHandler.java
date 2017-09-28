@@ -1,11 +1,15 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EServiceState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EServiceState;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -15,8 +19,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HostHandler {
+	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+	
+	@Autowired
+	private IHostDAO hostDAO;
+	
+	
 	/**
 	 * @param host the host to change the state of the service in
 	 * @param service the service to change
@@ -24,16 +33,16 @@ public class HostHandler {
 	 * @return the modified host
 	 */
 	public EHost changeServiceState(EHost host, String service, ServiceState state) {
-		if(host == null) {
+		if (host == null) {
 			return null;
 		}
-		if(service == null || service.isEmpty() || state == null) {
+		if ((service == null) || service.isEmpty() || (state == null)) {
 			return host;
 		}
-
-		for(EServiceState currentServiceState : host.getServices()) {
-			if(currentServiceState.getService().getName().equals(service)) {
-				if(currentServiceState.getState().isStateChangePossible(state)) {
+		
+		for (EServiceState currentServiceState : host.getServices()) {
+			if (currentServiceState.getService().getName().equals(service)) {
+				if (currentServiceState.getState().isStateChangePossible(state)) {
 					currentServiceState.setState(state);
 				} else {
 					this.logger.warn("Desired target state of service " + service + " in host " + host.getName() + " not reachable.");
@@ -42,5 +51,20 @@ public class HostHandler {
 			}
 		}
 		return host;
+	}
+	
+	/**
+	 * Creates and persists a new host with given name and template.
+	 * 
+	 * @param hostName the name for the new host
+	 * @param template the template to be used by the new host
+	 * @return the new host
+	 */
+	public EHost createNewHost(String hostName, ETemplate template) {
+		EHost newHost = new EHost();
+		newHost.setName(hostName);
+		newHost.setTemplate(template);
+		newHost = this.hostDAO.save(newHost);
+		return newHost;
 	}
 }
