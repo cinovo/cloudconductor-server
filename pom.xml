@@ -8,7 +8,7 @@
     </parent>
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
-    <version>3.0-RC1</version>
+    <version>3.0-SNAPSHOT</version>
     <name>CloudConductor Server</name>
     <description>Server to manage deployment environments</description>
     <inceptionYear>2014</inceptionYear>
@@ -372,6 +372,17 @@
                                             <location>${project.build.directory}/lib</location>
                                         </source>
                                     </sources>
+                                </mapping>
+                                <mapping>
+                                	<directory>/opt/cloudconductor/web</directory>
+                                	<filemode>755</filemode>
+                                	<username>root</username>
+                                	<groupname>root</groupname>
+                                	<sources>
+                                		<source>
+                                			<location>src/main/webapp/dist</location>
+                                		</source>
+                                	</sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/etc/cron.d</directory>

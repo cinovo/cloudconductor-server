@@ -33,6 +33,7 @@ public interface IAgentDAO extends IEntityDAO<EAgent, Long> {
 	public List<EAgent> getAgentsWithoutToken();
 	
 	/**
+	 * @param agentName the name of the agent
 	 * @return the agent with unique name
 	 */
 	public EAgent findAgentByName(String agentName);

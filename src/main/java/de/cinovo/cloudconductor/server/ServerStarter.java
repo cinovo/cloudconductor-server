@@ -64,7 +64,11 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	public static void main(final String[] args) {
 		System.getProperties().put("jaxrs.path", "/api");
 		Log4jLoggingConfigurer.setup();
-		DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
+		if (ServerStarter.checkInstalled()) {
+			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
+		} else {
+			ServerStarter.log.error("Properties file '" + ServerStarter.CLOUDCONDUCTOR_PROPERTIES + "' is missing!");
+		}
 	}
 	
 	private static boolean checkInstalled() {

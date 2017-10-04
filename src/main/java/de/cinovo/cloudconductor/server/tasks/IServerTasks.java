@@ -9,11 +9,11 @@ import de.cinovo.cloudconductor.server.model.EServerOptions;
  * @author psigloch
  *
  */
-public interface IServerTasks extends Runnable{
-
+public interface IServerTasks extends Runnable {
+	
 	String getTaskIdentifier();
-
+	
 	void create(EServerOptions settings);
-
+	
 	void update(EServerOptions oldSettings, EServerOptions newSettings);
 }

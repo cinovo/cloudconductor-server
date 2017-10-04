@@ -17,10 +17,10 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import java.util.List;
+
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.IEntityDAO;
-
-import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -29,34 +29,37 @@ import java.util.List;
  * @author psigloch
  */
 public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
-
-    /**
-     * @param template the template name
-     * @return the configuration for the given template
-     */
-    List<EConfigValue> findBy(String template);
-
-    /**
-     * @param template the template name
-     * @param service  the service name
-     * @return the configuration for the service within the given template
-     */
-    List<EConfigValue> findBy(String template, String service);
-
-    /**
-     * @param template the template name
-     * @param service  the service name
-     * @param key      the key
-     * @return the value of the key within the configuration for the service within the given template
-     */
-    EConfigValue findBy(String template, String service, String key);
-
-
-    /**
-     * @return list of templates available in config
-     */
-    List<String> findTemplates();
-
-
-    List<EConfigValue> findAll(String template);
+	
+	/**
+	 * @param template the template name
+	 * @return the configuration for the given template
+	 */
+	List<EConfigValue> findBy(String template);
+	
+	/**
+	 * @param template the template name
+	 * @param service the service name
+	 * @return the configuration for the service within the given template
+	 */
+	List<EConfigValue> findBy(String template, String service);
+	
+	/**
+	 * @param template the template name
+	 * @param service the service name
+	 * @param key the key
+	 * @return the value of the key within the configuration for the service within the given template
+	 */
+	EConfigValue findBy(String template, String service, String key);
+	
+	/**
+	 * @return list of templates available in config
+	 */
+	List<String> findTemplates();
+	
+	/**
+	 * 
+	 * @param template
+	 * @return list of configuration
+	 */
+	List<EConfigValue> findAll(String template);
 }
