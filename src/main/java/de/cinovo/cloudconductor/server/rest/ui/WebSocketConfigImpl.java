@@ -24,7 +24,10 @@ public class WebSocketConfigImpl implements IWebSocketConfig {
 	@Autowired
 	DvalinRSContext context;
 	
-	@Value("${websocket.baseuri:/websocket}")
+	@Value("${ws.host:localhost}")
+	private String host;
+	
+	@Value("${ws.baseuri:/websocket}")
 	private String baseURI;
 	
 	@Value("${ws.timeout:60000}")
@@ -34,7 +37,7 @@ public class WebSocketConfigImpl implements IWebSocketConfig {
 	@Override
 	public WebSocketConfig getConfig() {
 		SplitURL split = URLUtils.splitURL(this.context.getServerURL());
-		String webSocketBasePath = "ws://" + split.getHost() + ":" + split.getPort() + this.baseURI;
+		String webSocketBasePath = "ws://" + this.host + ":" + split.getPort() + this.baseURI;
 		return new WebSocketConfig(webSocketBasePath, this.websocketTimeout);
 	}
 	
