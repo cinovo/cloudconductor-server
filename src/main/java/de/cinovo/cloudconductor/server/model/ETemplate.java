@@ -59,7 +59,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	
 	private List<EHost> hosts = new ArrayList<>();
 	
-	private List<ESSHKey> sshkeys;
+	private List<ESSHKey> sshkeys = new ArrayList<>();
 	
 	private List<EFile> configFiles = new ArrayList<>();
 	

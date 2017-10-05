@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.ETemplate;
@@ -42,6 +44,8 @@ public class TemplateImpl implements ITemplate {
 	private TemplatesWSHandler templatesWSHandler;
 	@Autowired
 	private TemplateDetailWSHandler templateDetailWSHandler;
+	@Autowired
+	private SSHHandler sshKeyHandler;
 	
 	
 	@Override
@@ -142,5 +146,13 @@ public class TemplateImpl implements ITemplate {
 		}
 		options = this.templateHandler.updateEntity(options, option);
 		return options.toApi();
+	}
+	
+	@Override
+	@Transactional
+	public SSHKey[] getSSHKeysForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		Set<SSHKey> keys = this.sshKeyHandler.getSSHKeyForTemplate(templateName);
+		return keys.toArray(new SSHKey[keys.size()]);
 	}
 }
