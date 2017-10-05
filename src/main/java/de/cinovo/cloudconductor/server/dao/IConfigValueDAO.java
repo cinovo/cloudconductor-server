@@ -58,7 +58,7 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	
 	/**
 	 * 
-	 * @param template
+	 * @param template the name of the template
 	 * @return list of configuration
 	 */
 	List<EConfigValue> findAll(String template);
