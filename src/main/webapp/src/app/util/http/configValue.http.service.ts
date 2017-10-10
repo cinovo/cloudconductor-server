@@ -31,7 +31,7 @@ export class ConfigValueHttpService extends HTTPService {
     this.reloadTemplates();
   }
 
-  public getValues(template: string): Observable<Array<ConfigValue>> {
+  public getValues(template: string): Observable<ConfigValue[]> {
     return this._get(template + '/unstacked');
   }
 
@@ -55,14 +55,15 @@ export class ConfigValueHttpService extends HTTPService {
     return ret;
   }
 
+  /* tslint:disable:curly */
   private reloadTemplates(): void {
     if (!this.reloading) {
       this.reloading = true;
       this._get('').subscribe(
         (result) => {
           this._templates.next(result.sort((a: string, b: string) => {
-            if (a == 'GLOBAL') return -1;
-            if (b == 'GLOBAL') return 1;
+            if (a === 'GLOBAL') return -1;
+            if (b === 'GLOBAL') return 1;
             if (a < b) return -1;
             if (a > b) return 1;
             return 0;
@@ -81,12 +82,17 @@ export class ConfigValueHttpService extends HTTPService {
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {
-    let additionalheaders: Headers = new Headers(
+    const additionalheaders: Headers = new Headers(
       {'Accept': mode}
     );
+
+    let preview$: Observable<any>;
     if (Validator.notEmpty(service)) {
-      return this._get(template + '/' + service, additionalheaders);
+      preview$ = this._get(template + '/' + service, additionalheaders);
+    } else {
+      preview$ = this._get(template, additionalheaders);
     }
-    return this._get(template, additionalheaders);
+
+    return preview$;
   }
 }

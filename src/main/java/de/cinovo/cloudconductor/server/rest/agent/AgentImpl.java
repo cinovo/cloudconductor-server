@@ -55,7 +55,10 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotEmpty(agent);
 		RESTAssert.assertNotEmpty(uuid);
 		
-		return this.agentHandler.handleHeartBeat(template, host, agent, uuid);
+		AgentOption option = this.agentHandler.handleHeartBeat(template, host, agent, uuid);
+		
+		RESTAssert.assertNotNull(option.getUuid());
+		return option;
 	}
 	
 }

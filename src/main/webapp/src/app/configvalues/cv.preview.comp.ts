@@ -16,9 +16,9 @@ import { ServiceHttpService } from '../util/http/service.http.service';
 })
 export class ConfigValuePreview implements AfterViewInit {
 
-  public templates: Array<string> = [];
-  public services: Array<string> = [];
-  public modes: Array<string> = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
+  public templates: string[] = [];
+  public services: string[] = [];
+  public modes: string[] = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
   public preview: any;
 
   private _templateQuery: string;
@@ -53,11 +53,24 @@ export class ConfigValuePreview implements AfterViewInit {
 
   private loadPreview(): void {
     this.preview = null;
-    this.configHttp.getPreview(this.templateQuery, this.serviceQuery, this.modeQuery).subscribe(
+    this.configHttp.getPreview(this.templateQuery, this.serviceQuery, this.modeQuery).map((obj) => {
+      if (obj['@class']) {
+        delete obj['@class'];
+      }
+
+      if (obj instanceof Array) {
+        obj = obj.map((ele => {
+          delete ele['@class'];
+          return ele;
+        }));
+      }
+
+      return obj;
+    }).subscribe(
       (result) => {
         if (result instanceof Array) {
           this.preview = result;
-        }else if (result._body) {
+        } else if (result._body) {
           this.preview = result._body;
         }
       }

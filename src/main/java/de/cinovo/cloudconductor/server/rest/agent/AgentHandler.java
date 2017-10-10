@@ -287,6 +287,7 @@ public class AgentHandler {
 		}
 		AgentOption result = options.toApi();
 		result.setTemplateName(host.getTemplate().getName());
+		result.setUuid(uuid);
 		boolean onceExecuted = false;
 		if (options.getDoSshKeys() == TaskState.ONCE) {
 			if (host.getExecutedSSH()) {
@@ -315,8 +316,9 @@ public class AgentHandler {
 		if (onceExecuted) {
 			this.hostDAO.save(host);
 		}
+		
 		// TODO BROKEN DUE TO INTERFACE CHANGES
-		return null;
+		return result;
 	}
 	
 	private EAgent createNewAgent(String agentName, EAgentAuthToken authToken) {
