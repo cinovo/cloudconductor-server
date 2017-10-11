@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -10,13 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.ERepo;
+import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
@@ -46,6 +54,10 @@ public class TemplateImpl implements ITemplate {
 	private TemplateDetailWSHandler templateDetailWSHandler;
 	@Autowired
 	private SSHHandler sshKeyHandler;
+	@Autowired
+	private IServiceDAO serviceDAO;
+	@Autowired
+	private IPackageDAO pkgDAO;
 	
 	
 	@Override
@@ -154,5 +166,40 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotEmpty(templateName);
 		Set<SSHKey> keys = this.sshKeyHandler.getSSHKeyForTemplate(templateName);
 		return keys.toArray(new SSHKey[keys.size()]);
+	}
+	
+	@Override
+	@Transactional
+	public Service[] getServicesForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+		List<EPackageVersion> pvs = template.getPackageVersions();
+		
+		Set<Service> templateServices = new HashSet<>();
+		for (EService service : this.serviceDAO.findList()) {
+			for (EPackageVersion pv : pvs) {
+				if (service.getPackages().contains(pv.getPkg())) {
+					templateServices.add(service.toApi());
+				}
+			}
+		}
+		
+		return templateServices.toArray(new Service[templateServices.size()]);
+	}
+	
+	@Override
+	@Transactional
+	public Repo[] getReposForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+		
+		Set<Repo> repos = new HashSet<>();
+		for (ERepo r : template.getRepos()) {
+			repos.add(r.toApi());
+		}
+		
+		return repos.toArray(new Repo[repos.size()]);
 	}
 }

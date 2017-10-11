@@ -87,7 +87,7 @@ public class ConfigFileHandler extends DefaultRestHandler<ConfigFile> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<ConfigFile> getConfigFilesByTemplate(String template) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.FILE_CONFIG_FILES, template);
+		String path = this.pathGenerator(IRestPath.FILE_TEMPLATE, template);
 		return (Set<ConfigFile>) this._get(path, this.getSetType(ConfigFile.class));
 	}
 }

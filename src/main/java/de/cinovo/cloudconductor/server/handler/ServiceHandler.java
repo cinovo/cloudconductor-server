@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.model.Service;
@@ -32,6 +34,8 @@ import de.taimos.restutils.RESTAssert;
  */
 @org.springframework.stereotype.Service
 public class ServiceHandler {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceHandler.class);
 	
 	@Autowired
 	private IServiceDAO serviceDAO;
@@ -107,6 +111,7 @@ public class ServiceHandler {
 				}
 			}
 		}
+		ServiceHandler.LOGGER.info("Found " + templateServices.size() + " services for template '" + template.getName() + "' on  host '" + host.getName() + "'");
 		
 		Set<EService> missingServices = new HashSet<>(templateServices);
 		Set<EServiceState> nonUsedServiceStates = new HashSet<>(host.getServices());
@@ -124,6 +129,9 @@ public class ServiceHandler {
 				}
 			}
 		}
+		
+		ServiceHandler.LOGGER.info(missingServices.size() + " services are missing.");
+		ServiceHandler.LOGGER.info(nonUsedServiceStates.size() + " services are not used.");
 		
 		boolean changes = false;
 		// add new service states
