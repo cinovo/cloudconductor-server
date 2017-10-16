@@ -63,6 +63,7 @@ public class IndexTask implements IServerTasks {
 				this.repoDAO.save(repo);
 			}
 		}
+		IndexTask.logger.info("End of Index Task.");
 	}
 	
 	private boolean indexRepo(ERepoMirror mirror) {

@@ -154,7 +154,7 @@ public class PackageHandler {
 	
 	/**
 	 * @param version the version
-	 * @return true, if any template ueses the version
+	 * @return true, if any template uses the version
 	 */
 	public boolean checkIfInUse(EPackageVersion version) {
 		for (ETemplate t : this.templateDAO.findList()) {
@@ -167,7 +167,6 @@ public class PackageHandler {
 	
 	private EPackageVersion fillFields(EPackageVersion epv, PackageVersion pv) {
 		epv.setVersion(pv.getVersion());
-		epv.setName(pv.getName());
 		epv.setRepos(this.getRepos(pv.getRepos()));
 		epv.setDeprecated(false);
 		epv.setDependencies(new HashSet<EDependency>());

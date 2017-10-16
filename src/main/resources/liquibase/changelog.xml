@@ -892,4 +892,7 @@
     <changeSet id="29" author="mweise">
     	<addUniqueConstraint columnNames="name" constraintName="service_name_key" schemaName="cloudconductor" tableName="service"/>
     </changeSet>
+    <changeSet id="30" author="mweise">
+    	<addUniqueConstraint columnNames="packageid,version" constraintName="packageid_version" schemaName="cloudconductor" tableName="packageversion"/>
+    </changeSet>
 </databaseChangeLog>

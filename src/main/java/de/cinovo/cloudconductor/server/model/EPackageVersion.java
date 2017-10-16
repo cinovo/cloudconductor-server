@@ -17,13 +17,26 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -34,7 +47,7 @@ import java.util.Set;
 @Entity
 @Table(name = "packageversion", schema = "cloudconductor")
 public class EPackageVersion extends AModelApiConvertable<PackageVersion> implements IEntity<Long>, INamed {
-
+	
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private EPackage pkg;
@@ -42,22 +55,22 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	private Set<EDependency> dependencies = new HashSet<>();
 	private Boolean deprecated;
 	private Set<ERepo> repos = new HashSet<>();
-
-
+	
+	
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-
+	
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-
+	
 	/**
 	 * @return the package
 	 */
@@ -66,14 +79,14 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	public EPackage getPkg() {
 		return this.pkg;
 	}
-
+	
 	/**
 	 * @param pkg the package to set
 	 */
 	public void setPkg(EPackage pkg) {
 		this.pkg = pkg;
 	}
-
+	
 	/**
 	 * @return the version
 	 */
@@ -81,106 +94,108 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	public String getVersion() {
 		return this.version;
 	}
-
+	
 	/**
 	 * @param version the version to set
 	 */
 	public void setVersion(String version) {
 		this.version = version;
 	}
-
+	
 	/**
 	 * @return the dependencies
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
 	@JoinTable(name = "mappingrpmdep", schema = "cloudconductor", //
-			joinColumns = @JoinColumn(name = "rpmid"), inverseJoinColumns = @JoinColumn(name = "dependencyid"))
+	joinColumns = @JoinColumn(name = "rpmid"), inverseJoinColumns = @JoinColumn(name = "dependencyid"))
 	public Set<EDependency> getDependencies() {
 		return this.dependencies;
 	}
-
+	
 	/**
 	 * @param dependencies the dependencies to set
 	 */
 	public void setDependencies(Set<EDependency> dependencies) {
 		this.dependencies = dependencies;
 	}
-
+	
 	@Transient
 	@Override
 	public String getName() {
 		return this.getVersion();
 	}
-
+	
 	/**
 	 * @param name the name
 	 */
 	public void setName(String name) {
 		this.setVersion(name);
 	}
-
+	
 	/**
 	 * @return the deprecated
 	 */
 	public Boolean getDeprecated() {
 		return this.deprecated;
 	}
-
+	
 	/**
 	 * @param deprecated the deprecated to set
 	 */
 	public void setDeprecated(Boolean deprecated) {
 		this.deprecated = deprecated;
 	}
-
+	
+	@Transient
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof EPackageVersion)) {
+		if (!(obj instanceof EPackageVersion)) {
 			return false;
 		}
 		EPackageVersion other = (EPackageVersion) obj;
-		if((this.getId() != null) && (other.getId() != null)) {
+		if ((this.getId() != null) && (other.getId() != null)) {
 			return this.getId().equals(other.getId());
 		}
-		if(this.getVersion() == null) {
+		if (this.getVersion() == null) {
 			return false;
 		}
-		if(!this.getVersion().equals(other.getVersion())) {
+		if (!this.getVersion().equals(other.getVersion())) {
 			return false;
 		}
 		return this.getPkg().equals(other.getPkg());
 	}
-
+	
+	@Transient
 	@Override
 	public int hashCode() {
 		int val = (this.getVersion() == null) ? 0 : this.getVersion().hashCode();
 		int parent = (this.getPkg() == null) ? 0 : this.getPkg().hashCode();
 		return val * parent;
 	}
-
+	
 	/**
 	 * @return the repos
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
 	@JoinTable(name = "map_version_repo", schema = "cloudconductor", //
-			joinColumns = @JoinColumn(name = "versionid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
+	joinColumns = @JoinColumn(name = "versionid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
 	public Set<ERepo> getRepos() {
 		return this.repos;
 	}
-
+	
 	/**
 	 * @param repos the repos to set
 	 */
 	public void setRepos(Set<ERepo> repos) {
 		this.repos = repos;
 	}
-
+	
 	@Override
 	@Transient
 	public Class<PackageVersion> getApiClass() {
 		return PackageVersion.class;
 	}
-
+	
 	@Override
 	@Transient
 	public PackageVersion toApi() {

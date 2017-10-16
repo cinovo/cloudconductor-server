@@ -11,7 +11,6 @@ package de.cinovo.cloudconductor.server.repo.importer;
  * and limitations under the License. #L%
  */
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +18,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,8 @@ import de.taimos.restutils.RESTAssert;
  */
 @Service
 public class PackageImport implements IPackageImport {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PackageImport.class);
 	
 	@Autowired
 	private IPackageDAO packageDAO;
@@ -81,7 +84,6 @@ public class PackageImport implements IPackageImport {
 	@Transactional
 	public void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		HashMap<String, PackageVersion> provided = new HashMap<>();
 		
 		for (PackageVersion version : packageVersions) {
@@ -91,11 +93,16 @@ public class PackageImport implements IPackageImport {
 				epackage = this.packageHandler.createPackageFromVersion(version);
 			}
 			
+			String name = version.getName();
+			String ver = version.getVersion();
+			
 			// Check if we have this particular package version on record.
-			EPackageVersion eversion = this.versionDAO.find(version.getName(), version.getVersion());
+			EPackageVersion eversion = this.versionDAO.find(name, ver);
 			if (eversion == null) {
+				PackageImport.LOGGER.debug("Create new package version '" + name + "':'" + ver + "'");
 				this.packageHandler.createEntity(version, epackage);
 			} else {
+				PackageImport.LOGGER.debug("Update existing package version");
 				eversion.setPkg(epackage);
 				this.packageHandler.updateEntity(eversion, version);
 			}
@@ -106,9 +113,11 @@ public class PackageImport implements IPackageImport {
 		this.templateHandler.updateAllPackages();
 	}
 	
+	@Transactional
 	private void performDBClean(String repoName, HashMap<String, PackageVersion> provided) {
 		List<EPackage> inDB = this.packageDAO.findList();
 		List<EFile> cfgs = this.fileDAO.findList();
+		
 		for (EPackage pkg : inDB) {
 			if (provided.containsKey(pkg.getName())) {
 				// clean up version list
@@ -116,7 +125,7 @@ public class PackageImport implements IPackageImport {
 				continue;
 			}
 			
-			// check if it's used somewhere within configfiles
+			// check if it's used somewhere within configuration files
 			for (EFile cfg : cfgs) {
 				if ((cfg.getPkg() != null) && cfg.getPkg().equals(pkg)) {
 					cfg.setPkg(null);
@@ -138,12 +147,15 @@ public class PackageImport implements IPackageImport {
 	
 	private boolean cleanUpVersionUsage(PackageVersion newPackageVersion, Set<EPackageVersion> existing) {
 		if (existing == null) {
+			PackageImport.LOGGER.info("package '" + newPackageVersion.getName() + "' is empty! Clean up...");
 			return true;
 		}
+		
 		for (EPackageVersion dbVersion : existing) {
-			if ((newPackageVersion != null) && (newPackageVersion.getName() != null) && newPackageVersion.getName().equals(dbVersion.getName())) {
-				continue;
+			if ((newPackageVersion != null) && (newPackageVersion.getName() != null) && newPackageVersion.getVersion().equals(dbVersion.getName())) {
+				return false;
 			}
+			
 			// check if other mirrors are still out there
 			for (ERepo svg : dbVersion.getRepos()) {
 				if ((newPackageVersion != null) && newPackageVersion.getRepos().contains(svg.getName())) {
@@ -159,15 +171,16 @@ public class PackageImport implements IPackageImport {
 			}
 			
 			if (this.packageHandler.checkIfInUse(dbVersion)) {
+				PackageImport.LOGGER.info("'" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + " still in use, set to deprecated.");
 				dbVersion.setDeprecated(true);
 				this.versionDAO.save(dbVersion);
 				return false;
 			}
 			
 			// delete it
+			PackageImport.LOGGER.info("Delete '" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + "'");
 			this.versionDAO.deleteById(dbVersion.getId());
 			return true;
-			
 		}
 		return true;
 	}

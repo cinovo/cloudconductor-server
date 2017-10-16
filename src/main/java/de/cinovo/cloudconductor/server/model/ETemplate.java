@@ -148,7 +148,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	/**
 	 * @return the rpms
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
 	@JoinTable(name = "mappingrpmtemplate", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "rpmid"))
 	public List<EPackageVersion> getPackageVersions() {

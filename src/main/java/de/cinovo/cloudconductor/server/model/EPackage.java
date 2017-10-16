@@ -17,12 +17,21 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -89,7 +98,7 @@ public class EPackage extends AModelApiConvertable<Package> implements IEntity<L
 	/**
 	 * @return the versions
 	 */
-	@OneToMany(mappedBy = "pkg", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "pkg", fetch = FetchType.EAGER)
 	public Set<EPackageVersion> getVersions() {
 		return this.versions;
 	}
