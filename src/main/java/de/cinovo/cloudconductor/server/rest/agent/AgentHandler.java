@@ -18,6 +18,7 @@ import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.enums.TaskState;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
+import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.PackageState;
 import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
@@ -42,6 +43,9 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -78,6 +82,9 @@ public class AgentHandler {
 	private PackageStateChangeHandler psChangeHandler;
 	@Autowired
 	private ServiceHandler serviceHandler;
+	
+	@Autowired
+	private HostDetailWSHandler hostDetailWsHandler;
 	
 	
 	/**
@@ -190,6 +197,7 @@ public class AgentHandler {
 		Set<String> toRestart = new HashSet<>();
 		
 		Set<EServiceState> stateList = new HashSet<>(host.getServices());
+		
 		// agent sends running services
 		for (String sname : serviceState.getRunningServices()) {
 			for (EServiceState state : host.getServices()) {
@@ -200,6 +208,8 @@ public class AgentHandler {
 					case STARTING:
 						state.nextState();
 						this.serviceStateDAO.save(state);
+						// service is now started, inform user interface via WS
+						this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 						break;
 					case STOPPING:
 						toStop.add(state.getService().getInitScript());
@@ -221,6 +231,8 @@ public class AgentHandler {
 			}
 		}
 		
+		// remaining elements in stateList refer to services which are not running at the moment
+		
 		// agent sends stopped services
 		for (EServiceState state : stateList) {
 			switch (state.getState()) {
@@ -230,6 +242,8 @@ public class AgentHandler {
 			case STOPPING:
 				state.nextState();
 				this.serviceStateDAO.save(state);
+				// service is now stopped, inform user interface via WS
+				this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 				break;
 			case STARTED:
 				toStart.add(state.getService().getInitScript());
