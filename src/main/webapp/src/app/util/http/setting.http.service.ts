@@ -22,7 +22,7 @@ export interface Settings {
   indexScanTimerUnit?: string;
   pageRefreshTimer?: number;
   pageRefreshTimerUnit?: string;
-  disallowUninstall?: Array<String>;
+  disallowUninstall?: string[];
 }
 
 @Injectable()
@@ -48,6 +48,10 @@ export class SettingHttpService extends HTTPService {
     let res = this._put('', settings).share();
     res.subscribe(() => this.reloadSettings(), () => {});
     return res;
+  }
+
+  public getNoUninstall(): Observable<string[]> {
+    return this.getSettings().pluck('disallowUninstall');
   }
 
   private reloadSettings() {

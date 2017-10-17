@@ -1,10 +1,12 @@
-import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Subscription } from 'rxjs/Rx';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
-import { TemplateHttpService } from '../util/http/template.http.service';
 import { Host } from '../util/http/host.http.service';
+import { SettingHttpService } from '../util/http/setting.http.service';
 import { Sorter } from '../util/sorters.util';
+import { TemplateHttpService } from '../util/http/template.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -16,38 +18,50 @@ import { Sorter } from '../util/sorters.util';
   selector: 'host-packages',
   templateUrl: './host.package.comp.html'
 })
-export class HostPackages implements AfterViewInit {
+export class HostPackages implements OnInit, OnDestroy {
 
   @Input() obsHost: Observable<Host>;
   @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
-  private packages: Array<{name: string, hostVersion: string, templateVersion?: string, state?: string}> = [];
+  public packages: Array<{name: string, hostVersion: string, templateVersion?: string, state?: string}> = [];
   public packageChanges = false;
   public host: Host = {name: '', template: ''};
 
-  constructor(private templateHttp: TemplateHttpService) {
-  };
+  private hostSub: Subscription;
+  private uninstallDisallowed: string[] = [];
 
-  ngAfterViewInit(): void {
-    this.obsHost.subscribe(
+  constructor(private templateHttp: TemplateHttpService,
+              private settingHttp: SettingHttpService) { };
+
+  public ngOnInit(): void {
+    this.hostSub = this.obsHost.subscribe(
       (result) => {
         this.loadPackages(result);
         this.host = result;
-      }
-    );
+      });
+  }
+
+  public ngOnDestroy(): void {
+    if (this.hostSub) {
+      this.hostSub.unsubscribe();
+    }
   }
 
   private loadPackages(host: Host): void {
     this.packages = [];
     this.packageChanges = false;
+
     if (host && host.packages && Object.keys(host.packages).length > 0) {
-      this.templateHttp.getTemplate(host.template).subscribe(
-        (result) => {
+      this.settingHttp.getNoUninstall().flatMap((unDis: string[]) => {
+        this.uninstallDisallowed = unDis;
+        return this.templateHttp.getTemplate(host.template);
+      }).subscribe(
+        (template) => {
           for (let index of Object.keys(host.packages)) {
             let element = {
               name: index,
               hostVersion: host.packages[index],
-              templateVersion: result.versions[index],
+              templateVersion: template.versions[index],
               state: 'ok'
             };
             element = this.updateState(element);
@@ -55,12 +69,12 @@ export class HostPackages implements AfterViewInit {
           }
           this.packages.sort(Sorter.nameField);
         }
-      )
+      );
     }
   }
 
   private updateState(element: {name: string; hostVersion: string; templateVersion: string; state: string}) {
-    if (!element.templateVersion) {
+    if (!element.templateVersion && !(this.uninstallDisallowed.indexOf(element.name) > -1)) {
       element['state'] = 'uninstalling';
       this.packageChanges = true;
     } else if (!element.hostVersion) {
@@ -79,4 +93,5 @@ export class HostPackages implements AfterViewInit {
     }
     return element;
   }
+
 }

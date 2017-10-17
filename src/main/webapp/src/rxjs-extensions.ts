@@ -18,3 +18,4 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/share';
+import 'rxjs/add/operator/pluck';
