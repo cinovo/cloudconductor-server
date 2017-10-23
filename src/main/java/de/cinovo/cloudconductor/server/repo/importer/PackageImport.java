@@ -99,10 +99,10 @@ public class PackageImport implements IPackageImport {
 			// Check if we have this particular package version on record.
 			EPackageVersion eversion = this.versionDAO.find(name, ver);
 			if (eversion == null) {
-				PackageImport.LOGGER.debug("Create new package version '" + name + "':'" + ver + "'");
+				PackageImport.LOGGER.info("Create new package version '" + name + "':'" + ver + "'");
 				this.packageHandler.createEntity(version, epackage);
 			} else {
-				PackageImport.LOGGER.debug("Update existing package version");
+				PackageImport.LOGGER.debug("Update existing package version '" + name + "':'" + ver + "'");
 				eversion.setPkg(epackage);
 				this.packageHandler.updateEntity(eversion, version);
 			}
@@ -140,6 +140,7 @@ public class PackageImport implements IPackageImport {
 			packageVersion.getRepos().add(repoName);
 			boolean cleanUp = this.cleanUpVersionUsage(packageVersion, pkg.getVersions());
 			if (cleanUp) {
+				PackageImport.LOGGER.info("Clean up: Delete package '" + pkg.getName() + "'");
 				this.packageDAO.deleteById(pkg.getId());
 			}
 		}
@@ -147,7 +148,7 @@ public class PackageImport implements IPackageImport {
 	
 	private boolean cleanUpVersionUsage(PackageVersion newPackageVersion, Set<EPackageVersion> existing) {
 		if (existing == null) {
-			PackageImport.LOGGER.info("package '" + newPackageVersion.getName() + "' is empty! Clean up...");
+			PackageImport.LOGGER.info("Package '" + newPackageVersion.getName() + "' is empty! Clean up...");
 			return true;
 		}
 		
@@ -177,7 +178,7 @@ public class PackageImport implements IPackageImport {
 				return false;
 			}
 			
-			// delete it
+			// delete package version
 			PackageImport.LOGGER.info("Delete '" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + "'");
 			this.versionDAO.deleteById(dbVersion.getId());
 			return true;

@@ -33,7 +33,6 @@ import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.FileHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 
@@ -133,16 +132,9 @@ public class FileImpl implements IFile {
 	
 	@Override
 	@Transactional
-	public ConfigFile[] getConfigFiles(String template) {
-		RESTAssert.assertNotEmpty(template);
-		Set<ConfigFile> result = new HashSet<>();
-		ETemplate eTemplate = this.templateDAO.findByName(template);
-		if ((eTemplate != null) && (eTemplate.getConfigFiles() != null)) {
-			for (EFile m : eTemplate.getConfigFiles()) {
-				result.add(m.toApi());
-			}
-		}
-		return result.toArray(new ConfigFile[result.size()]);
+	public ConfigFile[] getConfigFiles(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		return this.fileHandler.getFilesForTemplate(templateName);
 	}
 	
 }

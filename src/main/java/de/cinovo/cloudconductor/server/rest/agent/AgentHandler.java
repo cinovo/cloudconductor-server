@@ -30,12 +30,12 @@ import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.handler.FileHandler;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.handler.ServiceHandler;
 import de.cinovo.cloudconductor.server.model.EAgent;
 import de.cinovo.cloudconductor.server.model.EAgentAuthToken;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
-import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageState;
@@ -82,6 +82,8 @@ public class AgentHandler {
 	private PackageStateChangeHandler psChangeHandler;
 	@Autowired
 	private ServiceHandler serviceHandler;
+	@Autowired
+	private FileHandler fileHandler;
 	
 	@Autowired
 	private HostDetailWSHandler hostDetailWsHandler;
@@ -256,8 +258,8 @@ public class AgentHandler {
 		}
 		
 		HashSet<ConfigFile> configFiles = new HashSet<>();
-		for (EFile file : template.getConfigFiles()) {
-			configFiles.add(file.toApi());
+		for (ConfigFile configFile : this.fileHandler.getFilesForTemplate(templateName)) {
+			configFiles.add(configFile);
 		}
 		
 		if (toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {

@@ -124,9 +124,11 @@ export class Sorter {
 
   private static versionToArray(version: string): Array<string> {
     let res = [];
-    for (let element of  version.split('.')) {
-      for (let sub of element.split('-')) {
-        res.push(sub);
+    if (version) {
+      for (let element of version.split('.')) {
+        for (let sub of element.split('-')) {
+          res.push(sub);
+        }
       }
     }
     return res;

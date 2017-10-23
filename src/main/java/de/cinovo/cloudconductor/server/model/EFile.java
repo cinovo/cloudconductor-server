@@ -62,7 +62,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private boolean isDirectory;
 	private String checksum;
 	private List<EService> dependentServices = new ArrayList<>();
-	private List<ETemplate> templates;
+	private List<ETemplate> templates = new ArrayList<>();
 	
 	private Long version;
 	private boolean deleted = false;
