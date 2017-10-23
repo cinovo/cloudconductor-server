@@ -33,7 +33,6 @@ import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ERepo;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -157,12 +156,7 @@ public class PackageImport implements IPackageImport {
 				return false;
 			}
 			
-			// check if other mirrors are still out there
-			for (ERepo svg : dbVersion.getRepos()) {
-				if ((newPackageVersion != null) && newPackageVersion.getRepos().contains(svg.getName())) {
-					dbVersion.getRepos().remove(svg);
-				}
-			}
+			// TODO test this with multiple yum repos
 			
 			if (dbVersion.getRepos().size() > 0) {
 				// keep it since other mirrors still reference it
@@ -172,7 +166,7 @@ public class PackageImport implements IPackageImport {
 			}
 			
 			if (this.packageHandler.checkIfInUse(dbVersion)) {
-				PackageImport.LOGGER.info("'" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + " still in use, set to deprecated.");
+				PackageImport.LOGGER.info("'" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + "' still in use, set to deprecated.");
 				dbVersion.setDeprecated(true);
 				this.versionDAO.save(dbVersion);
 				return false;

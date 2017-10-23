@@ -53,7 +53,7 @@ public class IndexTask implements IServerTasks {
 	
 	@Override
 	public void run() {
-		IndexTask.logger.info("Start Index Task!");
+		IndexTask.logger.debug("Start Index Task!");
 		List<ERepo> repos = this.repoDAO.findList();
 		for (ERepo repo : repos) {
 			ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
@@ -63,7 +63,7 @@ public class IndexTask implements IServerTasks {
 				this.repoDAO.save(repo);
 			}
 		}
-		IndexTask.logger.info("End of Index Task.");
+		IndexTask.logger.debug("End of Index Task.");
 	}
 	
 	private boolean indexRepo(ERepoMirror mirror) {
