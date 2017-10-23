@@ -330,6 +330,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		r.setTargetPath(this.targetPath);
 		r.setTemplate(this.isTemplate);
 		r.setVersion(this.version);
+		r.setDirectory(this.isDirectory);
 		return r;
 	}
 	

@@ -9,6 +9,8 @@ import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,8 @@ import de.taimos.restutils.RESTAssert;
  */
 @Service
 public class FileHandler {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
 	
 	@Autowired
 	private IFileDAO fileDAO;
@@ -143,7 +147,7 @@ public class FileHandler {
 			}
 			return sb.toString();
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			// should never happen, if it does-> leave checksum empty
+			FileHandler.LOGGER.error("Error creating checksum: ", e);
 		}
 		return null;
 	}

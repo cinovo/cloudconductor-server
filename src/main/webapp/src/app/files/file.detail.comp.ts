@@ -110,11 +110,11 @@ export class FileDetailComponent implements OnInit, OnDestroy {
         return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
       }
     }).subscribe(() => {
-      this.alertService.success(`Successfully saved ${this.formObj} '${updatedFile.name}'!`);
+      this.alertService.success(`Successfully saved ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
       this.router.navigate(['/files']);
     },
     (err) => {
-      this.alertService.danger(`Error saving ${this.formObj} '${updatedFile.name}'!`);
+      this.alertService.danger(`Error saving ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
       console.error(err);
     });
   }
