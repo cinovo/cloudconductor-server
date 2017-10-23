@@ -41,6 +41,7 @@ export class FileForm {
     file.group = this.group;
     file.fileMode = this.fileMode;
     file.isDirectory = (this.type === FileType.Directory);
+    file.isReloadable = (this.servicesReload.length > 0);
     file.isTemplate = this.isTemplate;
     file.dependentServices = this.dependentServices;
     file.templates = this.templates;
