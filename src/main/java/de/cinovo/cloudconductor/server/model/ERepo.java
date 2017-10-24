@@ -131,6 +131,29 @@ public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, 
 	}
 	
 	@Override
+	@Transient
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ERepo)) {
+			return false;
+		}
+		
+		ERepo other = (ERepo) obj;
+		if ((this.getId() != null) && this.getId().equals(other.getId()) && (this.getName() != null) && this.getName().equals(other.getName())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transient
+	public int hashCode() {
+		int val = (this.getName() == null) ? 0 : this.getName().hashCode();
+		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
+		return val * idVal;
+	}
+	
+	@Override
 	public Repo toApi() {
 		Repo repo = super.toApi();
 		repo.setMirrors(this.convertableModelToApiSet(this.repoMirrors));

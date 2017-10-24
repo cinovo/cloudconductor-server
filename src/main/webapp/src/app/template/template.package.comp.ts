@@ -40,7 +40,7 @@ export class TemplatePackages implements AfterViewInit {
   private template: Template = {name: '', description: ''};
   public packageVersions: Array<TemplatePackageVersion> = [];
 
-  private packageTree: PackageTree = {};
+  public packageTree: PackageTree = {};
   public newPackage: {pkg: string, version: string} = null;
 
   private _allSelected = false;
@@ -55,7 +55,6 @@ export class TemplatePackages implements AfterViewInit {
     });
   }
 
-
   private load(template: Template): void {
     if (!template) {
       return;
@@ -67,29 +66,31 @@ export class TemplatePackages implements AfterViewInit {
 
     if (this.template.repos) {
       for (let repo of this.template.repos) {
-        this.packageHttp.getVersionsOfRepo(repo).subscribe(
-          (result) => this.preparePVS(result)
-        );
+        this.packageHttp.getVersionsOfRepo(repo).subscribe((result) => {
+           this.preparePVS(result);
+        });
       }
     }
-
   }
 
   private loadVersions(): void {
     let oldPackageVersions = this.packageVersions;
     this.packageVersions = [];
     for (let key in this.template.versions) {
-      let selected = this.allSelected;
-      if (!selected) {
-        for (let old of oldPackageVersions) {
-          if (old.pkg === key) {
-            selected = old.selected;
-            break;
+      if (this.template.versions.hasOwnProperty(key)) {
+        let selected = this.allSelected;
+        if (!selected) {
+          for (let old of oldPackageVersions) {
+            if (old.pkg === key) {
+              selected = old.selected;
+              break;
+            }
           }
         }
+        this.packageVersions.push({pkg: key, version: this.template.versions[key], selected: selected});
       }
-      this.packageVersions.push({pkg: key, version: this.template.versions[key], selected: selected});
     }
+    /* tslint:disable:curly */
     this.packageVersions.sort((a: TemplatePackageVersion, b: TemplatePackageVersion) => {
       if (a.pkg < b.pkg) return -1;
       if (a.pkg > b.pkg) return 1;

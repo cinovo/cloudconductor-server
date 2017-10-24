@@ -167,7 +167,7 @@ public class PackageHandler {
 	
 	private EPackageVersion fillFields(EPackageVersion epv, PackageVersion pv) {
 		epv.setVersion(pv.getVersion());
-		epv.setRepos(this.getRepos(pv.getRepos()));
+		epv.getRepos().addAll(this.getRepos(pv.getRepos()));
 		epv.setDeprecated(false);
 		epv.setDependencies(new HashSet<EDependency>());
 		for (Dependency dep : pv.getDependencies()) {

@@ -1,13 +1,13 @@
-import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/Rx';
 
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
+import { Mode } from '../util/enums.util';
 import { TemplateHttpService, Template } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
-import { Mode } from '../util/enums.util';
+import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 
 /**
  * Copyright 2017 Cinovo AG<br>
