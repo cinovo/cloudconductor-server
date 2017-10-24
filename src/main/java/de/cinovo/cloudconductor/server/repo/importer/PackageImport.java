@@ -152,7 +152,7 @@ public class PackageImport implements IPackageImport {
 		}
 		
 		for (EPackageVersion dbVersion : existing) {
-			if ((newPackageVersion != null) && (newPackageVersion.getName() != null) && newPackageVersion.getVersion().equals(dbVersion.getName())) {
+			if ((newPackageVersion != null) && (newPackageVersion.getVersion() != null) && newPackageVersion.getVersion().equals(dbVersion.getName())) {
 				return false;
 			}
 			
@@ -173,7 +173,7 @@ public class PackageImport implements IPackageImport {
 			}
 			
 			// delete package version
-			PackageImport.LOGGER.info("Delete '" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + "'");
+			PackageImport.LOGGER.info("Delete '" + dbVersion.getPkg().getName() + "':'" + dbVersion.getVersion() + "' because it has no repo");
 			this.versionDAO.deleteById(dbVersion.getId());
 			return true;
 		}

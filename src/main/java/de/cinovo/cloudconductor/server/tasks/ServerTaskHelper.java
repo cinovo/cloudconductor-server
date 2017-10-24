@@ -1,11 +1,12 @@
 package de.cinovo.cloudconductor.server.tasks;
 
-import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
-import de.cinovo.cloudconductor.server.model.EServerOptions;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
+import de.cinovo.cloudconductor.server.model.EServerOptions;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -23,24 +24,25 @@ public class ServerTaskHelper {
 	@Autowired
 	private Set<IServerTasks> tasks;
 	
+	
 	/**
 	 *
 	 */
 	public void init() {
 		EServerOptions options = this.optionsDao.get();
-		for(IServerTasks task : tasks) {
+		for (IServerTasks task : this.tasks) {
 			task.create(options);
 		}
 	}
-
+	
 	/**
 	 * @param oldOptions the old options
 	 */
 	public void updateTasks(EServerOptions oldOptions) {
 		EServerOptions options = this.optionsDao.get();
-		for(IServerTasks task : tasks) {
+		for (IServerTasks task : this.tasks) {
 			task.update(oldOptions, options);
 		}
 	}
-
+	
 }

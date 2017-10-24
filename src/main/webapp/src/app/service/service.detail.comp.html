@@ -61,8 +61,9 @@
             {{package}}
           </td>
           <td>
-            <a [routerLink]="['/package', package]" [queryParams]="{'ret': 'serviceDetail', 'id': service.name}"><i
-              class="fa fa-external-link fa-fw"></i></a>
+            <a [routerLink]="['/package', package]" [queryParams]="{'ret': 'serviceDetail', 'id': service.name}" title="Show Package">
+              <i class="fa fa-external-link fa-fw"></i>
+            </a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
@@ -70,7 +71,8 @@
                [message]="'Are you sure you want to remove the following package link from the service: '+ package.name + '?'"
                placement="left"
                confirmButtonType="danger"
-               (confirm)="deletePackage(package)">
+               (confirm)="deletePackage(package)"
+               title="Delete package from service">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>
@@ -130,11 +132,9 @@
             {{ref.pkg}}
           </td>
           <td>
-            <a [routerLink]="['/template', ref.template]"><i
-              class="fa fa-external-link fa-fw"></i></a>
+            <a [routerLink]="['/template', ref.template]" title="Show Template"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
         </tr>
-
         </tbody>
       </table>
     </cc-panel>

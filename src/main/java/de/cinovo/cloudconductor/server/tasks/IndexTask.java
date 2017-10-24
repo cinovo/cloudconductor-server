@@ -57,7 +57,7 @@ public class IndexTask implements IServerTasks {
 		List<ERepo> repos = this.repoDAO.findList();
 		for (ERepo repo : repos) {
 			ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
-			IndexTask.logger.info("Index mirror '" + mirror.getPath() + "'...");
+			IndexTask.logger.info("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
 			if (this.indexRepo(mirror)) {
 				repo.setLastIndex(DateTime.now().getMillis());
 				this.repoDAO.save(repo);

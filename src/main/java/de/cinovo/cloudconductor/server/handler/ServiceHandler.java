@@ -130,8 +130,7 @@ public class ServiceHandler {
 			}
 		}
 		
-		ServiceHandler.LOGGER.info(missingServices.size() + " services are missing.");
-		ServiceHandler.LOGGER.info(nonUsedServiceStates.size() + " services are not used.");
+		ServiceHandler.LOGGER.info(missingServices.size() + " services missing and " + nonUsedServiceStates.size() + " unused.");
 		
 		boolean changes = false;
 		// add new service states

@@ -17,16 +17,26 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Host;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -228,30 +238,30 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public void setAgent(EAgent agent) {
 		this.agent = agent;
 	}
-
+	
 	@Override
 	@Transient
 	public Class<Host> getApiClass() {
 		return Host.class;
 	}
-
+	
 	@Override
 	@Transient
 	public Host toApi() {
 		Host api = super.toApi();
-
+		
 		Map<String, ServiceState> serviceMap = new HashMap<>();
-		for(EServiceState service : services) {
+		for (EServiceState service : this.services) {
 			serviceMap.put(service.getService().getName(), service.getState());
 		}
 		api.setServices(serviceMap);
-
+		
 		Map<String, String> packageMap = new HashMap<>();
-		for(EPackageState pkg : this.getPackages()) {
+		for (EPackageState pkg : this.getPackages()) {
 			packageMap.put(pkg.getVersion().getPkg().getName(), pkg.getVersion().getVersion());
 		}
 		api.setPackages(packageMap);
-
+		
 		return api;
 	}
 }

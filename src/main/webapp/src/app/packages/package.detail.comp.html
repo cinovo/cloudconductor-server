@@ -69,8 +69,7 @@
                 </ng-template>
               </td>
               <td>
-                <a [routerLink]="['/repo', repo.name]"><i
-                  class="fa fa-external-link fa-fw"></i></a>
+                <a [routerLink]="['/repo', repo.name]" title="Show Repo"><i class="fa fa-external-link fa-fw"></i></a>
               </td>
             </tr>
 
@@ -174,8 +173,7 @@
                 {{ref.version}}
               </td>
               <td>
-                <a [routerLink]="['/template', ref.template]"><i
-                  class="fa fa-external-link fa-fw"></i></a>
+                <a [routerLink]="['/template', ref.template]" title="Show Template"><i class="fa fa-external-link fa-fw"></i></a>
               </td>
             </tr>
 

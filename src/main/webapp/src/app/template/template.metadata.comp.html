@@ -53,7 +53,7 @@
               </td>
               <td width="30px">
                 <a [routerLink]="['/repo',repo]" [queryParams]="{'ret':'templateDetail', 'id':repo}"><i
-                  class="fa fa-external-link fa-fw" title="go to repo"></i></a>
+                  class="fa fa-external-link fa-fw" title="Show repo"></i></a>
               </td>
               <td width="30px">
                 <a href="javascript:void(0)" mwlConfirmationPopover
@@ -62,7 +62,7 @@
                    placement="left"
                    confirmButtonType="danger"
                    (confirm)="removeRepo(repo)">
-                  <i class="fa fa-trash-o fa-fw" title="remove"></i>
+                  <i class="fa fa-trash-o fa-fw" title="Remove repo from template"></i>
                 </a>
               </td>
             </tr>
