@@ -29,8 +29,14 @@
                 </span>
               </td>
               <td>{{pkg.name}}</td>
-              <td>{{pkg.hostVersion}}</td>
-              <td>{{pkg.templateVersion}}</td>
+              <td>
+                <span *ngIf="pkg.hostVersion">{{pkg.hostVersion}}</span>
+                <span *ngIf="!pkg.hostVersion">None</span>
+              </td>
+              <td>
+                <span *ngIf="pkg.templateVersion">{{pkg.templateVersion}}</span>
+                <span *ngIf="!pkg.templateVersion">None</span>
+              </td>
             </tr>
           </ng-template>
           </tbody>

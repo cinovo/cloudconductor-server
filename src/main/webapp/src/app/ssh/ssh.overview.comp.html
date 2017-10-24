@@ -1,10 +1,15 @@
 <cc-title title="SSH Keys" [titleIcon]="'fa-key'"></cc-title>
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div *ngIf="!showAddKey" class="col-md-8">
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
+      [dataField]="'name'">
+    </cc-filter>
+  </div>
+  <div *ngIf="!showAddKey" class="col-md-6">
     <button class="btn btn-success pull-right" role="button" (click)="goToAddKey()">
       <i class="fa fa-plus fa-fw"></i>
       Add SSH Key
@@ -15,7 +20,7 @@
 <div class="row" *ngIf="keysLoaded && sshKeys.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning">
-        There are currently no ssh keys known.
+        No SSH keys found
     </div>
   </div>
 </div>

@@ -85,6 +85,9 @@ export class MirrorEdit implements OnInit {
       secretKey: formValue.secretKey
     };
 
+    mirror.path = mirror.path.trim();
+    mirror.basePath = mirror.basePath.trim();
+
     this.doSave(mirror).subscribe(
       (result) => {
         if (this.returnToOverview) {

@@ -84,7 +84,7 @@ public class IndexTask implements IServerTasks {
 				return true;
 			}
 		} catch (Exception e) {
-			IndexTask.logger.error("Error indexing repo " + mirror.getPath(), e);
+			IndexTask.logger.error("Error indexing repo '" + mirror.getPath() + "'", e);
 		}
 		return false;
 	}

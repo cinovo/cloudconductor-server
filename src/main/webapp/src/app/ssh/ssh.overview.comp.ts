@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
-import { TemplateHttpService } from '../util/http/template.http.service';
+import { Template, TemplateHttpService } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { SSHKey } from '../util/http/sshkey.model';
@@ -19,16 +19,20 @@ import { SSHKey } from '../util/http/sshkey.model';
   templateUrl: './ssh.overview.comp.html',
   styleUrls: [ './ssh.overview.comp.scss']
 })
-export class SSHOverviewComponent implements OnInit {
+export class SSHOverviewComponent implements OnInit, OnDestroy {
 
   private _sshKeys: SSHKey[] = [];
   private _searchQuery: string = null;
+  private _searchTemplateQuery = '';
+  private _templatesSub: Subscription;
 
   public showAddKey = false;
   public keysLoaded = false;
 
   public newKey: Observable<SSHKey> = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
 
+  public templates$: Observable<Template[]>;
+  public templates: Template[];
   public templateNames: Observable<String[]>;
 
   private static filterSSHKeys(key: SSHKey, query: string): boolean {
@@ -38,14 +42,40 @@ export class SSHOverviewComponent implements OnInit {
     return true;
   }
 
+  private static filterTemplateData(key: SSHKey, templateQuery: string) {
+    if (Validator.notEmpty(templateQuery)) {
+      return key.templates.some(t => t === templateQuery);
+    }
+    return true;
+  }
+
   constructor(private alertService: AlertService,
               private sshKeyHttp: SSHKeyHttpService,
               private templateHttp: TemplateHttpService) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadData();
 
-    this.templateNames = this.templateHttp.getTemplateNames();
+    this.templates$ = this.templateHttp.getTemplates();
+    this.templateNames = this.templates$.map(ts => ts.map(t => t.name));
+    this._templatesSub = this.templates$.subscribe((templates) => {
+      this.templates = templates;
+    });
+  }
+
+  public ngOnDestroy(): void {
+    if (this._templatesSub) {
+      this._templatesSub.unsubscribe();
+    }
+  }
+
+  get searchTemplateQuery() {
+    return this._searchTemplateQuery;
+  }
+
+  set searchTemplateQuery(value: string) {
+    this._searchTemplateQuery = value;
+    this.loadData();
   }
 
   private loadData() {
@@ -71,6 +101,7 @@ export class SSHOverviewComponent implements OnInit {
   set sshKeys(value: SSHKey[]) {
     this._sshKeys = value
       .filter(sshKey => SSHOverviewComponent.filterSSHKeys(sshKey, this._searchQuery))
+      .filter(sshKey => SSHOverviewComponent.filterTemplateData(sshKey, this._searchTemplateQuery))
       .sort(Sorter.sshKey);
   }
 
