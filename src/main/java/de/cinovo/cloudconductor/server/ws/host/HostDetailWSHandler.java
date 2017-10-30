@@ -26,20 +26,20 @@ public class HostDetailWSHandler extends AParamWSHandler<AParamWSAdapter<Host>, 
 	@Override
 	public void addSocketAdapter(String hostName, AParamWSAdapter<Host> a) {
 		super.addSocketAdapter(hostName, a);
-		HostDetailWSHandler.LOGGER.info("Added WS for details of host {}", hostName);
+		HostDetailWSHandler.LOGGER.info("Added WS for details of host '{}'", hostName);
 	}
 	
 	@Override
 	public boolean removeSocketAdapter(String hostName, AParamWSAdapter<Host> a) {
 		boolean success = super.removeSocketAdapter(hostName, a);
-		HostDetailWSHandler.LOGGER.info("Removed WS for details of host {}", hostName);
+		HostDetailWSHandler.LOGGER.info("Removed WS for details of host '{}'", hostName);
 		return success;
 	}
 	
 	@Override
 	public void broadcastChange(String hostName, WSChangeEvent<Host> event) {
 		super.broadcastChange(hostName, event);
-		HostDetailWSHandler.LOGGER.info("Broadcasted change for host {}", hostName);
+		HostDetailWSHandler.LOGGER.info("Broadcasted change for host '{}'", hostName);
 	}
 	
 }

@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -25,6 +29,19 @@ public class HostHandler {
 	@Autowired
 	private IHostDAO hostDAO;
 	
+	@Autowired
+	private HostDetailWSHandler hostDetailWSHandler;
+	
+	
+	/**
+	 * @param template the template which hosts should be updated
+	 */
+	public void updateHostDetails(ETemplate template) {
+		this.logger.info("Update host details for " + template.getHosts().size() + " hosts");
+		for (EHost host : template.getHosts()) {
+			this.hostDetailWSHandler.broadcastChange(host.getName(), new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+		}
+	}
 	
 	/**
 	 * @param host the host to change the state of the service in

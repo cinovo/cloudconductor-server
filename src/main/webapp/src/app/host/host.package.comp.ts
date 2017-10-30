@@ -1,7 +1,6 @@
-import { Subscription } from 'rxjs/Rx';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { Host } from '../util/http/host.http.service';
 import { SettingHttpService } from '../util/http/setting.http.service';
@@ -34,10 +33,10 @@ export class HostPackages implements OnInit, OnDestroy {
               private settingHttp: SettingHttpService) { };
 
   public ngOnInit(): void {
-    this.hostSub = this.obsHost.subscribe(
-      (result) => {
-        this.loadPackages(result);
-        this.host = result;
+    this.hostSub = this.obsHost.subscribe((newHost) => {
+        console.log({newHost});
+        this.loadPackages(newHost);
+        this.host = newHost;
       });
   }
 
@@ -53,11 +52,14 @@ export class HostPackages implements OnInit, OnDestroy {
 
     if (host && host.packages && Object.keys(host.packages).length > 0) {
       this.settingHttp.getNoUninstall().flatMap((unDis: string[]) => {
+        // first retrieve list of packages which are not allowed to uninstall
         this.uninstallDisallowed = unDis;
+
+        // second retrieve list of packages which SHOULD be installed according to the template
         return this.templateHttp.getTemplate(host.template);
-      }).subscribe(
-        (template) => {
-          for (let index of Object.keys(host.packages)) {
+      }).subscribe((template) => {
+          const allPackages = Object.assign({}, template.versions, host.packages)
+          for (let index of Object.keys(allPackages)) {
             let element = {
               name: index,
               hostVersion: host.packages[index],

@@ -19,6 +19,7 @@ import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
@@ -58,6 +59,8 @@ public class TemplateImpl implements ITemplate {
 	private IServiceDAO serviceDAO;
 	@Autowired
 	private IPackageDAO pkgDAO;
+	@Autowired
+	private HostHandler hostHandler;
 	
 	
 	@Override
@@ -84,6 +87,7 @@ public class TemplateImpl implements ITemplate {
 			Template aTemplate = eTemplate.toApi();
 			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 			this.templateDetailWSHandler.broadcastChange(eTemplate.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+			this.hostHandler.updateHostDetails(eTemplate);
 		}
 	}
 	
@@ -118,6 +122,7 @@ public class TemplateImpl implements ITemplate {
 		Template aTemplate = template.toApi();
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
 	
@@ -133,6 +138,7 @@ public class TemplateImpl implements ITemplate {
 		Template aTemplate = template.toApi();
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
 		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
 	

@@ -130,6 +130,8 @@ public class AgentHandler {
 		this.packageStateHandler.removePackageState(host, leftPackages);
 		host = this.hostDAO.save(host);
 		
+		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+		
 		// check whether the host may updateEntity or has to wait for another host to finish updating
 		if (this.sendPackageChanges(template, host)) {
 			// Compute instruction lists (install/updateEntity/erase) from difference between packages actually installed packages that
