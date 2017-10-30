@@ -97,9 +97,11 @@ public class AgentHandler {
 	 */
 	@Transactional
 	public PackageStateChanges handlePackageState(String hostName, String templateName, PackageState rpmState) {
+		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
 		
+		RESTAssert.assertNotEmpty(hostName);
 		EHost host = this.hostDAO.findByName(hostName);
 		if (host == null) {
 			host = this.hostHandler.createNewHost(hostName, template);

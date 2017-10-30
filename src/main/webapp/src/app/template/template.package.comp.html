@@ -24,6 +24,7 @@
           </td>
           <td>
             {{pv.pkg}}
+            <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
             {{pv.version}}

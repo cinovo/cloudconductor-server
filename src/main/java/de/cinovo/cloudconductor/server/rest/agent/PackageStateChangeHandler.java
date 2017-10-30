@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ArrayListMultimap;
 
-import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
-import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
@@ -84,15 +82,7 @@ public class PackageStateChangeHandler {
 	
 	private ArrayListMultimap<PackageCommand, PackageVersion> fillPackageDiff(ArrayListMultimap<PackageCommand, PackageVersion> map, PackageCommand command, Collection<EPackageVersion> packageVersions) {
 		for (EPackageVersion pv : packageVersions) {
-			String rpmName = pv.getPkg().getName();
-			Set<Dependency> dep = new HashSet<>();
-			for (EDependency edep : pv.getDependencies()) {
-				dep.add(edep.toApi());
-			}
-			PackageVersion apiPV = new PackageVersion();
-			apiPV.setName(rpmName);
-			apiPV.setVersion(pv.getVersion());
-			apiPV.setDependencies(dep);
+			PackageVersion apiPV = pv.toApi();
 			map.put(command, apiPV);
 		}
 		return map;

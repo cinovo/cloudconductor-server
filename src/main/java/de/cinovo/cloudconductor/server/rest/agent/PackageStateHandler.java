@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IPackageStateDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.util.comparators.VersionStringComparator;
 
 /**
@@ -30,6 +32,9 @@ public class PackageStateHandler {
 	
 	@Autowired
 	private IPackageStateDAO packageStateDAO;
+	
+	@Autowired
+	private IRepoDAO repoDAO;
 	
 	
 	/**
@@ -87,7 +92,13 @@ public class PackageStateHandler {
 			rpm.setPkg(pkg);
 			rpm.setVersion(installedPV.getVersion());
 			rpm.setDeprecated(true);
-			// rpm.getRepos().add(this.repoDAO.findByName(irpm.getRepos()));
+			
+			for (String repoName : installedPV.getRepos()) {
+				ERepo repo = this.repoDAO.findByName(repoName);
+				if (repo != null) {
+					rpm.getRepos().add(repo);
+				}
+			}
 			rpm = this.versionDAO.save(rpm);
 		}
 		

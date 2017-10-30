@@ -202,6 +202,10 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 		PackageVersion packageVersion = super.toApi();
 		packageVersion.setName(this.pkg.getName());
 		packageVersion.setRepos(this.namedModelToStringSet(this.repos));
+		packageVersion.setDependencies(new HashSet<>());
+		for (EDependency dep : this.dependencies) {
+			packageVersion.getDependencies().add(dep.toApi());
+		}
 		return packageVersion;
 	}
 }
