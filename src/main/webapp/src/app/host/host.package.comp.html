@@ -20,11 +20,12 @@
           </thead>
           <tbody>
           <ng-template ngFor let-pkg [ngForOf]="packages">
-            <tr *ngIf="pkg.state != 'ok'">
+            <tr *ngIf="pkg.state !== 'ok'">
               <td>
                 <span class="label label-default label-as-badge"
-                      [class.label-success]="pkg.state == 'installing' || pkg.state == 'upgrading'"
-                      [class.label-danger]="pkg.state == 'uninstalling' || pkg.state == 'downgrading'">
+                      [class.label-success]="pkg.state === 'installing' || pkg.state === 'upgrading'"
+                      [class.label-danger]="pkg.state === 'uninstalling' || pkg.state === 'downgrading'">
+                  <i class="fa fa-refresh fa-spin fa-fw" *ngIf="pkg.state !== 'protected'"></i>
                   {{pkg.state}}
                 </span>
               </td>

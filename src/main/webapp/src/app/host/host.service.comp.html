@@ -10,7 +10,7 @@
                *ngIf="services && services.length > 0">
           <thead>
           <tr>
-            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
+            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all services"></th>
             <th>Service Name</th>
             <th>State</th>
             <th width="15px">Autostart</th>
@@ -22,7 +22,7 @@
           <tbody>
           <tr *ngFor="let service of services">
             <td>
-              <input type="checkbox" [(ngModel)]="service.selected" title="Service select">
+              <input type="checkbox" [(ngModel)]="service.selected" title="Select Service">
             </td>
             <td>{{service.name}}</td>
             <td>
@@ -30,6 +30,7 @@
                           [class.label-success]="isServiceStarted(service)"
                           [class.label-warning]="isServiceTransient(service)"
                           [class.label-danger]="isServiceStoped(service)">
+                      <i class="fa fa-refresh fa-spin fa-fw" *ngIf="isServiceTransient(service)"></i>
                       {{service.state}}
                     </span>
             </td>
