@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
@@ -208,4 +209,20 @@ public class TemplateImpl implements ITemplate {
 		
 		return repos.toArray(new Repo[repos.size()]);
 	}
+	
+	@Override
+	@Transactional
+	public PackageVersion[] getPackageVersionsForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+		
+		Set<PackageVersion> packageVersions = new HashSet<>();
+		for (EPackageVersion packageVersion : template.getPackageVersions()) {
+			packageVersions.add(packageVersion.toApi());
+		}
+		
+		return packageVersions.toArray(new PackageVersion[packageVersions.size()]);
+	}
+	
 }
