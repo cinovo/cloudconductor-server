@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.handler;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
+import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -28,6 +30,9 @@ public class HostHandler {
 	
 	@Autowired
 	private IHostDAO hostDAO;
+	
+	@Autowired
+	private HostsWSHandler hostWSHandler;
 	
 	@Autowired
 	private HostDetailWSHandler hostDetailWSHandler;
@@ -81,7 +86,10 @@ public class HostHandler {
 		EHost newHost = new EHost();
 		newHost.setName(hostName);
 		newHost.setTemplate(template);
+		newHost.setLastSeen((new DateTime()).getMillis());
 		newHost = this.hostDAO.save(newHost);
+		
+		this.hostWSHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.ADDED, newHost.toApi()));
 		return newHost;
 	}
 }

@@ -46,6 +46,7 @@ import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
+import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.restutils.RESTAssert;
 
 /**
@@ -85,6 +86,8 @@ public class AgentHandler {
 	@Autowired
 	private FileHandler fileHandler;
 	
+	@Autowired
+	private HostsWSHandler hostsWSHandler;
 	@Autowired
 	private HostDetailWSHandler hostDetailWsHandler;
 	
@@ -130,6 +133,7 @@ public class AgentHandler {
 		this.packageStateHandler.removePackageState(host, leftPackages);
 		host = this.hostDAO.save(host);
 		
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 		
 		// check whether the host may updateEntity or has to wait for another host to finish updating
@@ -294,10 +298,11 @@ public class AgentHandler {
 		if (host == null) {
 			host = this.hostHandler.createNewHost(hostName, this.templateDAO.findByName(templateName));
 		}
-		DateTime now = new DateTime();
-		host.setLastSeen(now.getMillis());
+		host.setLastSeen((new DateTime()).getMillis());
 		host.setAgent(agent);
 		host = this.hostDAO.save(host);
+		
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 		
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(host.getTemplate());
 		if (options == null) {
@@ -337,7 +342,6 @@ public class AgentHandler {
 			this.hostDAO.save(host);
 		}
 		
-		// TODO BROKEN DUE TO INTERFACE CHANGES
 		return result;
 	}
 	
