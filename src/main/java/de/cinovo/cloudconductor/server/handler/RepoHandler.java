@@ -170,7 +170,7 @@ public class RepoHandler {
 	 */
 	public void deleteEntity(ERepo erepo) throws WebApplicationException {
 		if (this.checkIfInUse(erepo)) {
-			throw new WebApplicationException(Status.CONFLICT);
+			throw new WebApplicationException("Repository '" + erepo.getName() + "' is still used by a template!", Status.CONFLICT);
 		}
 		if ((erepo.getRepoMirrors() != null) && !erepo.getRepoMirrors().isEmpty()) {
 			for (ERepoMirror mirror : erepo.getRepoMirrors()) {

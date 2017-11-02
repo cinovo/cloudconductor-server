@@ -142,9 +142,11 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   private loadData() {
-    this.hostHttp.getHosts().subscribe(
-      (result) => this.hosts = result
-    );
+    this.hostHttp.getHosts().subscribe((result) => {
+      this.hosts = result;
+    }, (err) => {
+      this.alertService.danger('Error loading hosts!');
+    });
 
     this.templateHttp.getTemplates().subscribe(
       (result) => this.templates = result

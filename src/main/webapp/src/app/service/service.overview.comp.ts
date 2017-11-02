@@ -38,9 +38,11 @@ export class ServiceOverview implements OnInit {
   }
 
   private loadData() {
-    this.serviceHttp.getServices().subscribe(
-      (result) => this.services = result
-    );
+    this.serviceHttp.getServices().subscribe((result) => {
+      this.services = result;
+    }, (err) => {
+      this.alerts.danger('Error loading services!');
+    });
   }
 
   get services(): Array<Service> {

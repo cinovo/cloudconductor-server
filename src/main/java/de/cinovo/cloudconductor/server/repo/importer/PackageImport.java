@@ -156,8 +156,6 @@ public class PackageImport implements IPackageImport {
 				return false;
 			}
 			
-			// TODO test this with multiple yum repos
-			
 			if (dbVersion.getRepos().size() > 0) {
 				// keep it since other mirrors still reference it
 				dbVersion.setDeprecated(false);

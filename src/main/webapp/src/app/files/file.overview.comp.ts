@@ -80,6 +80,8 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
                                   .filter(f => FileOverviewComponent.filterTemplateData(f, this._searchTemplateQuery))
                                   .sort(Sorter.files);
       this._filesSub.next(filteredFiles);
+    }, (err) => {
+      this.alertService.danger('Error loading files and directories!');
     });
 
     this.templateSub = this.templateHttp.getTemplates().subscribe((result) => {

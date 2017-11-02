@@ -1,6 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
@@ -29,8 +30,10 @@ export class RepoOverview implements AfterViewInit {
     return true;
   }
 
-  constructor(private repoHttp: RepoHttpService, private mirrorHttp: RepoMirrorHttpService,
-              private router: Router) {
+  constructor(private repoHttp: RepoHttpService,
+              private mirrorHttp: RepoMirrorHttpService,
+              private router: Router,
+              private alertService: AlertService) {
   };
 
   ngAfterViewInit(): void {
@@ -38,14 +41,22 @@ export class RepoOverview implements AfterViewInit {
   }
 
   private loadData() {
-    this.repoHttp.getRepos().subscribe(
-      (result) => this.repos = result
-    )
+    this.repoHttp.getRepos().subscribe((result) => {
+      this.repos = result;
+    }, (err) => {
+      this.alertService.danger('Error loading repositories!');
+      console.error(err);
+    });
   }
 
-  deleteRepo(name: string) {
-    if (Validator.notEmpty(name)) {
-      this.repoHttp.deleteRepo(name).subscribe((result) => this.loadData());
+  deleteRepo(repoName: string) {
+    if (Validator.notEmpty(repoName)) {
+      this.repoHttp.deleteRepo(repoName).subscribe((result) => {
+        this.loadData();
+      }, (err) => {
+        this.alertService.danger(`Error deleting repository '${repoName}'!`);
+        console.error({err});
+      });
     }
   }
 

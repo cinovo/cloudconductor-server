@@ -1,3 +1,4 @@
+import { AlertService } from '../util/alert/alert.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -39,16 +40,19 @@ export class PackageOverview implements OnInit {
 
   constructor(private packageHttp: PackageHttpService,
               private router: Router,
-              private wsService: WebSocketService) { };
+              private wsService: WebSocketService,
+              private alertService: AlertService) { };
 
   ngOnInit(): void {
     this.loadPackages();
   }
 
   private loadPackages() {
-    this.packageHttp.getPackages().subscribe(
-      (result) => this.packages = result
-    )
+    this.packageHttp.getPackages().subscribe((result) => {
+      this.packages = result;
+    }, (err) => {
+      this.alertService.danger('Error loading packages!');
+    });
   }
 
   get packages(): Array<Package> {

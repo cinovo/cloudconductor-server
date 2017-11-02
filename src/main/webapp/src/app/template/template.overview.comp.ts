@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
@@ -105,9 +105,11 @@ export class TemplateOverview implements OnInit, OnDestroy {
   }
 
   private loadTemplates(): void {
-    this.templateHttp.getTemplates().subscribe(
-      (result) => this.templates = result
-    )
+    this.templateHttp.getTemplates().subscribe((result) => {
+      this.templates = result;
+    }, (err) => {
+      this.alerts.danger('Error loading templates!');
+    });
   }
 
   protected countVersion(versions: any): number {
@@ -138,8 +140,10 @@ export class TemplateOverview implements OnInit, OnDestroy {
       () => {
         this._templates.splice(this._templates.indexOf(template), 1);
         this.alerts.success('The template ' + template.name + ' has been deleted.')
-      }
-    )
+      }, (err) => {
+        this.alerts.danger(`Error deleting template '${template.name}'!`);
+        console.error(err);
+      });
   }
 
   protected deleteAllTemplates(): void {

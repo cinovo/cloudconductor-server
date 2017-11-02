@@ -82,6 +82,8 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
     this.sshKeyHttp.getKeys().subscribe((keys) => {
       this.sshKeys = keys;
       this.keysLoaded = true;
+    }, (err) => {
+      this.alertService.danger('Error loading SSH keys!');
     });
   }
 
@@ -133,11 +135,12 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
 
   private createKey(newKey: SSHKey) {
     this.sshKeyHttp.updateKey(newKey).subscribe(() => {
-      this.alertService.success(`Successfully created new SSH key for '${newKey.owner}'!`)
+      this.alertService.success(`Successfully created new SSH key for '${newKey.owner}'!`);
       this.newKey = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
       this.loadData();
     },
     (err) => {
+      this.alertService.danger(`Error saving key for '${newKey.owner}'!`);
       console.error(err);
     });
 
