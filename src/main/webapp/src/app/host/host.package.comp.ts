@@ -7,6 +7,13 @@ import { SettingHttpService } from '../util/http/setting.http.service';
 import { Sorter } from '../util/sorters.util';
 import { TemplateHttpService } from '../util/http/template.http.service';
 
+interface PackageChange {
+  name: string;
+  hostVersion: string;
+  templateVersion: string;
+  state: string
+}
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -34,7 +41,6 @@ export class HostPackages implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.hostSub = this.obsHost.subscribe((newHost) => {
-        console.log({newHost});
         this.loadPackages(newHost);
         this.host = newHost;
       });
@@ -58,7 +64,7 @@ export class HostPackages implements OnInit, OnDestroy {
         // second retrieve list of packages which SHOULD be installed according to the template
         return this.templateHttp.getTemplate(host.template);
       }).subscribe((template) => {
-          const allPackages = Object.assign({}, template.versions, host.packages)
+          const allPackages = Object.assign({}, template.versions, host.packages);
           for (let index of Object.keys(allPackages)) {
             let element = {
               name: index,
@@ -75,21 +81,25 @@ export class HostPackages implements OnInit, OnDestroy {
     }
   }
 
-  private updateState(element: {name: string; hostVersion: string; templateVersion: string; state: string}) {
-    if (!element.templateVersion && !(this.uninstallDisallowed.indexOf(element.name) > -1)) {
-      element['state'] = 'uninstalling';
-      this.packageChanges = true;
+  private updateState(element: PackageChange) {
+    if (!element.templateVersion) {
+      if (!(this.uninstallDisallowed.indexOf(element.name) > -1)) {
+        element.state = 'uninstalling';
+        this.packageChanges = true;
+      } else {
+        element.state = 'protected';
+      }
     } else if (!element.hostVersion) {
-      element['state'] = 'installing';
+      element.state = 'installing';
       this.packageChanges = true;
     } else {
       let comp = Sorter.versionComp(element.hostVersion, element.templateVersion);
       if (comp < 0) {
-        element['state'] = 'upgrading';
+        element.state = 'upgrading';
         this.packageChanges = true;
       }
       if (comp > 0) {
-        element['state'] = 'downgrading';
+        element.state = 'downgrading';
         this.packageChanges = true;
       }
     }
