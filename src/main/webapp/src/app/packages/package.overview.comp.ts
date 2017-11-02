@@ -1,10 +1,10 @@
-import { AlertService } from '../util/alert/alert.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+import { AlertService } from '../util/alert/alert.service';
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
@@ -22,6 +22,8 @@ import { WebSocketService, Heartbeat } from '../util/websockets/websocket.servic
   templateUrl: './package.overview.comp.html'
 })
 export class PackageOverview implements OnInit {
+
+  public packagesLoaded = false;
 
   private _searchQuery: string = null;
 
@@ -50,8 +52,10 @@ export class PackageOverview implements OnInit {
   private loadPackages() {
     this.packageHttp.getPackages().subscribe((result) => {
       this.packages = result;
+      this.packagesLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading packages!');
+      this.packagesLoaded = true;
     });
   }
 

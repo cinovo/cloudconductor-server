@@ -24,6 +24,8 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
   private filesSub: Subscription;
   private templateSub: Subscription;
 
+  public filesLoaded = false;
+
   private static filterData(file: ConfigFile, query: string): boolean {
     if (Validator.notEmpty(query)) {
       return file.name.indexOf(query.trim()) >= 0;
@@ -80,8 +82,10 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
                                   .filter(f => FileOverviewComponent.filterTemplateData(f, this._searchTemplateQuery))
                                   .sort(Sorter.files);
       this._filesSub.next(filteredFiles);
+      this.filesLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading files and directories!');
+      this.filesLoaded = true;
     });
 
     this.templateSub = this.templateHttp.getTemplates().subscribe((result) => {

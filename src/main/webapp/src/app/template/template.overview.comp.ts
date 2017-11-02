@@ -33,6 +33,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
 
+  public templatesLoaded = false;
+
   private static filterData(template: Template, query: string): boolean {
     if (Validator.notEmpty(query)) {
       return template.name.indexOf(query.trim()) >= 0;
@@ -107,8 +109,10 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private loadTemplates(): void {
     this.templateHttp.getTemplates().subscribe((result) => {
       this.templates = result;
+      this.templatesLoaded = true;
     }, (err) => {
       this.alerts.danger('Error loading templates!');
+      this.templatesLoaded = true;
     });
   }
 

@@ -9,7 +9,16 @@
   </div>
 </div>
 
-<div class="row" *ngIf="repos.length < 1">
+<div class="row" *ngIf="!reposLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading repositories...
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="reposLoaded && repos.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no Repositories defined.<br/>
@@ -17,7 +26,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="row" *ngIf="repos && repos.length > 0">
   <div *ngFor="let repo of repos" class="col-md-12 col-lg-6">

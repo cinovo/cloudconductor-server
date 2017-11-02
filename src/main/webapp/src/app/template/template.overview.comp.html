@@ -11,7 +11,16 @@
   </div>
 </div>
 
-<div class="row" *ngIf="templates.length < 1">
+<div class="row" *ngIf="!templatesLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading templates...
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="templatesLoaded && templates.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no templates defined.<br/>

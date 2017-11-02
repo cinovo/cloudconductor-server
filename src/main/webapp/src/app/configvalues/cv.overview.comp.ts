@@ -27,6 +27,8 @@ export class ConfigValueOverview implements AfterViewInit {
   private _searchQuery: string = null;
   public template: string;
 
+  public kvLoaded = false;
+
   public tree: Array<ConfigValueTreeNode> = [];
 
   private static filterData(cf: ConfigValue, query: string): boolean {
@@ -134,9 +136,13 @@ export class ConfigValueOverview implements AfterViewInit {
     this.tree = this.tree.sort(Sorter.nameField);
   }
 
-
   private loadData() {
-    this.configHttp.getValues(this.template).subscribe((result) => this.generateTree(result));
+    this.configHttp.getValues(this.template).subscribe((result) => {
+      this.generateTree(result);
+      this.kvLoaded = true;
+    }, (err) => {
+      this.kvLoaded = true;
+    });
   }
 
   protected goToDetail(cv: ConfigValue) {

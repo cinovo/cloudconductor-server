@@ -21,7 +21,16 @@
   </div>
 </div>
 
-<div class="row" *ngIf="tree.length < 1">
+<div class="row" *ngIf="!kvLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading key-value-pairs...
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="kvLoaded && tree.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are no Key-Value-Pairs defined for this template.<br/>

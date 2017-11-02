@@ -31,6 +31,7 @@ export class HostOverview implements OnInit, OnDestroy {
 
   private autorefresh = false;
 
+  public hostsLoaded = false;
   public templates: Array<Template> = [];
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
@@ -144,8 +145,10 @@ export class HostOverview implements OnInit, OnDestroy {
   private loadData() {
     this.hostHttp.getHosts().subscribe((result) => {
       this.hosts = result;
+      this.hostsLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading hosts!');
+      this.hostsLoaded = true;
     });
 
     this.templateHttp.getTemplates().subscribe(

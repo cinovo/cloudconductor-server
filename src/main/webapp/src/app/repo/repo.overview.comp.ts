@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AlertService } from '../util/alert/alert.service';
@@ -17,11 +17,13 @@ import { RepoMirrorHttpService, RepoMirror } from '../util/http/repomirror.http.
   selector: 'repo-overview',
   templateUrl: './repo.overview.comp.html'
 })
-export class RepoOverview implements AfterViewInit {
+export class RepoOverview implements OnInit {
 
   private _searchQuery: string = null;
 
   private _repos: Array<Repo> = [];
+
+  public reposLoaded = false;
 
   private static filterData(repo: Repo, query: string) {
     if (Validator.notEmpty(query)) {
@@ -33,19 +35,20 @@ export class RepoOverview implements AfterViewInit {
   constructor(private repoHttp: RepoHttpService,
               private mirrorHttp: RepoMirrorHttpService,
               private router: Router,
-              private alertService: AlertService) {
-  };
+              private alertService: AlertService) { };
 
-  ngAfterViewInit(): void {
+  public ngOnInit(): void {
     this.loadData();
   }
 
   private loadData() {
     this.repoHttp.getRepos().subscribe((result) => {
       this.repos = result;
+      this.reposLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading repositories!');
       console.error(err);
+      this.reposLoaded = true;
     });
   }
 

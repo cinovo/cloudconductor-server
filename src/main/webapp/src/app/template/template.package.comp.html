@@ -41,14 +41,19 @@
           </td>
           <td *ngIf="isPkgLatest(pv)"></td>
           <td>
-            <a (click)="removePackage(pv)" role="button" title="Remove package from template">
+            <a role="button" mwlConfirmationPopover
+              title="Remove package from template"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="removePackage(pv)">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>
         </tr>
 
         <tr *ngIf="newPackage">
-
           <td colspan="6">
             <label class="control-label"><i class="fa fa-plus fa-fw"></i> Add a new package
               package</label>
@@ -90,10 +95,17 @@
       </table>
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
         <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
-          <i class="fa fa-refresh fa-fw"></i> Update selected
+          <i class="fa fa-refresh fa-fw"></i>
+          Update selected
         </button>
-        <button (click)="removeSelected()" class="btn btn-danger" [disabled]="!isPkgSelected()">
-          <i class="fa fa-trash-o fa-fw"></i> Remove selected
+        <button class="btn btn-danger" [disabled]="!isPkgSelected()" mwlConfirmationPopover
+          title="Remove packages from template"
+          [title]="'Please verify!'"
+          [message]="'Are you sure you want to remove all selected packages from the template?'"
+          confirmButtonType="danger"
+          (confirm)="removeSelected()">
+            <i class="fa fa-trash-o fa-fw"></i>
+            Remove selected
         </button>
       </div>
     </cc-panel>

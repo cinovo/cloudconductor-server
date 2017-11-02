@@ -10,7 +10,16 @@
   </div>
 </div>
 
-<div class="row" *ngIf="hosts.length < 1">
+<div class="row" *ngIf="!hostsLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading hosts...
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="hostsLoaded && hosts.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no Hosts known.<br/>

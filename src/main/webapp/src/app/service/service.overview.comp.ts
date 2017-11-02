@@ -22,6 +22,8 @@ export class ServiceOverview implements OnInit {
 
   private _services: Array<Service> = [];
 
+  public servicesLoaded = false;
+
   private static filterData(service: Service, query: string): boolean {
     if (Validator.notEmpty(query)) {
       return service.name.indexOf(query.trim()) >= 0;
@@ -40,8 +42,10 @@ export class ServiceOverview implements OnInit {
   private loadData() {
     this.serviceHttp.getServices().subscribe((result) => {
       this.services = result;
+      this.servicesLoaded = true;
     }, (err) => {
       this.alerts.danger('Error loading services!');
+      this.servicesLoaded = true;
     });
   }
 

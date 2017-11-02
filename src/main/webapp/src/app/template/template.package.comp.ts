@@ -226,11 +226,11 @@ export class TemplatePackages implements AfterViewInit {
           result.versions[this.newPackage.pkg] = this.newPackage.version;
           this.templateHttp.save(result).subscribe(
             () => {
-              this.alerts.success('Successfully added the package to the template.');
+              this.alerts.success(`Successfully added package '${this.newPackage.pkg}:${this.newPackage.version}' to the template.`);
               this.newPackage = null;
             },
             () => {
-              this.alerts.danger('Failed to add the new package to the template.');
+              this.alerts.danger(`Failed to add package '${this.newPackage.pkg}:${this.newPackage.version}' to the template!`);
               this.cancelAddPackage();
             }
           )
