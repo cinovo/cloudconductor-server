@@ -15,7 +15,6 @@ import { AlertService } from './alert.service';
 })
 export class AlertComponent {
 
-  constructor(public alertService: AlertService) {
-  };
+  constructor(public alertService: AlertService) { };
 
 }

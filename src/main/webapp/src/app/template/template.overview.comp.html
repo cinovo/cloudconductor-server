@@ -64,7 +64,7 @@
         <tbody>
         <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)"
             [class.warning]="template.hosts.length < 1"
-            [class.danger]="template.hosts.length < 1 &&countVersion(template.versions) < 1">
+            [class.danger]="template.hosts.length < 1 && countVersion(template.versions) < 1">
           <td>
             {{template.name}}
           </td>

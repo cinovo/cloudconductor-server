@@ -9,7 +9,7 @@ import { FileForm } from '../util/http/config-file.model';
 @Injectable()
 export class FileResolver implements Resolve<FileForm> {
 
-  constructor(private fileHttpService: FileHttpService) {}
+  constructor(private fileHttpService: FileHttpService) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<FileForm> {
     const fileName = route.paramMap.get('fileName');

@@ -21,7 +21,6 @@ import {
 })
 export class CCPanel implements AfterViewInit {
 
-
   @Input() icon: string;
   @Input() title: string;
 
@@ -35,8 +34,7 @@ export class CCPanel implements AfterViewInit {
 
   public showDropDown = false;
 
-  constructor() {
-  };
+  constructor() { };
 
   ngAfterViewInit(): void {
     if (!this.collapsable) {

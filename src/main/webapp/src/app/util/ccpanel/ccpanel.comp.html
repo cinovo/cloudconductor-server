@@ -1,20 +1,22 @@
 <div class="panel panel-default">
   <div class="panel-heading" (dblclick)="doHeaderDblClick()">
 
-    <i class="fa {{icon}} fa-fw"></i> {{title}}
+    <i class="fa {{icon}} fa-fw"></i>
+    {{title}}
 
     <div class="pull-right">
       <small *ngIf="subTitle && subTitleCondition">{{subTitle}}</small>
       <div class="btn-group" [class.hidden]="!showDropDown">
         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-          {{dropDownLabel}} <span class="caret"></span>
+          {{dropDownLabel}}
+          <span class="caret"></span>
         </button>
         <ul class="dropdown-menu pull-right" role="menu" #dropdownmenu>
           <ng-content select="[cc-panel-dropdown]"></ng-content>
         </ul>
       </div>
 
-      <button class="btn btn-default btn-xs" (click)="collapseBody = !collapseBody" role="button" *ngIf="collapsable">
+      <button class="btn btn-default btn-xs collapse-toggle" (click)="collapseBody = !collapseBody" role="button" *ngIf="collapsable">
         <i class="fa fa-compress fa-fw" *ngIf="!collapseBody" title="Hide content"></i>
         <i class="fa fa-expand fa-fw" *ngIf="collapseBody" title="Show content"></i>
       </button>

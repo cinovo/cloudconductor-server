@@ -19,14 +19,12 @@ export class TopNavComponent implements AfterViewInit, AfterContentInit {
   public settings: Settings = {};
   public currentTime: number = Date.now();
 
-  constructor(private settingHttp: SettingHttpService) {
-  };
+  constructor(private settingHttp: SettingHttpService) { };
 
   ngAfterViewInit(): void {
     this.settingHttp.settings.subscribe(
       (result) => this.settings = result
     );
-
   }
 
   ngAfterContentInit(): void {

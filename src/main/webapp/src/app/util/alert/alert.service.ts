@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
 
+type AlertType = 'success' | 'info' | 'warning' | 'danger';
+
+export interface Alert {
+  type: AlertType,
+  msg: string
+}
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -9,9 +16,9 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class AlertService {
 
-  private alerts: Array<{type: string, msg: string}> = [];
+  private alerts: Alert[] = [];
 
-  public getAlerts(): Array<{type: string, msg: string}> {
+  public getAlerts(): Alert[] {
     return this.alerts;
   }
 
@@ -19,12 +26,12 @@ export class AlertService {
     this.alerts[index] = null;
   }
 
-  private addAlert(type: string, msg: string): void {
+  private addAlert(type: AlertType, msg: string): void {
     let index = this.alerts.indexOf(null);
     if (index > -1) {
       this.alerts[index] = {type: type, msg: msg};
     }else {
-      index = this.alerts.push({type: type, msg: msg}) - 1;
+      index = this.alerts.push({type, msg}) - 1;
     }
     setTimeout(() => {this.closeAlert(index)}, 5000);
   }

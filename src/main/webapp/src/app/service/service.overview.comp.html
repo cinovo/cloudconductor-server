@@ -18,7 +18,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="servicesLoaded && services.length < 1">
+<div class="row" *ngIf="servicesLoaded && services && services.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no Services defined.<br/>
@@ -54,16 +54,19 @@
             {{service.description}}
           </td>
           <td class="text-center">
-            {{service.packages.length}}
+            <span *ngIf="service.packages">{{service.packages.length}}</span>
+            <span *ngIf="!service.packages">0</span>
           </td>
           <td>
-            <a title="Edit Service" [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+            <a class="edit" title="Edit Service" [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}">
+              <i class="fa fa-edit fa-fw"></i>
+            </a>
           </td>
           <td>
-            <a href="javascript:void(0)" mwlConfirmationPopover
+            <a class="delete" href="javascript:void(0)" mwlConfirmationPopover
               title="Delete Service"
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the following service: '+ service.name+'?'"
+              [message]="'Are you sure you want to delete the following service: ' + service.name + '?'"
               placement="left"
               confirmButtonType="danger"
               (confirm)="deleteService(service)">

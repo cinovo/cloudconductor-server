@@ -20,8 +20,7 @@ export class CCTitle {
 
   private autorefesh: boolean = false;
 
-  constructor() {
-  };
+  constructor() { };
 
   private reload(): void {
     this.onReload.emit(true);

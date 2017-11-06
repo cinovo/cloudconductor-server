@@ -7,8 +7,10 @@
           <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
         </a>
       </ng-template>
-      <i class="fa {{titleIcon}} fa-fw" *ngIf="titleIcon"></i> {{title}}
-      <h4 *ngIf="subtitle">{{subtitle}}
+      <i class="fa {{titleIcon}} fa-fw" *ngIf="titleIcon"></i>
+      {{title}}
+      <h4 *ngIf="subtitle">
+        {{subtitle}}
         <ng-content select="[cc-subtitle-addition]"></ng-content>
       </h4>
     </h1>

@@ -1,30 +1,31 @@
+import { Component, Input, EventEmitter, Output, AfterViewInit } from "@angular/core";
+
+type FilterMode = 'text' | 'select';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-import { Component, Input, EventEmitter, Output, AfterViewInit } from "@angular/core";
-
 @Component({
   selector: 'cc-filter',
   templateUrl: './ccfilter.comp.html'
 })
 export class CCFilter implements AfterViewInit {
 
-  @Input() label: string = "Search";
-  @Input() mode: "text" | "select" = "text";
-  @Input() data: Array<String> = [];
+  @Input() label: string = 'Search';
+  @Input() mode: FilterMode  = 'text';
+  @Input() data: Array<string> | Array<any> = [];
   @Input() dataField: string;
 
   @Input() selected: string;
 
   @Output() onQueryChange: EventEmitter<string> = new EventEmitter();
 
-  private _query: string ="";
+  private _query: string = '';
 
-  constructor() {
-  };
+  constructor() { };
 
   ngAfterViewInit(): void {
     if (this.selected != null) {
