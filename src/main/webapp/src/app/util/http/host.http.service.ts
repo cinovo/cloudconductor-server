@@ -46,7 +46,6 @@ export class HostHttpService extends HTTPService {
     return this._put(hostName + '/' + serviceName, ServiceState.STARTING);
   }
 
-
   public stopService(hostName: string, serviceName: string): Observable<boolean> {
     return this._put(hostName + '/' + serviceName, ServiceState.STOPPING);
   }

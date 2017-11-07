@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { CCDashboardPanel } from './app/util/ccdashboardpanel/ccdashboardpanel.comp';
 import { NotFoundComponent } from './app/not-found/not-found.comp';
 import { AuthTokenHttpService } from './app/util/http/authtoken.http.service';
 import { AuthTokenOverviewComponent } from './app/authtoken/authtoken.overview.comp';
@@ -81,6 +82,7 @@ import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
   declarations: [
     AppComponent,
     AlertComponent,
+    CCDashboardPanel,
     CCPanel,
     CCTitle,
     CCFilter,

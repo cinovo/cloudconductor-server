@@ -1,5 +1,57 @@
-<cc-title [title]="'Not yet implemented'"></cc-title>
+<cc-title [title]="'CloudConductor 3.0'"></cc-title>
 
-<p>
-  This part of CloudConductor 3.0 is not yet implemented
-</p>
+<div class="row">
+  <div class="col-lg-3 col-md-6">
+      <cc-dashboard-panel type="primary" icon="fa-laptop" number="1" label="Active Hosts" detailLink="host">
+      </cc-dashboard-panel>
+  </div>
+
+  <div class="col-lg-3 col-md-6">
+      <cc-dashboard-panel type="primary" icon="fa-institution" number="2" label="Templates" detailLink="template">
+      </cc-dashboard-panel>
+  </div>
+
+  <div class="col-lg-3 col-md-6">
+      <cc-dashboard-panel type="primary" icon="fa-flask" number="5" label="Services" detailLink="service">
+      </cc-dashboard-panel>
+  </div>
+
+  <div class="col-lg-3 col-md-6">
+    <cc-dashboard-panel type="primary" icon="fa-book" number="42" label="Available Packages" detailLink="package">
+    </cc-dashboard-panel>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <cc-panel [title]="'Host Status'" icon="fa-laptop">
+      <div cc-panel-body>
+        <p>Not implemented yet!</p>
+      </div>
+    </cc-panel>
+  </div>
+
+  <div class="col-md-4">
+    <cc-panel [title]="'Service Status'" icon="fa-flask">
+      <div cc-panel-body>
+        <p>Not implemented yet!</p>
+      </div>
+    </cc-panel>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <cc-panel [title]="'Pending Package Changes'" icon="fa-hourglass-2">
+      <div cc-panel-body><p>Not implemented yet!</p></div>
+    </cc-panel>
+  </div>
+
+  <div class="col-md-6">
+    <cc-panel [title]="'Repository Scans'" icon="fa-server">
+      <div cc-panel-body>
+        <p>Not implemented yet!</p>
+      </div>
+    </cc-panel>
+  </div>
+</div>
