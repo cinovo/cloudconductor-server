@@ -1,4 +1,4 @@
-<cc-title title="Configuration Key-Value-Pairs" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
+<cc-title [title]="'Configuration Key-Value-Pairs'" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
   <a cc-subtitle-addition *ngIf="template != 'GLOBAL'" href="javascript:void(0)" mwlConfirmationPopover
      [title]="'Please verify!'"
      [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>'+ template+'</strong>?'"

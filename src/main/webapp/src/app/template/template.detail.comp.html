@@ -1,5 +1,4 @@
-<cc-title title="Template Details" titleIcon="fa-institution" [subtitle]="currentTemplate.name" [reloadable]="true"
-          (onreload)="reloadTemplate()"></cc-title>
+<cc-title [title]="'Template Details'" titleIcon="fa-institution" [subtitle]="currentTemplate.name" [autorefresh]="true"></cc-title>
 
 <div class="row">
   <div class="col-md-8">
@@ -30,7 +29,7 @@
               <tr *ngFor="let host of currentTemplate.hosts">
                 <td>{{host}}</td>
                 <td>
-                  <a [routerLink]="['/host',host]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
+                  <a [routerLink]="['/host', host]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
                 </td>
               </tr>
               </tbody>

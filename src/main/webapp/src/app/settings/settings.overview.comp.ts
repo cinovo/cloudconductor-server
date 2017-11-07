@@ -22,15 +22,14 @@ export class SettingsOverview implements AfterViewInit {
   public settings: Settings = {};
 
   protected allPackages: Array<Package> = [];
-  private newPackage: string;
+  public newPackage: string;
   public showAddPackage = false;
 
   public noGtEqZero = Validator.noGtEqZero;
 
   constructor(private settingHttp: SettingHttpService,
               private packageHttp: PackageHttpService,
-              private alerts: AlertService) {
-  };
+              private alerts: AlertService) { };
 
   ngAfterViewInit(): void {
     this.loadSettings();
@@ -43,7 +42,6 @@ export class SettingsOverview implements AfterViewInit {
       }
     );
   }
-
 
   public saveSettings(): void {
     this.settingHttp.save(this.settings).subscribe(

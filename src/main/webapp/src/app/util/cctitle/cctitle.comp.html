@@ -1,11 +1,9 @@
 <div class="row">
   <div class="col-lg-12">
-
     <h1 class="page-header">
-      <ng-template [ngIf]="reloadable">
-        <a (click)="reload()" class="pull-right" role="button" title="Reload">
-          <i class="fa fa-refresh" aria-hidden="true" [class.fa-spin]="autorefesh"></i>
-        </a>
+      <ng-template [ngIf]="autorefresh">
+        <i title="Page is updated automatically" class="fa fa-refresh pull-right" aria-hidden="true"></i>
+        <span class="sr-only">Page is updated automatically</span>
       </ng-template>
       <i class="fa {{titleIcon}} fa-fw" *ngIf="titleIcon"></i>
       {{title}}

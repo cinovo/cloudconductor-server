@@ -1,5 +1,5 @@
-<cc-title title="Repository Details" titleIcon="fa-server" *ngIf="mode == 'edit'" [subtitle]="repo.name"></cc-title>
-<cc-title title="New Repository" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
+<cc-title [title]="'Repository Details'" titleIcon="fa-server" *ngIf="mode == 'edit'" [subtitle]="repo.name"></cc-title>
+<cc-title [title]="'New Repository'" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
 
 <div class="row">
   <div class="col-md-6">
@@ -76,7 +76,7 @@
 
   <div class="col-md-6">
     <cc-panel [title]="'Provided packages'" icon="fa-server"
-              subTitle="last selected: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm'}} Uhr"
+              subTitle="last selected: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm'}}"
               [subTitleCondition]="repo.lastIndex" [collapsable]="true">
       <div cc-panel-body>
         <div class="alert alert-warning" role="alert-1" *ngIf="packages.length < 1">
