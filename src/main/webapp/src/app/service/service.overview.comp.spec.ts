@@ -16,7 +16,7 @@ import { CCPanel } from "../util/ccpanel/ccpanel.comp";
 import { ConfirmationPopoverModule } from "angular-confirmation-popover";
 import { AlertStubService } from "../util/alert/alert-stub";
 import { ConfirmationPopoverStubDirective } from "../../testing/confirmation-popover-stub";
-import { checkLoadingMessage } from "../../testing/test-helper.spec";
+import { checkLoadingMessage } from "../../testing/test-helper";
 
 const expectedServices = [{ name: 'Testservice', packages: [] }];
 
