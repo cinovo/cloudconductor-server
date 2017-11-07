@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable, Subscription } from 'rxjs/Rx';
@@ -51,7 +52,8 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
 
   constructor(private alertService: AlertService,
               private sshKeyHttp: SSHKeyHttpService,
-              private templateHttp: TemplateHttpService) { }
+              private templateHttp: TemplateHttpService,
+              private router: Router) { }
 
   public ngOnInit(): void {
     this.loadData();
@@ -105,6 +107,10 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
       .filter(sshKey => SSHOverviewComponent.filterSSHKeys(sshKey, this._searchQuery))
       .filter(sshKey => SSHOverviewComponent.filterTemplateData(sshKey, this._searchTemplateQuery))
       .sort(Sorter.sshKey);
+  }
+
+  public gotoDetails(sshKey: SSHKey) {
+    this.router.navigate(['/ssh', sshKey.owner]);
   }
 
   public deleteKey(sshKey: SSHKey) {

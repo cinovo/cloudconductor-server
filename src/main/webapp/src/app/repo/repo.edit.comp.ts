@@ -60,6 +60,9 @@ export class RepoEdit implements OnInit {
         this.repo = result;
         this.repoForm.controls.name.setValue(result.name);
         this.loadPackages();
+      },
+      (err) => {
+        this.router.navigate(['/not-found', 'repo', repoName]);
       });
     }
   }

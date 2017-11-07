@@ -54,7 +54,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let file of files | async">
+          <tr *ngFor="let file of files | async" (dblclick)="gotoDetails(file)">
             <td>
               <i *ngIf="file.isDirectory" class="fa fa-folder-open fa-fw" title="Directory"></i>
               <i *ngIf="!file.isDirectory" class="fa fa-file-text fa-fw" title="File"></i>

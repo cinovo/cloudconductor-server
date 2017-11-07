@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BehaviorSubject, Subject, Subscription, Observable } from 'rxjs';
 
@@ -34,6 +34,7 @@ export class HostDetail implements OnInit, OnDestroy {
   private _heartBeatSub: Subscription;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private hostHttp: HostHttpService,
               private alerts: AlertService,
               private wsService: WebSocketService) { };
@@ -88,11 +89,8 @@ export class HostDetail implements OnInit, OnDestroy {
   private loadData(hostName: string): void {
     if (Validator.notEmpty(hostName) && hostName !== 'new') {
       this.hostHttp.getHost(hostName).subscribe(
-        (result) => {
-          this._behavHost.next(result);
-        },
-        (error) => this.alerts.danger('The host does not exist!')
-      )
+        (result) => this._behavHost.next(result),
+        (error) => this.router.navigate(['/not-found', 'host', hostName]));
     }
   }
 

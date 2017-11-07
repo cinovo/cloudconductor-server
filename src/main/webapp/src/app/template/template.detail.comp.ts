@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/Rx';
 
@@ -34,6 +34,7 @@ export class TemplateDetail implements OnInit, OnDestroy {
 
   constructor(private templateHttp: TemplateHttpService,
               private route: ActivatedRoute,
+              private router: Router,
               private wsService: WebSocketService) { };
 
   ngOnInit(): void {
@@ -81,12 +82,12 @@ export class TemplateDetail implements OnInit, OnDestroy {
 
   private loadTemplate(templateName: string) {
     if (Validator.notEmpty(templateName) && templateName !== 'new') {
-      this.templateHttp.getTemplate(templateName).subscribe(
-        (result) => {
+      this.templateHttp.getTemplate(templateName).subscribe((result) => {
           result.repos.sort();
           this._template.next(result);
-        }
-      )
+        },
+        (err) => this.router.navigate(['/not-found', 'template', templateName])
+      );
     }
   }
 

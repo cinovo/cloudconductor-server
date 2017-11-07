@@ -1,5 +1,5 @@
-import { Http, Response, Headers, RequestOptionsArgs } from "@angular/http";
-import { Observable } from "rxjs";
+import { Http, Response, Headers, RequestOptionsArgs } from '@angular/http';
+import { Observable } from 'rxjs';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -17,8 +17,17 @@ export abstract class HTTPService {
     {'Content-Type': 'application/json'}
   );
 
-  constructor(protected http: Http) {
+  private static handleError(error: Response | any) {
+    let errMsg: string;
+    if (error instanceof Response) {
+      errMsg = `${error.status} - ${error.statusText || ''} ${error}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    return Observable.throw(errMsg);
   }
+
+  constructor(protected http: Http) { }
 
   protected _get(pathUrl: string, additionalHeaders?: Headers): Observable<any> {
     let options: RequestOptionsArgs = {headers: this.headers};
@@ -76,13 +85,4 @@ export abstract class HTTPService {
     return this.apiURL + this.basePathURL + pathUrl;
   }
 
-  private static handleError(error: Response | any) {
-    let errMsg: string;
-    if (error instanceof Response) {
-      errMsg = `${error.status} - ${error.statusText || ''} ${error}`;
-    } else {
-      errMsg = error.message ? error.message : error.toString();
-    }
-    return Observable.throw(errMsg);
-  }
 }

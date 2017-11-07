@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { NotFoundComponent } from './app/not-found/not-found.comp';
 import { AuthTokenHttpService } from './app/util/http/authtoken.http.service';
 import { AuthTokenOverviewComponent } from './app/authtoken/authtoken.overview.comp';
 import { FooterComponent } from './app/footer/footer.comp';
@@ -114,7 +115,8 @@ import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
     FileOverviewComponent,
     FileDetailComponent,
     FooterComponent,
-    AuthTokenOverviewComponent
+    AuthTokenOverviewComponent,
+    NotFoundComponent
   ],
   providers: [
     AlertService,

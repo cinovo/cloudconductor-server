@@ -49,7 +49,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let sshKey of sshKeys">
+          <tr *ngFor="let sshKey of sshKeys" (dblclick)="gotoDetails(sshKey)">
             <td>{{sshKey.owner}}</td>
             <td>{{sshKey.username}}</td>
             <td>

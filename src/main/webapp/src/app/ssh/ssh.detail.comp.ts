@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject, Subject } from 'rxjs/Rx';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
@@ -21,10 +22,11 @@ import { TemplateHttpService } from '../util/http/template.http.service';
 export class SSHDetailComponent implements OnInit, OnDestroy {
 
   public owner: string;
-  public key: Observable<SSHKey>;
+  public key: Subject<SSHKey> = new BehaviorSubject<SSHKey>({ owner: '', username: '', key: '', templates: []});
   public templateNames: Observable<string[]>;
 
   private paraSub: Subscription;
+  private keySub: Subscription;
 
   constructor(private alertService: AlertService,
               private sshHttp: SSHKeyHttpService,
@@ -35,7 +37,11 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.paraSub = this.route.paramMap.subscribe((paraMap) => {
       this.owner = paraMap.get('owner');
-      this.key = this.sshHttp.getKey(this.owner);
+      this.keySub = this.sshHttp.getKey(this.owner).subscribe((key) => {
+          this.key.next(key)
+        },
+        (err) => this.router.navigate(['/not-found', 'ssh', this.owner])
+      );
     });
 
     this.templateNames = this.templateHttp.getTemplateNames();
@@ -45,15 +51,19 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
     if (this.paraSub) {
       this.paraSub.unsubscribe();
     }
+
+    if (this.keySub) {
+      this.keySub.unsubscribe();
+    }
   }
 
   public saveKey(newSSHKey: SSHKey) {
     this.sshHttp.updateKey(newSSHKey).subscribe(() => {
-      this.alertService.success(`SSH Key of ${newSSHKey.owner} was successfully updated!`);
+      this.alertService.success(`SSH Key of '${newSSHKey.owner}' was successfully updated!`);
       this.router.navigate(['/ssh']);
     },
     (err) => {
-      this.alertService.danger(`Error updating SSH key of ${newSSHKey.owner}!`);
+      this.alertService.danger(`Error updating SSH key of '${newSSHKey.owner}'!`);
       console.error(err);
     });
   }

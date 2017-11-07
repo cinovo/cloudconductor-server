@@ -52,7 +52,6 @@ public class SSHKeyImpl implements ISSHKey {
 	@Transactional
 	public SSHKey getKey(String owner) {
 		RESTAssert.assertNotEmpty(owner);
-		SSHKeyImpl.LOGGER.info("Retrive SSH key for '" + owner + "'...");
 		ESSHKey modelKey = this.sshDAO.findByName(owner);
 		RESTAssert.assertNotNull(modelKey, Response.Status.NOT_FOUND);
 		return modelKey.toApi();

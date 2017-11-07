@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
@@ -9,7 +9,8 @@ import { FileForm } from '../util/http/config-file.model';
 @Injectable()
 export class FileResolver implements Resolve<FileForm> {
 
-  constructor(private fileHttpService: FileHttpService) { }
+  constructor(private fileHttpService: FileHttpService,
+              private router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<FileForm> {
     const fileName = route.paramMap.get('fileName');
@@ -23,6 +24,9 @@ export class FileResolver implements Resolve<FileForm> {
           fileForm.fileContent = data;
           return fileForm;
         });
+      }).catch(err => {
+        this.router.navigate(['/not-found', 'file', fileName]);
+        return Observable.throw(err);
       });
     } else {
       return Observable.of(emptyFileForm);

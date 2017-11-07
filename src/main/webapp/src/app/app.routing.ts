@@ -1,4 +1,5 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { NotFoundComponent } from './not-found/not-found.comp';
 import { AuthTokenOverviewComponent } from './authtoken/authtoken.overview.comp';
 import { Routes } from '@angular/router';
 
@@ -70,6 +71,8 @@ export const APP_ROUTES: Routes = [
   {path: 'settings', component: SettingsOverview},
 
   {path: 'token', component: AuthTokenOverviewComponent},
+
+  {path: 'not-found/:type/:name', component: NotFoundComponent},
 
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];

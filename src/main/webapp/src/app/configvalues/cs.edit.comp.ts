@@ -66,7 +66,7 @@ export class ConfigValueEdit implements OnInit {
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
     this.serviceHttp.getServices().subscribe((result) => {
-        this.services = result.map((val) => {return val.name});
+        this.services = result.map((val) => val.name);
       });
   }
 

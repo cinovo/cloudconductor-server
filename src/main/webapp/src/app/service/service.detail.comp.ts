@@ -73,10 +73,7 @@ export class ServiceDetail implements OnInit {
             initScript: this.service.initScript,
             description: this.service.description});
         },
-        () => {
-          this.alerts.danger('The service you are looking for doesn\'t not exists.');
-          this.router.navigate(['service']);
-        }
+        (err) => this.router.navigate(['/not-found', 'service', serviceName])
       );
 
       this.serviceHttp.getServiceUsage(serviceName).subscribe(

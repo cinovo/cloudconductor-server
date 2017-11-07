@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,7 +55,7 @@ public class HostImpl implements IHost {
 	public Host getHost(String hostName) {
 		RESTAssert.assertNotEmpty(hostName);
 		EHost eHost = this.hostDAO.findByName(hostName);
-		RESTAssert.assertNotNull(eHost);
+		RESTAssert.assertNotNull(eHost, Response.Status.NOT_FOUND);
 		return eHost.toApi();
 	}
 	

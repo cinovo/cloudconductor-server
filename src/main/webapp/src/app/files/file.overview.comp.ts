@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
@@ -42,7 +43,8 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
 
   constructor(private alertService: AlertService,
               private fileHttp: FileHttpService,
-              private templateHttp: TemplateHttpService) { }
+              private templateHttp: TemplateHttpService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.reloadData();
@@ -91,6 +93,10 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
     this.templateSub = this.templateHttp.getTemplates().subscribe((result) => {
       this.templates = result;
     });
+  }
+
+  public gotoDetails(file: ConfigFile) {
+    this.router.navigate(['/files', file.name]);
   }
 
   public deleteFile(fileToDelete: ConfigFile) {

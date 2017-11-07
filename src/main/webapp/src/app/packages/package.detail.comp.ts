@@ -53,7 +53,6 @@ export class PackageDetail implements AfterViewInit {
     this.route.queryParams.subscribe((params) => {
       this.back = {ret: params['ret'], id: params['id']};
     });
-
   }
 
   private loadPackage(packageName: string) {
@@ -66,10 +65,7 @@ export class PackageDetail implements AfterViewInit {
           this.loadTemplateUsage();
           this.loadRepoProvision();
         },
-        () => {
-          this.alerts.danger('The package you are looking for doesn\'t not exists.');
-          this.router.navigate(['package']);
-        }
+        (err) => this.router.navigate(['/not-found', 'package', packageName])
       );
     }
   }
@@ -77,7 +73,7 @@ export class PackageDetail implements AfterViewInit {
   private loadAssociatedServices(): void {
     this.serviceHttp.getServices().subscribe(
       (result) => this.services = result.filter(service => this.serviceProvidedFilter(service)).sort(Sorter.service)
-    )
+    );
   }
 
   private loadTemplateUsage(): void {
