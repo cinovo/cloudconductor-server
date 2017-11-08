@@ -19,7 +19,9 @@ export interface Host {
   description?: string;
   lastSeen?: number;
   services?: {[serviceName: string]: ServiceState};
+  numberOfServices?: number;
   packages?: {[pkgName: string]: string};
+  numberOfPackages?: number;
 }
 
 @Injectable()

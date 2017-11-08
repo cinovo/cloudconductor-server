@@ -14,8 +14,7 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-8">
-    <button [routerLink]="['/config', template, '', 'new']" [queryParams]="{'ret':'ov'}"
-            class="btn btn-default pull-right">
+    <button [routerLink]="['/config', template, '', 'new']" class="btn btn-default pull-right">
       Add a new Key-Value-Pair
     </button>
   </div>
@@ -34,7 +33,7 @@
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are no Key-Value-Pairs defined for this template.<br/>
-      <a [routerLink]="['/config', template, '', 'new']" [queryParams]="{'ret':'ov'}">Add a new Key-Value-Pair</a>
+      <a [routerLink]="['/config', template, '', 'new']">Add a new Key-Value-Pair</a>
     </div>
   </div>
 </div>
@@ -43,7 +42,7 @@
   <div class="col-md-6" *ngFor="let service of tree">
     <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
       <li cc-panel-dropdown>
-        <a [routerLink]="['/config', template, service.name, 'new']" [queryParams]="{'ret':'ov'}">Add new Key-Value</a>
+        <a [routerLink]="['/config', template, service.name, 'new']">Add new Key-Value</a>
       </li>
       <li class="divider" cc-panel-dropdown></li>
       <li cc-panel-dropdown>

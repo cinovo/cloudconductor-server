@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -36,7 +37,8 @@ export class RepoEdit implements OnInit {
               private route: ActivatedRoute,
               private alerts: AlertService,
               private router: Router,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private location: Location) {
     this.repoForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]]
     });
@@ -79,11 +81,13 @@ export class RepoEdit implements OnInit {
     const repo = this.repo;
     repo.name = formValue.name;
     this.doSave(repo).subscribe(() => {
-      this.alerts.success(`Successfully saved repository '${repo.name}' ` );
-      if (this.mode === 'new') {
-        this.router.navigate(['repo']);
-      }
-    });
+        this.alerts.success(`Successfully saved repository '${repo.name}'.`);
+        if (this.mode === 'new') {
+          this.router.navigate(['repo']);
+        }
+      },
+      (error) => this.alerts.danger(`Error saving repository '${repo.name}'!`)
+    );
   }
 
   addMirror(): void {
@@ -119,7 +123,7 @@ export class RepoEdit implements OnInit {
 
   gotToPackage(pkg: PackageVersion): void {
     if (pkg) {
-      this.router.navigate(['/package', pkg.name], {queryParams: {ret: 'repoDetail', id: this.repo.name}})
+      this.router.navigate(['/package', pkg.name]);
     }
   }
 
@@ -133,4 +137,9 @@ export class RepoEdit implements OnInit {
 
     return call;
   }
+
+  public goBack(): void {
+    this.location.back();
+  }
+
 }

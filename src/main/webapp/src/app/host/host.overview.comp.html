@@ -32,7 +32,7 @@
     <cc-panel [icon]="'fa-laptop'" [title]="'All available hosts'">
 
       <li cc-panel-dropdown>
-        <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New host</a>
+        <a [routerLink]="['new']">New host</a>
       </li>
 
       <li class="divider" cc-panel-dropdown></li>
@@ -52,15 +52,16 @@
         <thead>
         <tr>
           <th class="sorting_asc">Name</th>
-          <th>Template</th>
+          <th class="sorting">Template</th>
+          <th class="sorting"># Services</th>
+          <th class="sorting"># Packages</th>
           <th class="sorting">last seen</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="isAlive(host)"
-            [class.danger]="!isAlive(host)">
+        <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="isAlive(host)" [class.danger]="!isAlive(host)">
           <td class="word-break" *ngIf="!host.agent">
             {{host.name}}
           </td>
@@ -71,11 +72,13 @@
           <td>
             {{host.template}}
           </td>
+          <td>{{host.numberOfServices}}</td>
+          <td>{{host.numberOfPackages}}</td>
           <td>
             {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
           </td>
           <td>
-            <a title="Edit Host" [routerLink]="[host.name]" [queryParams]="{'ret':'ov'}"><i class="fa fa-edit fa-fw"></i></a>
+            <a title="Edit Host" [routerLink]="[host.name]"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover

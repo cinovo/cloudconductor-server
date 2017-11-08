@@ -1,3 +1,4 @@
+import { Hosts } from '../util/hosts.util';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -95,7 +96,7 @@ export class HostOverview implements OnInit, OnDestroy {
             console.error('Unknown WS message type!');
             break;
         }
-        this._hosts = updatedHosts;
+        this.hosts = updatedHosts;
       });
 
       const iv = (this.wsService.timeout * 0.4);
@@ -119,7 +120,11 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   set hosts(value: Array<Host>) {
-    this._hosts = value
+    this._hosts = value.map(h => {
+        const nPackages = Object.keys(h.packages).length;
+        const nServices = Object.keys(h.services).length;
+        return {...h, numberOfPackages: nPackages, numberOfServices: nServices};
+      })
       .filter(repo => HostOverview.filterData(repo, this._searchQuery))
       .filter(repo => HostOverview.filterTemplateData(repo,  this._searchTemplateQuery))
       .sort(Sorter.host);
@@ -165,9 +170,8 @@ export class HostOverview implements OnInit, OnDestroy {
     this.router.navigate(['host', host.name]);
   }
 
-  protected isAlive(host: Host): boolean {
-    let now = new Date();
-    return now.getMilliseconds() - host.lastSeen < 30 * 1000 * 60;
+  public isAlive(host: Host): boolean {
+    return Hosts.isAlive(host);
   }
 
   public deleteHosts() {

@@ -22,7 +22,7 @@
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no Services defined.<br/>
-      <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">Add a new service</a>
+      <a [routerLink]="['new']">Add a new service</a>
     </div>
   </div>
 </div>
@@ -32,7 +32,7 @@
     <cc-panel [icon]="'fa-flask'" [title]="'All available services'">
 
       <li cc-panel-dropdown>
-        <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New service</a>
+        <a [routerLink]="['new']">New service</a>
       </li>
 
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
@@ -40,13 +40,16 @@
         <tr>
           <th class="sorting_asc" width="30%">Name</th>
           <th class="sorting">Description</th>
-          <th class="sorting"># Packages</th>
+          <th class="sorting"># Providing Packages</th>
+          <th class="sorting"># Templates</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)" [class.danger]="service.packages.length < 1">
+        <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)"
+          [class.warning]="!service.templates || service.templates.length < 1"
+          [class.danger]="!service.packages || service.packages.length < 1">
           <td>
             {{service.name}}
           </td>
@@ -58,9 +61,11 @@
             <span *ngIf="!service.packages">0</span>
           </td>
           <td>
-            <a class="edit" title="Edit Service" [routerLink]="[service.name]" [queryParams]="{'ret':'ov'}">
-              <i class="fa fa-edit fa-fw"></i>
-            </a>
+            <span *ngIf="service.templates">{{service.templates.length}}</span>
+            <span *ngIf="!service.templates">0</span>
+          </td>
+          <td>
+            <a class="edit" title="Edit Service" [routerLink]="[service.name]"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
             <a class="delete" href="javascript:void(0)" mwlConfirmationPopover

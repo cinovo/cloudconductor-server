@@ -102,8 +102,7 @@
                 {{service.name}}
               </td>
               <td>
-                <a [routerLink]="['/service', service.name]" [queryParams]="{'ret':'packageDetail', 'id':pkg.name}"><i
-                  class="fa fa-external-link fa-fw"></i></a>
+                <a [routerLink]="['/service', service.name]"><i class="fa fa-external-link fa-fw"></i></a>
               </td>
               <td>
                 <a href="javascript:void(0)" mwlConfirmationPopover
@@ -130,7 +129,7 @@
 
                 <div class="pull-right">
                   <button (click)="showAddService = false" class="btn btn-default">Cancel</button>
-                  <button [routerLink]="['/service', 'new']" [queryParams]="{'ret': 'packageDetail', 'id': pkg.name}" class="btn btn-info">
+                  <button [routerLink]="['/service', 'new']" class="btn btn-info">
                     Create a new Service
                   </button>
                   <button (click)="saveNewService()" class="btn btn-success" [disabled]="!newService">

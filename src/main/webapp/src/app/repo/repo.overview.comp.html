@@ -22,7 +22,7 @@
   <div class="col-sm-12">
     <div class="alert alert-warning" role="alert-1">
       There are currently no Repositories defined.<br/>
-      <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New Repository</a>
+      <a [routerLink]="['new']">New Repository</a>
     </div>
   </div>
 </div>
@@ -32,7 +32,7 @@
     <cc-panel [icon]="'fa-server'" [title]="repo.name" (onHeaderDblClick)="goToDetail(repo)">
 
       <li cc-panel-dropdown>
-        <a [routerLink]="[repo.id,'mirror','new']" [queryParams]="{'ret':'ov'}">New Repository</a>
+        <a [routerLink]="[repo.id, 'mirror', 'new']">New Repository</a>
       </li>
       <li class="divider" cc-panel-dropdown></li>
 
@@ -84,9 +84,7 @@
             <a title="Go to Mirror" target="_blank" [href]="mirror.path"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
-            <a title="Edit Mirror" [routerLink]="[repo.name,'mirror', mirror.id]" [queryParams]="{'ret':'ov'}">
-              <i class="fa fa-edit fa-fw"></i>
-            </a>
+            <a title="Edit Mirror" [routerLink]="[repo.name,'mirror', mirror.id]"><i class="fa fa-edit fa-fw"></i></a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover

@@ -62,7 +62,7 @@
         </cc-panel>
 
         <div class="pull-right">
-          <button type="button" class="btn btn-default" [routerLink]="['/repo']">
+          <button type="button" class="btn btn-default" (click)="goBack()">
             Back
           </button>
           <button type="submit" class="btn btn-info" [disabled]="repoForm.invalid">
@@ -91,6 +91,7 @@
             <th width="15px"></th>
           </tr>
           </thead>
+
           <tbody>
           <tr *ngFor="let pkg of packages" (dblclick)="gotToPackage(pkg)">
             <td>
@@ -100,11 +101,9 @@
               {{pkg.version}}
             </td>
             <td>
-              <a [routerLink]="['/package', pkg.name]" [queryParams]="{'ret':'repoDetail', 'id':repo.name}"><i
-                class="fa fa-external-link fa-fw"></i></a>
+              <a [routerLink]="['/package', pkg.name]"><i class="fa fa-external-link fa-fw"></i></a>
             </td>
           </tr>
-
           </tbody>
         </table>
       </div>

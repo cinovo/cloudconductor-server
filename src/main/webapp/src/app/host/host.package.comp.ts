@@ -83,6 +83,7 @@ export class HostPackages implements OnInit, OnDestroy {
 
   private updateState(element: PackageChange) {
     if (!element.templateVersion) {
+      // host has package which is not in template
       if (!(this.uninstallDisallowed.indexOf(element.name) > -1)) {
         element.state = 'uninstalling';
         this.packageChanges = true;
@@ -90,9 +91,13 @@ export class HostPackages implements OnInit, OnDestroy {
         element.state = 'protected';
       }
     } else if (!element.hostVersion) {
+
+      // package is missing on host
       element.state = 'installing';
       this.packageChanges = true;
     } else {
+
+      // package installed but versions differ between host and template
       let comp = Sorter.versionComp(element.hostVersion, element.templateVersion);
       if (comp < 0) {
         element.state = 'upgrading';

@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,7 +23,6 @@ import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 export class MirrorEdit implements OnInit {
 
   public mode = 'edit';
-  public returnToOverview = false;
   public repoName: string;
   public mirrorForm: FormGroup;
 
@@ -31,7 +31,8 @@ export class MirrorEdit implements OnInit {
               private route: ActivatedRoute,
               private alerts: AlertService,
               private router: Router,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private location: Location) {
     this.mirrorForm = fb.group({
       id: '',
       description: ['', [Validators.required, forbiddenNameValidator('new')]],
@@ -57,12 +58,6 @@ export class MirrorEdit implements OnInit {
       this.repoName = params['repoName'];
       this.mirrorForm.controls.repoName.setValue(this.repoName);
       this.loadMirror(params['mirrorid'], this.repoName);
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      if (params['ret'] && params['ret'] === 'ov') {
-        this.returnToOverview = true;
-      }
     });
   }
 
@@ -90,15 +85,10 @@ export class MirrorEdit implements OnInit {
 
     this.doSave(mirror).subscribe(
       (result) => {
-        if (this.returnToOverview) {
-          this.router.navigate(['repo']);
-        } else {
-          this.router.navigate(['repo', this.repoName])
-        }
+        this.alerts.success(`Successfully saved mirror '${mirror.description}'`);
+        this.location.back();
       },
-      (error) => {
-        this.alerts.danger('Failed to save the mirror');
-      }
+      (error) => this.alerts.danger('Failed to save the mirror')
     );
   }
 

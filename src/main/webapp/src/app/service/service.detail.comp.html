@@ -61,14 +61,14 @@
             {{package}}
           </td>
           <td>
-            <a [routerLink]="['/package', package]" [queryParams]="{'ret': 'serviceDetail', 'id': service.name}" title="Show Package">
+            <a [routerLink]="['/package', package]" title="Show Package">
               <i class="fa fa-external-link fa-fw"></i>
             </a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
                [title]="'Please verify!'"
-               [message]="'Are you sure you want to remove the following package link from the service: '+ package.name + '?'"
+               [message]="'Are you sure you want to remove the link to the package \'' + package + '\' from this service?'"
                placement="left"
                confirmButtonType="danger"
                (confirm)="deletePackage(package)"

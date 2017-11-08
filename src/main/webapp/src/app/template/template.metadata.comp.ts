@@ -38,8 +38,6 @@ export class TemplateMetaData implements OnInit {
   public newRepo = '';
   public showNewRepo = false;
 
-  private back: any;
-
   public templateForm: FormGroup;
   public copyFrom: FormControl;
 
@@ -70,10 +68,6 @@ export class TemplateMetaData implements OnInit {
       this.templateForm.controls.description.setValue(result.description);
       this.templateForm.controls.autoUpdate.setValue(result.autoUpdate);
       this.templateForm.controls.smoothUpdate.setValue(result.smoothUpdate);
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      this.back = {ret: params['ret'], id: params['id']};
     });
 
     this.settingsHttp.getSettings().subscribe(

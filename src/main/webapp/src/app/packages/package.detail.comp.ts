@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -34,24 +35,19 @@ export class PackageDetail implements AfterViewInit {
   public showAddService = false;
   private newService: Service;
 
-  private back: any;
-
   public repos: Array<RepoVersionTree> = [];
 
   constructor(private packageHttp: PackageHttpService,
               private serviceHttp: ServiceHttpService,
-              private route: ActivatedRoute, private router: Router,
-              private alerts: AlertService) {
-  };
+              private route: ActivatedRoute,
+              private router: Router,
+              private alerts: AlertService,
+              private location: Location) { };
 
 
   ngAfterViewInit(): void {
     this.route.params.subscribe((params) => {
       this.loadPackage(params['packageName']);
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      this.back = {ret: params['ret'], id: params['id']};
     });
   }
 
@@ -149,37 +145,19 @@ export class PackageDetail implements AfterViewInit {
   }
 
   public goToBack(): void {
-    if (this.back) {
-      if (this.back.ret === 'serviceDetail') {
-        this.gotoService(this.back.id, true);
-        return;
-      }
-      if (this.back.ret === 'repoDetail') {
-        this.gotoRepo(this.back.id, true);
-        return;
-      }
-    }
-    this.router.navigate(['package']);
+    this.location.back();
   }
 
   protected gotoTemplate(templateName: string) {
     this.router.navigate(['template', templateName]);
   }
 
-  private gotoService(service: string, back?: boolean): void {
-    if (back) {
-      this.router.navigate(['service', service]);
-    }else {
-      this.router.navigate(['service', service], {queryParams: {ret: 'packageDetail', id: this.pkg.name}});
-    }
+  private gotoService(service: string): void {
+    this.router.navigate(['service', service]);
   }
 
-  private gotoRepo(repo: string, back?: boolean) {
-    if (back) {
-      this.router.navigate(['repo', repo]);
-    }else {
-      this.router.navigate(['repo', repo], {queryParams: {ret: 'packageDetail', id: this.pkg.name}});
-    }
+  private gotoRepo(repo: string) {
+    this.router.navigate(['repo', repo]);
   }
 
   protected goToAddService(): void {

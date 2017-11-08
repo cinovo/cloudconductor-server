@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -39,7 +40,8 @@ export class ServiceDetail implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private alerts: AlertService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private location: Location) {
     this.serviceForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]],
       initScript: ['', Validators.required],
@@ -56,9 +58,6 @@ export class ServiceDetail implements OnInit {
       } else {
         this.loadData(serviceName);
       }
-    });
-    this.route.queryParams.subscribe((params) => {
-      this.back = {ret: params['ret'], id: params['id']};
     });
   }
 
@@ -174,21 +173,11 @@ export class ServiceDetail implements OnInit {
   }
 
   public goToBack(): void {
-    if (this.back) {
-      if (this.back.ret === 'packageDetail') {
-        this.gotoPackage(this.back.id, true);
-        return;
-      }
-    }
-    this.router.navigate(['service']);
+    this.location.back();
   }
 
-  private gotoPackage(pkgName: string, back?: boolean) {
-    if (back) {
-      this.router.navigate(['package', pkgName]);
-    } else {
-      this.router.navigate(['package', pkgName], {queryParams: {ret: 'serviceDetail', id: this.service.name}});
-    }
+  private gotoPackage(pkgName: string) {
+    this.router.navigate(['package', pkgName]);
   }
 
   protected gotoTemplate(templateName: string) {

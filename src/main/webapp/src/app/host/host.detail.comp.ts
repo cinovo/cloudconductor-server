@@ -26,7 +26,6 @@ export class HostDetail implements OnInit, OnDestroy {
   public obsHost: Observable<Host> = this._behavHost.asObservable();
   public host: Host = {name: '', template: ''};
 
-  private back: {ret: string; id: string};
   private autorefresh = false;
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
@@ -46,13 +45,7 @@ export class HostDetail implements OnInit, OnDestroy {
       this.loadData(hostName);
       this.connectWS(hostName);
     });
-    this.obsHost.subscribe(
-      (result) => this.host = result
-    );
-
-    this.route.queryParams.subscribe((params) => {
-      this.back = {ret: params['ret'], id: params['id']};
-    });
+    this.obsHost.subscribe((result) => this.host = result);
   }
 
   private connectWS(hostName: string): void {

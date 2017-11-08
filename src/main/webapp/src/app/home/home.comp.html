@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-lg-3 col-md-6">
-      <cc-dashboard-panel type="primary" icon="fa-laptop" number="1" label="Active Hosts" detailLink="host">
+      <cc-dashboard-panel type="primary" icon="fa-laptop" [number]="(hosts$ | async)?.length" label="Active Hosts" detailLink="host">
       </cc-dashboard-panel>
   </div>
 
@@ -12,7 +12,7 @@
   </div>
 
   <div class="col-lg-3 col-md-6">
-      <cc-dashboard-panel type="primary" icon="fa-flask" number="5" label="Services" detailLink="service">
+      <cc-dashboard-panel type="primary" icon="fa-flask" [number]="(services$ | async)?.length" label="Services" detailLink="service">
       </cc-dashboard-panel>
   </div>
 
@@ -25,17 +25,63 @@
 <div class="row">
   <div class="col-md-8">
     <cc-panel [title]="'Host Status'" icon="fa-laptop">
-      <div cc-panel-body>
-        <p>Not implemented yet!</p>
-      </div>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+        <tr>
+          <th class="sorting">Name</th>
+          <th class="sorting">Template</th>
+          <th class="sorting_asc">Last Seen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let host of (hosts$ | async)" (dblclick)="gotoHost(host)" [class.success]="isAlive(host)" [class.danger]="!isAlive(host)">
+          <td class="word-break" *ngIf="!host.agent">
+            {{host.name}}
+          </td>
+          <td class="word-break" *ngIf="host.agent">
+            {{host.agent}}
+            <small> - {{host.name}}</small>
+          </td>
+          <td>
+            {{host.template}}
+          </td>
+          <td>
+            {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </cc-panel>
   </div>
 
   <div class="col-md-4">
     <cc-panel [title]="'Service Status'" icon="fa-flask">
-      <div cc-panel-body>
-        <p>Not implemented yet!</p>
-      </div>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+          <thead>
+          <tr>
+            <th class="sorting_asc" width="30%">Name</th>
+            <th class="sorting"># Providing Packages</th>
+            <th class="sorting"># Templates</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let service of (services$ | async)" (dblclick)="gotoService(service)"
+            [class.warning]="!service.templates || service.templates.length < 1"
+            [class.danger]="!service.packages || service.packages.length < 1">
+            <td>
+              {{service.name}}
+            </td>
+            <td>
+              <span *ngIf="service.packages">{{service.packages.length}}</span>
+              <span *ngIf="!service.packages">0</span>
+            </td>
+            <td>
+              <span *ngIf="service.templates">{{service.templates.length}}</span>
+              <span *ngIf="!service.templates">0</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
     </cc-panel>
   </div>
 </div>
@@ -49,9 +95,27 @@
 
   <div class="col-md-6">
     <cc-panel [title]="'Repository Scans'" icon="fa-server">
-      <div cc-panel-body>
-        <p>Not implemented yet!</p>
-      </div>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+          <thead>
+          <tr>
+            <th class="sorting" width="30%">Name</th>
+            <th class="sorting_asc">Last Indexed</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let repo of (repos$ | async)" (dblclick)="gotoRepo(repo)"
+            [class.success]="!scanIsDue(repo)"
+            [class.warning]="scanIsDue(repo)"
+            [class.danger]="scanIsPastDue(repo)">
+            <td>
+              {{repo.name}}
+            </td>
+            <td>
+              {{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}
+            </td>
+          </tr>
+          </tbody>
+        </table>
     </cc-panel>
   </div>
 </div>
