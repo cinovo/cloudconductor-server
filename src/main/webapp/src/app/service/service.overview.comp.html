@@ -35,12 +35,12 @@
         <a [routerLink]="['new']" [queryParams]="{'ret':'ov'}">New service</a>
       </li>
 
-      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th width="30%">Name</th>
-          <th>Description</th>
-          <th class="text-center"># Packages</th>
+          <th class="sorting_asc" width="30%">Name</th>
+          <th class="sorting">Description</th>
+          <th class="sorting"># Packages</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
@@ -53,7 +53,7 @@
           <td class="word-break">
             {{service.description}}
           </td>
-          <td class="text-center">
+          <td>
             <span *ngIf="service.packages">{{service.packages.length}}</span>
             <span *ngIf="!service.packages">0</span>
           </td>

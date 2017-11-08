@@ -8,6 +8,7 @@ import { Template } from './http/template.http.service';
 import { Host } from './http/host.http.service';
 import { ConfigFile } from './http/config-file.model';
 import { SSHKey } from './http/sshkey.model';
+import { TemplatePackageVersion } from '../template/template.package.comp';
 
 /* tslint:disable:curly */
 
@@ -61,6 +62,12 @@ export class Sorter {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
     return Sorter.versionComp(a.version, b.version);
+  }
+
+  public static templatePackageVersion(a: TemplatePackageVersion, b: TemplatePackageVersion) {
+    if (a.pkg < b.pkg) return -1;
+    if (a.pkg > b.pkg) return 1;
+    return 0;
   }
 
   public static stringReverse(a: string, b: string): number {

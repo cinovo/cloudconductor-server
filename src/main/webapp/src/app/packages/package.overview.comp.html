@@ -26,12 +26,12 @@
 <div class="row" *ngIf="packages && packages.length > 0">
   <div class="col-md-12">
     <cc-panel [title]="'All available packages'" icon="fa-book">
-      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th width="30%">Package-Name</th>
-          <th># Versions</th>
-          <th>Latest version</th>
+          <th class="sorting_asc" width="30%">Package-Name</th>
+          <th class="sorting"># Versions</th>
+          <th class="sorting">Latest version</th>
           <th width="15px"></th>
         </tr>
         </thead>

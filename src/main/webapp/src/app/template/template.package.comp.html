@@ -1,13 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     <cc-panel [title]="'Installed packages'" icon="fa-book">
-      <table class=" table-condensed table-responsive table table-striped table-hover" cc-panel-body>
+      <table class="table-condensed table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
           <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
-          <th>Package-Name</th>
-          <th>Installed version</th>
-          <th>Latest version</th>
+          <th class="sorting_asc">Package-Name</th>
+          <th class="sorting">Installed version</th>
+          <th class="sorting">Latest version</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>

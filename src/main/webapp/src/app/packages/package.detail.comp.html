@@ -43,10 +43,10 @@
     <div class="row">
       <div class="col-md-12">
         <cc-panel [title]="'Repositories providing the package'" icon="fa-server" [collapsable]="true">
-          <table class="table-responsive table table-striped table-hover" cc-panel-body>
+          <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
             <thead>
             <tr>
-              <th width="30%">Name</th>
+              <th class="sorting_asc" width="30%">Name</th>
               <th>Provided versions</th>
               <th width="15px"></th>
             </tr>
@@ -83,11 +83,10 @@
     <div class="row">
       <div class="col-md-12">
         <cc-panel [title]="'Associated services'" icon="fa-flask" [collapsable]="true">
-
-          <table class="table-responsive table table-striped table-hover" cc-panel-body>
+          <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
             <thead>
             <tr>
-              <th>Service-Name</th>
+              <th class="sorting_asc">Service-Name</th>
               <th width="15px"></th>
               <th width="15px"></th>
             </tr>
@@ -131,11 +130,11 @@
 
                 <div class="pull-right">
                   <button (click)="showAddService = false" class="btn btn-default">Cancel</button>
-                  <button [routerLink]="['/service', 'new']" [queryParams]="{'ret':'packageDetail', 'id':pkg.name}"
-                          class="btn btn-info">Create a new Service
+                  <button [routerLink]="['/service', 'new']" [queryParams]="{'ret': 'packageDetail', 'id': pkg.name}" class="btn btn-info">
+                    Create a new Service
                   </button>
-                  <button (click)="saveNewService()" class="btn btn-success"
-                          [disabled]="!newService">Add
+                  <button (click)="saveNewService()" class="btn btn-success" [disabled]="!newService">
+                    Add
                   </button>
                 </div>
               </td>
@@ -152,14 +151,15 @@
         </cc-panel>
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
         <cc-panel [title]="'Used in templates'" icon="fa-institution" [collapsable]="true">
-          <table class="table-responsive table table-striped table-hover" cc-panel-body>
+          <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
             <thead>
             <tr>
-              <th width="30%">Template</th>
-              <th>Version</th>
+              <th class="sorting_asc" width="30%">Template</th>
+              <th class="sorting">Version</th>
               <th width="15px"></th>
             </tr>
             </thead>
@@ -187,7 +187,6 @@
         </cc-panel>
       </div>
     </div>
-
 
   </div>
 </div>

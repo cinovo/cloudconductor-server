@@ -124,7 +124,6 @@ export class ConfigValueOverview implements AfterViewInit {
       temp[cf.service].push(cf);
     }
 
-
     this.tree = [];
     for (let key in temp) {
       if (temp.hasOwnProperty(key)) {

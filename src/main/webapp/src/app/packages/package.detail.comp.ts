@@ -88,6 +88,7 @@ export class PackageDetail implements AfterViewInit {
         for (let key of keys) {
           this.templateRefs.push({template: key, version: result[key]});
         }
+        this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
       });
   }
 

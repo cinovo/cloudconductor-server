@@ -12,6 +12,7 @@ import { Template, TemplateHttpService } from '../util/http/template.http.servic
 import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 import { AlertService } from '../util/alert/alert.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>

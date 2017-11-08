@@ -41,10 +41,10 @@
 
   <div class="col-md-6">
     <cc-panel [title]="'Provided by'" icon="fa-book" [collapsable]="true">
-      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th>Package-Name</th>
+          <th class="sorting_asc">Package-Name</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
@@ -109,11 +109,11 @@
 
   <div class="col-md-6">
     <cc-panel [title]="'Template references'" icon="fa-institution" [collapsable]="true">
-      <table class="table-responsive table table-striped table-hover" cc-panel-body>
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th width="30%">Template</th>
-          <th>Package</th>
+          <th class="sorting_asc" width="30%">Template</th>
+          <th class="sorting">Package</th>
           <th width="15px"></th>
         </tr>
         </thead>

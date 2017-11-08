@@ -83,11 +83,11 @@
           There are currently no packages provided, these will be added with the next repo scan.
         </div>
 
-        <table class="table-responsive table table-striped table-hover" *ngIf="packages.length > 0">
+        <table class="table-responsive table table-striped table-hover dataTable" *ngIf="packages.length > 0">
           <thead>
           <tr>
-            <th width="30%">Package</th>
-            <th>Version</th>
+            <th class="sorting_asc" width="30%">Package</th>
+            <th class="sorting">Version</th>
             <th width="15px"></th>
           </tr>
           </thead>

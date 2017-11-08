@@ -14,7 +14,7 @@ import { AlertService } from '../util/alert/alert.service';
  *
  * @author psigloch
  */
-interface TemplatePackageVersion {
+export interface TemplatePackageVersion {
   pkg: string,
   version: string,
   selected: boolean
@@ -90,12 +90,8 @@ export class TemplatePackages implements AfterViewInit {
         this.packageVersions.push({pkg: key, version: this.template.versions[key], selected: selected});
       }
     }
-    /* tslint:disable:curly */
-    this.packageVersions.sort((a: TemplatePackageVersion, b: TemplatePackageVersion) => {
-      if (a.pkg < b.pkg) return -1;
-      if (a.pkg > b.pkg) return 1;
-      return 0;
-    });
+
+    this.packageVersions.sort(Sorter.templatePackageVersion);
   }
 
   private preparePVS(pvs: Array<PackageVersion>) {
@@ -182,7 +178,6 @@ export class TemplatePackages implements AfterViewInit {
       }
     )
   }
-
 
   get allSelected(): boolean {
     return this._allSelected;

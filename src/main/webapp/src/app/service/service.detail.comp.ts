@@ -83,6 +83,7 @@ export class ServiceDetail implements OnInit {
           for (let key of keys) {
             this.templateRefs.push({template: key, pkg: result[key]});
           }
+          this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
         });
     }
   }

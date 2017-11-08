@@ -6,13 +6,13 @@
         <div class="alert alert-warning" *ngIf="!services || services.length <= 0">
           There are currently no services available on this host.
         </div>
-        <table class=" table-condensed table-responsive table table-striped table-hover"
+        <table class=" table-condensed table-responsive table table-striped table-hover dataTable"
                *ngIf="services && services.length > 0">
           <thead>
           <tr>
             <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all services"></th>
-            <th>Service Name</th>
-            <th>State</th>
+            <th class="sorting_asc">Service Name</th>
+            <th class="sorting">State</th>
             <th width="15px">Autostart</th>
             <th width="15px"></th>
             <th width="15px"></th>
@@ -26,17 +26,16 @@
             </td>
             <td>{{service.name}}</td>
             <td>
-                    <span class="label label-default label-as-badge"
-                          [class.label-success]="isServiceStarted(service)"
-                          [class.label-warning]="isServiceTransient(service)"
-                          [class.label-danger]="isServiceStoped(service)">
-                      <i class="fa fa-refresh fa-spin fa-fw" *ngIf="isServiceTransient(service)"></i>
-                      {{service.state}}
-                    </span>
+              <span class="label label-default label-as-badge"
+                    [class.label-success]="isServiceStarted(service)"
+                    [class.label-warning]="isServiceTransient(service)"
+                    [class.label-danger]="isServiceStoped(service)">
+                <i class="fa fa-refresh fa-spin fa-fw" *ngIf="isServiceTransient(service)"></i>
+                {{service.state}}
+              </span>
             </td>
             <td class="text-center">
-              <input type="checkbox" [(ngModel)]="service.autostart"
-                     title="Automaticly start this service on host restart">
+              <input type="checkbox" [(ngModel)]="service.autostart" title="Automaticly start this service on host restart">
             </td>
             <td>
               <a class="btn btn-xs text-success" role="button" (click)="handleService('start', service)"

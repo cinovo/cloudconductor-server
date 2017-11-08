@@ -17,11 +17,11 @@
             <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
               There are currently no host using this template.
             </div>
-            <table class="table-condensed table-responsive table table-striped table-hover"
+            <table class="table-condensed table-responsive table table-striped table-hover dataTable"
                    *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
               <thead>
               <tr>
-                <th>Agent-Name</th>
+                <th class="sorting_asc">Agent-Name</th>
                 <th width="15px"></th>
               </tr>
               </thead>
