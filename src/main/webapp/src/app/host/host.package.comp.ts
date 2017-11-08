@@ -6,13 +6,7 @@ import { Host } from '../util/http/host.http.service';
 import { SettingHttpService } from '../util/http/setting.http.service';
 import { Sorter } from '../util/sorters.util';
 import { TemplateHttpService } from '../util/http/template.http.service';
-
-interface PackageChange {
-  name: string;
-  hostVersion: string;
-  templateVersion: string;
-  state: string
-}
+import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -27,88 +21,37 @@ interface PackageChange {
 export class HostPackages implements OnInit, OnDestroy {
 
   @Input() obsHost: Observable<Host>;
-  @Output() reloadTrigger: EventEmitter<any> = new EventEmitter();
 
-  public packages: Array<{name: string, hostVersion: string, templateVersion?: string, state?: string}> = [];
+  public packages: PackageChange[] = [];
   public packageChanges = false;
   public host: Host = {name: '', template: ''};
 
   private hostSub: Subscription;
-  private uninstallDisallowed: string[] = [];
+  private packageChangesSub: Subscription;
 
-  constructor(private templateHttp: TemplateHttpService,
-              private settingHttp: SettingHttpService) { };
+  constructor(private packageChangesService: PackageChangesService) { };
 
   public ngOnInit(): void {
     this.hostSub = this.obsHost.subscribe((newHost) => {
-        this.loadPackages(newHost);
-        this.host = newHost;
-      });
+      this.loadPackages(newHost);
+      this.host = newHost;
+    });
+  }
+
+  private loadPackages(host: Host): void {
+    this.packageChangesSub = this.packageChangesService.computePackageChanges(host).subscribe((packages) => {
+       this.packages = packages;
+       this.packageChanges = packages.some(pkg => (pkg.state !== 'protected' && pkg.state !== 'ok'));
+    });
   }
 
   public ngOnDestroy(): void {
     if (this.hostSub) {
       this.hostSub.unsubscribe();
     }
-  }
-
-  private loadPackages(host: Host): void {
-    this.packages = [];
-    this.packageChanges = false;
-
-    if (host && host.packages && Object.keys(host.packages).length > 0) {
-      this.settingHttp.getNoUninstall().flatMap((unDis: string[]) => {
-        // first retrieve list of packages which are not allowed to uninstall
-        this.uninstallDisallowed = unDis;
-
-        // second retrieve list of packages which SHOULD be installed according to the template
-        return this.templateHttp.getTemplate(host.template);
-      }).subscribe((template) => {
-          const allPackages = Object.assign({}, template.versions, host.packages);
-          for (let index of Object.keys(allPackages)) {
-            let element = {
-              name: index,
-              hostVersion: host.packages[index],
-              templateVersion: template.versions[index],
-              state: 'ok'
-            };
-            element = this.updateState(element);
-            this.packages.push(element);
-          }
-          this.packages.sort(Sorter.nameField);
-        }
-      );
+    if (this.packageChangesSub) {
+      this.packageChangesSub.unsubscribe();
     }
-  }
-
-  private updateState(element: PackageChange) {
-    if (!element.templateVersion) {
-      // host has package which is not in template
-      if (!(this.uninstallDisallowed.indexOf(element.name) > -1)) {
-        element.state = 'uninstalling';
-        this.packageChanges = true;
-      } else {
-        element.state = 'protected';
-      }
-    } else if (!element.hostVersion) {
-
-      // package is missing on host
-      element.state = 'installing';
-      this.packageChanges = true;
-    } else {
-
-      // package installed but versions differ between host and template
-      let comp = Sorter.versionComp(element.hostVersion, element.templateVersion);
-      if (comp < 0) {
-        element.state = 'upgrading';
-        this.packageChanges = true;
-      }
-      if (comp > 0) {
-        element.state = 'downgrading';
-        this.packageChanges = true;
-      }
-    }
-    return element;
   }
 
 }

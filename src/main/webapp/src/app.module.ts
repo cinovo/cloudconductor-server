@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { PackageChangesService } from './app/util/packagechanges/packagechanges.service';
 import { CCDashboardPanel } from './app/util/ccdashboardpanel/ccdashboardpanel.comp';
 import { NotFoundComponent } from './app/not-found/not-found.comp';
 import { AuthTokenHttpService } from './app/util/http/authtoken.http.service';
@@ -68,6 +69,7 @@ import { FileDetailComponent } from './app/files/file.detail.comp';
 import { FileResolver } from './app/files/file.resolve';
 import { WebSocketService } from './app/util/websockets/websocket.service';
 import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
+import { HomePackageChangesComponent } from './app/home/home.pkgchanges.comp';
 
 @NgModule({
   imports: [
@@ -118,7 +120,8 @@ import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
     FileDetailComponent,
     FooterComponent,
     AuthTokenOverviewComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    HomePackageChangesComponent
   ],
   providers: [
     AlertService,
@@ -136,7 +139,8 @@ import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
     FileResolver,
     WSConfigHttpService,
     WebSocketService,
-    AuthTokenHttpService
+    AuthTokenHttpService,
+    PackageChangesService
   ],
   bootstrap: [AppComponent]
 })
