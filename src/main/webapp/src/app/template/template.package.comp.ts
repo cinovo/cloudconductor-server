@@ -99,8 +99,8 @@ export class TemplatePackages implements AfterViewInit {
       if (!this.packageTree[pv.name]) {
         this.packageTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
       }
-      let entry: any = this.packageTree[pv.name];
-      if (entry.versions.indexOf(pv) < 0) {
+      let entry = this.packageTree[pv.name];
+      if (entry.versions.findIndex((version) => version.name === pv.name && version.version === pv.version) < 0) {
         entry.versions.push(pv);
         entry.versions.sort(Sorter.packageVersion);
         if (Sorter.packageVersion(entry.newestVersion, pv) < 0) {
@@ -109,7 +109,6 @@ export class TemplatePackages implements AfterViewInit {
       }
     }
   }
-
 
   protected updatePackage(pv: TemplatePackageVersion): void {
     if (pv) {
