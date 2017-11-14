@@ -98,8 +98,9 @@
         </tr>
 
         <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
-          <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
-            Add a package providing this service
+          <td colspan="3" role="button">
+            <i class="fa fa-plus fa-fw"></i>
+            Add package providing this service
           </td>
         </tr>
         </tbody>
@@ -112,9 +113,8 @@
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th class="sorting_asc" width="30%">Template</th>
+          <th class="sorting_asc">Template</th>
           <th class="sorting">Package</th>
-          <th width="15px"></th>
         </tr>
         </thead>
 
@@ -127,12 +127,12 @@
         <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
           <td>
             {{ref.template}}
+            <a [routerLink]="['/template', ref.template]" title="Show Template">
+              <i class="fa fa-external-link fa-fw"></i>
+            </a>
           </td>
           <td class="word-break">
             {{ref.pkg}}
-          </td>
-          <td>
-            <a [routerLink]="['/template', ref.template]" title="Show Template"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
         </tr>
         </tbody>

@@ -1,0 +1,31 @@
+<cc-panel [title]="'Service Status'" icon="fa-flask">
+  <div class="alert alert-warning" *ngIf="(servicesObs | async)?.length < 1" cc-panel-body>
+    No services found!
+  </div>
+  <table class="table-responsive table table-striped table-hover dataTable" *ngIf="(servicesObs | async)?.length > 0" cc-panel-body>
+      <thead>
+      <tr>
+        <th class="sorting_asc" width="30%">Name</th>
+        <th class="sorting"># Providing Packages</th>
+        <th class="sorting"># Templates</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let service of (servicesObs | async)" (dblclick)="serviceClicked(service)"
+        [class.warning]="!service.templates || service.templates.length < 1"
+        [class.danger]="!service.packages || service.packages.length < 1">
+        <td>
+          {{service.name}}
+        </td>
+        <td>
+          <span *ngIf="service.packages">{{service.packages.length}}</span>
+          <span *ngIf="!service.packages">0</span>
+        </td>
+        <td>
+          <span *ngIf="service.templates">{{service.templates.length}}</span>
+          <span *ngIf="!service.templates">0</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+</cc-panel>

@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { HomeServiceStatusComponent } from './app/home/home.servicestatus.comp';
 import { PackageChangesService } from './app/util/packagechanges/packagechanges.service';
 import { CCDashboardPanel } from './app/util/ccdashboardpanel/ccdashboardpanel.comp';
 import { NotFoundComponent } from './app/not-found/not-found.comp';
@@ -70,6 +71,10 @@ import { FileResolver } from './app/files/file.resolve';
 import { WebSocketService } from './app/util/websockets/websocket.service';
 import { WSConfigHttpService } from './app/util/http/wsconfig.http.service';
 import { HomePackageChangesComponent } from './app/home/home.pkgchanges.comp';
+import { HomeHostStatusComponent } from './app/home/home.hoststatus.comp';
+import { HostsService } from './app/util/hosts/hosts.service';
+import { HomeRepoScansComponent } from './app/home/home.reposcans.comp';
+import { RepoScansService } from './app/util/reposcans/reposcans.service';
 
 @NgModule({
   imports: [
@@ -121,7 +126,10 @@ import { HomePackageChangesComponent } from './app/home/home.pkgchanges.comp';
     FooterComponent,
     AuthTokenOverviewComponent,
     NotFoundComponent,
-    HomePackageChangesComponent
+    HomePackageChangesComponent,
+    HomeHostStatusComponent,
+    HomeServiceStatusComponent,
+    HomeRepoScansComponent
   ],
   providers: [
     AlertService,
@@ -140,7 +148,9 @@ import { HomePackageChangesComponent } from './app/home/home.pkgchanges.comp';
     WSConfigHttpService,
     WebSocketService,
     AuthTokenHttpService,
-    PackageChangesService
+    PackageChangesService,
+    HostsService,
+    RepoScansService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,4 +1,3 @@
-import { Hosts } from '../util/hosts.util';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -6,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
+import { HostsService } from '../util/hosts/hosts.service';
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
@@ -60,6 +60,7 @@ export class HostOverview implements OnInit, OnDestroy {
 
   constructor(private alertService: AlertService,
               private hostHttp: HostHttpService,
+              public hostsService: HostsService,
               private router: Router,
               private templateHttp: TemplateHttpService,
               private wsService: WebSocketService) { };
@@ -168,10 +169,6 @@ export class HostOverview implements OnInit, OnDestroy {
 
   protected gotoDetails(host: Host) {
     this.router.navigate(['host', host.name]);
-  }
-
-  public isAlive(host: Host): boolean {
-    return Hosts.isAlive(host);
   }
 
   public deleteHosts() {

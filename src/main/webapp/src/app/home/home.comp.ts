@@ -6,7 +6,6 @@ import { Observable } from 'rxjs/Observable';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Sorter } from '../util/sorters.util';
-import { Hosts } from '../util/hosts.util';
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 
@@ -61,29 +60,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
   }
 
-  public isAlive(host: Host): boolean {
-    return Hosts.isAlive(host);
+  public gotoHost(hostName: string) {
+    this.router.navigate(['/host', hostName]);
   }
 
-  public gotoHost(host: Host) {
-    this.router.navigate(['/host', host.name]);
+  public gotoService(serviceName: string) {
+    this.router.navigate(['/service', serviceName]);
   }
 
-  public gotoService(service: Service) {
-    this.router.navigate(['/service', service.name]);
+  public gotoRepo(repoName: string) {
+    this.router.navigate(['/repo', repoName]);
   }
 
-  public gotoRepo(repo: Repo) {
-    this.router.navigate(['/repo', repo.name]);
-  }
-
-  public scanIsDue(repo: Repo): boolean {
-    const diff = new Date().getTime() - repo.lastIndex;
-    return diff > this.scanInterval;
-  }
-
-  public scanIsPastDue(repo: Repo): boolean {
-    const diff = new Date().getTime() - repo.lastIndex;
-    return diff > 2 * this.scanInterval;
-  }
 }

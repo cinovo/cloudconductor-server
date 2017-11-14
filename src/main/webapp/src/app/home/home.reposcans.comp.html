@@ -1,0 +1,23 @@
+<cc-panel [title]="'Repository Scans'" icon="fa-server">
+  <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+      <thead>
+      <tr>
+        <th class="sorting" width="30%">Name</th>
+        <th class="sorting_asc">Last Indexed</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let repo of (reposObs | async)" (dblclick)="repoClicked(repo)"
+        [class.success]="!repoScans.isDue(repo)"
+        [class.warning]="repoScans.isDue(repo)"
+        [class.danger]="repoScans.isPastDue(repo)">
+        <td>
+          {{repo.name}}
+        </td>
+        <td>
+          {{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+</cc-panel>
