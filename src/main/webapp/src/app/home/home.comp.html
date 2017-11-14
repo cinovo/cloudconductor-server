@@ -25,7 +25,10 @@
 <div class="row">
   <div class="col-md-8">
     <cc-panel [title]="'Host Status'" icon="fa-laptop">
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+      <div class="alert alert-warning" *ngIf="(hosts$ | async)?.length < 1" cc-panel-body>
+        No hosts found!
+      </div>
+      <table class="table-responsive table table-striped table-hover dataTable" *ngIf="(hosts$ | async)?.length > 0" cc-panel-body>
         <thead>
         <tr>
           <th class="sorting">Name</th>
@@ -56,7 +59,10 @@
 
   <div class="col-md-4">
     <cc-panel [title]="'Service Status'" icon="fa-flask">
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+      <div class="alert alert-warning" *ngIf="(services$ | async)?.length < 1" cc-panel-body>
+        No services found!
+      </div>
+      <table class="table-responsive table table-striped table-hover dataTable" *ngIf="(services$ | async)?.length > 0" cc-panel-body>
           <thead>
           <tr>
             <th class="sorting_asc" width="30%">Name</th>

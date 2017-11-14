@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // TODO get this from Settings
   private hostInterval = 60 * 1000;
   private scanInterval = 60 * 1000;
+  private serviceInterval = 60 * 1000;
 
   private onDestroy$: Subject<void> = new Subject();
 
@@ -39,8 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.hosts$ = Observable.interval(this.hostInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadHosts());
     this.repos$ = Observable.interval(this.scanInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadRepos());
-
-    this.services$ = this.serviceHttpService.getServices();
+    this.services$ = Observable.interval(this.serviceInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadServices());
   }
 
   public loadHosts(): Observable<Host[]> {
@@ -51,6 +51,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   public loadRepos(): Observable<Repo[]> {
     return this.repoHttpService.getRepos()
                               .map(repos => repos.sort((a, b) => Sorter.byField(a, b, 'lastIndex')));
+  }
+
+  public loadServices(): Observable<Service[]> {
+    return this.serviceHttpService.getServices().map(services => services.sort(Sorter.service));
   }
 
   ngOnDestroy(): void {
