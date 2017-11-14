@@ -80,7 +80,7 @@
               </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" [hidden]="(serviceNames | async)?.length < 1">
               <label for="serviceDep" class="col-md-2 control-label">Service Dependencies</label>
               <div class="col-md-10">
                 <select id="servicesDep" multiple class="form-control" formControlName="dependentServices">
@@ -89,7 +89,7 @@
               </div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" [hidden]="(serviceNames | async)?.length < 1">
               <label for="servicesReload" class="col-md-2 control-label">Service to reload</label>
               <div class="col-md-10">
                 <select id="servicesReload" multiple class="form-control" formControlName="servicesReload">
