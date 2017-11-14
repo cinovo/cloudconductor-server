@@ -1,3 +1,28 @@
+@import "../../../glob/_variables";
+
+$dashboard-colors: (
+  'primary': $brand-primary,
+  'green': $brand-success,
+  'yellow': $brand-warning,
+  'red': $brand-danger
+);
+
 .huge {
   font-size: 40px;
+}
+
+@each $category, $color in  $dashboard-colors {
+  .panel-#{$category} {
+    border-color: $color;
+
+    a {
+      color: $color;
+    }
+
+    .panel-heading {
+      border-color: $color;
+      color: white;
+      background-color: $color;
+    }
+  }
 }

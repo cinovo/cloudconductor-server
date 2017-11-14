@@ -1,4 +1,6 @@
-<div class="panel panel-{{type}}">
+<div class="panel" [class.panel-primary]="!minValue"
+                    [class.panel-yellow]="minValue && number < minValue"
+                    [class.panel-green]="minValue && number >= minValue">
   <div class="panel-heading">
     <div class="row">
       <div class="col-xs-3">

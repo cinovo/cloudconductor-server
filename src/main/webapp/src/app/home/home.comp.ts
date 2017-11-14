@@ -1,3 +1,4 @@
+import { TemplateHttpService, Template } from '../util/http/template.http.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -8,6 +9,7 @@ import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
+import { Package, PackageHttpService } from '../util/http/package.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -30,16 +32,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   public hosts$: Observable<Host[]>;
   public services$: Observable<Service[]>;
   public repos$: Observable<Repo[]>;
+  public templates$: Observable<Template[]>;
+  public packages$: Observable<Package[]>;
 
   constructor(private router: Router,
               private hostHttpService: HostHttpService,
               private serviceHttpService: ServiceHttpService,
-              private repoHttpService: RepoHttpService) { };
+              private repoHttpService: RepoHttpService,
+              private templateHttpService: TemplateHttpService,
+              private packageHttpService: PackageHttpService) { };
 
   ngOnInit(): void {
     this.hosts$ = Observable.interval(this.hostInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadHosts());
     this.repos$ = Observable.interval(this.scanInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadRepos());
     this.services$ = Observable.interval(this.serviceInterval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadServices());
+    this.templates$ = this.templateHttpService.getTemplates();
+    this.packages$ = this.packageHttpService.getPackages();
   }
 
   public loadHosts(): Observable<Host[]> {

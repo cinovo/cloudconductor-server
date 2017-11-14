@@ -7,9 +7,10 @@ import { Component, Input, ViewEncapsulation } from '@angular/core';
 })
 export class CCDashboardPanel {
 
-  @Input() type: string;
   @Input() icon: string;
   @Input() number: number;
   @Input() label: string;
   @Input() detailLink: string;
+  @Input() minValue: number;
+
 }
