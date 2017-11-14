@@ -72,10 +72,7 @@
           </div>
         </div>
         <div class="pull-right">
-          <button *ngIf="returnToOverview" type="button" [routerLink]="['/repo']" class="btn btn-default" title="Back to Overview">
-            Back
-          </button>
-          <button *ngIf="!returnToOverview" type="button" [routerLink]="['/repo', repoName]" class="btn btn-default" title="Back to Repository">
+          <button type="button" (click)="goBack()" class="btn btn-default">
             Back
           </button>
           <button type="submit" title="Save Mirror" class="btn btn-info" [disabled]="mirrorForm.invalid">

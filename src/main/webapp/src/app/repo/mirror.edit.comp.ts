@@ -103,6 +103,10 @@ export class MirrorEdit implements OnInit {
     return call
   }
 
+  public goBack(): void {
+    this.location.back();
+  }
+
   private loadMirror(mirrorid: any, repoName: string) {
     if (Validator.notEmpty(mirrorid) && +mirrorid > 0) {
       this.mirrorHttp.getMirror(mirrorid).subscribe((result) => {
