@@ -1,14 +1,21 @@
+import { Component, OnDestroy, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs/Rx';
-import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';
-import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { SettingHttpService } from '../util/http/setting.http.service';
+import { Observable, Subscription } from 'rxjs/Rx';
+
 import { HostHttpService, Host } from '../util/http/host.http.service';
+import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';
+import { SettingHttpService } from '../util/http/setting.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 
 interface PackageChangeMap { [key: string]: PackageChange[] };
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @Component({
   selector: 'home-packagechanges',
   templateUrl: 'home.pkgchanges.comp.html'
@@ -16,16 +23,17 @@ interface PackageChangeMap { [key: string]: PackageChange[] };
 export class HomePackageChangesComponent implements OnInit, OnDestroy {
 
   public packageChanges: PackageChangeMap;
+  public lastUpdate: number;
+
+  @Input() hostsObs: Observable<Host[]>;
+  @Output() onHostClicked: EventEmitter<string> = new EventEmitter<string>();
 
   private hostsSub: Subscription;
 
-  constructor(private hostHttpService: HostHttpService,
-              private packageChangesService: PackageChangesService,
-              private router: Router) { }
+  constructor(private packageChangesService: PackageChangesService) { }
 
     public ngOnInit(): void {
-      // TODO update periodically
-      this.hostsSub = this.hostHttpService.getHosts().subscribe((hosts) => {
+      this.hostsSub = this.hostsObs.subscribe((hosts) => {
         this.loadChangesForHosts(hosts);
       });
     }
@@ -38,12 +46,13 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
           if (changes.length > 0) {
             container[host.name] = changes
           }
-          return container
+          return container;
         });
       });
 
       Observable.forkJoin(changes$).subscribe((data) => {
         this.packageChanges = data.reduce((acc, c) => Object.assign({}, acc, c));
+        this.lastUpdate = new Date().getTime();
       });
     }
 
@@ -62,10 +71,6 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
         return Object.keys(this.packageChanges);
       }
       return [];
-    }
-
-    public gotoHost(hostName: string) {
-      this.router.navigate(['/host', hostName]);
     }
 
 }

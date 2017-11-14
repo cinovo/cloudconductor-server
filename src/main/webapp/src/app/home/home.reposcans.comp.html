@@ -1,5 +1,9 @@
-<cc-panel [title]="'Repository Scans'" icon="fa-server">
-  <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+<cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+  <ng-container *ngIf="(reposObs | async) as repos" cc-panel-body>
+    <div class="alert alert-warning" *ngIf="repos?.length < 1">
+      No repository scans!
+    </div>
+    <table class="table-responsive table table-striped table-hover dataTable" *ngIf="repos?.length > 0">
       <thead>
       <tr>
         <th class="sorting" width="30%">Name</th>
@@ -7,7 +11,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let repo of (reposObs | async)" (dblclick)="repoClicked(repo)"
+      <tr *ngFor="let repo of repos" (dblclick)="onRepoClicked.emit(repo.name)"
         [class.success]="!repoScans.isDue(repo)"
         [class.warning]="repoScans.isDue(repo)"
         [class.danger]="repoScans.isPastDue(repo)">
@@ -20,4 +24,5 @@
       </tr>
       </tbody>
     </table>
+  </ng-container>
 </cc-panel>

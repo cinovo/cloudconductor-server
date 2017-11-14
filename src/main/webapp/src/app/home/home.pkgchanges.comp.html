@@ -1,4 +1,8 @@
-<cc-panel [title]="'Pending Package Changes'" icon="fa-hourglass-2">
+<cc-panel [title]="'Pending Package Changes'" icon="fa-hourglass-2" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+  <div *ngIf="!hasChanges" class="alert alert-success" cc-panel-body>
+    There are no pending package changes on any host.
+  </div>
+
   <table *ngIf="hasChanges" class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
       <thead>
       <tr>
@@ -7,7 +11,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let hostname of hostNames" (dblclick)="gotoHost(hostname)">
+      <tr *ngFor="let hostname of hostNames" (dblclick)="onHostClicked.emit(hostname)">
         <td>
           {{hostname}}
         </td>
@@ -24,7 +28,7 @@
                 {{packageChange.name}}
               </span>
               <span *ngIf="packageChange.templateVersion">
-                  :{{packageChange.templateVersion}}
+                :{{packageChange.templateVersion}}
               </span>
             </li>
           </ul>
@@ -32,8 +36,4 @@
       </tr>
       </tbody>
     </table>
-
-    <div *ngIf="!hasChanges" class="alert alert-success" cc-panel-body>
-      There are no pending package changes on any host.
-    </div>
 </cc-panel>

@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs';
 
 import { Host } from '../util/http/host.http.service';
 import { HostsService } from '../util/hosts/hosts.service';
@@ -15,15 +16,26 @@ import { HostsService } from '../util/hosts/hosts.service';
   selector: 'home-hoststatus',
   templateUrl: 'home.hoststatus.comp.html'
 })
-export class HomeHostStatusComponent {
+export class HomeHostStatusComponent implements OnInit, OnDestroy {
 
   @Input() hostsObs: Observable<Host[]>;
   @Output() onHostClicked: EventEmitter<string> = new EventEmitter<string>();
 
+  public lastUpdate: number;
+  private hostsSub: Subscription;
+
   constructor(public hostsService: HostsService) { }
 
-  public hostClicked(host: Host): void {
-    this.onHostClicked.emit(host.name);
+  ngOnInit(): void {
+    this.hostsSub = this.hostsObs.subscribe(() => {
+      this.lastUpdate = new Date().getTime();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.hostsSub) {
+      this.hostsSub.unsubscribe();
+    }
   }
 
 }

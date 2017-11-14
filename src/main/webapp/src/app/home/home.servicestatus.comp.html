@@ -1,8 +1,9 @@
-<cc-panel [title]="'Service Status'" icon="fa-flask">
-  <div class="alert alert-warning" *ngIf="(servicesObs | async)?.length < 1" cc-panel-body>
-    No services found!
-  </div>
-  <table class="table-responsive table table-striped table-hover dataTable" *ngIf="(servicesObs | async)?.length > 0" cc-panel-body>
+<cc-panel [title]="'Service Status'" icon="fa-flask" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+  <ng-container *ngIf="(servicesObs | async) as services" cc-panel-body>
+    <div class="alert alert-warning" *ngIf="services?.length < 1" >
+      No services found!
+    </div>
+    <table class="table-responsive table table-striped table-hover dataTable" *ngIf="services?.length > 0">
       <thead>
       <tr>
         <th class="sorting_asc" width="30%">Name</th>
@@ -11,7 +12,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let service of (servicesObs | async)" (dblclick)="serviceClicked(service)"
+      <tr *ngFor="let service of services" (dblclick)="onServiceClicked.emit(service.name)"
         [class.warning]="!service.templates || service.templates.length < 1"
         [class.danger]="!service.packages || service.packages.length < 1">
         <td>
@@ -28,4 +29,5 @@
       </tr>
       </tbody>
     </table>
+  </ng-container>
 </cc-panel>

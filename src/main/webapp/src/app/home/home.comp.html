@@ -1,4 +1,4 @@
-<cc-title [title]="'CloudConductor 3.0'"></cc-title>
+<cc-title [titleIcon]="'fa-tachometer'" [title]="'Dashboard'" [autorefresh]="true"></cc-title>
 
 <div class="row">
   <div class="col-lg-3 col-md-6">
@@ -34,7 +34,7 @@
 
 <div class="row">
   <div class="col-md-6">
-    <home-packagechanges></home-packagechanges>
+    <home-packagechanges [hostsObs]="hosts$" (onHostClicked)="gotoHost($event)"></home-packagechanges>
   </div>
 
   <div class="col-md-6">

@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Rx';
 
 import { Repo } from '../util/http/repo.http.service';
 import { RepoScansService } from '../util/reposcans/reposcans.service';
@@ -15,15 +16,27 @@ import { RepoScansService } from '../util/reposcans/reposcans.service';
   selector: 'home-reposcans',
   templateUrl: 'home.reposcans.comp.html'
 })
-export class HomeRepoScansComponent {
+export class HomeRepoScansComponent implements OnInit, OnDestroy {
+
+  public lastUpdate: number;
 
   @Input() reposObs: Observable<Repo[]>;
   @Output() onRepoClicked: EventEmitter<string> = new EventEmitter<string>();
 
+  private repoSub: Subscription;
+
   constructor(public repoScans: RepoScansService) { }
 
-  public repoClicked(repo: Repo): void {
-    this.onRepoClicked.emit(repo.name);
+  ngOnInit(): void {
+    this.repoSub = this.reposObs.subscribe(() => {
+      this.lastUpdate = new Date().getTime();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.repoSub) {
+      this.repoSub.unsubscribe();
+    }
   }
 
 }

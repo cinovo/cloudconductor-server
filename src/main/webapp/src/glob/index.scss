@@ -177,3 +177,8 @@ table.dataTable thead .sorting:after {
 td ul {
   padding-left: 20px;
 }
+
+/* no additional margin if inside of a panel */
+.panel-body .alert {
+  margin-bottom: 0
+}

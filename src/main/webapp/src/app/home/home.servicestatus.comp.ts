@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs';
 
 import { Service } from '../util/http/service.http.service';
 
@@ -14,15 +15,26 @@ import { Service } from '../util/http/service.http.service';
   selector: 'home-servicestatus',
   templateUrl: './home.servicestatus.comp.html'
 })
-export class HomeServiceStatusComponent {
+export class HomeServiceStatusComponent implements OnInit, OnDestroy {
 
   @Input() servicesObs: Observable<Service[]>;
   @Output() onServiceClicked: EventEmitter<string> = new EventEmitter<string>();
 
+  public lastUpdate: number;
+  private servicesSub: Subscription;
+
   constructor() { }
 
-  public serviceClicked(service: Service): void {
-    this.onServiceClicked.emit(service.name);
+  ngOnInit(): void {
+    this.servicesObs.subscribe(() => {
+      this.lastUpdate = new Date().getTime();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.servicesSub) {
+      this.servicesSub.unsubscribe();
+    }
   }
 
 }
