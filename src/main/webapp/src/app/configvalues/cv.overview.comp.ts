@@ -1,5 +1,8 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Rx';
 
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
 import { Sorter } from '../util/sorters.util';
@@ -22,13 +25,13 @@ interface ConfigValueTreeNode {
   selector: 'cv-overview',
   templateUrl: './cv.overview.comp.html'
 })
-export class ConfigValueOverview implements AfterViewInit {
+export class ConfigValueOverview implements OnInit, OnDestroy {
 
   private _searchQuery: string = null;
+  private routeSub: Subscription;
+
   public template: string;
-
   public kvLoaded = false;
-
   public tree: Array<ConfigValueTreeNode> = [];
 
   private static filterData(cf: ConfigValue, query: string): boolean {
@@ -48,11 +51,17 @@ export class ConfigValueOverview implements AfterViewInit {
               private router: Router,
               private alerts: AlertService) { };
 
-  ngAfterViewInit(): void {
-    this.route.params.subscribe((params) => {
-      this.template = params['template'];
+  ngOnInit(): void {
+    this.routeSub = this.route.paramMap.subscribe((paramMap) => {
+      this.template = paramMap.get('template');
       this.loadData();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 
   get searchQuery(): string {
@@ -65,31 +74,53 @@ export class ConfigValueOverview implements AfterViewInit {
   }
 
   protected deleteCurrentTemplate() {
+    let ops: Observable<boolean>[] = [];
     for (let index in this.tree) {
       if (this.tree.hasOwnProperty(index)) {
         for (let kv of this.tree[index].kvs) {
-          this.deleteKey(kv);
+          ops.push(this.deleteKey(kv));
         }
       }
     }
-    this.alerts.success('The template "' + this.template + '" was deleted successfully!');
-    this.router.navigate(['config', 'GLOBAL']);
+
+    Observable.forkJoin(ops).subscribe(
+      () => {
+        this.alerts.success(`All config values for template '${this.template}' were deleted successfully!`);
+        this.router.navigate(['config', 'GLOBAL']);
+      },
+      (err) => {
+        this.alerts.danger(`Error deleting config values for template '${this.template}'!`);
+        console.error(err);
+      }
+    );
   }
 
-  protected deleteService(name: string) {
+  protected deleteService(serviceName: string) {
     let element: ConfigValueTreeNode;
     for (let nodeIndex in this.tree) {
-      if (this.tree[nodeIndex].name === name) {
+      if (this.tree[nodeIndex].name === serviceName) {
         element = this.tree[nodeIndex];
       }
     }
-    for (let kv of element.kvs) {
-      this.deleteKey(kv);
+
+    if (element && element.kvs) {
+      const ops: Observable<boolean>[] = element.kvs.map(kv => this.deleteKey(kv));
+
+      Observable.forkJoin(ops).subscribe(
+        () => {
+          this.alerts.success(`Successfully deleted all configuration values for service '${serviceName}'`);
+          this.loadData();
+        },
+        (err) => {
+          this.alerts.danger(`Error deleting configuration values for service '${serviceName}'!`);
+          console.error(err);
+        }
+      );
     }
   }
 
-  private deleteKey(kv: ConfigValue): void {
-    this.configHttp.deleteValue(kv).subscribe(
+  private doDelete(kv: ConfigValue) {
+    this.deleteKey(kv).subscribe(
       () => {
         let element: ConfigValueTreeNode;
         for (let nodeIndex in this.tree) {
@@ -105,8 +136,16 @@ export class ConfigValueOverview implements AfterViewInit {
         if (element.kvs.length < 1) {
           this.tree.splice(this.tree.indexOf(element), 1);
         }
+      },
+      (err) => {
+        this.alerts.danger(`Error deleting config pair '${kv.key}-${kv.value}'`);
+        console.error(err);
       }
     );
+  }
+
+  private deleteKey(kv: ConfigValue): Observable<boolean> {
+    return this.configHttp.deleteValue(kv);
   }
 
   private generateTree(result: Array<ConfigValue>): void {
@@ -140,6 +179,7 @@ export class ConfigValueOverview implements AfterViewInit {
       this.generateTree(result);
       this.kvLoaded = true;
     }, (err) => {
+      this.alerts.danger(`Error loading config values for template '${this.template}'!`);
       this.kvLoaded = true;
     });
   }

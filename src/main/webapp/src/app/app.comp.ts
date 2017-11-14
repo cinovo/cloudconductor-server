@@ -24,7 +24,7 @@ export class AppComponent implements AfterViewInit {
       (<any>$('div.navbar-collapse')).removeClass('collapse');
     }
 
-    let height = ((window.innerHeight > 0) ? window.innerHeight : screen.height) - 1;
+    let height = ((window.innerHeight > 0) ? window.innerHeight : screen.height) - 20;
     height = height - topOffset;
     if (height < 1) {
       height = 1;

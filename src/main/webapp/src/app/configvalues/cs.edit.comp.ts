@@ -57,11 +57,12 @@ export class ConfigValueEdit implements OnInit {
 
       if (Validator.notEmpty(key)) {
         this.mode = 'edit';
-        this.configHttp.getConfigValue(template, service, key)
-          .subscribe((result) => {
+        this.configHttp.getConfigValue(template, service, key).subscribe(
+          (result) => {
             formObj.value = result;
             this.kvForm.setValue(formObj);
-          }, (err) => console.error(err));
+          },
+          (err) => console.error(err));
       }
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
@@ -70,12 +71,12 @@ export class ConfigValueEdit implements OnInit {
       });
   }
 
-  public save(newConfigPair): void {
+  public save(newConfigPair: ConfigValue): void {
     this.configHttp.save(newConfigPair).subscribe(() => {
-        this.alerts.success('Successfully created new key-value pair!');
+        this.alerts.success(`Successfully created new key-value pair: '${newConfigPair.key}-${newConfigPair.value}'.`);
         this.router.navigate(['config', newConfigPair.template])
       }, (err) => {
-        this.alerts.danger('Error creating new key-value pair!');
+        this.alerts.danger(`Error creating new key-value pair '${newConfigPair.key}-${newConfigPair.value}'!`);
         console.error(err);
       }
     );
