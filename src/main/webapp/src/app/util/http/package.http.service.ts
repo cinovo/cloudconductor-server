@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { HTTPService } from './abstract.http.service';
 
@@ -40,7 +40,11 @@ export class PackageHttpService extends HTTPService {
   }
 
   public getPackages(): Observable<Array<Package>> {
-    return this._get('');
+    return this._get('', null);
+  }
+
+  public getPackagesPagewise(page = 0, pageSize = 0): Observable<Response> {
+    return this._getResponse('', null, {page: page, per_page: pageSize});
   }
 
   public getPackage(pkgName: string): Observable<Package> {

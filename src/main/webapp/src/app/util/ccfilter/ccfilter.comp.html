@@ -1,8 +1,8 @@
 <div class="form-group input-group">
   <label class="input-group-addon" for="labelquery">{{label}}</label>
 
-  <ng-template [ngIf]="mode === 'text'">
-    <input type="text" class="form-control" [(ngModel)]="query" id="labelquery" list="queryList">
+  <ng-template [ngIf]="mode === 'text' || mode === 'number'">
+    <input [type]="mode" class="form-control" [(ngModel)]="query" id="labelquery" list="queryList">
     <datalist id="queryList" *ngIf="data && data.length > 0">
       <ng-template [ngIf]="dataField">
         <option *ngFor="let elem of data" value="{{elem[dataField]}}"></option>

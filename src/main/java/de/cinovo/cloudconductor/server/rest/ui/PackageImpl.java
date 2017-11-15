@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,7 @@ import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.rest.utils.PaginationUtils;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 
@@ -42,12 +45,28 @@ public class PackageImpl implements IPackage {
 	
 	@Override
 	@Transactional
-	public Set<Package> get() {
+	public Response get(int page, int pageSize, UriInfo uriInfo) {
 		Set<Package> result = new HashSet<>();
-		for (EPackage pkg : this.packageDAO.findList()) {
+		
+		if (page == 0) {
+			for (EPackage pkg : this.packageDAO.findList()) {
+				result.add(pkg.toApi());
+			}
+			return Response.ok(result).build();
+		}
+		
+		int first = (page - 1) * pageSize;
+		
+		for (EPackage pkg : this.packageDAO.findList(first, pageSize)) {
 			result.add(pkg.toApi());
 		}
-		return result;
+		
+		Long totalCount = this.packageDAO.count();
+		String linkHeader = PaginationUtils.buildLinkHeader(uriInfo.getAbsolutePath().toString(), page, pageSize, totalCount);
+		
+		return Response.ok(result).header("x-total-count", totalCount) //
+		.header("Link", linkHeader) //
+		.build();
 	}
 	
 	@Override

@@ -37,6 +37,11 @@ import de.taimos.dvalin.jpa.EntityDAOHibernate;
 public class PackageDAOHib extends EntityDAOHibernate<EPackage, Long> implements IPackageDAO {
 	
 	@Override
+	protected String getFindListQuery() {
+		return super.getFindListQuery() + " ORDER BY name";
+	}
+	
+	@Override
 	public Class<EPackage> getEntityClass() {
 		return EPackage.class;
 	}

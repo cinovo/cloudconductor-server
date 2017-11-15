@@ -4,6 +4,9 @@
   <div class="col-md-4">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
+  <div class="col-md-4">
+    <cc-filter [mode]="'number'" [label]="'Limit'" [selected]="limit" (onQueryChange)="limit = $event"></cc-filter>
+  </div>
 </div>
 
 <div class="row" *ngIf="!packagesLoaded">
@@ -26,32 +29,63 @@
 <div class="row" *ngIf="packages && packages.length > 0">
   <div class="col-md-12">
     <cc-panel [title]="'All available packages'" icon="fa-book">
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
-        <thead>
-        <tr>
-          <th class="sorting_asc" width="30%">Package-Name</th>
-          <th class="sorting"># Versions</th>
-          <th class="sorting">Latest version</th>
-          <th width="15px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let pkg of packages" (dblclick)="gotoDetails(pkg)">
-          <td>
-            {{pkg.name}}
-          </td>
-          <td>
-            {{pkg.versions.length}}
-          </td>
-          <td>
-            {{pkg.versions[0]}}
-          </td>
-          <td>
-            <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+      <ng-container cc-panel-body>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+              <thead>
+              <tr>
+                <th class="sorting_asc" width="30%">Package-Name</th>
+                <th class="sorting"># Versions</th>
+                <th class="sorting">Latest version</th>
+                <th width="15px"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let pkg of packages" (dblclick)="gotoDetails(pkg)">
+                <td>
+                  {{pkg.name}}
+                </td>
+                <td>
+                  {{pkg.versions.length}}
+                </td>
+                <td>
+                  {{pkg.versions[0]}}
+                </td>
+                <td>
+                  <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">Showing {{start}} to {{end}} of {{totalPackageCount}} results</div>
+          <div class="col-md-6">
+            <ul class="pagination pull-right">
+              <li [class.disabled]="page < 2">
+                <a *ngIf="page > 1" [routerLink]="[]" [queryParams]="{page: page - 1}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+                <a *ngIf="page < 2" href="javascript:void(0)">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+
+              <li [class.disabled]="page >= pageCount">
+                <a *ngIf="page < pageCount" [routerLink]="[]" [queryParams]="{page: page + 1}" aria-label="Next" >
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+                <a *ngIf="page >= pageCount" href="javascript:void(0)">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
     </cc-panel>
   </div>
 </div>
