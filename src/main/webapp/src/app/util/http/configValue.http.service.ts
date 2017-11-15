@@ -74,6 +74,12 @@ export class ConfigValueHttpService extends HTTPService {
     }
   }
 
+  public existsConfigValue(template: string, service: string, key: string): Observable<boolean> {
+    return this.getConfigValue(template, service, key)
+                .map(s => (s && s.length > 0))
+                .catch(err => Observable.of(false));
+  }
+
   public getConfigValue(template: string, service: string, key: string): Observable<string> {
     if (!Validator.notEmpty(service)) {
       return this._get(template + '/null/' + key);

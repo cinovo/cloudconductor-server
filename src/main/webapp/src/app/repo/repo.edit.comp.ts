@@ -77,34 +77,52 @@ export class RepoEdit implements OnInit {
     }
   }
 
-  save(formValue): void {
+  public save(formValue): void {
     const repo = this.repo;
     repo.name = formValue.name;
-    this.doSave(repo).subscribe(() => {
+
+    let check;
+    if (this.mode === 'new') {
+      check = this.repoHttp.existsRepo(repo.name);
+    } else {
+      check = Observable.of(false);
+    }
+
+    check.flatMap(exists => {
+      if (exists) {
+        return Observable.throw(`Repository named '${repo.name}' already exists!`);
+      } else {
+        return this.doSave(repo);
+      }
+    }).subscribe(
+      () => {
         this.alerts.success(`Successfully saved repository '${repo.name}'.`);
         if (this.mode === 'new') {
-          this.router.navigate(['repo']);
+          this.router.navigate(['/repo']);
         }
       },
-      (error) => this.alerts.danger(`Error saving repository '${repo.name}'!`)
+      (err) => {
+        this.alerts.danger(`Error saving repository '${repo.name}': ${err}`);
+        console.error(err);
+      }
     );
   }
 
-  addMirror(): void {
+  public addMirror(): void {
     const repo = this.repo;
     repo.name = this.repoForm.controls.name.value;
     this.doSave(repo).subscribe(() => {
-      this.router.navigate(['repo', this.repo.name, 'mirror', 'new']);
+      this.router.navigate(['/repo', this.repo.name, 'mirror', 'new']);
     });
   }
 
-  editMirror(id: number): void {
+  public editMirror(id: number): void {
     const repo = this.repo;
     repo.name = this.repoForm.controls.name.value;
-    this.doSave(repo).subscribe(() => this.router.navigate(['repo', this.repo.name, 'mirror', id]));
+    this.doSave(repo).subscribe(() => this.router.navigate(['/repo', this.repo.name, 'mirror', id]));
   }
 
-  deleteMirror(id: number): void {
+  public deleteMirror(id: number): void {
     if (Validator.idIsSet(id)) {
       this.mirrorHttp.deleteMirror(id.toString()).subscribe(
         () => {
@@ -117,11 +135,11 @@ export class RepoEdit implements OnInit {
     }
   }
 
-  setPrimary(id: number): void {
+  public setPrimary(id: number): void {
     this.repo.primaryMirror = id;
   }
 
-  gotToPackage(pkg: PackageVersion): void {
+  public gotToPackage(pkg: PackageVersion): void {
     if (pkg) {
       this.router.navigate(['/package', pkg.name]);
     }

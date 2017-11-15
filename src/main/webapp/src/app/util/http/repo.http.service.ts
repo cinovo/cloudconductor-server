@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 import { HTTPService } from './abstract.http.service';
 import { RepoMirror } from './repomirror.http.service';
@@ -35,6 +35,12 @@ export class RepoHttpService extends HTTPService {
 
   public getRepo(repoName: string): Observable<Repo> {
     return this._get(repoName);
+  }
+
+  public existsRepo(repoName: string): Observable<boolean> {
+    return this.getRepo(repoName)
+                .map(r => r !== undefined && r.id !== undefined)
+                .catch(err => Observable.of(false));
   }
 
   public deleteRepo(repoName: string): Observable<boolean> {

@@ -37,6 +37,12 @@ export class FileHttpService extends HTTPService {
     return this._get(fileName).map((obj) => Object.assign(new ConfigFile(), obj));
   }
 
+  public existsFile(fileName: string): Observable<boolean> {
+    return this.getFile(fileName)
+              .map(f => (f !== undefined && f.name !== undefined))
+              .catch(err => Observable.of(false));
+  }
+
   public deleteFile(fileName: string): Observable<boolean> {
     return this._delete(fileName);
   }

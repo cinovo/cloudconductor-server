@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router/';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { ConfigFile, FileForm, FileType  } from '../util/http/config-file.model';
@@ -101,7 +102,21 @@ export class FileDetailComponent implements OnInit, OnDestroy {
     const fileForm = Object.assign(new FileForm(), fv);
     const updatedFile: ConfigFile = fileForm.toConfigFile();
 
-    this.fileHttpService.updateFile(updatedFile).flatMap(() => {
+    let check: Observable<boolean>;
+    if (this._createMode) {
+      check = this.fileHttpService.existsFile(updatedFile.name);
+    } else {
+      check = Observable.of(false);
+    }
+
+    check.flatMap(exists => {
+      if (exists) {
+        return Observable.throw(`File or directory named '${updatedFile.name}' already exists!`);
+      } else {
+        console.log(`Update file '${updatedFile.name}'`);
+        return this.fileHttpService.updateFile(updatedFile);
+      }
+    }).flatMap(() => {
       if (updatedFile.isDirectory) {
         // updating content is useless here
         return Observable.of(true);
@@ -109,14 +124,18 @@ export class FileDetailComponent implements OnInit, OnDestroy {
         console.log('Update file content...');
         return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
       }
-    }).subscribe(() => {
-      this.alertService.success(`Successfully saved ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
-      this.router.navigate(['/files']);
-    },
-    (err) => {
-      this.alertService.danger(`Error saving ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
-      console.error(err);
-    });
+    }).subscribe(
+      () => {
+        const verb = (this._createMode) ? 'created' : 'updated' ;
+
+        this.alertService.success(`Successfully ${verb} ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
+        this.router.navigate(['/files']);
+      },
+      (err) => {
+        this.alertService.danger(`Error saving ${this.formObj.toLowerCase()} '${updatedFile.name}': ${err}`);
+        console.error(err);
+      }
+    );
   }
 
 }

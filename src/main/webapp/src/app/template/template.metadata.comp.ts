@@ -122,13 +122,13 @@ export class TemplateMetaData implements OnInit {
             // alright, try to save template...
             return this.templateHttp.save(templateToSave);
           } else {
-            return Observable.throw(`template named ${templateToSave.name} does already exist!`);
+            return Observable.throw(`Template named '${templateToSave.name}' does already exist!`);
           }
         }).subscribe(() => {
           this.alerts.success('Successfully saved the template ' + templateToSave.name);
           this.router.navigate(['template', templateToSave]);
         }, (err) => {
-          this.alerts.danger('Failed to save template!');
+          this.alerts.danger(`Failed to save template: ${err}`);
           console.error(err);
         }
       );

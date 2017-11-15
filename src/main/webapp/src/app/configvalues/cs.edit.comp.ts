@@ -2,6 +2,8 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { Observable } from 'rxjs/Observable';
+
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
@@ -72,11 +74,26 @@ export class ConfigValueEdit implements OnInit {
   }
 
   public save(newConfigPair: ConfigValue): void {
-    this.configHttp.save(newConfigPair).subscribe(() => {
-        this.alerts.success(`Successfully created new key-value pair: '${newConfigPair.key}-${newConfigPair.value}'.`);
-        this.router.navigate(['config', newConfigPair.template])
+    let check: Observable<boolean>;
+    if (this.mode === 'new') {
+      check = this.configHttp.existsConfigValue(newConfigPair.template, newConfigPair.service, newConfigPair.key);
+    } else {
+      check = Observable.of(false);
+    }
+
+    check.flatMap(exists => {
+      if (exists) {
+        return Observable.throw(`Configuration for '${newConfigPair.key}' does already exist!`);
+      } else {
+        return this.configHttp.save(newConfigPair);
+      }
+    }).subscribe(
+      () => {
+        let verb = (this.mode === 'new') ? 'created' : 'updated';
+        this.alerts.success(`Successfully ${verb} key-value pair: '${newConfigPair.key} - ${newConfigPair.value}'.`);
+        this.router.navigate(['/config', newConfigPair.template])
       }, (err) => {
-        this.alerts.danger(`Error creating new key-value pair '${newConfigPair.key}-${newConfigPair.value}'!`);
+        this.alerts.danger(`Error creating new key-value pair '${newConfigPair.key} - ${newConfigPair.value}': ${err}`);
         console.error(err);
       }
     );
