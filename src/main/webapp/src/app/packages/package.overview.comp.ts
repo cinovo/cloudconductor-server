@@ -85,12 +85,16 @@ export class PackageOverview implements OnInit {
     );
   }
 
-  get packages(): Array<Package> {
+  get packages(): Package[] {
     return this._packages;
   }
 
-  set packages(value: Array<Package>) {
+  set packages(value: Package[]) {
     this._packages = value
+      .map(p => {
+        p.versions = p.versions.slice().sort(Sorter.versionComp);
+        return p;
+      })
       .filter(pkg => PackageOverview.filterData(pkg, this._searchQuery))
       .sort(Sorter.packages);
   }

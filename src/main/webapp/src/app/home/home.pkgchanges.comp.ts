@@ -50,10 +50,17 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
         });
       });
 
-      Observable.forkJoin(changes$).subscribe((data) => {
-        this.packageChanges = data.reduce((acc, c) => Object.assign({}, acc, c));
-        this.lastUpdate = new Date().getTime();
-      });
+      Observable.forkJoin(changes$).subscribe(
+        (data) => {
+          this.packageChanges = data.reduce((acc, c) => Object.assign({}, acc, c));
+          this.lastUpdate = new Date().getTime();
+        },
+        (err) => console.error(err),
+        () => {
+          // if there are no changes, forkJoin observable will complete immediatly
+          this.lastUpdate = new Date().getTime();
+        }
+      );
     }
 
     public ngOnDestroy(): void {

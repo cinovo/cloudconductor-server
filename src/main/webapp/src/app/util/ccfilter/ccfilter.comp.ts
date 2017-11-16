@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
 
 type FilterMode = 'text' | 'number' | 'select';
 
@@ -12,7 +12,7 @@ type FilterMode = 'text' | 'number' | 'select';
   selector: 'cc-filter',
   templateUrl: './ccfilter.comp.html'
 })
-export class CCFilter implements AfterViewInit {
+export class CCFilter implements OnInit {
 
   @Input() label = 'Search';
   @Input() mode: FilterMode  = 'text';
@@ -27,7 +27,7 @@ export class CCFilter implements AfterViewInit {
 
   constructor() { };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     if (this.selected != null) {
       this._query = this.selected;
     }
@@ -41,4 +41,5 @@ export class CCFilter implements AfterViewInit {
     this._query = value;
     this.onQueryChange.emit(this._query);
   }
+
 }

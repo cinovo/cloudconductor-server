@@ -1,10 +1,10 @@
 <cc-title [title]="'Packages'" titleIcon="fa-book"></cc-title>
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6 col-lg-3">
     <cc-filter [mode]="'number'" [label]="'Limit'" [selected]="limit" (onQueryChange)="limit = $event"></cc-filter>
   </div>
 </div>
@@ -37,6 +37,7 @@
               <tr>
                 <th class="sorting_asc" width="30%">Package-Name</th>
                 <th class="sorting"># Versions</th>
+                <th class="sorting">Oldest version</th>
                 <th class="sorting">Latest version</th>
                 <th width="15px"></th>
               </tr>
@@ -51,6 +52,9 @@
                 </td>
                 <td>
                   {{pkg.versions[0]}}
+                </td>
+                <td>
+                  {{pkg.versions[pkg.versions.length - 1]}}
                 </td>
                 <td>
                   <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>

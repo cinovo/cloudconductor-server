@@ -19,7 +19,8 @@
           {{repo.name}}
         </td>
         <td>
-          {{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}
+          <span *ngIf="!repo.lastIndex">Never</span>
+          <span *ngIf="repo.lastIndex">{{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}</span>
         </td>
       </tr>
       </tbody>
