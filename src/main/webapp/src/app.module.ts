@@ -75,6 +75,8 @@ import { HomeHostStatusComponent } from './app/home/home.hoststatus.comp';
 import { HostsService } from './app/util/hosts/hosts.service';
 import { HomeRepoScansComponent } from './app/home/home.reposcans.comp';
 import { RepoScansService } from './app/util/reposcans/reposcans.service';
+import { HomeStatsComponent } from './app/home/home.stats.comp';
+import { StatsHttpService } from './app/util/http/stats.http.service';
 
 @NgModule({
   imports: [
@@ -129,7 +131,8 @@ import { RepoScansService } from './app/util/reposcans/reposcans.service';
     HomePackageChangesComponent,
     HomeHostStatusComponent,
     HomeServiceStatusComponent,
-    HomeRepoScansComponent
+    HomeRepoScansComponent,
+    HomeStatsComponent
   ],
   providers: [
     AlertService,
@@ -150,7 +153,8 @@ import { RepoScansService } from './app/util/reposcans/reposcans.service';
     AuthTokenHttpService,
     PackageChangesService,
     HostsService,
-    RepoScansService
+    RepoScansService,
+    StatsHttpService
   ],
   bootstrap: [AppComponent]
 })

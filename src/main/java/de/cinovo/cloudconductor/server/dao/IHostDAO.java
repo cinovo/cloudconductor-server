@@ -28,5 +28,10 @@ import de.taimos.dvalin.jpa.IEntityDAO;
  * 
  */
 public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
-	// nothing to add
+	
+	/**
+	 * @return the number of hosts
+	 */
+	public Long count();
+	
 }

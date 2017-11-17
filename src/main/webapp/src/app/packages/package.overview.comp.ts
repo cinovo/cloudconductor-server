@@ -72,7 +72,6 @@ export class PackageOverview implements OnInit {
 
         try {
           let pkgs = response.json();
-          console.log(pkgs);
           this.packages = pkgs;
         } catch (error) {
           this.packages = <any>response;

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+
 /*
  * #%L
  * cloudconductor-server
@@ -53,6 +56,14 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	@Override
 	public List<ETemplate> findByPackage(EPackage pkg) {
 		return this.findListByQuery("SELECT DISTINCT t FROM ETemplate t join fetch t.packageVersions pv WHERE ?1 = pv.pkg", pkg);
+	}
+	
+	@Override
+	public Long count() {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = builder.createQuery(Long.class);
+		query.select(builder.count(query.from(ETemplate.class)));
+		return this.entityManager.createQuery(query).getSingleResult();
 	}
 
 }

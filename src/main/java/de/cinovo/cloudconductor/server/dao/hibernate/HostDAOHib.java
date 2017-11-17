@@ -1,5 +1,8 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+
 /*
  * #%L
  * cloudconductor-server
@@ -41,6 +44,14 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	@Override
 	public EHost findByName(String name) {
 		return this.findByQuery("FROM EHost h WHERE h.name = ?1", name);
+	}
+	
+	@Override
+	public Long count() {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = builder.createQuery(Long.class);
+		query.select(builder.count(query.from(EHost.class)));
+		return this.entityManager.createQuery(query).getSingleResult();
 	}
 	
 }
