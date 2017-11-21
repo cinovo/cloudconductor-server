@@ -1,4 +1,4 @@
-<cc-panel [title]="'Pending Package Changes'" icon="fa-hourglass-2" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+<cc-panel [title]="'Pending Package Changes'" icon="fa-hourglass-2" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
   <div *ngIf="!hasChanges" class="alert alert-success" cc-panel-body>
     There are no pending package changes on any host.
   </div>

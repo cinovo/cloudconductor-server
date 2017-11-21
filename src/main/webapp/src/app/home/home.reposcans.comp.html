@@ -1,4 +1,4 @@
-<cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+<cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
   <ng-container *ngIf="(reposObs | async) as repos" cc-panel-body>
     <div class="alert alert-warning" *ngIf="repos?.length < 1">
       No repository scans!

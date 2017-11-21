@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { HostHttpService, Host } from '../util/http/host.http.service';
 import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';

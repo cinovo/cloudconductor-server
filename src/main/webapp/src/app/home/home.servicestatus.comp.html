@@ -1,4 +1,4 @@
-<cc-panel [title]="'Service Status'" icon="fa-flask" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}">
+<cc-panel [title]="'Service Status'" icon="fa-flask" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
   <ng-container *ngIf="(servicesObs | async) as services" cc-panel-body>
     <div class="alert alert-warning" *ngIf="services?.length < 1" >
       No services found!
