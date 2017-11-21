@@ -895,4 +895,14 @@
     <changeSet id="30" author="mweise">
     	<addUniqueConstraint columnNames="packageid,version" constraintName="packageid_version" schemaName="cloudconductor" tableName="packageversion"/>
     </changeSet>
+    <changeSet id="31" author="mweise">
+    	<addColumn schemaName="cloudconductor" tableName="serveroptions">
+    		<column name="hostalivetimer" defaultValueNumeric="15" type="bigint">
+				<constraints nullable="false"/>
+    		</column>
+    		<column name="hostalivetimerunit" defaultValueNumeric="3" type="bigint">
+                <constraints nullable="false"/>
+			</column>
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog>

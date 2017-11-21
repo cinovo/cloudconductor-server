@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Host } from '../http/host.http.service';
+import { SettingHttpService } from '../http/setting.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -11,12 +12,21 @@ import { Host } from '../http/host.http.service';
 @Injectable()
 export class HostsService {
 
-  private hostsInterval = 30 * 1000 * 60;
+  private static readonly defaultHostsInterval = 30 * 1000 * 60;
 
-  constructor() { }
+  constructor(private settingHttpService: SettingHttpService) { }
 
   public isAlive(host: Host): boolean {
-    return new Date().getTime() - host.lastSeen < this.hostsInterval;
+    const settings = this.settingHttpService.lastInstance;
+
+    let hostsInterval: number;
+    if (settings) {
+      hostsInterval = SettingHttpService.calcIntervalInMillis(settings.hostAliveTimer, settings.hostAliveTimerUnit);
+    } else {
+      hostsInterval = HostsService.defaultHostsInterval
+    }
+
+    return (new Date().getTime() - host.lastSeen) < hostsInterval;
   }
 
 }

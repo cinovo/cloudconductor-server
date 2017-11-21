@@ -23,7 +23,7 @@ export class SettingsOverview implements OnInit {
 
   public settingsForm: FormGroup;
 
-  protected allPackages: Array<Package> = [];
+  protected allPackages: Package[] = [];
   public newPackage: string;
   public showAddPackage = false;
 
@@ -35,6 +35,8 @@ export class SettingsOverview implements OnInit {
       name: ['Default', [Validators.required]],
       description: [''],
       allowautoupdate: [false],
+      hostAliveTimer: [60, [Validators.required, gtValidator(0)]],
+      hostAliveTimerUnit: ['SECONDS', [Validators.required]],
       hostCleanUpTimer: [60, [Validators.required, gtValidator(0)]],
       hostCleanUpTimerUnit: ['SECONDS', [Validators.required]],
       indexScanTimer: [60, [Validators.required, gtValidator(0)]],
@@ -63,10 +65,12 @@ export class SettingsOverview implements OnInit {
   }
 
   public saveSettings(settings: Settings): void {
-    const updatedSettings = {
+    const updatedSettings: Settings = {
       name: settings.name,
       description: settings.description,
       allowautoupdate: settings.allowautoupdate,
+      hostAliveTimer: settings.hostAliveTimer,
+      hostAliveTimerUnit: settings.hostAliveTimerUnit,
       hostCleanUpTimer: settings.hostCleanUpTimer,
       hostCleanUpTimerUnit: settings.hostCleanUpTimerUnit,
       indexScanTimer: settings.indexScanTimer,

@@ -1,7 +1,7 @@
 <cc-title [title]="'Settings'" titleIcon="fa-gear"></cc-title>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-lg-6">
     <cc-panel [title]="'Settings'" icon="fa-gear">
       <form [formGroup]="settingsForm" (ngSubmit)="saveSettings(settingsForm.value)" novalidate cc-panel-body>
         <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.name.pristine && !settingsForm.controls.name.valid }">
@@ -19,13 +19,33 @@
         <div class="form-group">
           <label for="autoupdate">
             <input type="checkbox" id="autoupdate" formControlName="allowautoupdate">
-            Allow auto selected in the configuration of the templates</label>
+            Allow auto selected in the configuration of the templates
+          </label>
+        </div>
+
+        <div class="form-horizontal">
+          <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.hostAliveTimer.pristine && !settingsForm.controls.hostAliveTimer.valid }">
+            <label for="hostalivetimer" class="col-sm-3 control-label" style="text-align:left">
+              Host alive timer
+            </label>
+            <div class="col-sm-6">
+              <input type="number" class="form-control" style="text-align: right;" id="hostalivetimer" formControlName="hostAliveTimer" min="1">
+              <span *ngIf="!settingsForm.controls.hostAliveTimer.pristine && !settingsForm.controls.hostAliveTimer.valid" class="help-block">
+                Please enter a number > 0.
+              </span>
+            </div>
+            <div class="col-sm-3">
+              <select name="hostAliveTimerUnit" class="form-control" id="alivetimerunit" formControlName="hostAliveTimerUnit">
+                <option *ngFor="let unit of timeUnits" [value]="unit.value">{{unit.label}}</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div class="form-horizontal">
           <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.hostCleanUpTimer.pristine && !settingsForm.controls.hostCleanUpTimer.valid }">
             <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">
-              Host Cleanup timer:
+              Host Cleanup timer
             </label>
             <div class="col-sm-6">
               <input type="number" class="form-control" style="text-align:right" id="cleanuptimer" formControlName="hostCleanUpTimer" min="1">
@@ -43,7 +63,9 @@
 
         <div class="form-horizontal">
           <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.indexScanTimer.pristine && !settingsForm.controls.indexScanTimer.valid }">
-            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Index-Scan timer: </label>
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">
+              Index-Scan timer
+            </label>
             <div class="col-sm-6">
               <input type="number" class="form-control" style="text-align:right" id="indexscantimer" formControlName="indexScanTimer" min="1">
               <span *ngIf="!settingsForm.controls.indexScanTimer.pristine && !settingsForm.controls.indexScanTimer.valid" class="help-block">
@@ -60,7 +82,9 @@
 
         <div class="form-horizontal">
           <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.pageRefreshTimer.pristine && !settingsForm.controls.pageRefreshTimer.valid }">
-            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Page refresh timer: </label>
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">
+              Page refresh timer
+            </label>
             <div class="col-sm-6">
               <input type="number" class="form-control" style="text-align:right" id="refreshtimer" formControlName="pageRefreshTimer" min="1">
               <span *ngIf="!settingsForm.controls.pageRefreshTimer.pristine && !settingsForm.controls.pageRefreshTimer.valid" class="help-block">

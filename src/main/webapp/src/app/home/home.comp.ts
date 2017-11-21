@@ -91,7 +91,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public loadServices(): Observable<Service[]> {
-    return this.serviceHttpService.getServices().map(services => services.sort(Sorter.service));
+    return this.serviceHttpService.getServices()
+                                  .map(services => services.sort(Sorter.service));
   }
 
   public loadStats(): Observable<Stats> {

@@ -17,13 +17,23 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.model.Settings;
-import de.taimos.dvalin.jpa.IEntity;
-
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import de.cinovo.cloudconductor.api.model.Settings;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -41,25 +51,28 @@ public class EServerOptions extends AModelApiConvertable<Settings> implements IE
 	private Long id;
 	
 	private String name;
-
+	
 	private boolean allowautoupdate;
 	
 	private String description;
 	
 	private boolean needsApproval;
 	
+	private int hostAliveTimer = 15;
+	private TimeUnit hostAliveTimerUnit = TimeUnit.MINUTES;
+	
 	private int hostCleanUpTimer = 30;
 	private TimeUnit hostCleanUpTimerUnit = TimeUnit.MINUTES;
-
+	
 	private int indexScanTimer = 60;
 	private TimeUnit indexScanTimerUnit = TimeUnit.SECONDS;
-
+	
 	private int pageRefreshTimer = 15;
 	private TimeUnit pageRefreshTimerUnit = TimeUnit.SECONDS;
-
+	
 	private Set<String> disallowUninstall = new HashSet<>();
-
-
+	
+	
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -128,6 +141,34 @@ public class EServerOptions extends AModelApiConvertable<Settings> implements IE
 	 */
 	public void setNeedsApproval(boolean needsApproval) {
 		this.needsApproval = needsApproval;
+	}
+	
+	/**
+	 * @return the hostAliveTimer
+	 */
+	public int getHostAliveTimer() {
+		return this.hostAliveTimer;
+	}
+	
+	/**
+	 * @param hostAliveTimer the hostAliveTimer to set
+	 */
+	public void setHostAliveTimer(int hostAliveTimer) {
+		this.hostAliveTimer = hostAliveTimer;
+	}
+	
+	/**
+	 * @return the hostAliveTimerUnit
+	 */
+	public TimeUnit getHostAliveTimerUnit() {
+		return this.hostAliveTimerUnit;
+	}
+	
+	/**
+	 * @param hostAliveTimerUnit the hostAliveTimerUnit to set
+	 */
+	public void setHostAliveTimerUnit(TimeUnit hostAliveTimerUnit) {
+		this.hostAliveTimerUnit = hostAliveTimerUnit;
 	}
 	
 	/**
@@ -230,7 +271,7 @@ public class EServerOptions extends AModelApiConvertable<Settings> implements IE
 	public void setDisallowUninstall(Set<String> disallowUninstall) {
 		this.disallowUninstall = disallowUninstall;
 	}
-
+	
 	@Override
 	@Transient
 	public Class<Settings> getApiClass() {

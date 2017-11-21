@@ -45,6 +45,7 @@ public class SettingsImpl implements ISettings {
 		RESTAssert.assertNotNull(settings);
 		RESTAssert.assertNotNull(settings.getName());
 		
+		RESTAssert.assertTrue(settings.getHostAliveTimer() > 0);
 		RESTAssert.assertTrue(settings.getHostCleanUpTimer() > 0);
 		RESTAssert.assertTrue(settings.getPageRefreshTimer() > 0);
 		RESTAssert.assertTrue(settings.getIndexScanTimer() > 0);

@@ -17,16 +17,20 @@ export interface Settings {
   description?: string;
   allowautoupdate?: boolean;
   needsApproval?: boolean;
+  hostAliveTimer?: number;
+  hostAliveTimerUnit?: TimeUnit;
   hostCleanUpTimer?: number;
-  hostCleanUpTimerUnit?: string;
+  hostCleanUpTimerUnit?: TimeUnit;
   indexScanTimer?: number;
-  indexScanTimerUnit?: string;
+  indexScanTimerUnit?: TimeUnit;
   pageRefreshTimer?: number;
   pageRefreshTimerUnit?: string;
   disallowUninstall?: string[];
 }
 
-export const timeUnits = [
+type TimeUnit = 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS';
+
+export const timeUnits: {value: TimeUnit, label: string, factor: number}[] = [
   { value: 'SECONDS', label: 'Seconds', factor: 1000 },
   { value: 'MINUTES', label: 'Minutes', factor: 60000 },
   { value: 'HOURS', label: 'Hours', factor: 3600000 },

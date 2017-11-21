@@ -101,8 +101,10 @@ public class IndexTask implements IServerTasks {
 	
 	@Override
 	public void update(EServerOptions oldSettings, EServerOptions newSettings) {
-		boolean change = oldSettings == null;
-		if (!change) {
+		boolean change = false;
+		if (oldSettings == null) {
+			change = true;
+		} else {
 			if (oldSettings.getIndexScanTimer() != newSettings.getIndexScanTimer()) {
 				change = true;
 			}
