@@ -3,75 +3,73 @@
 <div class="row">
   <div class="col-md-6">
     <cc-panel [title]="'Settings'" icon="fa-gear">
-      <div cc-panel-body>
-        <div class="form-group" [class.has-error]="!settings.name">
-          <label class="control-label" for="servername">Server-Name</label>
-          <input type="text" class="form-control" value="Default" id="servername" [(ngModel)]="settings.name">
+      <form [formGroup]="settingsForm" (ngSubmit)="saveSettings(settingsForm.value)" novalidate cc-panel-body>
+        <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.name.pristine && !settingsForm.controls.name.valid }">
+          <label class="control-label" for="servername">Server Name</label>
+          <input type="text" class="form-control" id="servername" formControlName="name">
+          <span *ngIf="!settingsForm.controls.name.pristine && !settingsForm.controls.name.valid" class="help-block">
+            This field is required.
+          </span>
         </div>
         <div class="form-group">
           <label class="control-label" for="description">Server Description</label>
-          <textarea class="form-control" rows="3" id="description" [(ngModel)]="settings.description"></textarea>
+          <textarea class="form-control" rows="3" id="description" formControlName="description"></textarea>
         </div>
 
         <div class="form-group">
           <label for="autoupdate">
-            <input type="checkbox" id="autoupdate" [(ngModel)]="settings.allowautoupdate">
+            <input type="checkbox" id="autoupdate" formControlName="allowautoupdate">
             Allow auto selected in the configuration of the templates</label>
         </div>
 
         <div class="form-horizontal">
-          <div class="form-group" [class.has-error]="!noGtEqZero(settings.hostCleanUpTimer)">
-            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Host Cleanup
-              timer: </label>
+          <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.hostCleanUpTimer.pristine && !settingsForm.controls.hostCleanUpTimer.valid }">
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">
+              Host Cleanup timer:
+            </label>
             <div class="col-sm-6">
-              <input type="number" class="form-control" style="text-align:right" value="30" id="cleanuptimer"
-                     [(ngModel)]="settings.hostCleanUpTimer">
+              <input type="number" class="form-control" style="text-align:right" id="cleanuptimer" formControlName="hostCleanUpTimer" min="1">
+              <span *ngIf="!settingsForm.controls.hostCleanUpTimer.pristine && !settingsForm.controls.hostCleanUpTimer.valid" class="help-block">
+                Please enter a number > 0.
+              </span>
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="cleanuptimerunit"
-                      [(ngModel)]="settings.hostCleanUpTimerUnit">
-                <option value="SECONDS" selected="selected">Seconds</option>
-                <option value="MINUTES">Minutes</option>
-                <option value="HOURS">Hours</option>
-                <option value="DAYS">Days</option>
+              <select name="hostCleanUpTimerUnit" class="form-control" id="cleanuptimerunit" formControlName="hostCleanUpTimerUnit">
+                <option *ngFor="let unit of timeUnits" [value]="unit.value">{{unit.label}}</option>
               </select>
             </div>
           </div>
         </div>
 
         <div class="form-horizontal">
-          <div class="form-group" [class.has-error]="!noGtEqZero(settings.indexScanTimer)">
+          <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.indexScanTimer.pristine && !settingsForm.controls.indexScanTimer.valid }">
             <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Index-Scan timer: </label>
             <div class="col-sm-6">
-              <input type="number" class="form-control" style="text-align:right" value="30" id="indexscantimer"
-                     [(ngModel)]="settings.indexScanTimer">
+              <input type="number" class="form-control" style="text-align:right" id="indexscantimer" formControlName="indexScanTimer" min="1">
+              <span *ngIf="!settingsForm.controls.indexScanTimer.pristine && !settingsForm.controls.indexScanTimer.valid" class="help-block">
+                Please enter a number > 0.
+              </span>
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="indexscantimerunit"
-                      [(ngModel)]="settings.indexScanTimerUnit">
-                <option value="SECONDS" selected="selected">Seconds</option>
-                <option value="MINUTES">Minutes</option>
-                <option value="HOURS">Hours</option>
-                <option value="DAYS">Days</option>
+              <select name="hostCleanUpTimerUnit" class="form-control" id="indexscantimerunit" formControlName="indexScanTimerUnit">
+                <option *ngFor="let unit of timeUnits" [value]="unit.value">{{unit.label}}</option>
               </select>
             </div>
           </div>
         </div>
+
         <div class="form-horizontal">
-          <div class="form-group" [class.has-error]="!noGtEqZero(settings.pageRefreshTimer)">
-            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Page refresh
-              timer: </label>
+          <div class="form-group" [ngClass]="{ 'has-error': !settingsForm.controls.pageRefreshTimer.pristine && !settingsForm.controls.pageRefreshTimer.valid }">
+            <label class="col-sm-3 control-label" for="cleanuptimer" style="text-align:left">Page refresh timer: </label>
             <div class="col-sm-6">
-              <input type="number" class="form-control" style="text-align:right" value="30" id="refreshtimer"
-                     [(ngModel)]="settings.pageRefreshTimer">
+              <input type="number" class="form-control" style="text-align:right" id="refreshtimer" formControlName="pageRefreshTimer" min="1">
+              <span *ngIf="!settingsForm.controls.pageRefreshTimer.pristine && !settingsForm.controls.pageRefreshTimer.valid" class="help-block">
+                Please enter a number > 0.
+              </span>
             </div>
             <div class="col-sm-3">
-              <select name="hostCleanUpTimerUnit" class="form-control" id="refreshtimerunit"
-                      [(ngModel)]="settings.pageRefreshTimerUnit">
-                <option value="SECONDS" selected="selected">Seconds</option>
-                <option value="MINUTES">Minutes</option>
-                <option value="HOURS">Hours</option>
-                <option value="DAYS">Days</option>
+              <select name="hostCleanUpTimerUnit" class="form-control" id="refreshtimerunit" formControlName="pageRefreshTimerUnit">
+                <option *ngFor="let unit of timeUnits" [value]="unit.value">{{unit.label}}</option>
               </select>
             </div>
           </div>
@@ -80,12 +78,12 @@
         <cc-panel [title]="'Deinstall-Protected packages:'" icon="fa-book">
           <table class="table-responsive table table-striped table-hover" cc-panel-body>
             <tbody>
-            <tr *ngIf="!settings.disallowUninstall || settings.disallowUninstall.length <= 0" class="warning">
+            <tr *ngIf="!settingsForm.value.disallowUninstall || settingsForm.value.disallowUninstall.length <= 0" class="warning">
               <td colspan="6" class="text-center">
                 There are currently no deinstall-protected packages.
               </td>
             </tr>
-            <tr *ngFor="let package of settings.disallowUninstall">
+            <tr *ngFor="let package of settingsForm.value.disallowUninstall">
               <td>
                 {{package}}
               </td>
@@ -104,18 +102,19 @@
             <tr *ngIf="showAddPackage">
               <td colspan="3">
                 <div class="form-group">
-                  <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a protected
-                    package</label>
-                  <input type="text" class="form-control" [(ngModel)]="newPackage" id="addpackage" list="packageList">
+                  <label class="control-label" for="addpackage">
+                    <i class="fa fa-plus fa-fw"></i>
+                    Add a protected package
+                  </label>
+                  <input type="text" class="form-control" formControlName="newPackage" id="addpackage" list="packageList">
                   <datalist id="packageList">
                     <option *ngFor="let pkg of allPackages" value="{{pkg.name}}">{{pkg.name}}</option>
                   </datalist>
                 </div>
 
                 <div class="pull-right">
-                  <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
-                  <button (click)="saveNewPackage()" class="btn btn-success"
-                          [disabled]="!newPackage">
+                  <button type="button" (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
+                  <button type="button" (click)="saveNewPackage()" class="btn btn-success" [disabled]="!settingsForm.value.newPackage">
                     Add
                   </button>
                 </div>
@@ -123,8 +122,9 @@
             </tr>
 
             <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
-              <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
-                Add a protected package
+              <td colspan="3" role="button">
+                <i class="fa fa-plus fa-fw"></i>
+                Add protected package
               </td>
             </tr>
 
@@ -133,14 +133,11 @@
         </cc-panel>
 
         <div class="pull-right">
-          <button (click)="saveSettings()" class="btn btn-info"
-                  [disabled]="!settings.name|| !noGtEqZero(settings.hostCleanUpTimer)
-                  ||!noGtEqZero(settings.pageRefreshTimer) || !noGtEqZero(settings.indexScanTimer)">
+          <button type="submit" class="btn btn-info" [disabled]="settingsForm.invalid">
             Save
           </button>
         </div>
-
-      </div>
+      </form>
     </cc-panel>
   </div>
 

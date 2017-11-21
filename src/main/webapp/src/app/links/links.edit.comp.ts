@@ -2,7 +2,6 @@ import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
-import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
 
@@ -25,8 +24,7 @@ export class LinksEdit implements AfterViewInit {
   private editLink: AdditionalLink;
 
   constructor(private linksHttp: AdditionalLinkHttpService,
-              private alerts: AlertService) {
-  };
+              private alerts: AlertService) { };
 
   ngAfterViewInit(): void {
     this.loadLinks();

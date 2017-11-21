@@ -25,6 +25,13 @@ export class Validator {
 
 }
 
+export function gtValidator(n: number): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} => {
+    const smEq = control.value <= n;
+    return smEq ? { 'gtValue': { value: control.value } } : null;
+  };
+}
+
 export function forbiddenNameValidator(forbiddenName: string): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} => {
     const forbidden = (control.value === forbiddenName);
