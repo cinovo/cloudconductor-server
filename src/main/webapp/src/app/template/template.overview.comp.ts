@@ -11,6 +11,7 @@ import { TemplateHttpService, Template } from '../util/http/template.http.servic
 import { Validator } from '../util/validator.util';
 import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
+import { RepoHttpService, Repo } from '../util/http/repo.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -25,6 +26,7 @@ import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 export class TemplateOverview implements OnInit, OnDestroy {
 
   private _searchQuery: string = null;
+  private _repoQuery: string = null;
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
@@ -33,7 +35,16 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
 
+  public repos: Repo[];
+
   public templatesLoaded = false;
+
+  private static filterByRepo(template: Template, repoName: string): boolean {
+    if (Validator.notEmpty(repoName)) {
+      return template.repos.indexOf(repoName) > -1
+    }
+    return true;
+  }
 
   private static filterData(template: Template, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -43,12 +54,15 @@ export class TemplateOverview implements OnInit, OnDestroy {
   }
 
   constructor(private templateHttp: TemplateHttpService,
+              private repoHttp: RepoHttpService,
               private router: Router,
               private alerts: AlertService,
               private wsService: WebSocketService) {  };
 
   ngOnInit(): void {
     this.loadTemplates();
+
+    this.loadRepos();
 
     this.wsService.connect('templates').subscribe((webSocket) => {
       this._webSocket = webSocket;
@@ -116,6 +130,15 @@ export class TemplateOverview implements OnInit, OnDestroy {
     });
   }
 
+  private loadRepos(): void {
+    this.repoHttp.getRepos().subscribe(
+      (repos) => this.repos = repos,
+      (err) => {
+        console.error(err);
+      }
+    )
+  }
+
   protected countVersion(versions: any): number {
     return Object.keys(versions).length;
   }
@@ -126,7 +149,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   set templates(value: Array<Template>) {
     this._templates = value
-      .filter(repo => TemplateOverview.filterData(repo, this._searchQuery))
+      .filter(template => TemplateOverview.filterByRepo(template, this._repoQuery))
+      .filter(template => TemplateOverview.filterData(template, this._searchQuery))
       .sort(Sorter.template);
   }
 
@@ -136,6 +160,11 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   set searchQuery(value: string) {
     this._searchQuery = value;
+    this.loadTemplates();
+  }
+
+  set repoQuery(value: string) {
+    this._repoQuery = value;
     this.loadTemplates();
   }
 

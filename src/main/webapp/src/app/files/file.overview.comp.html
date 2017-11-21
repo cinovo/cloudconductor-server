@@ -5,11 +5,14 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-3">
-    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
-      [dataField]="'name'">
+    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="templateQuery = $event" [dataField]="'name'">
     </cc-filter>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Service" [data]="services" (onQueryChange)="serviceQuery = $event" [dataField]="'name'">
+    </cc-filter>
+  </div>
+  <div class="col-md-3">
     <a class="btn btn-success pull-right" role="button" [routerLink]="['new']">
       <i class="fa fa-plus fa-fw"></i>
       New
