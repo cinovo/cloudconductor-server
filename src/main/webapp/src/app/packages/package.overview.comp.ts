@@ -104,7 +104,8 @@ export class PackageOverview implements OnInit {
 
   set limit(value: number) {
     this._limit = value;
-    this.loadPackages()
+    this.router.navigate(['/package'], { queryParams: { page: 1 }});
+    this.loadPackages();
   }
 
   get page(): number {
