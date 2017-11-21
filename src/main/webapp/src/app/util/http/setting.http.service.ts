@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { HTTPService } from './abstract.http.service';
 
@@ -25,6 +26,13 @@ export interface Settings {
   disallowUninstall?: string[];
 }
 
+export const timeUnits = [
+  { value: 'SECONDS', label: 'Seconds', factor: 1000 },
+  { value: 'MINUTES', label: 'Minutes', factor: 60000 },
+  { value: 'HOURS', label: 'Hours', factor: 3600000 },
+  { value: 'DAYS', label: 'Days', factor: 86400000 }
+];
+
 @Injectable()
 export class SettingHttpService extends HTTPService {
 
@@ -33,10 +41,22 @@ export class SettingHttpService extends HTTPService {
 
   private reloading = false;
 
+  public static calcIntervalInMillis(n: number, label: string) {
+    const unit = timeUnits.find(u => u.value === label);
+    if (unit && unit.factor) {
+      return n * unit.factor
+    }
+    return n * 1000;
+  }
+
   constructor(protected http: Http) {
     super(http);
     this.basePathURL = 'settings/';
     this.reloadSettings();
+  }
+
+  get lastInstance(): Settings {
+    return this._settings.value;
   }
 
   public getSettings(): Observable<Settings> {

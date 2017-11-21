@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { Repo } from '../http/repo.http.service';
+import { SettingHttpService } from '../http/setting.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -10,7 +12,13 @@ import { Repo } from '../http/repo.http.service';
 @Injectable()
 export class RepoScansService {
 
-  private scanInterval = 60 * 1000;
+  constructor(private settingHttpService: SettingHttpService) { }
+
+  private get scanInterval() {
+    const intervalNumber = this.settingHttpService.lastInstance.indexScanTimer;
+    const intervalUnit = this.settingHttpService.lastInstance.indexScanTimerUnit;
+    return SettingHttpService.calcIntervalInMillis(intervalNumber, intervalUnit);
+  }
 
   public isDue(repo: Repo): boolean {
     const diff = new Date().getTime() - repo.lastIndex;

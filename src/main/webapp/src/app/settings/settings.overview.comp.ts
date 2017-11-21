@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { SettingHttpService, Settings } from '../util/http/setting.http.service';
+import { SettingHttpService, Settings, timeUnits } from '../util/http/setting.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { Package, PackageHttpService } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
@@ -19,12 +19,7 @@ import { Validator, gtValidator } from '../util/validator.util';
 })
 export class SettingsOverview implements OnInit {
 
-  public readonly timeUnits = [
-    { value: 'SECONDS', label: 'Seconds' },
-    { value: 'MINUTES', label: 'Minutes' },
-    { value: 'HOURS', label: 'Hours' },
-    { value: 'DAYS', label: 'Days' }
-  ];
+  public readonly timeUnits = timeUnits;
 
   public settingsForm: FormGroup;
 
