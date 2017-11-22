@@ -1,8 +1,9 @@
 <cc-panel [title]="'Service Status'" icon="fa-flask" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
-  <ng-container *ngIf="(servicesObs | async) as services" cc-panel-body>
+  <ng-container *ngIf="(servicesObs | async) as services; else loading" cc-panel-body>
     <div class="alert alert-warning" *ngIf="services?.length < 1" >
       No services found!
     </div>
+
     <table class="table-responsive table table-striped table-hover dataTable" *ngIf="services?.length > 0">
       <thead>
       <tr>
@@ -30,4 +31,11 @@
       </tbody>
     </table>
   </ng-container>
+
+  <ng-template #loading>
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading services...
+    </div>
+  </ng-template>
 </cc-panel>

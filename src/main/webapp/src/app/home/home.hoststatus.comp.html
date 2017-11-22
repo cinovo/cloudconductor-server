@@ -1,5 +1,5 @@
 <cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
-  <ng-container *ngIf="(hostsObs|async) as hosts" cc-panel-body>
+  <ng-container *ngIf="(hostsObs|async) as hosts; else loading" cc-panel-body>
     <div class="alert alert-warning" *ngIf="hosts?.length < 1" cc-panel-body>
       No hosts found!
     </div>
@@ -31,4 +31,12 @@
       </tbody>
     </table>
   </ng-container>
+
+  <ng-template #loading>
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading hosts...
+    </div>
+  </ng-template>
+
 </cc-panel>
