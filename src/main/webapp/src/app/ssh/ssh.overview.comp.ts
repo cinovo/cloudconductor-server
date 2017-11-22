@@ -1,7 +1,8 @@
-import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
@@ -24,6 +25,7 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
   private _sshKeys: SSHKey[] = [];
   private _searchQuery: string = null;
   private _searchTemplateQuery = '';
+  private _userQuery = null;
   private _templatesSub: Subscription;
 
   public showAddKey = false;
@@ -45,6 +47,13 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
   private static filterTemplateData(key: SSHKey, templateQuery: string) {
     if (Validator.notEmpty(templateQuery)) {
       return key.templates.some(t => t === templateQuery);
+    }
+    return true;
+  }
+
+  private static filterByUser(key: SSHKey, userQuery: string) {
+    if (Validator.notEmpty(userQuery)) {
+      return key.username.indexOf(userQuery.trim()) >= 0;
     }
     return true;
   }
@@ -97,6 +106,15 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
+  get userQuery(): string {
+    return this._userQuery;
+  }
+
+  set userQuery(value: string) {
+    this._userQuery = value;
+    this.loadData();
+  }
+
   get sshKeys() {
     return this._sshKeys;
   }
@@ -105,6 +123,7 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
     this._sshKeys = value
       .filter(sshKey => SSHOverviewComponent.filterSSHKeys(sshKey, this._searchQuery))
       .filter(sshKey => SSHOverviewComponent.filterTemplateData(sshKey, this._searchTemplateQuery))
+      .filter(sshKey => SSHOverviewComponent.filterByUser(sshKey, this._userQuery))
       .sort(Sorter.sshKey);
   }
 

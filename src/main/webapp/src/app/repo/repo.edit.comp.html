@@ -101,7 +101,9 @@
               {{pkg.version}}
             </td>
             <td>
-              <a [routerLink]="['/package', pkg.name]"><i class="fa fa-external-link fa-fw"></i></a>
+              <a [routerLink]="['/package', pkg.name]" title="Show Package">
+                <i class="fa fa-external-link fa-fw"></i>
+              </a>
             </td>
           </tr>
           </tbody>

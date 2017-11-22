@@ -5,11 +5,14 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-3">
+    <cc-filter label="User" (onQueryChange)="userQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-3">
     <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
       [dataField]="'name'">
     </cc-filter>
   </div>
-  <div *ngIf="!showAddKey" class="col-md-6">
+  <div *ngIf="!showAddKey" class="col-md-3">
     <button class="btn btn-success pull-right" role="button" (click)="goToAddKey()">
       <i class="fa fa-plus fa-fw"></i>
       Add SSH Key

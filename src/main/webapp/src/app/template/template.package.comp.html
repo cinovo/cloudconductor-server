@@ -35,7 +35,7 @@
             </span>
           </td>
           <td>
-            <a *ngIf="!isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" title="Update package to newest">
+            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" title="Update package to newest">
               <i class="fa fa-refresh fa-fw"></i>
             </a>
           </td>
@@ -61,14 +61,13 @@
             <div class="form-horizontal">
               <div class="form-group">
                 <div class="col-sm-6">
-                  <select #pkgSelect class="form-control" id="pkg" [(ngModel)]="newPackage.pkg"
-                          (ngModelChange)="onPackageChange()">
+                  <select class="form-control" id="pkg" [(ngModel)]="newPackage.pkg" (ngModelChange)="onPackageChange()">
                     <option *ngFor="let pt of packageTreeArray()" value="{{pt.pkgName}}">{{pt.pkgName}}</option>
                   </select>
                 </div>
                 <div class="col-sm-6">
-                  <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!pkgSelect.value">
-                    <option *ngFor="let version of getVersions(pkgSelect.value)" value="{{version.version}}">
+                  <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!newPackage.pkg">
+                    <option *ngFor="let version of getVersions(newPackage.pkg)" value="{{version.version}}">
                       {{version.version}}
                     </option>
                   </select>
