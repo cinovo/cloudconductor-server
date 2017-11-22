@@ -5,7 +5,7 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-6 col-lg-3">
-    <cc-filter [mode]="'number'" [label]="'Limit'" [selected]="limit" (onQueryChange)="limit = $event"></cc-filter>
+    <cc-filter [mode]="'select'" [label]="'Limit'" [data]="limits" [selected]="limit" (onQueryChange)="limit = $event"></cc-filter>
   </div>
 </div>
 
@@ -65,30 +65,9 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-6">Showing {{start}} to {{end}} of {{totalPackageCount}} results</div>
-          <div class="col-md-6">
-            <ul class="pagination pull-right">
-              <li [class.disabled]="page < 2">
-                <a *ngIf="page > 1" [routerLink]="[]" [queryParams]="{page: page - 1}" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-                <a *ngIf="page < 2" href="javascript:void(0)">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
+        <cc-pagination [start]="start" [end]="end" [totalCount]="totalPackageCount" [pageCount]="pageCount" [pages]="pages" [currentPage]="page">
+        </cc-pagination>
 
-              <li [class.disabled]="page >= pageCount">
-                <a *ngIf="page < pageCount" [routerLink]="[]" [queryParams]="{page: page + 1}" aria-label="Next" >
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-                <a *ngIf="page >= pageCount" href="javascript:void(0)">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
       </ng-container>
     </cc-panel>
   </div>

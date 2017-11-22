@@ -10,7 +10,6 @@ import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
-import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
 
 /**
   * Copyright 2017 Cinovo AG<br>
@@ -22,23 +21,24 @@ import { WebSocketService, Heartbeat } from '../util/websockets/websocket.servic
   selector: 'package-overview',
   templateUrl: './package.overview.comp.html'
 })
-export class PackageOverview implements OnInit {
+export class PackageOverview implements OnInit, OnDestroy {
+
+  public limits: number[] = [15, 30, 50, 100];
 
   public packagesLoaded = false;
   public totalPackageCount = 0;
   public pageCount = 0;
   public start = 0;
   public end = 0;
+  public pages: number[] = [];
 
   private _searchQuery: string = null;
   private _limit = 15;
   private _page = 1;
 
-  private _packages: Array<Package> = [];
+  private _packages: Package[] = [];
 
-  private _webSocket: Subject<MessageEvent | Heartbeat>;
-
-  private _webSocketSub: Subscription;
+  private _querySub: Subscription;
 
   private static filterData(pkg: Package, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -50,38 +50,63 @@ export class PackageOverview implements OnInit {
   constructor(private packageHttp: PackageHttpService,
               private router: Router,
               private route: ActivatedRoute,
-              private wsService: WebSocketService,
               private alertService: AlertService) { };
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(qpm => {
+    this._querySub = this.route.queryParamMap.subscribe(qpm => {
       const pageNumber = +qpm.get('page') || 1;
       this._page = pageNumber;
       this.loadPackages();
     });
   }
 
+  ngOnDestroy(): void {
+    if (this._querySub) {
+      this._querySub.unsubscribe();
+    }
+  }
+
   private loadPackages() {
-    this.packageHttp.getPackagesPagewise(this._page, this._limit).subscribe(
-      (response) => {
-        this.totalPackageCount = +response.headers.get('x-total-count');
+    if (this._page && this._limit) {
+      this.packageHttp.getPackagesPagewise(this._page, this._limit).subscribe(
+        (response) => {
+          this.totalPackageCount = +response.headers.get('x-total-count');
 
-        this.pageCount = Math.floor(this.totalPackageCount / this.limit) + 1;
-        this.start = ((this._page - 1) * this._limit + 1);
-        this.end = Math.min(this._page * this._limit, this.totalPackageCount);
+          this.pageCount = Math.floor(this.totalPackageCount / this.limit) + 1;
+          this.start = ((this._page - 1) * this._limit + 1);
+          this.end = Math.min(this._page * this._limit, this.totalPackageCount);
 
-        try {
-          let pkgs = response.json();
-          this.packages = pkgs;
-        } catch (error) {
-          this.packages = <any>response;
+          this.pages = Array.from(Array(this.pageCount), (x, i) => i + 1);
+
+          try {
+            let pkgs = response.json();
+            this.packages = pkgs;
+          } catch (error) {
+            this.packages = <any>response;
+          }
+          this.packagesLoaded = true;
+        }, (err) => {
+          this.alertService.danger('Error loading packages!');
+          this.packagesLoaded = true;
         }
-        this.packagesLoaded = true;
-      }, (err) => {
-        this.alertService.danger('Error loading packages!');
-        this.packagesLoaded = true;
-      }
-    );
+      );
+    } else {
+      this.packageHttp.getPackages().subscribe(
+        (allPkgs) => {
+          this.totalPackageCount = allPkgs.length;
+          this.packages = allPkgs;
+          this.pageCount = 1;
+          this.start = 1;
+          this.end = allPkgs.length;
+          this.pages = [1];
+          this.packagesLoaded = true;
+        }, (err) => {
+          this.alertService.danger('Error loading all packages!');
+          console.error(err);
+          this.packagesLoaded = true;
+        }
+      )
+    }
   }
 
   get packages(): Package[] {

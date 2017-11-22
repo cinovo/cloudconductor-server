@@ -43,6 +43,7 @@ import { HostServices } from './app/host/host.service.comp';
 import { CCTitle } from './app/util/cctitle/cctitle.comp';
 import { CCPanel } from './app/util/ccpanel/ccpanel.comp';
 import { CCFilter } from './app/util/ccfilter/ccfilter.comp';
+import { CCPagination } from './app/util/ccpagination/ccpagination.comp';
 import { HomeComponent } from './app/home/home.comp';
 import { ConfigValueOverview } from './app/configvalues/cv.overview.comp';
 import { ConfigValueEdit } from './app/configvalues/cs.edit.comp';
@@ -95,6 +96,7 @@ import { StatsHttpService } from './app/util/http/stats.http.service';
     CCPanel,
     CCTitle,
     CCFilter,
+    CCPagination,
     HomeComponent,
     ConfigValueOverview,
     ConfigValueEdit,
@@ -158,5 +160,4 @@ import { StatsHttpService } from './app/util/http/stats.http.service';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule { }

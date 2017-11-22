@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-md-6">Showing {{start}} to {{end}} of {{totalCount}} results</div>
+  <div class="col-md-6">
+    <ul class="pagination pull-right">
+      <li [class.disabled]="currentPage < 2">
+        <a *ngIf="currentPage > 1" [routerLink]="[]" [queryParams]="{page: page - 1}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+        <a *ngIf="currentPage < 2" href="javascript:void(0)">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+
+      <li [class.active]="p === currentPage" *ngFor="let p of pages">
+        <a [routerLink]="[]" [queryParams]="{page: p}">{{p}}</a>
+      </li>
+
+      <li [class.disabled]="currentPage >= pageCount">
+        <a *ngIf="currentPage < pageCount" [routerLink]="[]" [queryParams]="{page: page + 1}" aria-label="Next" >
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+        <a *ngIf="currentPage >= pageCount" href="javascript:void(0)">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
