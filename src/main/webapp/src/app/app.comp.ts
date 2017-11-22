@@ -14,6 +14,8 @@ declare let $: any;
 })
 export class AppComponent implements AfterViewInit {
 
+  public showLogin = false;
+
   private static handleTheme() {
     let topOffset = 50;
     let width = (window.innerWidth > 0) ? window.innerWidth : screen.width;

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, AfterViewInit, AfterContentInit } from '@angular/core';
+import { Component, ViewEncapsulation, AfterViewInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
 
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 
@@ -19,6 +19,8 @@ export class TopNavComponent implements AfterViewInit, AfterContentInit {
   public settings: Settings = {};
   public currentTime: number = Date.now();
 
+  @Output() onLogOut: EventEmitter<string> = new EventEmitter();
+
   constructor(private settingHttp: SettingHttpService) { };
 
   ngAfterViewInit(): void {
@@ -34,6 +36,10 @@ export class TopNavComponent implements AfterViewInit, AfterContentInit {
   private workClock() {
     this.currentTime = Date.now()
     setTimeout(() => this.workClock(), 1000);
+  }
+
+  public logOut() {
+    this.onLogOut.emit('');
   }
 
 }

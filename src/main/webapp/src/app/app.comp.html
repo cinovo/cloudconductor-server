@@ -1,17 +1,20 @@
 <div id="wrapper">
 
+  <!-- Login -->
+  <login *ngIf="showLogin"></login>
+
   <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-    <top-navbar></top-navbar>
+  <nav *ngIf="!showLogin" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <top-navbar (onLogOut)="showLogin = true"></top-navbar>
     <main-navbar></main-navbar>
   </nav>
 
-  <div id="page-wrapper">
+  <div id="page-wrapper" [hidden]="showLogin">
     <alert-area></alert-area>
 
     <router-outlet></router-outlet>
 
     <app-footer></app-footer>
   </div>
-  <!-- /#page-wrapper -->
+
 </div>
