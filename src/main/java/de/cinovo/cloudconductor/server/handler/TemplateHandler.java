@@ -191,9 +191,8 @@ public class TemplateHandler {
 				break;
 			}
 		}
-		if (remove != null) {
-			template.getPackageVersions().remove(remove);
-		}
+		RESTAssert.assertNotNull(remove);
+		template.getPackageVersions().remove(remove);
 		return template;
 	}
 	

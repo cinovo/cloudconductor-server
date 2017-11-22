@@ -1,12 +1,14 @@
-import { Component, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
 import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
+import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -33,26 +35,33 @@ type PackageTree = {
   selector: 'template-packages',
   templateUrl: './template.package.comp.html'
 })
-export class TemplatePackages implements AfterViewInit {
+export class TemplatePackages implements OnInit, OnDestroy {
 
   @Input() obsTemplate: Observable<Template>;
 
   private template: Template = {name: '', description: ''};
-  public packageVersions: Array<TemplatePackageVersion> = [];
+  public packageVersions: TemplatePackageVersion[] = [];
 
   public packageTree: PackageTree = {};
   public newPackage: {pkg: string, version: string} = null;
 
   private _allSelected = false;
+  private templateSub: Subscription;
 
   constructor(private packageHttp: PackageHttpService,
               private templateHttp: TemplateHttpService,
               private alerts: AlertService) { };
 
-  ngAfterViewInit(): void {
-    this.obsTemplate.subscribe((result) => {
-      return this.load(result);
+  ngOnInit(): void {
+    this.templateSub = this.obsTemplate.subscribe((template) => {
+      return this.load(template);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.templateSub) {
+      this.templateSub.unsubscribe();
+    }
   }
 
   private load(template: Template): void {
@@ -129,18 +138,19 @@ export class TemplatePackages implements AfterViewInit {
       this.allSelected = false;
       return;
     }
-
     if (this.isPkgLatest(this.packageVersions[index])) {
       this.updateSelected(index + 1);
       return;
     }
-    this.templateHttp.updatePackage(this.template, this.packageVersions[index].pkg).subscribe(
+    const pkgToUpdate = Object.assign({}, this.packageVersions[index]);
+    this.templateHttp.updatePackage(this.template, pkgToUpdate.pkg).subscribe(
       () => {
-        this.alerts.success('The package ' + this.packageVersions[index].pkg + ' has been successfully updated.');
+        this.alerts.success(`The package '${pkgToUpdate.pkg}' has been successfully updated.`);
         this.updateSelected(index + 1);
       },
-      () => {
-        this.alerts.danger('The package update of ' + this.packageVersions[index].pkg + ' failed.');
+      (err) => {
+        this.alerts.danger(`Error updating package '${pkgToUpdate.pkg}'!`);
+        console.error(err);
         this.updateSelected(index + 1);
       }
     )
@@ -150,9 +160,12 @@ export class TemplatePackages implements AfterViewInit {
     if (pv) {
       this.templateHttp.deletePackage(this.template, pv.pkg).subscribe(
         () => {
-          this.alerts.success('The package ' + pv.pkg + ' has been successfully removed.');
+          this.alerts.success(`Package '${pv.pkg}' has been removed successfully.`);
         },
-        () => this.alerts.danger('The package removal of ' + pv.pkg + ' failed.')
+        (err) => {
+          this.alerts.danger(`Error removing package '${pv.pkg}'!`);
+          console.error(err);
+        }
       )
     }
   }
@@ -166,16 +179,18 @@ export class TemplatePackages implements AfterViewInit {
       return;
     }
 
-    this.templateHttp.deletePackage(this.template, this.packageVersions[index].pkg).subscribe(
+    const pvToRemove = Object.assign({}, this.packageVersions[index]);
+    this.templateHttp.deletePackage(this.template, pvToRemove.pkg).subscribe(
       () => {
-        this.alerts.success('The package ' + this.packageVersions[index].pkg + ' has been successfully removed.');
-        this.removeSelected(index + 1);
+        this.alerts.success(`The package '${pvToRemove.pkg}' has been removed successfully.`);
+        this.removeSelected(index);
       },
-      () => {
-        this.alerts.danger('The package removal of ' + this.packageVersions[index].pkg + ' failed.');
+      (err) => {
+        this.alerts.danger(`Error removing package '${pvToRemove.pkg}'!`);
+        console.error(err);
         this.removeSelected(index + 1);
       }
-    )
+    );
   }
 
   get allSelected(): boolean {
@@ -189,7 +204,7 @@ export class TemplatePackages implements AfterViewInit {
     }
   }
 
-  protected pkgSelect(pv: TemplatePackageVersion, event: any) {
+  protected selectPackage(pv: TemplatePackageVersion, event: any) {
     let index = this.packageVersions.indexOf(pv);
     if (index > -1) {
       this.packageVersions[index].selected = event.target.checked;
@@ -197,12 +212,11 @@ export class TemplatePackages implements AfterViewInit {
   }
 
   protected isPkgSelected(): boolean {
-    for (let pv of this.packageVersions) {
-      if (pv.selected) {
-        return true;
-      }
-    }
-    return false;
+    return this.packageVersions.some(pv => pv.selected);
+  }
+
+  protected selectedUpToDate(): boolean {
+    return this.packageVersions.filter(pv => pv.selected).some(pv => this.isPkgLatest(pv));
   }
 
   private isPkgLatest(pv: TemplatePackageVersion) {
@@ -214,17 +228,18 @@ export class TemplatePackages implements AfterViewInit {
   }
 
   protected addNewPackage(): void {
-    if (this.newPackage) {
+    if (this.newPackage && this.newPackage.pkg && this.newPackage.version) {
+      const addedPkg = Object.assign({}, this.newPackage);
       this.templateHttp.getTemplate(this.template.name).subscribe(
         (result) => {
-          result.versions[this.newPackage.pkg] = this.newPackage.version;
+          result.versions[addedPkg.pkg] = addedPkg.version;
           this.templateHttp.save(result).subscribe(
             () => {
-              this.alerts.success(`Successfully added package '${this.newPackage.pkg}:${this.newPackage.version}' to the template.`);
+              this.alerts.success(`Successfully added package '${addedPkg.pkg}:${addedPkg.version}' to the template.`);
               this.newPackage = null;
             },
             () => {
-              this.alerts.danger(`Failed to add package '${this.newPackage.pkg}:${this.newPackage.version}' to the template!`);
+              this.alerts.danger(`Failed to add package '${addedPkg.pkg}:${addedPkg.version}' to the template!`);
               this.cancelAddPackage();
             }
           )

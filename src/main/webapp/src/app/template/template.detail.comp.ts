@@ -1,7 +1,10 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs/Rx';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { Mode } from '../util/enums.util';
@@ -32,6 +35,8 @@ export class TemplateDetail implements OnInit, OnDestroy {
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
 
+  private _wsDisconnected = false;
+
   constructor(private templateHttp: TemplateHttpService,
               private route: ActivatedRoute,
               private router: Router,
@@ -47,24 +52,37 @@ export class TemplateDetail implements OnInit, OnDestroy {
     this.template.subscribe((result) => this.currentTemplate = result);
   }
 
-  private connectWS(hostName: string): void {
-    this.wsService.connect('template', hostName).subscribe((webSocket) => {
-      this._webSocket = webSocket;
+  private connectWS(templateName: string): void {
+    this.wsService.connect('template', templateName).subscribe(
+      (webSocket) => {
+        this._webSocket = webSocket;
 
-      this._webSocketSub = this._webSocket.subscribe((event) => {
-        const data: WSChangeEvent<Template> = JSON.parse(event.data);
+        this._webSocketSub = this._webSocket.subscribe((event) => {
+          const data: WSChangeEvent<Template> = JSON.parse(event.data);
 
-        switch (data.type) {
-          case 'UPDATED':
-            const updatedTemplate = data.content;
-            this._template.next(updatedTemplate);
-            break;
+          switch (data.type) {
+            case 'UPDATED':
+              const updatedTemplate = data.content;
+              this._template.next(updatedTemplate);
+              break;
 
-          default:
-            console.error('Unknown type of WS message!');
-            break;
+            default:
+              console.error('Unknown type of WS message!');
+              break;
+          }
+        }, (err) => {
+          console.error(`Unable to connect WS for template '${templateName}', retry...`);
+          Observable.of(templateName).delay(1000).subscribe((tn) => {
+            this.connectWS(tn);
+          });
+        }, () => {
+          // completed = connection closed
+          if (!this._wsDisconnected) {
+            console.error(`Lost WS connection for template '${templateName}', try to reconnect...`);
+            this.connectWS(templateName);
+          }
         }
-      });
+      );
 
       const iv = (this.wsService.timeout * 0.4);
       this._heartBeatSub = Observable.interval(iv).subscribe(() => {
@@ -74,6 +92,7 @@ export class TemplateDetail implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this._wsDisconnected = true;
     this.wsService.disconnect();
     if (this._heartBeatSub) {
       this._heartBeatSub.unsubscribe();

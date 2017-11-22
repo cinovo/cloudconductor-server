@@ -18,9 +18,9 @@
             There are currently no packages installed.
           </td>
         </tr>
-        <tr *ngFor="let pv of packageVersions;" [class.warning]="!isPkgLatest(pv)">
+        <tr *ngFor="let pv of packageVersions;" [class.warning]="packageTree[pv.pkg] && !isPkgLatest(pv)">
           <td>
-            <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="pkgSelect(pv, $event)">
+            <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="selectPackage(pv, $event)">
           </td>
           <td>
             {{pv.pkg}}
@@ -34,12 +34,11 @@
               {{packageTree[pv.pkg].newestVersion.version}}
             </span>
           </td>
-          <td *ngIf="!isPkgLatest(pv)">
-            <a (click)="updatePackage(pv)" role="button" title="Update package to newest">
+          <td>
+            <a *ngIf="!isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" title="Update package to newest">
               <i class="fa fa-refresh fa-fw"></i>
             </a>
           </td>
-          <td *ngIf="isPkgLatest(pv)"></td>
           <td>
             <a role="button" mwlConfirmationPopover
               title="Remove package from template"
@@ -55,8 +54,10 @@
 
         <tr *ngIf="newPackage">
           <td colspan="6">
-            <label class="control-label"><i class="fa fa-plus fa-fw"></i> Add a new package
-              package</label>
+            <label class="control-label">
+              <i class="fa fa-plus fa-fw"></i>
+              Add package to template
+            </label>
             <div class="form-horizontal">
               <div class="form-group">
                 <div class="col-sm-6">
@@ -66,8 +67,7 @@
                   </select>
                 </div>
                 <div class="col-sm-6">
-                  <select class="form-control" id="version" [(ngModel)]="newPackage.version"
-                          [disabled]="!pkgSelect.value">
+                  <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!pkgSelect.value">
                     <option *ngFor="let version of getVersions(pkgSelect.value)" value="{{version.version}}">
                       {{version.version}}
                     </option>
@@ -78,8 +78,8 @@
 
             <div class="pull-right">
               <button (click)="cancelAddPackage()" class="btn btn-default">Cancel</button>
-              <button (click)="addNewPackage()" class="btn btn-success"
-                      [disabled]="">Add
+              <button (click)="addNewPackage()" class="btn btn-success" [disabled]="!newPackage.pkg || !newPackage.version">
+                Add
               </button>
             </div>
           </td>
@@ -87,14 +87,14 @@
 
         <tr *ngIf="!newPackage" (click)="goToAddPackage()">
           <td colspan="6" role="button"><i class="fa fa-plus fa-fw"></i>
-            Add a new package
+            Add package to template
           </td>
         </tr>
 
         </tbody>
       </table>
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
-        <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
+        <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected() || selectedUpToDate()">
           <i class="fa fa-refresh fa-fw"></i>
           Update selected
         </button>

@@ -44,17 +44,17 @@ export class WebSocketService {
     const socket = new WebSocket(url);
     const observable = Observable.create(
       (observer: Observer<MessageEvent>) => {
-          socket.onmessage = observer.next.bind(observer);
-          socket.onerror = observer.error.bind(observer);
-          socket.onclose = observer.complete.bind(observer);
-          return socket.close.bind(socket);
+        socket.onmessage = observer.next.bind(observer);
+        socket.onerror = observer.error.bind(observer);
+        socket.onclose = observer.complete.bind(observer);
+        return socket.close.bind(socket);
       }
     );
     const observer = {
       next: (data: Object) => {
-          if (socket.readyState === WebSocket.OPEN) {
-              socket.send(JSON.stringify(data));
-          }
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify(data));
+        }
       }
     };
     this._socket = socket;
