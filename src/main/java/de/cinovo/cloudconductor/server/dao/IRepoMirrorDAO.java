@@ -36,6 +36,6 @@ public interface IRepoMirrorDAO extends IEntityDAO<ERepoMirror, Long> {
 	 * @param repo the {@link ERepo}
 	 * @return all mirrors of the repo
 	 */
-	public List<ERepoMirror> findForRepo(ERepo repo);
+	List<ERepoMirror> findForRepo(ERepo repo);
 
 }

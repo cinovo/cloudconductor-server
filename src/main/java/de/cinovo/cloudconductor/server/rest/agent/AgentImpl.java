@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.rest.agent;
 
+import de.cinovo.cloudconductor.server.handler.AgentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.cinovo.cloudconductor.api.interfaces.IAgent;

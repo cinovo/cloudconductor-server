@@ -31,5 +31,5 @@ public interface IFindNamed<T> {
 	 * @param name the config file name
 	 * @return the config file
 	 */
-	public T findByName(String name);
+	T findByName(String name);
 }

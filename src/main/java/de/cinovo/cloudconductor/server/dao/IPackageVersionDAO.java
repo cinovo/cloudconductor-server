@@ -17,10 +17,10 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -36,11 +36,11 @@ public interface IPackageVersionDAO extends IEntityDAO<EPackageVersion, Long> {
 	 * @param version the version
 	 * @return the model object
 	 */
-	public EPackageVersion find(String baseName, String version);
+	EPackageVersion find(String baseName, String version);
 	
 	/**
 	 * @param baseName the base name
 	 * @return list of packages
 	 */
-	public List<EPackageVersion> find(String baseName);
+	List<EPackageVersion> find(String baseName);
 }

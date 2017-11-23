@@ -23,16 +23,15 @@ import de.taimos.dvalin.jpa.IEntityDAO;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public interface IAdditionalLinksDAO extends IEntityDAO<EAdditionalLinks, Long> {
-	
+
 	/**
 	 * @param label the label
 	 * @return the additional link
 	 */
-	public EAdditionalLinks findByLabel(String label);
-	
+	EAdditionalLinks findByLabel(String label);
+
 }

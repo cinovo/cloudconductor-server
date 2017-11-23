@@ -19,16 +19,10 @@ public class EAgent implements IEntity<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
 	private Long id;
-	
 	private String name;
-	
-	private EAgentAuthToken token;
-	
-	private Long tokenAssociationDate;
-	
-	
+	private EUser user;
+
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,33 +52,18 @@ public class EAgent implements IEntity<Long> {
 	}
 	
 	/**
-	 * @return token for agent authentication
+	 * @return the user
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "agentauthtokenid")
-	public EAgentAuthToken getToken() {
-		return this.token;
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "userid")
+	public EUser getUser() {
+		return this.user;
 	}
-	
+
 	/**
-	 * @param token the authentication token
+	 * @param user the user to set
 	 */
-	public void setToken(EAgentAuthToken token) {
-		this.token = token;
+	public void setUser(EUser user) {
+		this.user = user;
 	}
-	
-	/**
-	 * @return the tokenAssociationDate the timestamp where the current token was last associated with
-	 */
-	public Long getTokenAssociationDate() {
-		return this.tokenAssociationDate;
-	}
-	
-	/**
-	 * @param tokenAssociationDate the tokenAssociationDate to set
-	 */
-	public void setTokenAssociationDate(Long tokenAssociationDate) {
-		this.tokenAssociationDate = tokenAssociationDate;
-	}
-	
 }

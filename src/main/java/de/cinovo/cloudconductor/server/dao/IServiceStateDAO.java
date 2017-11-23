@@ -23,16 +23,15 @@ import de.taimos.dvalin.jpa.IEntityDAO;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public interface IServiceStateDAO extends IEntityDAO<EServiceState, Long> {
-	
+
 	/**
 	 * @param name the service name
 	 * @param host the host name
 	 * @return the service state
 	 */
-	public EServiceState findByName(String name, String host);
+	EServiceState findByName(String name, String host);
 }

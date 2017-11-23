@@ -78,27 +78,27 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
     }
 
     private List<EConfigValue> findList(String template, String service) {
-        return this.findVersionedListByQuery(this.createQuery(template, service, null), "c", this.getParams(template, service, null));
+        return this.findVersionedListByQuery(this.createQuery(template, service, null), "c", (Object[]) this.getParams(template, service, null));
     }
 
 
     private EConfigValue find(String template, String service, String key) {
-        return this.findVersionedByQuery(this.createQuery(template, service, key), "c", this.getParams(template, service, key));
+        return this.findVersionedByQuery(this.createQuery(template, service, key), "c", (Object[]) this.getParams(template, service, key));
     }
 
 
     private String createQuery(String template, String service, String key) {
         StringBuilder b = new StringBuilder();
-        b.append(BASE_QUERY);
+        b.append(ConfigValueDAOHib.BASE_QUERY);
         int app = 2;
         if(service == null || service.isEmpty()) {
-            b.append(WHERE_SERVICE_NULL);
+            b.append(ConfigValueDAOHib.WHERE_SERVICE_NULL);
         } else {
-            b.append(WHERE_SERVICE);
+            b.append(ConfigValueDAOHib.WHERE_SERVICE);
             app = 3;
         }
         if(key != null && !(key.isEmpty())) {
-            b.append(WHERE_KEY);
+            b.append(ConfigValueDAOHib.WHERE_KEY);
             b.append(app);
         }
 

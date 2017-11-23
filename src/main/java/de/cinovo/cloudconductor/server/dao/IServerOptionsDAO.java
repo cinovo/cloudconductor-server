@@ -32,5 +32,5 @@ public interface IServerOptionsDAO extends IEntityDAO<EServerOptions, Long> {
 	/**
 	 * @return the server options
 	 */
-	public EServerOptions get();
+	EServerOptions get();
 }

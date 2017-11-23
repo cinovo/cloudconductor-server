@@ -26,7 +26,6 @@ import de.taimos.dvalin.jpa.IEntityDAO;
  * <br>
  *
  * @author psigloch
- *
  */
 public interface IAgentOptionsDAO extends IEntityDAO<EAgentOption, Long> {
 
@@ -34,11 +33,11 @@ public interface IAgentOptionsDAO extends IEntityDAO<EAgentOption, Long> {
 	 * @param template the template name
 	 * @return the option
 	 */
-	public EAgentOption findByTemplate(String template);
+	EAgentOption findByTemplate(String template);
 
 	/**
 	 * @param template the template
 	 * @return the option
 	 */
-	public EAgentOption findByTemplate(ETemplate template);
+	EAgentOption findByTemplate(ETemplate template);
 }

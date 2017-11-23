@@ -16,12 +16,6 @@ package de.cinovo.cloudconductor.server;
  * and limitations under the License. #L%
  */
 
-import java.io.File;
-import java.util.Map;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import de.cinovo.cloudconductor.server.tasks.ServerTaskHelper;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
@@ -29,6 +23,11 @@ import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
 import de.taimos.dvalin.daemon.DvalinLifecycleAdapter;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * Copyright 2012 Cinovo AG<br>
@@ -105,7 +104,7 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	@Override
 	protected void loadBasicProperties(Map<String, String> map) {
 		super.loadBasicProperties(map);
-		map.put("ds.package", "de/cinovo/cloudconductor/server/model");
+		map.put("ds.package", "de/cinovo/cloudconductor/server/");
 		map.put("jaxrs.path", "/api");
 		map.put("jetty.sessions", "true");
 	}

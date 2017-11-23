@@ -24,16 +24,15 @@ import de.taimos.dvalin.jpa.IEntityDAO;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public interface IDependencyDAO extends IEntityDAO<EDependency, Long> {
-	
+
 	/**
 	 * @param dep a dependency
 	 * @return the database dependency object
 	 */
-	public EDependency find(Dependency dep);
-	
+	EDependency find(Dependency dep);
+
 }

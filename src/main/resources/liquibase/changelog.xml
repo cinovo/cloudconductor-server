@@ -9,6 +9,9 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="postgresql"/>
 
     <changeSet id="1" author="psigloch" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
         <sql dbms="hsqldb,postgresql"><![CDATA[
@@ -870,30 +873,253 @@
         <dropTable tableName="filetag" schemaName="cloudconductor"/>
     </changeSet>
     <changeSet id="25" author="mweise">
-    	<addColumn tableName="sshkey" schemaName="cloudconductor">
-    		<column name="lastchangeddate" type="bigint"></column>
-    		<column name="username" type="varchar(255)"></column>
-    	</addColumn>
+        <addColumn tableName="sshkey" schemaName="cloudconductor">
+            <column name="lastchangeddate" type="bigint"></column>
+            <column name="username" type="varchar(255)"></column>
+        </addColumn>
     </changeSet>
     <changeSet id="26" author="mweise">
-    	<addColumn schemaName="cloudconductor" tableName="file">
-    		<column name="directory" type="boolean"></column>
-    	</addColumn>
-    	<addNotNullConstraint schemaName="cloudconductor" tableName="file" columnName="directory" columnDataType="boolean" defaultNullValue="false"/>
+        <addColumn schemaName="cloudconductor" tableName="file">
+            <column name="directory" type="boolean"></column>
+        </addColumn>
+        <addNotNullConstraint schemaName="cloudconductor" tableName="file" columnName="directory"
+                              columnDataType="boolean" defaultNullValue="false"/>
     </changeSet>
     <changeSet id="27" author="mweise">
-    	<dropTable schemaName="cloudconductor" tableName="mappingdirectoryservice" />
-    	<dropTable schemaName="cloudconductor" tableName="mappingdirectorytemplate" />
-    	<dropTable schemaName="cloudconductor" tableName="directory" />
+        <dropTable schemaName="cloudconductor" tableName="mappingdirectoryservice"/>
+        <dropTable schemaName="cloudconductor" tableName="mappingdirectorytemplate"/>
+        <dropTable schemaName="cloudconductor" tableName="directory"/>
     </changeSet>
     <changeSet id="28" author="mweise">
-    	<addNotNullConstraint schemaName="cloudconductor" tableName="sshkey" columnName="username" columnDataType="varchar(255)" defaultNullValue="root"/>
+        <addNotNullConstraint schemaName="cloudconductor" tableName="sshkey" columnName="username"
+                              columnDataType="varchar(255)" defaultNullValue="root"/>
     </changeSet>
     <changeSet id="29" author="mweise">
-    	<addUniqueConstraint columnNames="name" constraintName="service_name_key" schemaName="cloudconductor" tableName="service"/>
+        <addUniqueConstraint columnNames="name" constraintName="service_name_key" schemaName="cloudconductor"
+                             tableName="service"/>
     </changeSet>
     <changeSet id="30" author="mweise">
-    	<addUniqueConstraint columnNames="packageid,version" constraintName="packageid_version" schemaName="cloudconductor" tableName="packageversion"/>
+        <addUniqueConstraint columnNames="packageid,version" constraintName="packageid_version"
+                             schemaName="cloudconductor" tableName="packageversion"/>
+    </changeSet>
+    <changeSet id="31" author="psigloch">
+
+        <createTable tableName="usergroup" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="text"/>
+        </createTable>
+        <insert tableName="usergroup" schemaName="cloudconductor">
+            <column name="name">Administrator</column>
+        </insert>
+        <insert tableName="usergroup" schemaName="cloudconductor">
+            <column name="name">Agent</column>
+        </insert>
+        <insert tableName="usergroup" schemaName="cloudconductor">
+            <column name="name">Anonymous</column>
+        </insert>
+
+        <createTable tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id" type="bigint">
+                <constraints nullable="false" references="cloudconductor.usergroup(id)"
+                             foreignKeyName="fk_usergroup_permission"
+                             deleteCascade="true"/>
+            </column>
+            <column name="permission" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">0</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">1</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">2</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">3</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">4</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">5</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">6</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">7</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">8</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">9</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">10</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">11</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Administrator')"/>
+            <column name="permission">12</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Agent')"/>
+            <column name="permission">10</column>
+        </insert>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name ='Anonymous')"/>
+            <column name="permission">4</column>
+        </insert>
+
+        <createTable tableName="user" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="loginname" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="roundoffset" type="int"/>
+            <column name="hash" type="varchar(255)"/>
+            <column name="salt" type="varchar(255)"/>
+            <column name="displayname" type="varchar(255)"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="registrationdate" type="datetime"/>
+            <column name="active" type="boolean"/>
+        </createTable>
+        <insert tableName="user" schemaName="cloudconductor">
+            <column name="loginname">admin</column>
+            <column name="roundoffset">5000</column>
+            <column name="hash">
+                15F52B01B7636D5FEC497FAE1ECC23AB5A288AD3B0EC75F366FA607F9F712BD4AAB3F355542FF0475E20AB1C8EDF48A983D7128D860FBC05ABF487DBF14D58ED
+            </column>
+            <column name="salt">
+                932F60D8C4BC62B8F4EE1A342EFE0F220FE9717C0B1E4C44EF66D9717EB703A8AB1C465F74AA34F520C7DC60559FEE3793F8F99FB79A21291C95C5C60441A067
+            </column>
+            <column name="displayname">Admin</column>
+            <column name="registrationdate" valueDate="${now}"/>
+            <column name="active">true</column>
+        </insert>
+        <insert tableName="user" schemaName="cloudconductor">
+            <column name="loginname">agent</column>
+            <column name="displayname">Agent</column>
+            <column name="registrationdate" valueDate="${now}"/>
+            <column name="active">true</column>
+        </insert>
+
+        <createTable schemaName="cloudconductor" tableName="map_user_usergroup">
+            <column name="userid" type="bigint">
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_user_group"
+                             deleteCascade="true"/>
+            </column>
+            <column name="groupid" type="bigint">
+                <constraints nullable="false" references="cloudconductor.usergroup(id)" foreignKeyName="fk_group_user"
+                             deleteCascade="true"/>
+            </column>
+        </createTable>
+        <insert tableName="map_user_usergroup" schemaName="cloudconductor">
+            <column name="userid" valueComputed="(SELECT id FROM cloudconductor.user WHERE loginname='admin')"/>
+            <column name="groupid"
+                    valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name='Administrator')"/>
+        </insert>
+        <insert tableName="map_user_usergroup" schemaName="cloudconductor">
+            <column name="userid" valueComputed="(SELECT id FROM cloudconductor.user WHERE loginname='agent')"/>
+            <column name="groupid" valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name='Agent')"/>
+        </insert>
+
+        <createTable tableName="authtoken" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="userid" type="bigint">
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_authtoken_user"
+                             deleteCascade="true"/>
+            </column>
+            <column name="token" type="varchar(255)"/>
+            <column name="creationdate" type="datetime"/>
+            <column name="revokedate" type="datetime"/>
+        </createTable>
+        <sql stripComments="true" dbms="postgresql">
+            INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
+            to_timestamp(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            AND a.revoked IS NULL;
+        </sql>
+        <sql stripComments="true" dbms="hsqldb">
+            INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
+            TIMESTAMP_WITH_ZONE(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            AND a.revoked IS NULL;
+        </sql>
+        <sql stripComments="true" dbms="mysql">
+            INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
+            FROM_UNIXTIME(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            AND a.revoked IS NULL;
+        </sql>
+        <createTable tableName="jwttoken" schemaName="cloudconductor">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="userid" type="bigint">
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_authtoken_user"
+                             deleteCascade="true"/>
+            </column>
+            <column name="token" type="text"/>
+            <column name="active" type="boolean"/>
+            <column name="authtype" type="int"/>
+            <column name="reftoken" type="bigint">
+                <constraints references="cloudconductor.authtoken(id)"
+                             foreignKeyName="fk_jwttoken_authtoken"
+                             deleteCascade="true"/>
+            </column>
+        </createTable>
+        <dropColumn tableName="agent" schemaName="cloudconductor" columnName="agentauthtokenid"/>
+        <dropColumn tableName="agent" schemaName="cloudconductor" columnName="tokenassociationdate"/>
+        <addColumn tableName="agent" schemaName="cloudconductor">
+            <column name="userid" type="bigint">
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_authtoken_user"
+                             deleteCascade="true"/>
+            </column>
+        </addColumn>
+        <update tableName="agent" schemaName="cloudconductor">
+            <column name="userid" valueComputed="(SELECT id FROM cloudconductor.user WHERE loginname='agent')"/>
+        </update>
+        <dropTable tableName="agentauthtoken" schemaName="cloudconductor"/>
     </changeSet>
     <changeSet id="31" author="mweise">
     	<addColumn schemaName="cloudconductor" tableName="serveroptions">

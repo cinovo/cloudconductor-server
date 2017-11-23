@@ -2,7 +2,7 @@ package de.cinovo.cloudconductor.server.repo.indexer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.SimpleType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
@@ -44,7 +44,7 @@ public class IndexFileIndexer implements IRepoIndexer {
 			this.latest = indexEntry;
 			try {
 				String indexString = StreamUtils.copyToString(provider.getEntryStream(IndexFileIndexer.INDEX_FILE), Charset.forName("UTF-8"));
-				CollectionType indexType = CollectionType.construct(Set.class, SimpleType.construct(PackageVersion.class));
+				CollectionType indexType = TypeFactory.defaultInstance().constructCollectionType(Set.class, TypeFactory.defaultInstance().constructType(PackageVersion.class));
 				return this.mapper.readValue(indexString, indexType);
 			} catch (IOException e) {
 				throw new RuntimeException("Failed to read index", e);

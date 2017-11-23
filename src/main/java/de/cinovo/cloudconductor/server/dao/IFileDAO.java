@@ -34,12 +34,12 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	/**
 	 * @return the row count
 	 */
-	public Long count();
+	Long count();
 	
 	/**
 	 * @param tagnames the tag names
 	 * @return list of files with these tags
 	 */
-	public List<EFile> findByTag(String... tagnames);
+	List<EFile> findByTag(String... tagnames);
 
 }

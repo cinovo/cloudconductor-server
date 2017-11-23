@@ -37,17 +37,18 @@ public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ET
 	 * @param repo the repo
 	 * @return the templates using the repo
 	 */
-	public List<ETemplate> findByRepo(ERepo repo);
+	List<ETemplate> findByRepo(ERepo repo);
 
 
 	/**
 	 * @param pkg the package
 	 * @return the templates using a version of this package
 	 */
-	public List<ETemplate> findByPackage(EPackage pkg);
-	
+	List<ETemplate> findByPackage(EPackage pkg);
+
+
 	/**
 	 * @return the number of templates
 	 */
-	public Long count();
+	Long count();
 }

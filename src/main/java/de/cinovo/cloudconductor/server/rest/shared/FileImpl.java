@@ -17,24 +17,21 @@ package de.cinovo.cloudconductor.server.rest.shared;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IFile;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.FileHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.core.Response;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -49,8 +46,6 @@ public class FileImpl implements IFile {
 	private IFileDAO fileDAO;
 	@Autowired
 	private IFileDataDAO fileDataDAO;
-	@Autowired
-	private ITemplateDAO templateDAO;
 	@Autowired
 	private FileHandler fileHandler;
 	

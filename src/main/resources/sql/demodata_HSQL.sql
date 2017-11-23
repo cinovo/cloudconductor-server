@@ -57,7 +57,7 @@ INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar');
 
 INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
 
-INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', 1, false, true)
+INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', 1, false, true);
 
 
 INSERT INTO cloudconductor.packageservergroup VALUES (1, 'TESTREPO', '1');
@@ -94,12 +94,12 @@ INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1');
 INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs');
 INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1');
 
-INSERT INTO cloudconductor.mappingversiongroup VALUES (1,1)
-INSERT INTO cloudconductor.mappingversiongroup VALUES (2,1)
-INSERT INTO cloudconductor.mappingversiongroup VALUES (3,1)
-INSERT INTO cloudconductor.mappingversiongroup VALUES (4,1)
-INSERT INTO cloudconductor.mappingversiongroup VALUES (5,1)
-INSERT INTO cloudconductor.mappingversiongroup VALUES (6,1) 
+INSERT INTO cloudconductor.mappingversiongroup VALUES (1,1);
+INSERT INTO cloudconductor.mappingversiongroup VALUES (2,1);
+INSERT INTO cloudconductor.mappingversiongroup VALUES (3,1);
+INSERT INTO cloudconductor.mappingversiongroup VALUES (4,1);
+INSERT INTO cloudconductor.mappingversiongroup VALUES (5,1);
+INSERT INTO cloudconductor.mappingversiongroup VALUES (6,1);
 
 
 INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1, 1);

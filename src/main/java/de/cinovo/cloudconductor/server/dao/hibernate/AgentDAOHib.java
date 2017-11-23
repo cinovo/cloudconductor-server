@@ -5,8 +5,6 @@ import de.cinovo.cloudconductor.server.model.EAgent;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 /**
  * Copyright 2016 Cinovo AG<br>
  * <br>
@@ -23,26 +21,7 @@ public class AgentDAOHib extends EntityDAOHibernate<EAgent, Long> implements IAg
 	}
 	
 	@Override
-	public List<EAgent> getAgentsByToken(String authToken) {
-		List<EAgent> agentsByToken = this.findListByQuery("FROM EAgent a WHERE a.token.token = ?1", authToken);
-		return agentsByToken;
-	}
-	
-	@Override
-	public List<EAgent> getAgentsByTokenId(Long id) {
-		List<EAgent> agentsByToken = this.findListByQuery("FROM EAgent a WHERE a.token.id = ?1", id);
-		return agentsByToken;
-	}
-	
-	@Override
-	public List<EAgent> getAgentsWithoutToken() {
-		List<EAgent> agents = this.findListByQuery("FROM EAgent a WHERE a.token IS EMPTY");
-		return agents;
-	}
-	
-	@Override
 	public EAgent findAgentByName(String agentName) {
-		EAgent agent = this.findByQuery("FROM EAgent a WHERE a.name = ?1", agentName);
-		return agent;
+		return this.findByQuery("FROM EAgent a WHERE a.name = ?1", agentName);
 	}
 }

@@ -17,10 +17,10 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -36,11 +36,11 @@ public interface IServiceDefaultStateDAO extends IEntityDAO<EServiceDefaultState
 	 * @param template the template name
 	 * @return the default service state
 	 */
-	public EServiceDefaultState findByName(String name, String template);
+	EServiceDefaultState findByName(String name, String template);
 	
 	/**
 	 * @param template the template name
 	 * @return list off default services
 	 */
-	public List<EServiceDefaultState> findByTemplate(String template);
+	List<EServiceDefaultState> findByTemplate(String template);
 }

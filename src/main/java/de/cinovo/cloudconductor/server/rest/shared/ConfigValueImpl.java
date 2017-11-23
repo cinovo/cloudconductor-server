@@ -17,18 +17,6 @@ package de.cinovo.cloudconductor.server.rest.shared;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.NotAcceptableException;
-import javax.ws.rs.NotFoundException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IConfigValue;
 import de.cinovo.cloudconductor.api.model.ConfigValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
@@ -37,6 +25,16 @@ import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.NotAcceptableException;
+import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -49,8 +47,7 @@ public class ConfigValueImpl implements IConfigValue {
 	
 	@Autowired
 	private IConfigValueDAO configValueDAO;
-	
-	
+
 	@Override
 	public Collection<String> getAvailableTemplates() {
 		return this.configValueDAO.findTemplates();

@@ -84,6 +84,11 @@
             <version>${dvalin.version}</version>
         </dependency>
         <dependency>
+            <groupId>de.taimos</groupId>
+            <artifactId>dvalin-jaxrs-jwtauth</artifactId>
+            <version>${dvalin.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.10.37</version>

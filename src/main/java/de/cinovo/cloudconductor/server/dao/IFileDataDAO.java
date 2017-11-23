@@ -34,5 +34,5 @@ public interface IFileDataDAO extends IEntityDAO<EFileData, Long> {
 	 * @param file the file
 	 * @return the config data
 	 */
-	public EFileData findDataByFile(EFile file);
+	EFileData findDataByFile(EFile file);
 }
