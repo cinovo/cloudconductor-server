@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 import { ServiceState } from '../../util/enums.util';
 
@@ -27,8 +28,9 @@ export interface Host {
 @Injectable()
 export class HostHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'host/';
   }
 

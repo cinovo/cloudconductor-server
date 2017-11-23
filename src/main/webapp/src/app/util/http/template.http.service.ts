@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 
 /**
@@ -20,6 +21,7 @@ export interface Template {
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
 }
+
 export interface AgentOption {
   aliveTimer?: number;
   aliveTimerUnit?: string;
@@ -38,11 +40,13 @@ export interface AgentOption {
 
   templateName?: string;
 }
+
 @Injectable()
 export class TemplateHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'template/';
   }
 

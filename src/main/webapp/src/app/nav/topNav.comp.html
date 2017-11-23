@@ -8,7 +8,7 @@
   <a class="navbar-left" [routerLink]="['/']"><img src="assets/images/50x50.jpg"></a>
   <a class="navbar-brand" [routerLink]="['/']">
     CloudConductor
-    <small *ngIf="settings.name"> - {{settings.name}}</small>
+    <small *ngIf="(settingsObs | async) as settings"> - {{settings.name}}</small>
   </a>
 </div>
 <!-- /.navbar-header -->
@@ -24,7 +24,10 @@
     </a>
     <ul class="dropdown-menu dropdown-user">
       <li>
-        <a href="#"><i class="fa fa-user fa-fw"></i> User Settings</a>
+        <a href="#">
+          <i class="fa fa-user fa-fw"></i>
+          User Settings
+        </a>
       </li>
       <li class="divider"></li>
       <li>

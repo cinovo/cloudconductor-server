@@ -3,6 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 
 export interface AuthToken {
@@ -22,8 +23,9 @@ export interface AuthToken {
 @Injectable()
 export class AuthTokenHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'authtoken/'
   }
 

@@ -1,15 +1,15 @@
 <div id="wrapper">
 
   <!-- Login -->
-  <login *ngIf="showLogin"></login>
+  <login *ngIf="!(loggedIn | async)"></login>
 
   <!-- Navigation -->
-  <nav *ngIf="!showLogin" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-    <top-navbar (onLogOut)="showLogin = true"></top-navbar>
+  <nav *ngIf="(loggedIn | async)" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <top-navbar></top-navbar>
     <main-navbar></main-navbar>
   </nav>
 
-  <div id="page-wrapper" [hidden]="showLogin">
+  <div id="page-wrapper" [hidden]="!(loggedIn | async)">
     <alert-area></alert-area>
 
     <router-outlet></router-outlet>

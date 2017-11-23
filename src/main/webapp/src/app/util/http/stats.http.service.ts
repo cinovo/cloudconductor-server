@@ -3,8 +3,15 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 export interface Stats {
   numberOfHosts: number,
   numberOfTemplates: number,
@@ -15,8 +22,9 @@ export interface Stats {
 @Injectable()
 export class StatsHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'stats/';
   }
 

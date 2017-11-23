@@ -1,6 +1,9 @@
-import { Component, ViewEncapsulation, AfterViewInit } from "@angular/core";
-import { AdditionalLinkHttpService, AdditionalLink } from "../util/http/additionalLinks.http.service";
-import { ConfigValueHttpService } from "../util/http/configValue.http.service";
+import { Component, ViewEncapsulation, AfterViewInit, OnInit } from '@angular/core';
+
+import { Observable } from 'rxjs/Observable';
+
+import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
+import { ConfigValueHttpService } from '../util/http/configValue.http.service';
 
 declare let $: any;
 
@@ -18,20 +21,20 @@ declare let $: any;
   templateUrl: './nav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
-export class NavComponent implements AfterViewInit {
+export class NavComponent implements AfterViewInit, OnInit {
 
-  public links: Array<AdditionalLink> = [];
-  public templates: Array<string> = [];
+  public links$: Observable<AdditionalLink[]>;
+  public templates$: Observable<string[]>;
 
   constructor(private linksHttp: AdditionalLinkHttpService,
-              private confHttp: ConfigValueHttpService) {
-  };
+              private confHttp: ConfigValueHttpService) { };
 
   ngAfterViewInit(): void {
     (<any>$('#sideMenu')).metisMenu();
+  }
 
-    this.linksHttp.links.subscribe((result) => this.links = result);
-    this.confHttp.templates.subscribe((result) => this.templates = result);
-
+  ngOnInit(): void {
+    this.links$ = this.linksHttp.links;
+    this.templates$ = this.confHttp.templates;
   }
 }

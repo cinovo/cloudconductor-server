@@ -3,6 +3,7 @@ import { Http, Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 
 /**
@@ -34,8 +35,9 @@ export interface Dependency {
 @Injectable()
 export class PackageHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'package/';
   }
 

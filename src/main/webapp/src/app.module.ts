@@ -79,6 +79,7 @@ import { RepoScansService } from './app/util/reposcans/reposcans.service';
 import { HomeStatsComponent } from './app/home/home.stats.comp';
 import { StatsHttpService } from './app/util/http/stats.http.service';
 import { LoginComponent } from './app/login/login.comp';
+import { AuthenticationService } from './app/util/auth/authentication.service';
 
 @NgModule({
   imports: [
@@ -158,7 +159,8 @@ import { LoginComponent } from './app/login/login.comp';
     PackageChangesService,
     HostsService,
     RepoScansService,
-    StatsHttpService
+    StatsHttpService,
+    AuthenticationService
   ],
   bootstrap: [AppComponent]
 })

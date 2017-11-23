@@ -2,6 +2,8 @@ import { Http,  Response,  Headers,  RequestOptionsArgs} from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -14,10 +16,6 @@ export abstract class HTTPService {
 
   protected basePathURL = '';
 
-  protected headers = new Headers(
-    {'Content-Type': 'application/json'}
-  );
-
   private static handleError(error: Response | any) {
     let errMsg: string;
     if (error instanceof Response) {
@@ -28,7 +26,15 @@ export abstract class HTTPService {
     return Observable.throw(errMsg);
   }
 
-  constructor(protected http: Http) { }
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) { }
+
+  protected get headers() {
+    return new Headers({
+      'Authorization': `Bearer ${this.authService.token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   protected _getResponse(pathUrl: string, additionalHeaders: Headers, params: any): Observable<Response> {
     let options: RequestOptionsArgs = {headers: this.headers};

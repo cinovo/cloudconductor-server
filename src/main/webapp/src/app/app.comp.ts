@@ -1,4 +1,7 @@
-import { Component, HostListener, AfterViewInit } from '@angular/core';
+import { Component, HostListener, AfterViewInit, OnInit } from '@angular/core';
+
+import { AuthenticationService } from './util/auth/authentication.service';
+import { Observable } from 'rxjs/Observable';
 
 declare let $: any;
 
@@ -12,9 +15,9 @@ declare let $: any;
   selector: 'app-component',
   templateUrl: './app.comp.html'
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
 
-  public showLogin = false;
+  public loggedIn: Observable<boolean>;
 
   private static handleTheme() {
     let topOffset = 50;
@@ -40,10 +43,14 @@ export class AppComponent implements AfterViewInit {
     AppComponent.handleTheme();
   }
 
-  constructor() { };
+  constructor(private authService: AuthenticationService) { };
 
   ngAfterViewInit(): void {
     AppComponent.handleTheme();
+  }
+
+  ngOnInit(): void {
+    this.loggedIn = this.authService.loggedIn;
   }
 
 }

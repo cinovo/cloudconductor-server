@@ -3,6 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 import { RepoMirror } from './repomirror.http.service';
 
@@ -24,8 +25,9 @@ export interface Repo {
 @Injectable()
 export class RepoHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'repo/';
   }
 

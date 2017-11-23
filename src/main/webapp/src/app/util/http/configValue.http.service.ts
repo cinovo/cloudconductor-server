@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 import { Validator } from '../../util/validator.util';
 
@@ -25,8 +27,9 @@ export class ConfigValueHttpService extends HTTPService {
   public templates: Observable<Array<string>> = this._templates.asObservable();
   private reloading = false;
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'config/';
     this.reloadTemplates();
   }

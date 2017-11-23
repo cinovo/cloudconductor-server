@@ -3,6 +3,7 @@ import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { ConfigFile, FileForm, FileType } from './config-file.model';
 import { HTTPService } from './abstract.http.service';
 
@@ -15,8 +16,9 @@ import { HTTPService } from './abstract.http.service';
 @Injectable()
 export class FileHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'file/'
   }
 

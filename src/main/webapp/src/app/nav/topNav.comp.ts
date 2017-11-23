@@ -1,6 +1,9 @@
-import { Component, ViewEncapsulation, AfterViewInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
+import { AfterContentInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+
+import { Observable } from 'rxjs/Observable';
 
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
+import { AuthenticationService } from '../util/auth/authentication.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -14,19 +17,16 @@ import { SettingHttpService, Settings } from '../util/http/setting.http.service'
   templateUrl: './topNav.comp.html',
   encapsulation: ViewEncapsulation.None
 })
-export class TopNavComponent implements AfterViewInit, AfterContentInit {
+export class TopNavComponent implements AfterContentInit, OnInit {
 
-  public settings: Settings = {};
+  public settingsObs: Observable<Settings>;
   public currentTime: number = Date.now();
 
-  @Output() onLogOut: EventEmitter<string> = new EventEmitter();
+  constructor(private settingHttp: SettingHttpService,
+              private authService: AuthenticationService) { };
 
-  constructor(private settingHttp: SettingHttpService) { };
-
-  ngAfterViewInit(): void {
-    this.settingHttp.settings.subscribe(
-      (result) => this.settings = result
-    );
+  ngOnInit(): void {
+    this.settingsObs = this.settingHttp.settings;
   }
 
   ngAfterContentInit(): void {
@@ -39,7 +39,7 @@ export class TopNavComponent implements AfterViewInit, AfterContentInit {
   }
 
   public logOut() {
-    this.onLogOut.emit('');
+    this.authService.logout();
   }
 
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Observable } from 'rxjs/';
+import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../auth/authentication.service';
 import { HTTPService } from './abstract.http.service';
 import { SSHKey } from './sshkey.model';
 
@@ -15,8 +16,9 @@ import { SSHKey } from './sshkey.model';
 @Injectable()
 export class SSHKeyHttpService extends HTTPService {
 
-  constructor(protected http: Http) {
-    super(http);
+  constructor(protected http: Http,
+              protected authService: AuthenticationService) {
+    super(http, authService);
     this.basePathURL = 'ssh/';
   };
 
