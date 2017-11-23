@@ -60,6 +60,16 @@
         </a>
       </li>
       <li>
+        <a [routerLink]="['user']" routerLinkActive="active">
+          <i class="fa fa-user fa-fw"></i> Users
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['group']" routerLinkActive="active">
+          <i class="fa fa-users fa-fw"></i> Groups
+        </a>
+      </li>
+      <li>
         <a [routerLink]="['settings']" routerLinkActive="active"><i class="fa fa-gear fa-fw"></i> Settings</a>
       </li>
       <li *ngIf="(links$ | async) as links">

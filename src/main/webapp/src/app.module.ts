@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { GroupOverviewComponent } from './app/group/group.overview.comp';
 import { AuthHttpService } from './app/util/http/auth.http.service';
 import { HomeServiceStatusComponent } from './app/home/home.servicestatus.comp';
 import { PackageChangesService } from './app/util/packagechanges/packagechanges.service';
@@ -82,6 +83,7 @@ import { StatsHttpService } from './app/util/http/stats.http.service';
 import { LoginComponent } from './app/login/login.comp';
 import { AuthenticationService } from './app/util/auth/authentication.service';
 import { AuthGuard } from './app/util/auth/auth.guard';
+import { UserOverviewComponent } from './app/user/user.overview.comp';
 
 @NgModule({
   imports: [
@@ -139,7 +141,9 @@ import { AuthGuard } from './app/util/auth/auth.guard';
     HomeServiceStatusComponent,
     HomeRepoScansComponent,
     HomeStatsComponent,
-    LoginComponent
+    LoginComponent,
+    UserOverviewComponent,
+    GroupOverviewComponent
   ],
   providers: [
     AlertService,

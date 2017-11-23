@@ -1,4 +1,5 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { GroupOverviewComponent } from './group/group.overview.comp';
 import { Routes } from '@angular/router';
 import { AuthGuard } from './util/auth/auth.guard';
 import { NotFoundComponent } from './not-found/not-found.comp';
@@ -26,6 +27,7 @@ import { FileOverviewComponent } from './files/file.overview.comp';
 import { FileDetailComponent } from './files/file.detail.comp';
 import { FileResolver } from './files/file.resolve';
 import { Role } from './util/enums.util';
+import { UserOverviewComponent } from './user/user.overview.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -91,6 +93,10 @@ export const APP_ROUTES: Routes = [
 
   {path: 'settings', component: SettingsOverview, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
    canActivate: [AuthGuard]},
+
+  {path: 'user', component: UserOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]}},
+
+  {path: 'group', component: GroupOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]}},
 
   // TODO remove me
   {path: 'token', component: AuthTokenOverviewComponent},
