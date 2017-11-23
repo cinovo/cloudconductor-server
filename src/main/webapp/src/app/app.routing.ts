@@ -1,8 +1,8 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { Routes } from '@angular/router';
+import { AuthGuard } from './util/auth/auth.guard';
 import { NotFoundComponent } from './not-found/not-found.comp';
 import { AuthTokenOverviewComponent } from './authtoken/authtoken.overview.comp';
-import { Routes } from '@angular/router';
-
 import { HomeComponent } from './home/home.comp';
 import { ConfigValueOverview } from './configvalues/cv.overview.comp';
 import { ConfigValueEdit } from './configvalues/cs.edit.comp';
@@ -25,6 +25,7 @@ import { SSHDetailComponent } from './ssh/ssh.detail.comp';
 import { FileOverviewComponent } from './files/file.overview.comp';
 import { FileDetailComponent } from './files/file.detail.comp';
 import { FileResolver } from './files/file.resolve';
+import { Role } from './util/enums.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -34,42 +35,64 @@ import { FileResolver } from './files/file.resolve';
  */
 export const APP_ROUTES: Routes = [
 
-  {path: 'home', component: HomeComponent},
+  {path: 'home', component: HomeComponent },
 
-  {path: 'host', component: HostOverview},
-  {path: 'host/:hostName', component: HostDetail},
+  {path: 'host', component: HostOverview, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]}, canActivate: [AuthGuard]},
+  {path: 'host/:hostName', component: HostDetail, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]}, canActivate: [AuthGuard]},
 
-  {path: 'template', component: TemplateOverview},
-  {path: 'template/new', component: TemplateNew},
-  {path: 'template/:templateName', component: TemplateDetail},
+  {path: 'template', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]}, canActivate: [AuthGuard]},
+  {path: 'template/new', component: TemplateNew, data: {rolesAllowed: [Role.EDIT_TEMPLATE]}, canActivate: [AuthGuard]},
+  {path: 'template/:templateName', component: TemplateDetail, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
+   canActivate: [AuthGuard]},
 
-  {path: 'config/preview', component: ConfigValuePreview},
-  {path: 'config/:template', component: ConfigValueOverview},
-  {path: 'config/:template/:service/new', component: ConfigValueEdit},
-  {path: 'config/:template/:service/:key', component: ConfigValueEdit},
+  {path: 'config/preview', component: ConfigValuePreview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
+   canActivate: [AuthGuard]},
+  {path: 'config/:template', component: ConfigValueOverview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
+   canActivate: [AuthGuard]},
+  {path: 'config/:template/:service/new', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+   canActivate: [AuthGuard]},
+  {path: 'config/:template/:service/:key', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+   canActivate: [AuthGuard]},
 
-  {path: 'files', component: FileOverviewComponent},
-  {path: 'files/new', component: FileDetailComponent},
-  {path: 'files/:fileName', component: FileDetailComponent, resolve: { fileForm: FileResolver }},
+  {path: 'files', component: FileOverviewComponent, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'files/new', component: FileDetailComponent, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'files/:fileName', component: FileDetailComponent, resolve: { fileForm: FileResolver },
+   data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]}, canActivate: [AuthGuard]},
 
-  {path: 'service', component: ServiceOverview},
-  {path: 'service/:serviceName', component: ServiceDetail},
-  {path: 'service/new', component: ServiceDetail},
+  {path: 'service', component: ServiceOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'service/:serviceName', component: ServiceDetail, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'service/new', component: ServiceDetail, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
 
-  {path: 'package', component: PackageOverview},
-  {path: 'package/:packageName', component: PackageDetail},
+  {path: 'package', component: PackageOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'package/:packageName', component: PackageDetail, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
 
-  {path: 'repo', component: RepoOverview},
-  {path: 'repo/new', component: RepoEdit},
-  {path: 'repo/:repoName', component: RepoEdit},
-  {path: 'repo/:repoName/mirror/new', component: MirrorEdit},
-  {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit},
+  {path: 'repo', component: RepoOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'repo/new', component: RepoEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'repo/:repoName', component: RepoEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'repo/:repoName/mirror/new', component: MirrorEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
+  {path: 'repo/:repoName/mirror/:mirrorid', component: MirrorEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
 
-  {path: 'ssh', component: SSHOverviewComponent },
-  {path: 'ssh/:owner', component: SSHDetailComponent },
+  {path: 'ssh', component: SSHOverviewComponent, data: {rolesAllowed: [Role.VIEW_SSH, Role.EDIT_SSH]},
+   canActivate: [AuthGuard]},
+  {path: 'ssh/:owner', component: SSHDetailComponent, data: {rolesAllowed: [Role.EDIT_SSH]},
+   canActivate: [AuthGuard]},
 
-  {path: 'settings', component: SettingsOverview},
+  {path: 'settings', component: SettingsOverview, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
+   canActivate: [AuthGuard]},
 
+  // TODO remove me
   {path: 'token', component: AuthTokenOverviewComponent},
 
   {path: 'not-found/:type/:name', component: NotFoundComponent},

@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { AuthHttpService } from './app/util/http/auth.http.service';
 import { HomeServiceStatusComponent } from './app/home/home.servicestatus.comp';
 import { PackageChangesService } from './app/util/packagechanges/packagechanges.service';
 import { CCDashboardPanel } from './app/util/ccdashboardpanel/ccdashboardpanel.comp';
@@ -80,6 +81,7 @@ import { HomeStatsComponent } from './app/home/home.stats.comp';
 import { StatsHttpService } from './app/util/http/stats.http.service';
 import { LoginComponent } from './app/login/login.comp';
 import { AuthenticationService } from './app/util/auth/authentication.service';
+import { AuthGuard } from './app/util/auth/auth.guard';
 
 @NgModule({
   imports: [
@@ -160,7 +162,9 @@ import { AuthenticationService } from './app/util/auth/authentication.service';
     HostsService,
     RepoScansService,
     StatsHttpService,
-    AuthenticationService
+    AuthenticationService,
+    AuthHttpService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })
