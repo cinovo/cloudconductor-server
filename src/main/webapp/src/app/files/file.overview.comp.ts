@@ -1,5 +1,5 @@
-import { Router } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
@@ -35,8 +35,9 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
   public filesLoaded = false;
 
   private static filterData(file: ConfigFile, query: string): boolean {
-    if (Validator.notEmpty(query)) {
-      return file.name.indexOf(query.trim()) >= 0;
+    const queryString = query.trim();
+    if (Validator.notEmpty(queryString)) {
+      return file.name.includes(queryString) || file.targetPath.includes(queryString);
     }
     return true;
   }

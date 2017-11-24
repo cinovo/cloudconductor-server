@@ -6,6 +6,7 @@ import { AlertService } from '../util/alert/alert.service';
 import { AuthenticationService, User } from '../util/auth/authentication.service';
 import { AuthHttpService } from '../util/http/auth.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
+import { Router } from '@angular/router';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -28,7 +29,8 @@ export class TopNavComponent implements AfterContentInit, OnInit {
   constructor(private settingHttp: SettingHttpService,
               private alertService: AlertService,
               private authService: AuthenticationService,
-              private authHttpService: AuthHttpService) { };
+              private authHttpService: AuthHttpService,
+              private router: Router) { };
 
   ngOnInit(): void {
     this.settingsObs = this.settingHttp.settings;
@@ -49,6 +51,7 @@ export class TopNavComponent implements AfterContentInit, OnInit {
       () => {
         this.alertService.success('Successfully logged out.');
         this.authService.removeToken();
+        this.router.navigate(['/login']);
       }, (err) => {
         this.alertService.danger('Unable to log out!');
         console.error(err);

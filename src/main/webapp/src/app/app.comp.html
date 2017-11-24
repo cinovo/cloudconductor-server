@@ -1,20 +1,17 @@
 <div id="wrapper">
 
-  <!-- Login -->
-  <login *ngIf="!(loggedIn | async)"></login>
-
   <!-- Navigation -->
   <nav *ngIf="(loggedIn | async)" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
     <top-navbar></top-navbar>
     <main-navbar></main-navbar>
   </nav>
 
-  <div id="page-wrapper" [hidden]="!(loggedIn | async)">
+  <div [class.page-wrapper]="(loggedIn | async)">
     <alert-area></alert-area>
 
     <router-outlet></router-outlet>
 
-    <app-footer></app-footer>
+    <app-footer *ngIf="(loggedIn | async)"></app-footer>
   </div>
 
 </div>

@@ -82,8 +82,9 @@ import { HomeStatsComponent } from './app/home/home.stats.comp';
 import { StatsHttpService } from './app/util/http/stats.http.service';
 import { LoginComponent } from './app/login/login.comp';
 import { AuthenticationService } from './app/util/auth/authentication.service';
-import { AuthGuard } from './app/util/auth/auth.guard';
+import { AuthorizationGuard } from './app/util/auth/authorization.guard';
 import { UserOverviewComponent } from './app/user/user.overview.comp';
+import { AuthenticationGuard } from './app/util/auth/authentication.guard';
 
 @NgModule({
   imports: [
@@ -168,7 +169,8 @@ import { UserOverviewComponent } from './app/user/user.overview.comp';
     StatsHttpService,
     AuthenticationService,
     AuthHttpService,
-    AuthGuard
+    AuthorizationGuard,
+    AuthenticationGuard
   ],
   bootstrap: [AppComponent]
 })

@@ -12,7 +12,7 @@ import { AuthenticationService } from './authentication.service';
  * @author mweise
  */
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthorizationGuard implements CanActivate {
 
   constructor(private authService: AuthenticationService) { }
 
@@ -20,9 +20,10 @@ export class AuthGuard implements CanActivate {
     if (route.data && route.data.rolesAllowed && route.data.rolesAllowed.length > 0) {
       const rolesAllowed: string[] = route.data.rolesAllowed;
 
-      return this.authService.currentUser.map((user) => {
-        return user.roles.filter(r => rolesAllowed.includes(r)).length > 0;
-      });
+      return this.authService.currentUser.map(user => user.roles.filter(r => rolesAllowed.includes(r)))
+        .map(matchingRoles => {
+          return matchingRoles.length > 0
+        });
     }
     return Observable.of(true);
   }

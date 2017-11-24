@@ -9,6 +9,7 @@ import { JwtHelper } from 'angular2-jwt';
 
 import { AuthHttpService } from '../http/auth.http.service';
 import { HTTPService } from '../http/abstract.http.service';
+import { Role } from '../enums.util';
 
 export interface Authentication {
   username: string,
@@ -19,7 +20,7 @@ export interface Authentication {
 export interface User {
   name: string,
   preferred_username: string,
-  roles: string[]
+  roles: Role[]
 }
 
 export interface JwtClaimSet {
@@ -27,7 +28,7 @@ export interface JwtClaimSet {
   iss: string,
   name: string
   preferred_username: string,
-  roles: string[]
+  roles: Role[]
   sub: string
 }
 
@@ -65,6 +66,8 @@ export class AuthenticationService {
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
       this.token = savedToken;
+    } else {
+      this.loggedIn.next(false);
     }
   }
 
