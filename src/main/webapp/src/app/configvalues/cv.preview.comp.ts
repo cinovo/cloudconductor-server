@@ -1,4 +1,6 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
@@ -14,10 +16,10 @@ import { ServiceHttpService } from '../util/http/service.http.service';
   selector: 'cs.preview.comp',
   templateUrl: './cv.preview.comp.html'
 })
-export class ConfigValuePreview implements AfterViewInit {
+export class ConfigValuePreview implements OnInit, OnDestroy {
 
-  public templates: string[] = [];
-  public services: string[] = [];
+  public templateNames: string[];
+  public serviceNames: string[] = [];
   public modes: string[] = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
   public preview: any;
 
@@ -25,30 +27,35 @@ export class ConfigValuePreview implements AfterViewInit {
   private _serviceQuery: string;
   private _modeQuery: string = this.modes[0];
 
+  private _templateNamesSub: Subscription;
+  private _serviceNamesSub: Subscription;
+
   constructor(private configHttp: ConfigValueHttpService,
               private templateHttp: TemplateHttpService,
-              private serviceHttp: ServiceHttpService) {
-  };
+              private serviceHttp: ServiceHttpService) { };
 
-  ngAfterViewInit(): void {
-    this.templateHttp.getTemplates().subscribe(
-      (result) => {
-        for (let template of result) {
-          this.templates.push(template.name);
-        }
-      }
+  ngOnInit(): void {
+    this._templateNamesSub = this.templateHttp.getTemplateNames().subscribe(
+      (templateNames) => this.templateNames = templateNames,
+      (err) => console.error(err)
     );
 
-    this.serviceHttp.getServices().subscribe(
-      (result) => {
-        for (let service of result) {
-          if (this.services.indexOf(service.name) < 0) {
-            this.services.push(service.name);
-          }
-        }
-      }
+    this._serviceNamesSub = this.serviceHttp.getServiceNames().subscribe(
+      (serviceNames) => this.serviceNames = serviceNames,
+      (err) => console.error(err)
     );
+
     this.loadPreview();
+  }
+
+  ngOnDestroy(): void {
+    if (this._templateNamesSub) {
+      this._templateNamesSub.unsubscribe();
+    }
+
+    if (this._serviceNamesSub) {
+      this._serviceNamesSub.unsubscribe();
+    }
   }
 
   private loadPreview(): void {

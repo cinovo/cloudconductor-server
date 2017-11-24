@@ -32,7 +32,7 @@
           <label for="copypackages">Copy behaviour from </label>
           <select class="form-control" formControlName="copyFrom" id="copypackages">
             <option value="" selected>None</option>
-            <option *ngFor="let existingTemplate of existingTemplateNames" value="{{existingTemplate}}">
+            <option *ngFor="let existingTemplate of (existingTemplateNames| async)" value="{{existingTemplate}}">
               {{existingTemplate}}
             </option>
           </select>
@@ -40,14 +40,14 @@
 
         <cc-panel [title]="'Repositories'" icon="fa-server" [collapsable]="true">
           <table class="table-responsive table table-striped table-hover" cc-panel-body
-                 *ngIf="mode == modes.EDIT || (mode == modes.NEW && !copyFrom.value)">
+                 *ngIf="mode === modes.EDIT || (mode === modes.NEW && !copyFrom.value)">
             <tbody>
-            <tr *ngIf="!template.repos || template.repos.length <= 0" class="danger">
+            <tr *ngIf="!template.repos || template.repos.length < 1; else repoList" class="danger">
               <td colspan="3" class="text-center">
                 There are currently no repositories selected.
               </td>
             </tr>
-            <tr *ngFor="let repo of template.repos">
+            <tr *ngFor="let repo of template.repos" #repoList>
               <td>
                 {{repo}}
               </td>

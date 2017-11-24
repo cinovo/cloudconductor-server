@@ -1,6 +1,9 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+
 import { Template } from '../util/http/template.http.service';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { Mode } from '../util/enums.util';
 
 /**
@@ -13,7 +16,7 @@ import { Mode } from '../util/enums.util';
   selector: 'template-new',
   templateUrl: './template.new.comp.html'
 })
-export class TemplateNew implements AfterViewInit {
+export class TemplateNew implements OnInit {
 
   private _template: BehaviorSubject<Template> = new BehaviorSubject({name: '', description: ''});
   public template: Observable<Template> = this._template.asObservable();
@@ -22,7 +25,7 @@ export class TemplateNew implements AfterViewInit {
 
   constructor() { };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this._template.next({name: '', description: '', repos: [], versions: {}, autoUpdate: false, smoothUpdate: false});
   }
 

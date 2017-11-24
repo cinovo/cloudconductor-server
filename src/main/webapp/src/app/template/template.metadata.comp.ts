@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
 import { Settings, SettingHttpService } from '../util/http/setting.http.service';
@@ -22,7 +23,7 @@ import { Mode } from '../util/enums.util';
   selector: 'template-metadata',
   templateUrl: './template.metadata.comp.html'
 })
-export class TemplateMetaData implements OnInit {
+export class TemplateMetaData implements OnInit, OnDestroy {
 
   @Input() obsTemplate: Observable<Template>;
   @Input() mode: Mode = Mode.EDIT;
@@ -30,7 +31,7 @@ export class TemplateMetaData implements OnInit {
   public modes = Mode;
   public template: Template = {name: '', description: ''};
 
-  public existingTemplateNames: Array<string> = [];
+  public existingTemplateNames: Observable<string[]>;
 
   public settings: Settings = {};
 
@@ -40,6 +41,9 @@ export class TemplateMetaData implements OnInit {
 
   public templateForm: FormGroup;
   public copyFrom: FormControl;
+
+  private _templateSub: Subscription;
+  private _settingsSub: Subscription;
 
   constructor(private route: ActivatedRoute,
               private settingsHttp: SettingHttpService,
@@ -60,33 +64,37 @@ export class TemplateMetaData implements OnInit {
   }
 
   ngOnInit(): void {
-    this.obsTemplate.subscribe((result) => {
-      this.template = result;
+    this._templateSub = this.obsTemplate.subscribe((template) => {
+      this.template = template;
 
       // update metadata form
-      this.templateForm.controls.name.setValue(result.name);
-      this.templateForm.controls.description.setValue(result.description);
-      this.templateForm.controls.autoUpdate.setValue(result.autoUpdate);
-      this.templateForm.controls.smoothUpdate.setValue(result.smoothUpdate);
+      this.templateForm.controls.name.setValue(template.name);
+      this.templateForm.controls.description.setValue(template.description);
+      this.templateForm.controls.autoUpdate.setValue(template.autoUpdate);
+      this.templateForm.controls.smoothUpdate.setValue(template.smoothUpdate);
     });
 
-    this.settingsHttp.getSettings().subscribe(
-      (result) => this.settings = result
+    this._settingsSub = this.settingsHttp.getSettings().subscribe(
+      (result) => this.settings = result,
+      (err) => console.error(err)
     );
 
     if (this.mode === Mode.NEW) {
-      this.templateHttp.getTemplates().subscribe((result) => {
-        for (let t of result) {
-          this.existingTemplateNames.push(t.name);
-        }
-        this.existingTemplateNames.sort();
-      });
+      this.existingTemplateNames = this.templateHttp.getTemplateNames();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this._templateSub) {
+      this._templateSub.unsubscribe();
+    }
+
+    if (this._settingsSub) {
+      this._settingsSub.unsubscribe();
     }
   }
 
   public saveTemplateMetadata(formValue): void {
-    console.log({formValue});
-
     const templateToSave: Template = {
       name: formValue.name,
       description: formValue.description || '',

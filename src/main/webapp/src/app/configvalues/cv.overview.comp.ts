@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription } from 'rxjs/Subscription';
 
 import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
 import { Sorter } from '../util/sorters.util';

@@ -93,9 +93,7 @@ export class TemplateHttpService extends HTTPService {
   }
 
   public getTemplateNames(): Observable<string[]> {
-    return this.getTemplates().map((templates) => {
-      return templates.map((template) => template.name);
-    });
+    return this.getTemplates().map(templates => templates.map(template => template.name).sort());
   }
 
 }

@@ -58,7 +58,7 @@ export class ServiceHttpService extends HTTPService {
   }
 
   public getServiceNames(): Observable<string[]> {
-    return this.getServices().map((services: Service[]) => services.map(s => s.name));
+    return this.getServices().map((services: Service[]) => services.map(s => s.name).sort());
   }
 
 }

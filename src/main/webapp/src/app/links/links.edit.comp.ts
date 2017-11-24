@@ -1,5 +1,7 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { Subscription } from 'rxjs/Subscription';
 
 import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
 import { Validator } from '../util/validator.util';
@@ -15,25 +17,31 @@ import { AlertService } from '../util/alert/alert.service';
   selector: 'links-edit',
   templateUrl: './links.edit.comp.html'
 })
+export class LinksEdit implements OnInit, OnDestroy {
 
-export class LinksEdit implements AfterViewInit {
-
-  public links: Array<AdditionalLink> = [];
+  public links: AdditionalLink[] = [];
   public newLink: AdditionalLink;
+  public editLink: AdditionalLink;
 
-  private editLink: AdditionalLink;
+  private _linksSub: Subscription;
 
   constructor(private linksHttp: AdditionalLinkHttpService,
               private alerts: AlertService) { };
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.loadLinks();
   }
 
+  ngOnDestroy(): void {
+    if (this._linksSub) {
+      this._linksSub.unsubscribe();
+    }
+  }
 
   private loadLinks(): void {
-    this.linksHttp.links.subscribe(
-      (result) => this.links = result
+    this._linksSub = this.linksHttp.links.subscribe(
+      (result) => this.links = result,
+      (err) => console.error(err)
     )
   }
 
@@ -42,9 +50,7 @@ export class LinksEdit implements AfterViewInit {
       return;
     }
     this.linksHttp.editLink(this.editLink).subscribe(
-      () => {
-        this.abortEditLink();
-      },
+      () => this.abortEditLink(),
       (error) => this.alerts.danger('The choosen label already exists. Please choose an unused label name.')
     );
   }
