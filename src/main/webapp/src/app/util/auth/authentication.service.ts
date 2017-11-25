@@ -41,7 +41,7 @@ export interface JwtClaimSet {
 @Injectable()
 export class AuthenticationService {
 
-  private readonly _anonymous_user = {name: 'ANONYMOUS', preferred_username: '', roles: []};
+  private static readonly ANONYMOUS: User = {name: 'ANONYMOUS', preferred_username: '', roles: []};
 
   private _token = '';
   public loggedIn: Subject<boolean> = new ReplaySubject(1);
@@ -58,6 +58,10 @@ export class AuthenticationService {
       roles: jwt.roles
     }
     return user;
+  }
+
+  public static isAnonymous(user: User): boolean {
+    return (user.name === AuthenticationService.ANONYMOUS.name);
   }
 
   constructor(protected http: Http) {
@@ -96,7 +100,7 @@ export class AuthenticationService {
     }
   }
 
-  public login(auth: Authentication): Observable<boolean> {
+  public login(auth: Authentication): Observable<User> {
     return this.http
       .put('/api/auth', JSON.stringify(auth), {headers: this.headers})
       .map((response) => {
@@ -105,12 +109,12 @@ export class AuthenticationService {
           return auth;
         }
         return result;
-      }).map((jwt) => {
+      }).flatMap((jwt: string) => {
         if (jwt) {
           this.token = jwt;
-          return true;
+          return this.currentUser;
         }
-        return false;
+        return Observable.of(AuthenticationService.ANONYMOUS);
       }).share();
   }
 
@@ -118,7 +122,7 @@ export class AuthenticationService {
     this._token = '';
     localStorage.removeItem('token');
     this.loggedIn.next(false);
-    this.currentUser.next(this._anonymous_user);
+    this.currentUser.next(AuthenticationService.ANONYMOUS);
   }
 
 }
