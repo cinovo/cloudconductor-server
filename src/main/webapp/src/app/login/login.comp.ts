@@ -35,12 +35,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this._querySub = this.route.queryParamMap.subscribe((queryParaMap) => {
-      const redirect = queryParaMap.get('redirect');
-      if (redirect) {
-        this._redirect = redirect;
+    this._querySub = this.route.queryParamMap.subscribe(
+      (queryParaMap) => {
+        const redirect = queryParaMap.get('redirect');
+        if (redirect) {
+          this._redirect = redirect;
+        }
       }
-    });
+    );
   }
 
   ngOnDestroy(): void {

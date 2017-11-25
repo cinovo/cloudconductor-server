@@ -85,6 +85,7 @@ import { AuthenticationService } from './app/util/auth/authentication.service';
 import { AuthorizationGuard } from './app/util/auth/authorization.guard';
 import { UserOverviewComponent } from './app/user/user.overview.comp';
 import { AuthenticationGuard } from './app/util/auth/authentication.guard';
+import { ForbiddenComponent } from './app/forbidden/forbidden.comp';
 
 @NgModule({
   imports: [
@@ -144,7 +145,8 @@ import { AuthenticationGuard } from './app/util/auth/authentication.guard';
     HomeStatsComponent,
     LoginComponent,
     UserOverviewComponent,
-    GroupOverviewComponent
+    GroupOverviewComponent,
+    ForbiddenComponent
   ],
   providers: [
     AlertService,

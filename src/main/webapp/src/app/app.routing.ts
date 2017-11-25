@@ -30,6 +30,7 @@ import { Role } from './util/enums.util';
 import { UserOverviewComponent } from './user/user.overview.comp';
 import { LoginComponent } from './login/login.comp';
 import { AuthenticationGuard } from './util/auth/authentication.guard';
+import { ForbiddenComponent } from './forbidden/forbidden.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -107,10 +108,12 @@ export const APP_ROUTES: Routes = [
   {path: 'group', component: GroupOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
+  {path: 'not-found/:type/:name', component: NotFoundComponent},
+
   // TODO remove me
   {path: 'token', component: AuthTokenOverviewComponent},
 
-  {path: 'not-found/:type/:name', component: NotFoundComponent},
+  {path: 'forbidden', component: ForbiddenComponent},
 
   {path: 'login', component: LoginComponent, data: {loggedIn: false},
    canActivate: [AuthenticationGuard]},

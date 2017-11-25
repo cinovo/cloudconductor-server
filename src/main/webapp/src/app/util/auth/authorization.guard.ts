@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
@@ -14,7 +14,8 @@ import { AuthenticationService } from './authentication.service';
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService,
+              private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (route.data && route.data.rolesAllowed && route.data.rolesAllowed.length > 0) {
@@ -22,9 +23,14 @@ export class AuthorizationGuard implements CanActivate {
 
       return this.authService.currentUser.map(user => user.roles.filter(r => rolesAllowed.includes(r)))
         .map(matchingRoles => {
-          return matchingRoles.length > 0
+          const allowed = (matchingRoles.length > 0);
+          if (!allowed) {
+            this.router.navigate(['/forbidden']);
+          }
+          return allowed;
         });
     }
+
     return Observable.of(true);
   }
 
