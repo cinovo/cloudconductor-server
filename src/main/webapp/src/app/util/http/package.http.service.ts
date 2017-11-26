@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -33,36 +30,36 @@ export interface Dependency {
 }
 
 @Injectable()
-export class PackageHttpService extends HTTPService {
+export class PackageHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'package/';
+  private _basePathURL = 'api/package';
+
+  constructor(private http: HttpClient) { }
+
+  public getPackages(): Observable<Package[]> {
+    return this.http.get<Package[]>(this._basePathURL);
   }
 
-  public getPackages(): Observable<Array<Package>> {
-    return this._get('', null);
-  }
-
-  public getPackagesPagewise(page = 0, pageSize = 0): Observable<Response> {
-    return this._getResponse('', null, {page: page, per_page: pageSize});
+  public getPackagesPagewise(page = 0, pageSize = 0): Observable<HttpResponse<Package[]>> {
+    const params = new HttpParams().set('page', page.toString())
+                                    .set('per_page', pageSize.toString());
+    return this.http.get<Package[]>(this._basePathURL, {observe: 'response', params: params});
   }
 
   public getPackage(pkgName: string): Observable<Package> {
-    return this._get(pkgName);
+    return this.http.get<Package>(`${this._basePathURL}/${pkgName}`);
   }
 
-  public getVersions(pkg: Package): Observable<Array<PackageVersion>> {
-    return this._get(pkg.name + '/versions');
+  public getVersions(pkg: Package): Observable<PackageVersion[]> {
+    return this.http.get<PackageVersion[]>(`${this._basePathURL}/${pkg.name}/versions`);
   }
 
   public getUsage(pkg: Package): Observable<any> {
-    return this._get(pkg.name + '/usage');
+    return this.http.get(`${this._basePathURL}/${pkg.name}/usage`);
   }
 
-  public getVersionsOfRepo(repoName: string): Observable<Array<PackageVersion>> {
-    return this._get('versions/repo/' + repoName);
+  public getVersionsOfRepo(repoName: string): Observable<PackageVersion[]> {
+    return this.http.get<PackageVersion[]>(`${this._basePathURL}/versions/repo/${repoName}`);
   }
 
 }

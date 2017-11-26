@@ -3,7 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from './authentication.service';
+import { AuthTokenProviderService } from './authtokenprovider.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -14,14 +14,15 @@ import { AuthenticationService } from './authentication.service';
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
 
-  constructor(private authService: AuthenticationService,
+  constructor(private authTokenProvider: AuthTokenProviderService,
               private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (route.data && route.data.rolesAllowed && route.data.rolesAllowed.length > 0) {
       const rolesAllowed: string[] = route.data.rolesAllowed;
 
-      return this.authService.currentUser.map(user => user.roles.filter(r => rolesAllowed.includes(r)))
+      return this.authTokenProvider.currentUser
+        .map(user => user.roles.filter(r => rolesAllowed.includes(r)))
         .map(matchingRoles => {
           const allowed = (matchingRoles.length > 0);
           if (!allowed) {

@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 
 export interface AuthToken {
   id: number,
@@ -21,24 +18,22 @@ export interface AuthToken {
  * @author mweise
  */
 @Injectable()
-export class AuthTokenHttpService extends HTTPService {
+export class AuthTokenHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'authtoken/'
-  }
+  private _basePathURL = 'api/authtoken'
+
+  constructor(protected http: HttpClient) { }
 
   public getAuthTokens(): Observable<AuthToken[]> {
-    return this._get('');
+    return this.http.get<AuthToken[]>(this._basePathURL);
   }
 
   public generateToken(): Observable<AuthToken> {
-    return this._put('generate', []);
+    return this.http.put<AuthToken>(`${this._basePathURL}/generate`, []);
   }
 
-  public revokeToken(tokenId: number, comment: string) {
-    return this._put(`${tokenId}/revoke`, comment);
+  public revokeToken(tokenId: number, comment: string): Observable<boolean> {
+    return this.http.put<boolean>(`${tokenId}/revoke`, comment);
   }
 
 }

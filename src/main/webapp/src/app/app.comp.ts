@@ -1,7 +1,8 @@
 import { Component, HostListener, AfterViewInit, OnInit } from '@angular/core';
 
-import { AuthenticationService } from './util/auth/authentication.service';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable'
+
+import { AuthTokenProviderService } from './util/auth/authtokenprovider.service';
 
 declare let $: any;
 
@@ -43,14 +44,14 @@ export class AppComponent implements AfterViewInit, OnInit {
     AppComponent.handleTheme();
   }
 
-  constructor(private authService: AuthenticationService) { };
+  constructor(private authTokenProvider: AuthTokenProviderService) { };
 
   ngAfterViewInit(): void {
     AppComponent.handleTheme();
   }
 
   ngOnInit(): void {
-    this.loggedIn = this.authService.loggedIn;
+    this.loggedIn = this.authTokenProvider.loggedIn;
   }
 
 }

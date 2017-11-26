@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 import { Sorter } from '../../util/sorters.util';
 
 /**
@@ -21,41 +19,39 @@ export interface AdditionalLink {
 }
 
 @Injectable()
-export class AdditionalLinkHttpService extends HTTPService {
+export class AdditionalLinkHttpService {
 
-  private _linksData: BehaviorSubject<Array<AdditionalLink>> = new BehaviorSubject([]);
-  public links: Observable<Array<AdditionalLink>> = this._linksData.asObservable();
+  private _linksData: BehaviorSubject<AdditionalLink[]> = new BehaviorSubject([]);
+  public links: Observable<AdditionalLink[]> = this._linksData.asObservable();
 
   private reloading = false;
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'links/';
+  private basePathURL = 'api/links'
+
+  constructor(private http: HttpClient) {
     this.reloadLinks();
   }
 
-  public getLinks(): Observable<Array<AdditionalLink>> {
-    return this._get('');
+  public getLinks(): Observable<AdditionalLink[]> {
+    return this.http.get<AdditionalLink[]>(this.basePathURL).share();
   }
 
   public deleteLink(id: number): Observable<boolean> {
-    let res = this._delete(id.toString());
+    let res = this.http.delete<boolean>(id.toString());
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
   public newLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this._post('', link);
+    let res = this.http.post<AdditionalLink>('', link);
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
-
   public editLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this._put('', link).share();
+    let res = this.http.put<AdditionalLink>('', link).share();
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
@@ -67,6 +63,8 @@ export class AdditionalLinkHttpService extends HTTPService {
         (result) => {
           this._linksData.next(result.sort(Sorter.links));
           this.reloading = false;
+        }, (err) => {
+          console.error(err);
         }
       );
     }

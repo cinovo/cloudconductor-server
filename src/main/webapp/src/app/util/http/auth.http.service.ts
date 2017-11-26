@@ -1,10 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
+import { Role } from '../enums.util';
+
+export interface JwtClaimSet {
+  exp: number,
+  iss: string,
+  name: string
+  preferred_username: string,
+  roles: Role[]
+  sub: string
+}
+
+export interface Authentication {
+  username: string,
+  password: string,
+  token: string
+}
+
+export interface User {
+  name: string,
+  preferred_username: string,
+  roles: Role[]
+}
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -13,16 +33,18 @@ import { HTTPService } from './abstract.http.service';
  * @author mweise
  */
 @Injectable()
-export class AuthHttpService extends HTTPService {
+export class AuthHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'auth/';
+  private _basePathURL = 'api/auth';
+
+  constructor(private http: HttpClient) { }
+
+  public login(auth: Authentication): Observable<string> {
+    return this.http.put<string>(this._basePathURL, auth);
   }
 
   public logout(): Observable<boolean> {
-    return this._put('logout', {});
+    return this.http.put<boolean>(`${this._basePathURL}/logout`, {});
   }
 
 }

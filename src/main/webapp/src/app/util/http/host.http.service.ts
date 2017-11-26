@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 import { ServiceState } from '../../util/enums.util';
 
 /**
@@ -26,35 +24,33 @@ export interface Host {
 }
 
 @Injectable()
-export class HostHttpService extends HTTPService {
+export class HostHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'host/';
-  }
+  private _basePathURL = 'api/host';
 
-  public getHosts(): Observable<Array<Host>> {
-    return this._get('');
+  constructor(private http: HttpClient) { }
+
+  public getHosts(): Observable<Host[]> {
+    return this.http.get<Host[]>(this._basePathURL).share();
   }
 
   public getHost(hostName: string): Observable<Host> {
-    return this._get(hostName);
+    return this.http.get<Host>(`${this._basePathURL}/${hostName}`).share();
   }
 
   public deleteHost(host: Host): Observable<boolean> {
-    return this._delete(host.name);
+    return this.http.delete<boolean>(`${this._basePathURL}/${host.name}`).share();
   }
 
   public startService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + '/' + serviceName, ServiceState.STARTING);
+    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, ServiceState.STARTING).share();
   }
 
   public stopService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + '/' + serviceName, ServiceState.STOPPING);
+    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, ServiceState.STOPPING).share();
   }
 
   public restartService(hostName: string, serviceName: string): Observable<boolean> {
-    return this._put(hostName + '/' + serviceName, ServiceState.RESTARTING_STOPPING);
+    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, ServiceState.RESTARTING_STOPPING).share();
   }
 }

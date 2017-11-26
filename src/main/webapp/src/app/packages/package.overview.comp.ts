@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Response} from '@angular/http';
 
 import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
@@ -69,7 +69,7 @@ export class PackageOverview implements OnInit, OnDestroy {
   private loadPackages() {
     if (this._page && this._limit) {
       this.packageHttp.getPackagesPagewise(this._page, this._limit).subscribe(
-        (response) => {
+        (response: HttpResponse<Package[]>) => {
           this.totalPackageCount = +response.headers.get('x-total-count');
 
           this.pageCount = Math.floor(this.totalPackageCount / this.limit) + 1;
@@ -78,12 +78,7 @@ export class PackageOverview implements OnInit, OnDestroy {
 
           this.pages = Array.from(Array(this.pageCount), (x, i) => i + 1);
 
-          try {
-            let pkgs = response.json();
-            this.packages = pkgs;
-          } catch (error) {
-            this.packages = <any>response;
-          }
+          this.packages = response.body;
           this.packagesLoaded = true;
         }, (err) => {
           this.alertService.danger('Error loading packages!');

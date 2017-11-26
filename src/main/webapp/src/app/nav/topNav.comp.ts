@@ -1,12 +1,12 @@
 import { AfterContentInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
 import { AlertService } from '../util/alert/alert.service';
-import { AuthenticationService, User } from '../util/auth/authentication.service';
-import { AuthHttpService } from '../util/http/auth.http.service';
+import { AuthHttpService, User } from '../util/http/auth.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
-import { Router } from '@angular/router';
+import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -28,13 +28,13 @@ export class TopNavComponent implements AfterContentInit, OnInit {
 
   constructor(private settingHttp: SettingHttpService,
               private alertService: AlertService,
-              private authService: AuthenticationService,
+              private authTokenProvider: AuthTokenProviderService,
               private authHttpService: AuthHttpService,
               private router: Router) { };
 
   ngOnInit(): void {
     this.settingsObs = this.settingHttp.settings;
-    this.userObs = this.authService.currentUser;
+    this.userObs = this.authTokenProvider.currentUser;
   }
 
   ngAfterContentInit(): void {
@@ -50,7 +50,7 @@ export class TopNavComponent implements AfterContentInit, OnInit {
     this.authHttpService.logout().subscribe(
       () => {
         this.alertService.success('Successfully logged out.');
-        this.authService.removeToken();
+        this.authTokenProvider.removeToken();
         this.router.navigate(['/login']);
       }, (err) => {
         this.alertService.danger('Unable to log out!');

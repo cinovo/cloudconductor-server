@@ -4,8 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { Authentication, AuthenticationService } from '../util/auth/authentication.service';
 import { AlertService } from '../util/alert/alert.service';
+import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
+import { AuthHttpService, Authentication } from '../util/http/auth.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   private _querySub: Subscription;
 
   constructor(private fb: FormBuilder,
-    private authService: AuthenticationService,
+    private authHttp: AuthHttpService,
+    private authTokenProvider: AuthTokenProviderService,
     private alertService: AlertService,
     private route: ActivatedRoute,
     private router: Router) {
@@ -52,9 +54,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public login(auth: Authentication): void {
-    this.authService.login(auth).take(1).subscribe(
+    this.authHttp.login(auth)
+      .map((jwt: string) => {
+        return this.authTokenProvider.storeToken(jwt);
+      }).take(1).subscribe(
       (user) => {
-        if (!AuthenticationService.isAnonymous(user)) {
+        if (!AuthTokenProviderService.isAnonymous(user)) {
           this.alertService.success(`Successfully logged in as '${user.preferred_username}'!`);
           this.router.navigate([this._redirect]);
         } else {

@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-
-import { HTTPService } from './abstract.http.service';
-import { AuthenticationService } from '../auth/authentication.service';
 
 export interface WSConfig {
   basePath: string,
@@ -18,16 +15,14 @@ export interface WSConfig {
  * @author mweise
  */
 @Injectable()
-export class WSConfigHttpService extends HTTPService {
+export class WSConfigHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'wsconfig/';
-  }
+  private _basePathURL = 'api/wsconfig';
+
+  constructor(private http: HttpClient) { }
 
   public getWSConfig(): Observable<WSConfig> {
-    return this._get('');
+    return this.http.get<WSConfig>(this._basePathURL);
   }
 
 }

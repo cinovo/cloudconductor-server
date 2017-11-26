@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 import { SSHKey } from './sshkey.model';
 
 /**
@@ -14,41 +12,39 @@ import { SSHKey } from './sshkey.model';
  * @author mweise
  */
 @Injectable()
-export class SSHKeyHttpService extends HTTPService {
+export class SSHKeyHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'ssh/';
-  };
+  private _basePathURL = 'api/ssh';
+
+  constructor(private http: HttpClient) { };
 
   public getKeys(): Observable<SSHKey[]> {
-    return this._get('');
+    return this.http.get<SSHKey[]>(this._basePathURL);
   }
 
   public getKey(owner: string): Observable<SSHKey> {
-    return this._get(owner).map((k) => {
+    return this.http.get<SSHKey>(`${this._basePathURL}/${owner}`).map((k) => {
       delete k['@class'];
       delete k['lastChanged'];
       return k;
     });
   }
 
-  public updateKey(sshKey: SSHKey): Observable<boolean> {
-    sshKey['@class'] = 'de.cinovo.cloudconductor.api.model.SSHKey';
-    return this._put('', sshKey);
-  }
-
-  public deleteKey(owner: string): Observable<boolean> {
-    return this._delete(owner);
-  }
-
   public existsKey(owner: string): Observable<boolean> {
-    return this._get(owner).map((sshKey: SSHKey) => {
+    return this.http.get(`${this._basePathURL}/${owner}`).map((sshKey: SSHKey) => {
       return (sshKey !== undefined);
     }).catch(() => {
       return Observable.of(false);
     });
+  }
+
+  public updateKey(sshKey: SSHKey): Observable<boolean> {
+    sshKey['@class'] = 'de.cinovo.cloudconductor.api.model.SSHKey';
+    return this.http.put<boolean>(this._basePathURL, sshKey);
+  }
+
+  public deleteKey(owner: string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this._basePathURL}/${owner}`);
   }
 
 }

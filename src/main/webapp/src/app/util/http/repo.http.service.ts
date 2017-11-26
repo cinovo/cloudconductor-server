@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 import { RepoMirror } from './repomirror.http.service';
 
 /**
@@ -23,20 +21,18 @@ export interface Repo {
 }
 
 @Injectable()
-export class RepoHttpService extends HTTPService {
+export class RepoHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'repo/';
-  }
+  private _basePathURL = 'api/repo';
 
-  public getRepos(): Observable<Array<Repo>> {
-    return this._get('');
+  constructor(private http: HttpClient) { }
+
+  public getRepos(): Observable<Repo[]> {
+    return this.http.get<Repo[]>(this._basePathURL);
   }
 
   public getRepo(repoName: string): Observable<Repo> {
-    return this._get(repoName);
+    return this.http.get<Repo>(`${this._basePathURL}/${repoName}`);
   }
 
   public existsRepo(repoName: string): Observable<boolean> {
@@ -46,17 +42,17 @@ export class RepoHttpService extends HTTPService {
   }
 
   public deleteRepo(repoName: string): Observable<boolean> {
-    return this._delete(repoName);
+    return this.http.delete<boolean>(`${this._basePathURL}/${repoName}`);
   }
 
   public newRepo(repo: Repo): Observable<Repo> {
     repo['@class'] = 'de.cinovo.cloudconductor.api.model.Repo';
-    return this._post('', repo);
+    return this.http.post<Repo>(this._basePathURL, repo);
   }
 
   public editRepo(repo: Repo): Observable<Repo> {
     repo['@class'] = 'de.cinovo.cloudconductor.api.model.Repo';
-    return this._put('', repo);
+    return this.http.put<Repo>(this._basePathURL, repo);
   }
 
 }

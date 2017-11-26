@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
 import { ConfigFile, FileForm, FileType } from './config-file.model';
-import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -14,29 +12,28 @@ import { HTTPService } from './abstract.http.service';
  * @author mweise
  */
 @Injectable()
-export class FileHttpService extends HTTPService {
+export class FileHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'file/'
-  }
+  private _basePathURL = 'api/file';
+
+  constructor(private http: HttpClient) { }
 
   public getFiles(): Observable<ConfigFile[]> {
-    return this._get('');
+    return this.http.get<ConfigFile[]>(this._basePathURL);
   }
 
   public getFilesForTemplate(templateName: string): Observable<ConfigFile[]> {
-    return this._get(`template/${templateName}`);
+    return this.http.get<ConfigFile[]>(`api/template/${templateName}`);
   }
 
   public updateFile(updatedFile: ConfigFile): Observable<boolean> {
     updatedFile['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigFile';
-    return this._put('', updatedFile);
+    return this.http.put<boolean>(this._basePathURL, updatedFile);
   }
 
   public getFile(fileName: string): Observable<ConfigFile> {
-    return this._get(fileName).map((obj) => Object.assign(new ConfigFile(), obj));
+    return this.http.get<ConfigFile>(`${this._basePathURL}/${fileName}`)
+                    .map(file => Object.assign(new ConfigFile(), file));
   }
 
   public existsFile(fileName: string): Observable<boolean> {
@@ -46,15 +43,15 @@ export class FileHttpService extends HTTPService {
   }
 
   public deleteFile(fileName: string): Observable<boolean> {
-    return this._delete(fileName);
+    return this.http.delete<boolean>(`${this._basePathURL}/${fileName}`);
   }
 
   public getFileData(fileName: string): Observable<string> {
-    return this._get(`${fileName}/data`);
+    return this.http.get<string>(`${this._basePathURL}/${fileName}/data`);
   }
 
   public updateFileData(fileName: string, fileData: string): Observable<boolean> {
-    return this._put(`${fileName}/data`, fileData);
+    return this.http.put<boolean>(`${this._basePathURL}/${fileName}/data`, fileData);
   }
 
 }

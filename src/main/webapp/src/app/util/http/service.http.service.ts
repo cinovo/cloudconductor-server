@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -17,48 +14,46 @@ export interface Service {
   name: string;
   description?: string;
   initScript?: string;
-  packages?: Array<String>;
-  templates?: Array<String>;
+  packages?: string[];
+  templates?: string[];
 }
 
 @Injectable()
-export class ServiceHttpService extends HTTPService {
+export class ServiceHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'service/';
-  }
+  private _basePathURL = 'api/service';
 
-  public getServices(): Observable<Array<Service>> {
-    return this._get('');
+  constructor(private http: HttpClient) { }
+
+  public getServices(): Observable<Service[]> {
+    return this.http.get<Service[]>(this._basePathURL);
   }
 
   public getService(serviceName: string): Observable<Service> {
-    return this._get(serviceName);
+    return this.http.get<Service>(`${this._basePathURL}/${serviceName}`);
   }
 
   public existsService(serviceName: string): Observable<boolean> {
-    return this._get(serviceName)
+    return this.getService(serviceName)
       .map((service: Service) => (service !== undefined))
       .catch(() => Observable.of(false));
   }
 
+  public getServiceNames(): Observable<string[]> {
+    return this.getServices().map((services: Service[]) => services.map(s => s.name).sort());
+  }
+
   public getServiceUsage(serviceName: string): Observable<any> {
-    return this._get(serviceName + '/usage');
+    return this.http.get(`${this._basePathURL}/${serviceName}/usage`);
   }
 
   public deleteService(service: Service): Observable<boolean> {
-    return this._delete(service.name);
+    return this.http.delete<boolean>(`${this._basePathURL}/${service.name}`);
   }
 
   public save(service: Service): Observable<boolean> {
     service['@class'] = 'de.cinovo.cloudconductor.api.model.Service';
-    return this._put('', service);
-  }
-
-  public getServiceNames(): Observable<string[]> {
-    return this.getServices().map((services: Service[]) => services.map(s => s.name).sort());
+    return this.http.put<boolean>(this._basePathURL, service);
   }
 
 }

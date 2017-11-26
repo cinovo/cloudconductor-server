@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -39,12 +36,14 @@ export const timeUnits: {value: TimeUnit, label: string, factor: number}[] = [
 ];
 
 @Injectable()
-export class SettingHttpService extends HTTPService {
+export class SettingHttpService {
 
   private _settings: BehaviorSubject<Settings> = new BehaviorSubject({});
   public settings: Observable<Settings> = this._settings.asObservable();
 
   private reloading = false;
+
+  private _basePathURL = 'api/settings/';
 
   public static calcIntervalInMillis(n: number, label: string) {
     const unit = timeUnits.find(u => u.value === label);
@@ -54,10 +53,7 @@ export class SettingHttpService extends HTTPService {
     return n * 1000;
   }
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'settings/';
+  constructor(private http: HttpClient) {
     this.reloadSettings();
   }
 
@@ -66,12 +62,12 @@ export class SettingHttpService extends HTTPService {
   }
 
   public getSettings(): Observable<Settings> {
-    return this._get('');
+    return this.http.get<Settings>(this._basePathURL);
   }
 
   public save(settings: Settings): Observable<boolean> {
     settings['@class'] = 'de.cinovo.cloudconductor.api.model.Settings';
-    let res = this._put('', settings).share();
+    let res = this.http.put<boolean>(this._basePathURL, settings).share();
     res.subscribe(() => this.reloadSettings(), () => {});
     return res;
   }

@@ -16,7 +16,7 @@ import { FooterComponent } from './app/footer/footer.comp';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Ng2Webstorage } from 'ng2-webstorage';
 import { NavComponent } from './app/nav/nav.comp';
 import { AppComponent } from './app/app.comp';
@@ -81,18 +81,19 @@ import { RepoScansService } from './app/util/reposcans/reposcans.service';
 import { HomeStatsComponent } from './app/home/home.stats.comp';
 import { StatsHttpService } from './app/util/http/stats.http.service';
 import { LoginComponent } from './app/login/login.comp';
-import { AuthenticationService } from './app/util/auth/authentication.service';
 import { AuthorizationGuard } from './app/util/auth/authorization.guard';
 import { UserOverviewComponent } from './app/user/user.overview.comp';
 import { AuthenticationGuard } from './app/util/auth/authentication.guard';
+import { AuthTokenProviderService } from './app/util/auth/authtokenprovider.service';
 import { ForbiddenComponent } from './app/forbidden/forbidden.comp';
+import { JwtInterceptor } from './app/util/http/jwt.interceptor';
 
 @NgModule({
   imports: [
     BrowserModule,
     Ng2Webstorage,
     RouterModule.forRoot(APP_ROUTES, {useHash: true}),
-    HttpModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     ConfirmationPopoverModule.forRoot()
@@ -169,10 +170,11 @@ import { ForbiddenComponent } from './app/forbidden/forbidden.comp';
     HostsService,
     RepoScansService,
     StatsHttpService,
-    AuthenticationService,
     AuthHttpService,
     AuthorizationGuard,
-    AuthenticationGuard
+    AuthenticationGuard,
+    AuthTokenProviderService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

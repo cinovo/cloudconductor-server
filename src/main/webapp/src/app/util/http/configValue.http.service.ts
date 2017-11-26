@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 import { Validator } from '../../util/validator.util';
 
 /**
@@ -22,39 +20,41 @@ export interface ConfigValue {
 }
 
 @Injectable()
-export class ConfigValueHttpService extends HTTPService {
-  private _templates: BehaviorSubject<Array<string>> = new BehaviorSubject([]);
-  public templates: Observable<Array<string>> = this._templates.asObservable();
+export class ConfigValueHttpService {
+
+  private _templates: BehaviorSubject<string[]> = new BehaviorSubject([]);
+  public templates: Observable<string[]> = this._templates.asObservable();
   private reloading = false;
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'config/';
+  private _basePathURL = 'api/config';
+
+  constructor(private http: HttpClient) {
     this.reloadTemplates();
   }
 
   public getValues(template: string): Observable<ConfigValue[]> {
-    return this._get(template + '/unstacked');
+    return this.http.get<ConfigValue[]>(`${this._basePathURL}/${template}/unstacked`);
   }
 
   public deleteValue(val: ConfigValue): Observable<boolean> {
     let ret;
     if (!Validator.notEmpty(val.service)) {
-      ret = this._delete(val.template + '/null/' + val.key);
+      ret = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/null/${val.key}`);
     } else {
-      ret = this._delete(val.template + '/' + val.service + '/' + val.key);
+      ret = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/${val.service}/${val.key}`);
     }
-    ret.subscribe(() => this.reloadTemplates(), () => {
-    });
+
+    ret.subscribe(
+      () => this.reloadTemplates(),
+      (err) => console.error(err)
+    );
     return ret;
   }
 
   public save(val: ConfigValue): Observable<ConfigValue> {
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigValue';
-    let ret = this._put('', val);
-    ret.subscribe(() => this.reloadTemplates(), () => {
-    });
+    let ret = this.http.put<ConfigValue>(this._basePathURL, val);
+    ret.subscribe(() => this.reloadTemplates(), () => { });
     return ret;
   }
 
@@ -62,7 +62,7 @@ export class ConfigValueHttpService extends HTTPService {
   private reloadTemplates(): void {
     if (!this.reloading) {
       this.reloading = true;
-      this._get('').subscribe(
+      this.http.get<string[]>(this._basePathURL).subscribe(
         (result) => {
           this._templates.next(result.sort((a: string, b: string) => {
             if (a === 'GLOBAL') return -1;
@@ -72,6 +72,8 @@ export class ConfigValueHttpService extends HTTPService {
             return 0;
           }));
           this.reloading = false;
+        }, (err) => {
+          console.error(err);
         }
       );
     }
@@ -85,21 +87,19 @@ export class ConfigValueHttpService extends HTTPService {
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {
     if (!Validator.notEmpty(service)) {
-      return this._get(template + '/null/' + key);
+      return this.http.get<string>(`${this._basePathURL}/${template}/null/'${key}`);
     }
-    return this._get(template + '/' + service + '/' + key);
+    return this.http.get<string>(`${this._basePathURL}/${template}/${service}/${key}`);
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {
-    const additionalheaders: Headers = new Headers(
-      {'Accept': mode}
-    );
+    const options = { headers: new HttpHeaders({'Accept': mode})};
 
     let preview$: Observable<any>;
     if (Validator.notEmpty(service)) {
-      preview$ = this._get(template + '/' + service, additionalheaders);
+      preview$ = this.http.get(`${this._basePathURL}/${template}/${service}`, options);
     } else {
-      preview$ = this._get(template, additionalheaders);
+      preview$ = this.http.get(`${this._basePathURL}/${template}`, options);
     }
 
     return preview$;

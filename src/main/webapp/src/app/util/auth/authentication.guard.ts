@@ -3,7 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 
 import { Observable } from 'rxjs/Observable';
 
-import { AuthenticationService } from './authentication.service';
+import { AuthTokenProviderService } from './authtokenprovider.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -14,7 +14,7 @@ import { AuthenticationService } from './authentication.service';
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
 
-  constructor(private authService: AuthenticationService,
+  constructor(private authTokenProvider: AuthTokenProviderService,
               private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -25,7 +25,7 @@ export class AuthenticationGuard implements CanActivate {
 
     const requestedRoute = route.url;
 
-    return this.authService.loggedIn.map(actualLoggedIn => {
+    return this.authTokenProvider.loggedIn.map(actualLoggedIn => {
       const match = (actualLoggedIn === expectedLoggedIn);
       if (!match) {
         if (actualLoggedIn) {

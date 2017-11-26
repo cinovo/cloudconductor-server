@@ -133,7 +133,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
             return Observable.throw(`Template named '${templateToSave.name}' does already exist!`);
           }
         }).subscribe(() => {
-          this.alerts.success('Successfully saved the template ' + templateToSave.name);
+          this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
           this.router.navigate(['template', templateToSave]);
         }, (err) => {
           this.alerts.danger(`Failed to save template: ${err}`);
@@ -142,13 +142,13 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       );
     } else {
       this.templateHttp.save(templateToSave).subscribe(() => {
-          this.alerts.success('Successfully saved the template ' + templateToSave.name);
+          this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
           if (this.mode === Mode.EDIT) {
             return;
           }
           this.router.navigate(['template', templateToSave.name]);
         }, (err) =>  {
-          this.alerts.danger('Failed to save template ' + formValue.copyFrom);
+          this.alerts.danger(`Failed to save template '${formValue.copyFrom}'`);
           console.error(err);
         });
     }

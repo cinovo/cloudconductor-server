@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-
-import { AuthenticationService } from '../auth/authentication.service';
-import { HTTPService } from './abstract.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -15,9 +12,9 @@ import { HTTPService } from './abstract.http.service';
 export interface Template {
   name: string;
   description?: string;
-  repos?: Array<string>;
+  repos?: string[];
   versions?: {[packageName: string]: string};
-  hosts?: Array<String>;
+  hosts?: string[];
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
 }
@@ -42,24 +39,26 @@ export interface AgentOption {
 }
 
 @Injectable()
-export class TemplateHttpService extends HTTPService {
+export class TemplateHttpService {
 
-  constructor(protected http: Http,
-              protected authService: AuthenticationService) {
-    super(http, authService);
-    this.basePathURL = 'template/';
+  private _basePathURL = 'api/template';
+
+  constructor(private http: HttpClient) { }
+
+  public getTemplates(): Observable<Template[]> {
+    return this.http.get<Template[]>(this._basePathURL);
   }
 
-  public getTemplates(): Observable<Array<Template>> {
-    return this._get('');
+  public getTemplateNames(): Observable<string[]> {
+    return this.getTemplates().map(templates => templates.map(template => template.name).sort());
   }
 
   public getTemplate(templateName: string): Observable<Template> {
-    return this._get(templateName);
+    return this.http.get<Template>(`${this._basePathURL}/${templateName}`);
   }
 
   public existsTemplate(templateName: string): Observable<boolean> {
-    return this._get(templateName).map((template: Template) => {
+    return this.getTemplate(templateName).map((template: Template) => {
       return (template !== undefined);
     }).catch(() => {
       return Observable.of(false);
@@ -67,33 +66,29 @@ export class TemplateHttpService extends HTTPService {
   }
 
   public deleteTemplate(template: Template): Observable<boolean> {
-    return this._delete(template.name);
+    return this.http.delete<boolean>(`${this._basePathURL}/${template.name}`);
   }
 
   public save(template: Template): Observable<boolean> {
     template['@class'] = 'de.cinovo.cloudconductor.api.model.Template';
-    return this._put('', template);
+    return this.http.put<boolean>(this._basePathURL, template);
   }
 
   public updatePackage(template: Template, packageName: string): Observable<Template> {
-    return this._put(template.name + '/package/' + packageName, '');
+    return this.http.put<Template>(`${this._basePathURL}/${template.name}/package/${packageName}`, '');
   }
 
   public deletePackage(template: Template, packageName: string): Observable<Template> {
-    return this._delete(template.name + '/package/' + packageName);
+    return this.http.delete<Template>(`${this._basePathURL}/${template.name}/package/${packageName}`);
   }
 
   public loadAgentOptions(templateName: string): Observable<AgentOption> {
-    return this._get(templateName + '/agentoption');
+    return this.http.get<AgentOption>(`${this._basePathURL}/${templateName}/agentoption`);
   }
 
   public saveAgentOptions(agentOption: AgentOption): Observable<AgentOption> {
     agentOption['@class'] = 'de.cinovo.cloudconductor.api.model.AgentOption';
-    return this._put(agentOption.templateName + '/agentoption', agentOption);
-  }
-
-  public getTemplateNames(): Observable<string[]> {
-    return this.getTemplates().map(templates => templates.map(template => template.name).sort());
+    return this.http.put<AgentOption>(`${this._basePathURL}/${agentOption.templateName}/agentoption`, agentOption);
   }
 
 }
