@@ -1,3 +1,69 @@
 <cc-title [title]="'Users'" titleIcon="fa-user"></cc-title>
 
-<p>Not implemented yet!</p>
+<div class="row">
+  <div class="col-md-3">
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Group" [data]="groups" (onQueryChange)="groupQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-6">
+    <a class="btn btn-success pull-right" role="button" [routerLink]="['new']">
+      <i class="fa fa-plus fa-fw"></i>
+      New
+    </a>
+  </div>
+</div>
+
+<div *ngIf="(users$ | async) as users" class="row">
+  <div class="col-sm-12">
+    <cc-panel [title]="'Users'" icon="fa-user">
+      <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+          <tr>
+            <th width="15px"></th>
+            <th>Login</th>
+            <th>Email</th>
+            <th>Groups</th>
+            <th># Agents</th>
+            <th># Auth Tokens</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" (dblclick)="goToDetails(user)">
+            <td><i class="fa fa-fw" [class.fa-circle]="user.active" [class.fa-circle-o]="!user.active"></i></td>
+            <td>{{user.loginName}}</td>
+            <td>
+              <span *ngIf="user.email && user.email.length > 0">{{user.email}}</span>
+              <span *ngIf="!user.email">None</span>
+            </td>
+            <td *ngIf="user && user.userGroups && user.userGroups.length > 0">
+              <ul *ngFor="let group of user.userGroups">
+                <li>{{group}}</li>
+              </ul>
+            </td>
+            <td *ngIf="!user.userGroups || user.userGroups.length < 1">None</td>
+            <td>{{user.agents.length}}</td>
+            <td>{{user.authTokens.length}}</td>
+            <td>
+              <a [routerLink]="['/user', user.loginName]">
+              <i class="fa fa-edit fa-fw" title="Edit User"></i>
+            </a>
+          </td>
+          <td>
+            <a href="javascript:void(0)" mwlConfirmationPopover
+            [title]="'Please verify!'"
+            [message]="'Are you sure you want to delete the user ' + user.loginName + '?'"
+            placement="left"
+            confirmButtonType="danger"
+            (confirm)="deleteUser(user)">
+              <i class="fa fa-trash-o fa-fw" title="Delete User"></i>
+            </a></td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

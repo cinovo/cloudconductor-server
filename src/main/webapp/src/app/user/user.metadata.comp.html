@@ -1,0 +1,104 @@
+<cc-panel [title]="'User details'" icon="fa-user">
+  <form [formGroup]="userForm" novalidate (ngSubmit)="saveUser(userForm.value)" cc-panel-body>
+    <div class="form-group">
+      <label for="loginName" class="control-label">Login</label>
+      <input type="text" class="form-control" formControlName="loginName" id="loginName" [readOnly]="mode == modes.EDIT">
+      <span *ngIf="!userForm.controls.loginName.pristine && !userForm.controls.loginName.valid" class="help-block">
+        This field is required
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="displayName" class="control-label">Name</label>
+      <input type="text" class="form-control" formControlName="displayName" id="displayName">
+    </div>
+
+    <div class="form-group">
+      <label for="email" class="control-label">Email</label>
+      <input type="email" class="form-control" formControlName="email" id="email">
+    </div>
+
+    <div class="form-group hidden">
+      <label for="registrationDate" class="control-label">Registration Date</label>
+      <input type="text" class="form-control" formControlName="registrationDate" id="registrationDate">
+    </div>
+
+    <div class="form-group hidden">
+      <label for="active" class="control-label">Active</label>
+      <input type="text" class="form-control" formControlName"active" id="active">
+    </div>
+
+    <cc-panel [title]="'Groups'" icon="fa-users">
+      <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
+        <tbody>
+          <tr *ngFor="let group of user?.userGroups">
+            <td><i class="fa fa-users fa-fw"></i></td>
+            <td>{{group}}</td>
+            <td width="30px">
+              <a href="javascript:void()" [routerLink]="['/group', group]" title="Show Group">
+                <i class="fa fa-external-link fa-fw"></i>
+              </a>
+            </td>
+            <td width="30px">
+              <a href="javascript:void()" mwlConfirmationPopover
+                title="Remove from group"
+                [title]="'Please verify!'"
+                [message]="'Are you sure you want to remove the user \'' + user.displayName + '\' from the group \''+ group + '\'?'"
+                placement="left"
+                confirmButtonType="danger"
+                (confirm)="removeGroup(group)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+            </td>
+          </tr>
+
+          <tr *ngIf="!user || !user.userGroups || user.userGroups.length < 1; else groupList" class="danger">
+            <td colspan="3" class="text-center">
+              There are currently no groups selected.
+            </td>
+          </tr>
+
+          <tr *ngIf="showNewGroup" #groupList>
+            <td colspan="4">
+              <div class="form-group">
+                <label class="control-label" for="addrepo">
+                  <i class="fa fa-plus fa-fw"></i> Add group
+                </label>
+                <div *ngIf="allGroups.length < 1" class="alert alert-warning">
+                  There are currently no more groups available
+                </div>
+                <select *ngIf="allGroups.length > 0" class="form-control" formControlName="newGroup" id="addrepo">
+                  <option value="" selected>
+                  </option>
+                  <option *ngFor="let group of allGroups" value="{{group}}">{{group}}</option>
+                </select>
+              </div>
+
+              <div class="pull-right">
+                <button type="button" (click)="showNewGroup = false" class="btn btn-default">Cancel</button>
+                <button type="button" (click)="addNewGroup(userForm.controls['newGroup'].value)" class="btn btn-success" [disabled]="!newGroup || allGroups.length < 1">
+                  Add
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!showNewGroup" role="button" (click)="goToNewGroup()">
+            <td colspan="4">
+              <i class="fa fa-plus fa-fw"></i>
+              Add group
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+
+    <div class="form-group pull-right">
+      <button type="button" class="btn btn-default" (click)="goBack()">
+        <span *ngIf="mode === modes.NEW">Cancel</span>
+        <span *ngIf="mode === modes.EDIT">Back</span>
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">Save</button>
+    </div>
+  </form>
+</cc-panel>

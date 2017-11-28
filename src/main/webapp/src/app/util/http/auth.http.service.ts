@@ -20,7 +20,7 @@ export interface Authentication {
   token: string
 }
 
-export interface User {
+export interface AuthenticatedUser {
   name: string,
   preferred_username: string,
   roles: Role[]

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
 import { AlertService } from '../util/alert/alert.service';
-import { AuthHttpService, User } from '../util/http/auth.http.service';
+import { AuthHttpService, AuthenticatedUser } from '../util/http/auth.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
 
@@ -22,7 +22,7 @@ import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service
 })
 export class TopNavComponent implements AfterContentInit, OnInit {
 
-  public userObs: Observable<User>;
+  public userObs: Observable<AuthenticatedUser>;
   public settingsObs: Observable<Settings>;
   public currentTime: number = Date.now();
 

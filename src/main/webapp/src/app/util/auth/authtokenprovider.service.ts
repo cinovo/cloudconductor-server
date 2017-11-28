@@ -2,7 +2,8 @@ import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { JwtHelper } from 'angular2-jwt';
-import { User, JwtClaimSet } from '../http/auth.http.service';
+
+import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -12,17 +13,17 @@ import { User, JwtClaimSet } from '../http/auth.http.service';
  */
 export class AuthTokenProviderService {
 
-  public static readonly ANONYMOUS: User = {name: 'ANONYMOUS', preferred_username: '', roles: []};
+  public static readonly ANONYMOUS: AuthenticatedUser = {name: 'ANONYMOUS', preferred_username: '', roles: []};
 
   public loggedIn: Subject<boolean> = new ReplaySubject(1);
-  public currentUser: Subject<User> = new ReplaySubject(1);
+  public currentUser: Subject<AuthenticatedUser> = new ReplaySubject(1);
 
   private _token: string;
 
   private jwtHelper: JwtHelper;
 
-  private static getUserFromJwt(jwt: JwtClaimSet): User {
-    const user: User = {
+  private static getUserFromJwt(jwt: JwtClaimSet): AuthenticatedUser {
+    const user: AuthenticatedUser = {
       name: jwt.name,
       preferred_username: jwt.preferred_username,
       roles: jwt.roles
@@ -30,7 +31,7 @@ export class AuthTokenProviderService {
     return user;
   }
 
-  public static isAnonymous(user: User): boolean {
+  public static isAnonymous(user: AuthenticatedUser): boolean {
     return (user.name === AuthTokenProviderService.ANONYMOUS.name);
   }
 
@@ -49,7 +50,7 @@ export class AuthTokenProviderService {
     return this._token;
   }
 
-  public storeToken(value: string): User {
+  public storeToken(value: string): AuthenticatedUser {
     if (!value || this.jwtHelper.isTokenExpired(value)) {
       this.loggedIn.next(false);
       const user =  AuthTokenProviderService.ANONYMOUS

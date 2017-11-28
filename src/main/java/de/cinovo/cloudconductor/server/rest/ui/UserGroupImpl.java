@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.interfaces.IUserGroup;
 import de.cinovo.cloudconductor.api.model.UserGroup;
@@ -29,6 +30,7 @@ public class UserGroupImpl implements IUserGroup {
 	
 	
 	@Override
+	@Transactional
 	public List<UserGroup> getUserGroups() {
 		List<UserGroup> result = new ArrayList<>();
 		for (EUserGroup group : this.userGroupDAO.findList()) {
@@ -38,6 +40,7 @@ public class UserGroupImpl implements IUserGroup {
 	}
 	
 	@Override
+	@Transactional
 	public void save(UserGroup userGroup) {
 		RESTAssert.assertNotNull(userGroup);
 		RESTAssert.assertNotEmpty(userGroup.getName());
@@ -51,6 +54,16 @@ public class UserGroupImpl implements IUserGroup {
 	}
 	
 	@Override
+	@Transactional
+	public UserGroup getUserGroup(String userGroupName) {
+		RESTAssert.assertNotEmpty(userGroupName);
+		EUserGroup eUserGroup = this.userGroupDAO.findByName(userGroupName);
+		RESTAssert.assertNotNull(eUserGroup);
+		return eUserGroup.toApi();
+	}
+	
+	@Override
+	@Transactional
 	public void delete(String userGroupName) {
 		RESTAssert.assertNotEmpty(userGroupName);
 		RESTAssert.assertFalse(userGroupName.equalsIgnoreCase("anonymous"));
@@ -59,4 +72,5 @@ public class UserGroupImpl implements IUserGroup {
 			this.userGroupDAO.delete(userGroup);
 		}
 	}
+	
 }

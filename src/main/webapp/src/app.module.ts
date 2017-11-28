@@ -4,6 +4,9 @@
  *
  * @author psigloch
  */
+import { UserMetaDataComponent } from './app/user/user.metadata.comp';
+import { GroupDetailComponent } from './app/group/group.detail.comp';
+import { UserHttpService } from './app/util/http/user.http.service';
 import { GroupOverviewComponent } from './app/group/group.overview.comp';
 import { AuthHttpService } from './app/util/http/auth.http.service';
 import { HomeServiceStatusComponent } from './app/home/home.servicestatus.comp';
@@ -87,6 +90,9 @@ import { AuthenticationGuard } from './app/util/auth/authentication.guard';
 import { AuthTokenProviderService } from './app/util/auth/authtokenprovider.service';
 import { ForbiddenComponent } from './app/forbidden/forbidden.comp';
 import { JwtInterceptor } from './app/util/http/jwt.interceptor';
+import { GroupHttpService } from './app/util/http/group.http.service';
+import { UserDetailComponent } from './app/user/user.detail.comp';
+import { UserNewComponent } from './app/user/user.new.comp';
 
 @NgModule({
   imports: [
@@ -146,7 +152,11 @@ import { JwtInterceptor } from './app/util/http/jwt.interceptor';
     HomeStatsComponent,
     LoginComponent,
     UserOverviewComponent,
+    UserNewComponent,
+    UserMetaDataComponent,
+    UserDetailComponent,
     GroupOverviewComponent,
+    GroupDetailComponent,
     ForbiddenComponent
   ],
   providers: [
@@ -174,7 +184,9 @@ import { JwtInterceptor } from './app/util/http/jwt.interceptor';
     AuthorizationGuard,
     AuthenticationGuard,
     AuthTokenProviderService,
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    UserHttpService,
+    GroupHttpService
   ],
   bootstrap: [AppComponent]
 })

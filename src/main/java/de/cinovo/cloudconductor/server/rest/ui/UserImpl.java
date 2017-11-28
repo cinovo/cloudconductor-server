@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.cinovo.cloudconductor.api.interfaces.IUser;
 import de.cinovo.cloudconductor.api.model.PasswordChange;
@@ -39,6 +40,7 @@ public class UserImpl implements IUser {
 	
 	
 	@Override
+	@Transactional
 	public List<User> getUsers() {
 		List<User> result = new ArrayList<>();
 		for (EUser eUser : this.userDAO.findList()) {
@@ -48,6 +50,7 @@ public class UserImpl implements IUser {
 	}
 	
 	@Override
+	@Transactional
 	public void save(User user) {
 		RESTAssert.assertNotNull(user);
 		RESTAssert.assertNotEmpty(user.getLoginName());
@@ -60,6 +63,16 @@ public class UserImpl implements IUser {
 	}
 	
 	@Override
+	@Transactional
+	public User getUser(String userName) {
+		RESTAssert.assertNotEmpty(userName);
+		EUser eUser = this.userDAO.findByLoginName(userName);
+		RESTAssert.assertNotNull(eUser);
+		return eUser.toApi();
+	}
+	
+	@Override
+	@Transactional
 	public void delete(String userName) {
 		RESTAssert.assertNotEmpty(userName);
 		EUser eUser = this.userDAO.findByLoginName(userName);
@@ -68,6 +81,7 @@ public class UserImpl implements IUser {
 	}
 	
 	@Override
+	@Transactional
 	public User createAuthToken(String userName) {
 		RESTAssert.assertNotEmpty(userName);
 		EUser eUser = this.userDAO.findByLoginName(userName);
@@ -78,6 +92,7 @@ public class UserImpl implements IUser {
 	}
 	
 	@Override
+	@Transactional
 	public User revokeAuthToken(String userName, String token) {
 		RESTAssert.assertNotEmpty(userName);
 		RESTAssert.assertNotEmpty(token);
@@ -90,6 +105,7 @@ public class UserImpl implements IUser {
 	}
 	
 	@Override
+	@Transactional
 	@LoggedIn
 	public void changePassword(PasswordChange pwChange) {
 		RESTAssert.assertNotNull(pwChange);
@@ -105,4 +121,5 @@ public class UserImpl implements IUser {
 		RESTAssert.assertNotNull(eUser);
 		this.userHandler.changePassword(eUser, pwChange.getOldPassword(), pwChange.getNewPassword());
 	}
+	
 }

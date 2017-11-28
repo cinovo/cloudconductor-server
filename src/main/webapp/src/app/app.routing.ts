@@ -1,4 +1,6 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { UserNewComponent } from './user/user.new.comp';
+import { GroupDetailComponent } from './group/group.detail.comp';
 import { GroupOverviewComponent } from './group/group.overview.comp';
 import { Routes } from '@angular/router';
 import { AuthorizationGuard } from './util/auth/authorization.guard';
@@ -31,6 +33,7 @@ import { UserOverviewComponent } from './user/user.overview.comp';
 import { LoginComponent } from './login/login.comp';
 import { AuthenticationGuard } from './util/auth/authentication.guard';
 import { ForbiddenComponent } from './forbidden/forbidden.comp';
+import { UserDetailComponent } from './user/user.detail.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -104,8 +107,14 @@ export const APP_ROUTES: Routes = [
 
   {path: 'user', component: UserOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'user/new', component: UserNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
+   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'user/:loginName', component: UserDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
+   canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
   {path: 'group', component: GroupOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
+   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'group/:groupName', component: GroupDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
   {path: 'not-found/:type/:name', component: NotFoundComponent},
