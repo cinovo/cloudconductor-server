@@ -1,0 +1,41 @@
+<cc-panel [title]="'Auth Tokens'" icon="fa-address-card">
+  <div *ngIf="(userObs | async)?.authTokens as authTokens" cc-panel-body>
+    <table class="table-responsive table table-striped table-hover dataTable">
+      <thead>
+      <tr>
+        <th class="sorting">Token</th>
+        <th class="sorting_desc">Creation Date</th>
+        <th class="sorting">Revoked</th>
+        <th width="30px"></th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="authTokens.length < 1">
+          <td colspan="4">There are no auth tokens for this user!</td>
+        </tr>
+        <tr *ngFor="let authToken of authTokens">
+          <td>{{authToken.token}}</td>
+          <td>{{authToken.creationDate | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td>
+            <span *ngIf="authToken.revoked">{{authToken.revoked | date:'dd.MM.yyyy HH:mm' }}</span>
+            <span *ngIf="!authToken.revoked">-</span>
+          </td>
+          <td>
+            <a *ngIf="!authToken.revoked" href="javascript:void()" mwlConfirmationPopover
+              title="Revoke auth token"
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to revoke the auth token \'' + authToken.token + '\' for the user \''+ username + '\'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="revokeAuthToken(authToken)">
+              <i class="fa fa-times fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+        <tr role="button" (click)="addAuthToken()">
+          <td colspan="4"><i class="fa fa-plus fa-fw"></i>Add auth token</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</cc-panel>

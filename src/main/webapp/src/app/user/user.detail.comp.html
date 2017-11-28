@@ -2,19 +2,16 @@
 
 <div class="row">
   <div class="col-md-8">
-    <cc-panel [title]="'Auth Tokens'">
-      <div cc-panel-body>
-        Not implemented yet!
-      </div>
-    </cc-panel>
-    <cc-panel [title]="'Agents'">
-      <div cc-panel-body>
-        Not implemented yet!
-      </div>
-    </cc-panel>
+    <user-token [userObs]="user$" (onReload)="reloadUser()"></user-token>
   </div>
 
   <div class="col-md-4">
     <user-metadata [userObs]="user$" [mode]="modes.EDIT"></user-metadata>
+
+    <cc-panel [title]="'Agents'">
+      <div class="alert alert-warning" cc-panel-body>
+        Not implemented yet!
+      </div>
+    </cc-panel>
   </div>
 </div>

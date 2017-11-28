@@ -58,30 +58,32 @@
             </td>
           </tr>
 
-          <tr *ngIf="showNewGroup" #groupList>
-            <td colspan="4">
-              <div class="form-group">
-                <label class="control-label" for="addrepo">
-                  <i class="fa fa-plus fa-fw"></i> Add group
-                </label>
-                <div *ngIf="allGroups.length < 1" class="alert alert-warning">
-                  There are currently no more groups available
+          <ng-template #groupList>
+            <tr *ngIf="showNewGroup">
+              <td colspan="4">
+                <div class="form-group">
+                  <label class="control-label" for="addrepo">
+                    <i class="fa fa-plus fa-fw"></i> Add group
+                  </label>
+                  <div *ngIf="allGroups.length < 1" class="alert alert-warning">
+                    There are currently no more groups available
+                  </div>
+                  <select *ngIf="allGroups.length > 0" class="form-control" formControlName="newGroup" id="addrepo">
+                    <option value="" selected>
+                    </option>
+                    <option *ngFor="let group of allGroups" value="{{group}}">{{group}}</option>
+                  </select>
                 </div>
-                <select *ngIf="allGroups.length > 0" class="form-control" formControlName="newGroup" id="addrepo">
-                  <option value="" selected>
-                  </option>
-                  <option *ngFor="let group of allGroups" value="{{group}}">{{group}}</option>
-                </select>
-              </div>
 
-              <div class="pull-right">
-                <button type="button" (click)="showNewGroup = false" class="btn btn-default">Cancel</button>
-                <button type="button" (click)="addNewGroup(userForm.controls['newGroup'].value)" class="btn btn-success" [disabled]="!newGroup || allGroups.length < 1">
-                  Add
-                </button>
-              </div>
-            </td>
-          </tr>
+                <div class="pull-right">
+                  <button type="button" (click)="showNewGroup = false" class="btn btn-default">Cancel</button>
+                  <button type="button" (click)="addNewGroup(userForm.controls['newGroup'].value)" class="btn btn-success" [disabled]="!newGroup || allGroups.length < 1">
+                    Add
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
 
           <tr *ngIf="!showNewGroup" role="button" (click)="goToNewGroup()">
             <td colspan="4">

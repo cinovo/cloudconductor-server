@@ -13,8 +13,6 @@ import { HomeServiceStatusComponent } from './app/home/home.servicestatus.comp';
 import { PackageChangesService } from './app/util/packagechanges/packagechanges.service';
 import { CCDashboardPanel } from './app/util/ccdashboardpanel/ccdashboardpanel.comp';
 import { NotFoundComponent } from './app/not-found/not-found.comp';
-import { AuthTokenHttpService } from './app/util/http/authtoken.http.service';
-import { AuthTokenOverviewComponent } from './app/authtoken/authtoken.overview.comp';
 import { FooterComponent } from './app/footer/footer.comp';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -93,6 +91,7 @@ import { JwtInterceptor } from './app/util/http/jwt.interceptor';
 import { GroupHttpService } from './app/util/http/group.http.service';
 import { UserDetailComponent } from './app/user/user.detail.comp';
 import { UserNewComponent } from './app/user/user.new.comp';
+import { UserTokenComponent } from './app/user/user.token.comp';
 
 @NgModule({
   imports: [
@@ -143,7 +142,6 @@ import { UserNewComponent } from './app/user/user.new.comp';
     FileOverviewComponent,
     FileDetailComponent,
     FooterComponent,
-    AuthTokenOverviewComponent,
     NotFoundComponent,
     HomePackageChangesComponent,
     HomeHostStatusComponent,
@@ -154,6 +152,7 @@ import { UserNewComponent } from './app/user/user.new.comp';
     UserOverviewComponent,
     UserNewComponent,
     UserMetaDataComponent,
+    UserTokenComponent,
     UserDetailComponent,
     GroupOverviewComponent,
     GroupDetailComponent,
@@ -175,7 +174,6 @@ import { UserNewComponent } from './app/user/user.new.comp';
     FileResolver,
     WSConfigHttpService,
     WebSocketService,
-    AuthTokenHttpService,
     PackageChangesService,
     HostsService,
     RepoScansService,

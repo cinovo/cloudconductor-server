@@ -26,6 +26,12 @@ export class Sorter {
     return 0;
   }
 
+  public static byFieldDesc(a: any, b: any, field: string): number {
+    if (a[field] > b[field]) return -1;
+    if (a[field] < b[field]) return 1;
+    return 0;
+  }
+
   public static nameField(a: any, b: any): number {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;

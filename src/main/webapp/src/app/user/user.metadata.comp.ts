@@ -52,8 +52,10 @@ export class UserMetaDataComponent implements OnInit {
   ngOnInit(): void {
     this.userObs.subscribe(
       (user) => {
-        this.user = user;
-        this.userForm.patchValue(user);
+        if (user) {
+          this.user = user;
+          this.userForm.patchValue(user);
+        }
       }, (err) => {
         console.error(err);
       }

@@ -5,7 +5,6 @@ import { GroupOverviewComponent } from './group/group.overview.comp';
 import { Routes } from '@angular/router';
 import { AuthorizationGuard } from './util/auth/authorization.guard';
 import { NotFoundComponent } from './not-found/not-found.comp';
-import { AuthTokenOverviewComponent } from './authtoken/authtoken.overview.comp';
 import { HomeComponent } from './home/home.comp';
 import { ConfigValueOverview } from './configvalues/cv.overview.comp';
 import { ConfigValueEdit } from './configvalues/cs.edit.comp';
@@ -118,9 +117,6 @@ export const APP_ROUTES: Routes = [
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
   {path: 'not-found/:type/:name', component: NotFoundComponent},
-
-  // TODO remove me
-  {path: 'token', component: AuthTokenOverviewComponent},
 
   {path: 'forbidden', component: ForbiddenComponent},
 

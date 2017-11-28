@@ -18,7 +18,13 @@ export interface User {
   password?: string,
   userGroups?: string[],
   agents?: string[],
-  authTokens?: string[]
+  authTokens?: AuthToken[]
+}
+
+export interface AuthToken {
+  token: string,
+  creationDate: Date,
+  revoked: Date
 }
 
 @Injectable()
@@ -47,6 +53,14 @@ export class UserHttpService {
 
   public deleteUser(username: string): Observable<boolean> {
     return this.http.delete<boolean>(`${this._basePath}/${username}`);
+  }
+
+  public createAuthToken(username: string): Observable<User> {
+    return this.http.post<User>(`${this._basePath}/${username}/authtoken`, {});
+  }
+
+  public revokeAuthToken(username: string, authToken: AuthToken): Observable<User> {
+    return this.http.delete<User>(`${this._basePath}/${username}/authtoken/${authToken.token}`);
   }
 
 }
