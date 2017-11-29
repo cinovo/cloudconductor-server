@@ -41,7 +41,12 @@
             </td>
             <td *ngIf="user && user.userGroups && user.userGroups.length > 0">
               <ul *ngFor="let group of user.userGroups">
-                <li>{{group}}</li>
+                <li>
+                  {{group}}
+                  <a [routerLink]="['/group', group]" title="Show Group">
+                    <i class="fa fa-external-link fa-fw"></i>
+                  </a>
+                </li>
               </ul>
             </td>
             <td *ngIf="!user.userGroups || user.userGroups.length < 1">None</td>
@@ -49,18 +54,19 @@
             <td>{{user.authTokens.length}}</td>
             <td>
               <a [routerLink]="['/user', user.loginName]">
-              <i class="fa fa-edit fa-fw" title="Edit User"></i>
-            </a>
-          </td>
-          <td>
-            <a href="javascript:void(0)" mwlConfirmationPopover
-            [title]="'Please verify!'"
-            [message]="'Are you sure you want to delete the user ' + user.loginName + '?'"
-            placement="left"
-            confirmButtonType="danger"
-            (confirm)="deleteUser(user)">
-              <i class="fa fa-trash-o fa-fw" title="Delete User"></i>
-            </a></td>
+                <i class="fa fa-edit fa-fw" title="Edit User"></i>
+              </a>
+            </td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the user \'' + user.loginName + '\'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteUser(user)">
+                <i class="fa fa-trash-o fa-fw" title="Delete User"></i>
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>

@@ -34,4 +34,12 @@ export class GroupHttpService {
     return this.http.get<Group>(`${this._basePath}/${groupName}`);
   }
 
+  saveGroup(groupToSave: Group): Observable<boolean> {
+    return this.http.put<boolean>(this._basePath, groupToSave);
+  }
+
+  deleteGroup(groupName: string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this._basePath}/${groupName}`)
+  }
+
 }

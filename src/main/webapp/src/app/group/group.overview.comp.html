@@ -1,3 +1,67 @@
 <cc-title [title]="'Groups'" titleIcon="fa-users"></cc-title>
 
-<p>Not implemented yet!</p>
+<div class="row">
+  <div class="col-md-3">
+    <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Permission" [data]="permissions" (onQueryChange)="permissionQuery = $event"></cc-filter>
+  </div>
+  <div class="col-md-6">
+    <button class="btn btn-success pull-right">
+      <i class="fa fa-plus fa-fw"></i>
+      New Group
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <cc-panel [title]="'Groups'" icon="fa-users">
+      <div *ngIf="!groups || groups.length < 1" class="alert alert-warning" cc-panel-body>
+        No user groups found!
+      </div>
+
+      <table class="table table-responsive table-striped table-hover dataTable" *ngIf="groups && groups.length > 0" cc-panel-body>
+        <thead>
+          <tr>
+            <th width="15px"></th>
+            <th class="sorting_asc">Name</th>
+            <th>Description</th>
+            <th>Permissions</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let group of groups">
+            <td><i class="fa fa-users fa-fw"></i></td>
+            <td>{{group.name}}</td>
+            <td>{{group.description}}</td>
+            <td>
+              <ul *ngIf="group.permissions && group.permissions.length > 0">
+                <li *ngFor="let permission of group.permissions">{{permission}}</li>
+              </ul>
+              <span *ngIf="!group.permissions || group.permissions.length < 1">None</span>
+            </td>
+            <td>
+              <a [routerLink]="['/group', group.name]">
+                <i class="fa fa-edit fa-fw" title="Edit Group"></i>
+              </a>
+            </td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+              [title]="'Please verify!'"
+              [message]="'Are you sure you want to delete the group \'' + group.name + '\'?'"
+              placement="left"
+              confirmButtonType="danger"
+              (confirm)="deleteGroup(group)">
+                <i class="fa fa-trash-o fa-fw" title="Delete Group"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>
