@@ -28,72 +28,10 @@
       <input type="text" class="form-control" formControlName"active" id="active">
     </div>
 
-    <cc-panel [title]="'Groups'" icon="fa-users">
-      <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
-        <tbody>
-          <tr *ngFor="let group of user?.userGroups">
-            <td><i class="fa fa-users fa-fw"></i></td>
-            <td>{{group}}</td>
-            <td width="30px">
-              <a href="javascript:void()" [routerLink]="['/group', group]" title="Show Group">
-                <i class="fa fa-external-link fa-fw"></i>
-              </a>
-            </td>
-            <td width="30px">
-              <a href="javascript:void()" mwlConfirmationPopover
-                title="Remove from group"
-                [title]="'Please verify!'"
-                [message]="'Are you sure you want to remove the user \'' + user.displayName + '\' from the group \''+ group + '\'?'"
-                placement="left"
-                confirmButtonType="danger"
-                (confirm)="removeGroup(group)">
-                <i class="fa fa-trash-o fa-fw"></i>
-              </a>
-            </td>
-          </tr>
-
-          <tr *ngIf="!user || !user.userGroups || user.userGroups.length < 1; else groupList" class="danger">
-            <td colspan="3" class="text-center">
-              There are currently no groups selected.
-            </td>
-          </tr>
-
-          <ng-template #groupList>
-            <tr *ngIf="showNewGroup">
-              <td colspan="4">
-                <div class="form-group">
-                  <label class="control-label" for="addrepo">
-                    <i class="fa fa-plus fa-fw"></i> Add group
-                  </label>
-                  <div *ngIf="allGroups.length < 1" class="alert alert-warning">
-                    There are currently no more groups available
-                  </div>
-                  <select *ngIf="allGroups.length > 0" class="form-control" formControlName="newGroup" id="addrepo">
-                    <option value="" selected>
-                    </option>
-                    <option *ngFor="let group of allGroups" value="{{group}}">{{group}}</option>
-                  </select>
-                </div>
-
-                <div class="pull-right">
-                  <button type="button" (click)="showNewGroup = false" class="btn btn-default">Cancel</button>
-                  <button type="button" (click)="addNewGroup(userForm.controls['newGroup'].value)" class="btn btn-success" [disabled]="!newGroup || allGroups.length < 1">
-                    Add
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-
-          <tr *ngIf="!showNewGroup" role="button" (click)="goToNewGroup()">
-            <td colspan="4">
-              <i class="fa fa-plus fa-fw"></i>
-              Add group
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </cc-panel>
+    <cc-panel-list [title]="'Groups'" icon="fa-users" [type]="'group'"
+      [elements]="user?.userGroups" [allElements]="allGroups" [showLinks]="false"
+      (onAdd)="addNewGroup($event)" (onRemove)="removeGroup($event)">
+    </cc-panel-list>
 
     <div class="form-group pull-right">
       <button type="button" class="btn btn-default" (click)="goBack()">

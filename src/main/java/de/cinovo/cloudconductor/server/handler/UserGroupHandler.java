@@ -39,6 +39,7 @@ public class UserGroupHandler {
 	 * @throws WebApplicationException on error
 	 */
 	public EUserGroup updateEntity(EUserGroup eUserGroup, UserGroup userGroup) throws WebApplicationException {
+		eUserGroup.setDescription(userGroup.getDescription());
 		eUserGroup.setPermissions(userGroup.getPermissions());
 		return this.userGroupDAO.save(eUserGroup);
 	}

@@ -1,16 +1,24 @@
-import { UserHttpService } from '../util/http/user.http.service';
 import { Component, OnInit } from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+
+import { UserHttpService, User } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @Component({
   templateUrl: './user.new.comp.html'
 })
 export class UserNewComponent implements OnInit {
 
-  private _userSubject = new BehaviorSubject({});
-  public user$ = this._userSubject.asObservable();
+  private _userSubject: BehaviorSubject<User> = new BehaviorSubject(UserHttpService.emptyUser);
+  public user$: Observable<User> = this._userSubject.asObservable();
 
   public modes = Mode;
 

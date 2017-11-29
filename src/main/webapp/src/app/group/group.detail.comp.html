@@ -1,5 +1,16 @@
-<cc-title [title]="'Group Details'" [titleIcon]="'fa-users'" [subtitle]="group?.name"></cc-title>
+<cc-title [title]="'Group Details'" [titleIcon]="'fa-users'" [subtitle]="(group$ | async)?.name">
+</cc-title>
 
 <div class="row">
-  <p>Not implemented yet!</p>
+  <div class="col-md-8">
+    <cc-panel [title]="'Group Members'" icon="fa-users">
+      <div class="alert alert-warning" cc-panel-body>
+        Not implemented yet!
+      </div>
+    </cc-panel>
+  </div>
+  <div class="col-md-4">
+    <group-metadata [groupObs]="group$" [mode]="modes.EDIT" (onReload)="reloadGroup()">
+    </group-metadata>
+  </div>
 </div>

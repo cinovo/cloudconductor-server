@@ -1,9 +1,13 @@
-import { AlertService } from '../util/alert/alert.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';
-import { Subscription } from 'rxjs';
+import { Mode } from '../util/enums.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -16,9 +20,12 @@ import { Subscription } from 'rxjs';
 })
 export class GroupDetailComponent implements OnInit, OnDestroy {
 
-  public group: Group;
-
+  private _groupSubject: Subject<Group> = new Subject();
   private _routeSub: Subscription;
+
+  public groupName: string;
+  public group$: Observable<Group> = this._groupSubject.asObservable();
+  public modes = Mode;
 
   constructor(private groupHttp: GroupHttpService,
               private route: ActivatedRoute,
@@ -26,17 +33,9 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._routeSub = this.route.paramMap.subscribe((paraMap) => {
-      const groupName = paraMap.get('groupName');
+      this.groupName = paraMap.get('groupName');
 
-      if (groupName) {
-        this.groupHttp.getGroup(groupName).subscribe(
-          (group) => this.group = group,
-          (err) => {
-            this.alertService.danger(`Error loading group '${groupName}'!`);
-            console.error(err);
-          }
-        );
-      }
+      this.reloadGroup();
     });
   }
 
@@ -44,5 +43,15 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     if (this._routeSub) {
       this._routeSub.unsubscribe();
     }
+  }
+
+  public reloadGroup(): void {
+    this.groupHttp.getGroup(this.groupName).subscribe(
+      (group) => this._groupSubject.next(group),
+      (err) => {
+        this.alertService.danger(`Error loading group '${this.groupName}'!`);
+        console.error(err);
+      }
+    );
   }
 }

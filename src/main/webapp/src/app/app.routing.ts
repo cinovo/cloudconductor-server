@@ -33,6 +33,7 @@ import { LoginComponent } from './login/login.comp';
 import { AuthenticationGuard } from './util/auth/authentication.guard';
 import { ForbiddenComponent } from './forbidden/forbidden.comp';
 import { UserDetailComponent } from './user/user.detail.comp';
+import { GroupNewComponent } from './group/group.new.comp';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -112,6 +113,8 @@ export const APP_ROUTES: Routes = [
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
   {path: 'group', component: GroupOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
+   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'group/new', component: GroupNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: 'group/:groupName', component: GroupDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},

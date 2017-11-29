@@ -92,6 +92,10 @@ import { GroupHttpService } from './app/util/http/group.http.service';
 import { UserDetailComponent } from './app/user/user.detail.comp';
 import { UserNewComponent } from './app/user/user.new.comp';
 import { UserTokenComponent } from './app/user/user.token.comp';
+import { GroupMetaDataComponent } from './app/group/group.metadata.comp';
+import { CCPanelListComponent } from './app/util/ccpanellist/ccpanellist.comp';
+import { PermissionHttpService } from './app/util/http/permission.http.service';
+import { GroupNewComponent } from './app/group/group.new.comp';
 
 @NgModule({
   imports: [
@@ -111,6 +115,7 @@ import { UserTokenComponent } from './app/user/user.token.comp';
     CCTitle,
     CCFilter,
     CCPagination,
+    CCPanelListComponent,
     HomeComponent,
     ConfigValueOverview,
     ConfigValueEdit,
@@ -155,6 +160,8 @@ import { UserTokenComponent } from './app/user/user.token.comp';
     UserTokenComponent,
     UserDetailComponent,
     GroupOverviewComponent,
+    GroupMetaDataComponent,
+    GroupNewComponent,
     GroupDetailComponent,
     ForbiddenComponent
   ],
@@ -184,7 +191,8 @@ import { UserTokenComponent } from './app/user/user.token.comp';
     AuthTokenProviderService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     UserHttpService,
-    GroupHttpService
+    GroupHttpService,
+    PermissionHttpService
   ],
   bootstrap: [AppComponent]
 })

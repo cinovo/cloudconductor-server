@@ -8,7 +8,7 @@
     <cc-filter mode="select" label="Permission" [data]="permissions" (onQueryChange)="permissionQuery = $event"></cc-filter>
   </div>
   <div class="col-md-6">
-    <button class="btn btn-success pull-right">
+    <button class="btn btn-success pull-right" [routerLink]="['/group', 'new']">
       <i class="fa fa-plus fa-fw"></i>
       New Group
     </button>
@@ -34,7 +34,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let group of groups">
+          <tr *ngFor="let group of groups" (dblclick)="goToGroup(group)">
             <td><i class="fa fa-users fa-fw"></i></td>
             <td>{{group.name}}</td>
             <td>{{group.description}}</td>

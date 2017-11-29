@@ -1,0 +1,109 @@
+import { Location } from '@angular/common';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+
+import { AlertService } from '../util/alert/alert.service';
+import { Group, GroupHttpService } from '../util/http/group.http.service';
+import { PermissionHttpService } from '../util/http/permission.http.service';
+import { Mode } from '../util/enums.util';
+
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
+@Component({
+  selector: 'group-metadata',
+  templateUrl: './group.metadata.comp.html'
+})
+export class GroupMetaDataComponent implements OnInit, OnDestroy {
+
+  @Input() groupObs: Observable<Group>;
+  @Input() mode: Mode;
+  @Output() onReload: EventEmitter<string> = new EventEmitter();
+
+  public userGroupForm: FormGroup;
+  public modes = Mode;
+  public group: Group;
+  public permissions: string[] = [];
+
+  private _groupSub: Subscription;
+
+  constructor(private fb: FormBuilder,
+              private location: Location,
+              private router: Router,
+              private groupHttp: GroupHttpService,
+              private permissionHttp: PermissionHttpService,
+              private alertService: AlertService) {
+    this.userGroupForm = fb.group({
+      name: ['', Validators.required],
+      description: ['']
+    });
+  }
+
+  ngOnInit(): void {
+    this._groupSub = this.groupObs.subscribe(
+      (group) => {
+        group.permissions = group.permissions.sort();
+        this.group = group;
+        this.userGroupForm.patchValue(group);
+      }
+    );
+
+    this.permissionHttp.getPermissions().subscribe(
+      (permissions) => {
+        this.permissions = permissions.sort();
+      }, (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this._groupSub) {
+      this._groupSub.unsubscribe();
+    }
+  }
+
+  public addPermission(newPermission: string): void {
+    this.group.permissions = [...this.group.permissions, newPermission].sort();
+  }
+
+  public removePermission(permissionToRemove: string): void {
+    const sortedPermissions = this.group.permissions.slice().sort();
+    const indexToDelete = sortedPermissions.indexOf(permissionToRemove);
+    if (indexToDelete > -1) {
+      sortedPermissions.splice(indexToDelete, 1);
+      this.group.permissions = sortedPermissions;
+    }
+  }
+
+  public saveGroup(groupForm: Group): void {
+    const groupToSave = Object.assign({}, this.group, groupForm);
+    const groupName = groupToSave.name;
+    this.groupHttp.saveGroup(groupToSave).subscribe(
+      () => {
+        this.alertService.success(`Successfully saved user group '${groupName}'.`);
+        this.userGroupForm.reset();
+        if (this.mode === this.modes.NEW) {
+          this.router.navigate(['/group', groupName]);
+        }
+        this.onReload.emit(groupName);
+      },
+      (err) => {
+        this.alertService.danger(`Error saving user group '${groupName}'!`);
+        console.log(err);
+      }
+    );
+  }
+
+  public goBack(): void {
+    this.location.back();
+  }
+
+}

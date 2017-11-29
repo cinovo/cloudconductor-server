@@ -1,0 +1,27 @@
+<cc-panel [title]="'Group Details'" icon="fa-users">
+  <ng-container cc-panel-body>
+    <form [formGroup]="userGroupForm" (ngSubmit)="saveGroup(userGroupForm.value)" novalidate cc-panel-body>
+      <div class="form-group">
+        <label for="name" class="control-label">Name</label>
+        <input type="text" class="form-control" id="name" formControlName="name" [readOnly]="mode == modes.EDIT">
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="control-label">Description</label>
+        <input type="text" class="form-control" id="description" formControlName="description">
+      </div>
+
+      <cc-panel-list [title]="'Permissions'" icon="fa-check" [type]="'permission'"
+        [elements]="group?.permissions" [allElements]="permissions" [showLinks]="false"
+        (onAdd)="addPermission($event)" (onRemove)="removePermission($event)">
+      </cc-panel-list>
+
+      <div class="form-group pull-right">
+        <button type="button" class="btn btn-default" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="userGroupForm.invalid">
+          Save
+        </button>
+      </div>
+    </form>
+  </ng-container>
+</cc-panel>

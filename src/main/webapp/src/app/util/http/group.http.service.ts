@@ -18,6 +18,8 @@ export interface Group {
 @Injectable()
 export class GroupHttpService {
 
+  public static emptyGroup: Group = {name: '', description: '', permissions: []};
+
   private _basePath = 'api/usergroup'
 
   constructor(private http: HttpClient) { }

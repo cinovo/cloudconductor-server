@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -43,7 +44,8 @@ export class GroupOverviewComponent implements OnInit, OnDestroy {
   }
 
   constructor(private groupHttp: GroupHttpService,
-              private alertService: AlertService) { }
+              private alertService: AlertService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.reloadGroups();
@@ -91,6 +93,12 @@ export class GroupOverviewComponent implements OnInit, OnDestroy {
   set permissionQuery(value: string) {
     this._permissionQuery = value;
     this.reloadGroups();
+  }
+
+  public goToGroup(group: Group): void {
+    if (group && group.name) {
+      this.router.navigate(['/group', group.name]);
+    }
   }
 
   public deleteGroup(groupToDelete: Group): void {

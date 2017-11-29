@@ -68,6 +68,7 @@ export class UserMetaDataComponent implements OnInit {
   }
 
   public goBack(): void {
+    this.userForm.reset();
     this.location.back();
   }
 
@@ -78,7 +79,6 @@ export class UserMetaDataComponent implements OnInit {
       email: userToSave.email,
       userGroups: this.user.userGroups
     };
-    console.log({u});
     this.userHttp.saveUser(u).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
@@ -109,9 +109,14 @@ export class UserMetaDataComponent implements OnInit {
 
   public removeGroup(groupName: string): void {
     if (Validator.notEmpty(groupName)) {
-      this.user.userGroups.splice(this.user.userGroups.indexOf(groupName), 1);
-      if (this.showNewGroup) {
-        this.goToNewGroup();
+      const sortedGroups = this.user.userGroups.slice().sort();
+      const indexToDelete = sortedGroups.indexOf(groupName);
+      if (indexToDelete > -1) {
+        sortedGroups.splice(indexToDelete, 1);
+        this.user.userGroups = sortedGroups;
+        if (this.showNewGroup) {
+          this.goToNewGroup();
+        }
       }
     }
   }
