@@ -96,6 +96,8 @@ import { GroupMetaDataComponent } from './app/group/group.metadata.comp';
 import { CCPanelListComponent } from './app/util/ccpanellist/ccpanellist.comp';
 import { PermissionHttpService } from './app/util/http/permission.http.service';
 import { GroupNewComponent } from './app/group/group.new.comp';
+import { UserAgentsComponent } from './app/user/user.agents.comp';
+import { GroupMemberComponent } from './app/group/group.member.comp';
 
 @NgModule({
   imports: [
@@ -158,10 +160,12 @@ import { GroupNewComponent } from './app/group/group.new.comp';
     UserNewComponent,
     UserMetaDataComponent,
     UserTokenComponent,
+    UserAgentsComponent,
     UserDetailComponent,
     GroupOverviewComponent,
     GroupMetaDataComponent,
     GroupNewComponent,
+    GroupMemberComponent,
     GroupDetailComponent,
     ForbiddenComponent
   ],

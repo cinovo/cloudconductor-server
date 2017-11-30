@@ -3,11 +3,7 @@
 
 <div class="row">
   <div class="col-md-8">
-    <cc-panel [title]="'Group Members'" icon="fa-users">
-      <div class="alert alert-warning" cc-panel-body>
-        Not implemented yet!
-      </div>
-    </cc-panel>
+    <group-member [groupObs]="group$"></group-member>
   </div>
   <div class="col-md-4">
     <group-metadata [groupObs]="group$" [mode]="modes.EDIT" (onReload)="reloadGroup()">

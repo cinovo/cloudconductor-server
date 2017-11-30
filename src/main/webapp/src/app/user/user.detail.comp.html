@@ -8,10 +8,6 @@
   <div class="col-md-4">
     <user-metadata [userObs]="user$" [mode]="modes.EDIT"></user-metadata>
 
-    <cc-panel [title]="'Agents'">
-      <div class="alert alert-warning" cc-panel-body>
-        Not implemented yet!
-      </div>
-    </cc-panel>
+    <user-agents [userObs]="user$"></user-agents>
   </div>
 </div>

@@ -1,0 +1,14 @@
+<cc-panel [title]="'Agents'" icon="fa-user">
+  <div *ngIf="(userObs | async)?.agents as agents" cc-panel-body>
+    <table class="table-responsive table table-striped table-hover dataTable">
+      <tbody>
+        <tr *ngIf="agents.length < 1" class="warning">
+          <td>User has no agents</td>
+        </tr>
+        <tr *ngFor="let agent of agents">
+          <td>{{agent}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</cc-panel>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
+import { User } from './user.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -34,6 +35,10 @@ export class GroupHttpService {
 
   getGroup(groupName: string): Observable<Group> {
     return this.http.get<Group>(`${this._basePath}/${groupName}`);
+  }
+
+  getMembers(groupName: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this._basePath}/${groupName}/members`);
   }
 
   saveGroup(groupToSave: Group): Observable<boolean> {

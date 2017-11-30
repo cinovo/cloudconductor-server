@@ -29,7 +29,7 @@
     </div>
 
     <cc-panel-list [title]="'Groups'" icon="fa-users" [type]="'group'"
-      [elements]="user?.userGroups" [allElements]="allGroups" [showLinks]="false"
+      [elements]="user?.userGroups" [allElements]="allGroups" [showLinks]="true"
       (onAdd)="addNewGroup($event)" (onRemove)="removeGroup($event)">
     </cc-panel-list>
 

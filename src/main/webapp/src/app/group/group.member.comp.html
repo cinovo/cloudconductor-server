@@ -1,0 +1,31 @@
+<cc-panel [title]="'Group Members'" icon="fa-user">
+    <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
+      <thead>
+        <tr>
+          <th width="15px"></th>
+          <th>Login</th>
+          <th>Email</th>
+          <th># Agents</th>
+          <th># Auth Tokens</th>
+          <th width="15px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let member of groupMembers">
+          <td><i class="fa fa-user fa-fw"></i></td>
+          <td>{{member.loginName}}</td>
+          <td>
+            <span *ngIf="member.email">{{member.email}}</span>
+            <span *ngIf="!member.email">None</span>
+          </td>
+          <td>{{member.agents?.length}}</td>
+          <td>{{member.authTokens?.length}}</td>
+          <td>
+            <a [routerLink]="['/user', member.loginName]" title="Show User">
+              <i class="fa fa-external-link fa-fw"></i>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</cc-panel>
