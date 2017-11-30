@@ -19,6 +19,7 @@ export class AuthTokenProviderService {
   public currentUser: Subject<AuthenticatedUser> = new ReplaySubject(1);
 
   private _token: string;
+  private _nextRefresh: number
 
   private jwtHelper: JwtHelper;
 
@@ -44,10 +45,21 @@ export class AuthTokenProviderService {
     } else {
       this.loggedIn.next(false);
     }
+
+    this._nextRefresh = +localStorage.getItem('refresh');
   }
 
   get token() {
     return this._token;
+  }
+
+  get nextRefresh() {
+    return this._nextRefresh;
+  }
+
+  set nextRefresh(value: number) {
+    this._nextRefresh = value;
+    localStorage.setItem('refresh', value.toString());
   }
 
   public storeToken(value: string): AuthenticatedUser {
@@ -57,6 +69,9 @@ export class AuthTokenProviderService {
       this.currentUser.next(user)
       return user;
     }
+
+    const expirationDate = Math.max(this.jwtHelper.getTokenExpirationDate(value).getTime() - 10000, new Date().getTime());
+    this.nextRefresh = expirationDate;
 
     this._token = value;
     localStorage.setItem('token', value);

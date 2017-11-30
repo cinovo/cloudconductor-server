@@ -63,9 +63,10 @@ public class AuthImpl implements IAuth {
 	@Transactional
 	public String refresh(String token) {
 		RESTAssert.assertNotEmpty(token);
-		EUser user = this.authHandler.getUser(token);
+		EUser user = this.authHandler.getCurrentUser();
+		RESTAssert.assertNotNull(user);
 		this.logout();
-		return this.getToken(user, AuthType.PERSON, token);
+		return this.getToken(user, AuthType.PERSON, null);
 	}
 	
 	private String getToken(EUser user, AuthType type, String refToken) {

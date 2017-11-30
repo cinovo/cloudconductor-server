@@ -43,6 +43,10 @@ export class AuthHttpService {
     return this.http.put<string>(this._basePathURL, auth);
   }
 
+  public refresh(currentToken: string): Observable<string> {
+    return this.http.put<string>(`${this._basePathURL}/refresh`, currentToken);
+  }
+
   public logout(): Observable<boolean> {
     return this.http.put<boolean>(`${this._basePathURL}/logout`, {});
   }

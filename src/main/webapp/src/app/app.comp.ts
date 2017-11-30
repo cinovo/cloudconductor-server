@@ -1,7 +1,9 @@
-import { Component, HostListener, AfterViewInit, OnInit } from '@angular/core';
+import { Component, HostListener, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable'
+import { Subscription } from 'rxjs/Subscription';
 
+import { AuthHttpService } from './util/http/auth.http.service';
 import { AuthTokenProviderService } from './util/auth/authtokenprovider.service';
 
 declare let $: any;
@@ -16,7 +18,10 @@ declare let $: any;
   selector: 'app-component',
   templateUrl: './app.comp.html'
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
+
+  private _loginSub: Subscription;
+  private _timerSub: Subscription;
 
   public loggedIn: Observable<boolean>;
 
@@ -44,7 +49,8 @@ export class AppComponent implements AfterViewInit, OnInit {
     AppComponent.handleTheme();
   }
 
-  constructor(private authTokenProvider: AuthTokenProviderService) { };
+  constructor(private authTokenProvider: AuthTokenProviderService,
+              private authHttp: AuthHttpService) { };
 
   ngAfterViewInit(): void {
     AppComponent.handleTheme();
@@ -52,6 +58,28 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.loggedIn = this.authTokenProvider.loggedIn;
+
+    this._loginSub = this.loggedIn.subscribe((loggedIn) => {
+      if (loggedIn) {
+        const delay = Math.max(this.authTokenProvider.nextRefresh - (new Date().getTime()), 0);
+        this._timerSub = Observable.of(this.authTokenProvider.token).delay(delay)
+                  .flatMap((token) => this.authHttp.refresh(token))
+                  .subscribe(
+                    (newToken) => this.authTokenProvider.storeToken(newToken),
+                    (err) => console.error(err)
+                  );
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this._loginSub) {
+      this._loginSub.unsubscribe();
+    }
+
+    if (this._timerSub) {
+      this._timerSub.unsubscribe();
+    }
   }
 
 }
