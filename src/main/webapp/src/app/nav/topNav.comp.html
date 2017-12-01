@@ -10,36 +10,34 @@
     CloudConductor
     <small *ngIf="(settingsObs | async) as settings"> - {{settings.name}}</small>
   </a>
-</div>
-<!-- /.navbar-header -->
+</div><!-- /.navbar-header -->
 
 <ul class="nav navbar-top-links navbar-right">
   <span class="navbar-brand nav-clock">
     <small>{{currentTime | date:'dd.MM.yyyy HH:mm:ss'}}</small>
   </span>
-  <li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-      <i class="fa fa-user fa-fw"></i>
-      {{(userObs | async)?.name}}
-      <i class="fa fa-caret-down"></i>
-    </a>
-    <ul class="dropdown-menu dropdown-user">
-      <li>
-        <a href="#">
-          <i class="fa fa-user fa-fw"></i>
-          User Settings
-        </a>
-      </li>
-      <li class="divider"></li>
-      <li>
-        <a href="javascript:void(0)" (click)="logOut()">
-          <i class="fa fa-sign-out fa-fw"></i>
-          Logout
-        </a>
-      </li>
-    </ul>
-    <!-- /.dropdown-user -->
-  </li>
-  <!-- /.dropdown -->
-</ul>
-<!-- /.navbar-top-links -->
+  <ng-container *ngIf="(userObs | async) as user">
+    <li *ngIf="user.name !== 'ANONYMOUS'" class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        <i class="fa fa-user fa-fw"></i>
+        {{user?.name}}
+        <i class="fa fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu dropdown-user">
+        <li>
+          <a href="#">
+            <i class="fa fa-user fa-fw"></i>
+            User Settings
+          </a>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <a href="javascript:void(0)" (click)="logOut()">
+            <i class="fa fa-sign-out fa-fw"></i>
+            Logout
+          </a>
+        </li>
+      </ul><!-- /.dropdown-user -->
+    </li><!-- /.dropdown -->
+  </ng-container>
+</ul><!-- /.navbar-top-links -->

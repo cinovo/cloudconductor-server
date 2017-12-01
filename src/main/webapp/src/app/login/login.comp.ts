@@ -16,6 +16,7 @@ import { AuthHttpService, Authentication } from '../util/http/auth.http.service'
  */
 @Component({
   templateUrl: './login.comp.html',
+  styleUrls: ['./login.comp.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
@@ -60,7 +61,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       }).take(1).subscribe(
       (user) => {
         if (!AuthTokenProviderService.isAnonymous(user)) {
-          this.alertService.success(`Successfully logged in as '${user.preferred_username}'!`);
           this.router.navigate([this._redirect]);
         } else {
           this.alertService.danger('Authentication failed!');
