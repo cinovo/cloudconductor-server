@@ -119,7 +119,8 @@ public class UserImpl implements IUser {
 		RESTAssert.assertTrue(pwChange.getUserName().equals(currentUser.getUsername()));
 		EUser eUser = this.userDAO.findByLoginName(pwChange.getUserName());
 		RESTAssert.assertNotNull(eUser);
-		this.userHandler.changePassword(eUser, pwChange.getOldPassword(), pwChange.getNewPassword());
+		boolean success = this.userHandler.changePassword(eUser, pwChange.getOldPassword(), pwChange.getNewPassword());
+		RESTAssert.assertTrue(success);
 	}
 	
 }

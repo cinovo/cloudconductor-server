@@ -1,8 +1,9 @@
 ///<reference path="host/host.overview.comp.ts"/>
+import { UserSettingsComponent } from './usersettings/usersettings.comp';
 import { UserNewComponent } from './user/user.new.comp';
 import { GroupDetailComponent } from './group/group.detail.comp';
 import { GroupOverviewComponent } from './group/group.overview.comp';
-import { Routes } from '@angular/router';
+import { CanActivate, Routes } from '@angular/router';
 import { AuthorizationGuard } from './util/auth/authorization.guard';
 import { NotFoundComponent } from './not-found/not-found.comp';
 import { HomeComponent } from './home/home.comp';
@@ -117,6 +118,9 @@ export const APP_ROUTES: Routes = [
   {path: 'group/new', component: GroupNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: 'group/:groupName', component: GroupDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
+   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+
+  {path: 'usersettings', component: UserSettingsComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 
   {path: 'not-found/:type/:name', component: NotFoundComponent},

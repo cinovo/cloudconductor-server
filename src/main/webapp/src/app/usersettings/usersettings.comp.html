@@ -1,0 +1,33 @@
+<cc-title [title]="'User Settings'" titleIcon="fa-gear"></cc-title>
+
+<div class="row">
+  <div class="col-lg-6 col-md-12">
+    <cc-panel [title]="'Change Password'" icon="fa-gear">
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword(passwordForm.value)" novalidate cc-panel-body>
+        <div class="form-group">
+          <label for="oldPassword" class="control-label">Current Password</label>
+          <input type="password" class="form-control" formControlName="oldPassword" id="oldPassword">
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword" class="control-label">New Password</label>
+          <input type="password" class="form-control" formControlName="newPassword" id="newPassword">
+        </div>
+
+        <div class="form-group">
+          <label for="repeatPassword" class="control-label">Repeat Password</label>
+          <input type="password" class="form-control" formControlName="repeatPassword" id="repeatPassword">
+        </div>
+
+        <div class="form-group pull-right">
+          <button type="button" class="btn btn-default" (click)="goBack()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid">
+            Save
+          </button>
+        </div>
+      </form>
+    </cc-panel>
+  </div>
+</div>
+
+

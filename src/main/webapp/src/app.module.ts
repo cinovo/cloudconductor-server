@@ -4,6 +4,7 @@
  *
  * @author psigloch
  */
+import { UserSettingsComponent } from './app/usersettings/usersettings.comp';
 import { UserMetaDataComponent } from './app/user/user.metadata.comp';
 import { GroupDetailComponent } from './app/group/group.detail.comp';
 import { UserHttpService } from './app/util/http/user.http.service';
@@ -167,7 +168,8 @@ import { GroupMemberComponent } from './app/group/group.member.comp';
     GroupNewComponent,
     GroupMemberComponent,
     GroupDetailComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    UserSettingsComponent
   ],
   providers: [
     AlertService,

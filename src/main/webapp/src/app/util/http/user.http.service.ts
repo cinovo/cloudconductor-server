@@ -27,6 +27,12 @@ export interface AuthToken {
   revoked: Date
 }
 
+export interface PasswordChangeRequest {
+  oldPassword: string,
+  newPassword: string,
+  username: string
+}
+
 @Injectable()
 export class UserHttpService {
 
@@ -61,6 +67,10 @@ export class UserHttpService {
 
   public revokeAuthToken(username: string, authToken: AuthToken): Observable<User> {
     return this.http.delete<User>(`${this._basePath}/${username}/authtoken/${authToken.token}`);
+  }
+
+  public changePassword(passwordChange: PasswordChangeRequest): Observable<boolean> {
+    return this.http.put<boolean>(`${this._basePath}/changepassword`, passwordChange);
   }
 
 }
