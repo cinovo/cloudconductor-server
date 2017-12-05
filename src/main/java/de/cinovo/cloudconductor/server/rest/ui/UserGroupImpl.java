@@ -3,6 +3,8 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +65,7 @@ public class UserGroupImpl implements IUserGroup {
 	public UserGroup getUserGroup(String userGroupName) {
 		RESTAssert.assertNotEmpty(userGroupName);
 		EUserGroup eUserGroup = this.userGroupDAO.findByName(userGroupName);
-		RESTAssert.assertNotNull(eUserGroup);
+		RESTAssert.assertNotNull(eUserGroup, Status.NOT_FOUND);
 		return eUserGroup.toApi();
 	}
 	

@@ -1,5 +1,9 @@
 <cc-panel [title]="'Group Members'" icon="fa-user">
-    <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
+    <div *ngIf="!groupMembers || groupMembers.length < 1" class="alert alert-warning" cc-panel-body>
+      This group has no members!
+    </div>
+
+    <table *ngIf="groupMembers && groupMembers.length > 0" class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
       <thead>
         <tr>
           <th width="15px"></th>

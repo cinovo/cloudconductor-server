@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -26,16 +26,23 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
   public groupName: string;
   public group$: Observable<Group> = this._groupSubject.asObservable();
   public modes = Mode;
+  public mode: Mode;
 
   constructor(private groupHttp: GroupHttpService,
               private route: ActivatedRoute,
+              private router: Router,
               private alertService: AlertService) { }
 
   ngOnInit(): void {
     this._routeSub = this.route.paramMap.subscribe((paraMap) => {
-      this.groupName = paraMap.get('groupName');
-
-      this.reloadGroup();
+      const groupName = paraMap.get('groupName');
+      if (groupName) {
+        this.groupName = groupName;
+        this.mode = this.modes.EDIT
+        this.reloadGroup();
+      } else {
+        this.mode = this.modes.NEW;
+      }
     });
   }
 
@@ -50,6 +57,18 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
       (group) => this._groupSubject.next(group),
       (err) => {
         this.alertService.danger(`Error loading group '${this.groupName}'!`);
+        console.error(err);
+      }
+    );
+  }
+
+  public deleteGroup(): void {
+    this.groupHttp.deleteGroup(this.groupName).subscribe(
+      () => {
+        this.alertService.success(`Successfully deleted user group '${this.groupName}'.`);
+        this.router.navigate(['/group']);
+      }, (err) => {
+        this.alertService.danger(`Error deleting user group '${this.groupName}'!`);
         console.error(err);
       }
     );

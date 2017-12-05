@@ -10,7 +10,18 @@ import { AlertService } from '../util/alert/alert.service';
 import { GroupHttpService } from '../util/http/group.http.service';
 import { User, UserHttpService } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
-import { Validator } from '../util/validator.util';
+import { Validator, forbiddenNameValidator, forbiddenNamesValidator } from '../util/validator.util';
+
+interface UserForm {
+  loginName: string,
+  displayName: string,
+  email: string,
+  newPassword: string,
+  repeatPassword: string,
+  registrationDate: string,
+  active: boolean,
+  newGroup: string
+}
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -44,9 +55,11 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
               private groupHttp: GroupHttpService,
               private alertService: AlertService) {
     this.userForm = this.fb.group({
-      'loginName': ['', Validators.required],
+      'loginName': ['', [Validators.required, forbiddenNamesValidator(['new', 'admin', 'agent'])]],
       'displayName': [''],
       'email': [''],
+      'newPassword': [''],
+      'repeatPassword': [''],
       'registrationDate': [''],
       'active': [false],
       'newGroup': ['']
@@ -56,7 +69,6 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._userSub = this.userObs.subscribe(
       (user) => {
-        console.log({user});
         if (user) {
           this.user = user;
           this.userForm.patchValue(user);
@@ -89,14 +101,34 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  public saveUser(userToSave: User): void {
-    const u = {
-      loginName: userToSave.loginName,
-      displayName: userToSave.displayName,
-      email: userToSave.email,
+  public saveUser(userForm: UserForm): void {
+    const u: User = {
+      loginName: userForm.loginName,
+      displayName: userForm.displayName,
+      email: userForm.email,
       userGroups: this.user.userGroups
     };
-    this.userHttp.saveUser(u).subscribe(
+
+    if (this.mode === this.modes.NEW) {
+      if (userForm.newPassword && userForm.newPassword.length > 0) {
+        if (userForm.newPassword === userForm.repeatPassword) {
+          u.password = userForm.newPassword
+        } else {
+          this.alertService.danger('Passwords do not match!');
+          return;
+        }
+      }
+    }
+
+    const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.userHttp.existsUser(u.loginName) : Observable.of(false);
+
+    check.flatMap((exists) => {
+      if (exists) {
+        return Observable.throw(`User named '${u.loginName}' does already exist!`);
+      } else {
+        return this.userHttp.saveUser(u);
+      }
+    }).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
         this.userForm.reset();
@@ -104,7 +136,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
           this.router.navigate(['/user', u.loginName]);
         }
       }, (err) => {
-        this.alertService.danger(`Error saving user '${u.loginName}'!`);
+        this.alertService.danger(`Error saving user '${u.loginName}': ${err}`);
         console.error(err);
       }
     );
@@ -140,8 +172,11 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
 
   public addNewGroup(groupName: string): void {
     if (groupName) {
-      this.user.userGroups.push(groupName);
-      this.user.userGroups.sort();
+      const userGroups = this.user.userGroups.slice();
+      userGroups.push(groupName);
+      userGroups.sort();
+
+      this.user.userGroups = userGroups;
       this.newGroup = null;
       this.showNewGroup = false;
     }

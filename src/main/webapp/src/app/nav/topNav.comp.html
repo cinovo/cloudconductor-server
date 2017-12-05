@@ -20,7 +20,8 @@
     <li *ngIf="user.name !== 'ANONYMOUS'" class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="fa fa-user fa-fw"></i>
-        {{user?.name}}
+        <span *ngIf="user.name">{{user.name}}</span>
+        <span *ngIf="!user.name">{{user?.preferred_username}}</span>
         <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-user">

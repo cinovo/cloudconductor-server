@@ -44,7 +44,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._userSub = this.authTokenProvider.currentUser.subscribe(
-      (user) => this._username = user.name
+      (user) => this._username = user.preferred_username,
+      (err) => console.error(err)
     );
   }
 
@@ -65,14 +66,14 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const changeRequest: PasswordChangeRequest = { oldPassword: pws.oldPassword, newPassword: pws.newPassword, username: this._username };
+    const changeRequest: PasswordChangeRequest = { oldPassword: pws.oldPassword, newPassword: pws.newPassword, userName: this._username };
     this.userHttp.changePassword(changeRequest).subscribe(
       () => {
         this.passwordForm.reset();
-        this.alertService.success(`Successfully changed password for user '${changeRequest.username}'.`);
+        this.alertService.success(`Successfully changed password for user '${changeRequest.userName}'.`);
       }, (err) => {
         this.passwordForm.reset();
-        this.alertService.danger(`Error changing password for user '${changeRequest.username}'!`);
+        this.alertService.danger(`Error changing password for user '${changeRequest.userName}'!`);
         console.error(err);
       }
     );

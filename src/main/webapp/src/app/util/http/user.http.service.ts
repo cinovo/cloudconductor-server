@@ -30,7 +30,7 @@ export interface AuthToken {
 export interface PasswordChangeRequest {
   oldPassword: string,
   newPassword: string,
-  username: string
+  userName: string
 }
 
 @Injectable()
@@ -54,6 +54,12 @@ export class UserHttpService {
   public getUser(username: string): Observable<User> {
     return this.http.get<User>(`${this._basePath}/${username}`)
                               .map(u => Object.assign(UserHttpService.getEmptyUser(), u));
+  }
+
+  public existsUser(username: string): Observable<boolean> {
+    return this.getUser(username)
+              .map((u) => u.loginName && u.loginName.length > 0)
+              .catch(err => Observable.of(false));
   }
 
   public saveUser(userToSave: User): Observable<boolean> {

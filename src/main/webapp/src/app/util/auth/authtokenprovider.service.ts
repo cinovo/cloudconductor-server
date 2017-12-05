@@ -13,7 +13,7 @@ import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
  */
 export class AuthTokenProviderService {
 
-  public static readonly ANONYMOUS: AuthenticatedUser = {name: 'ANONYMOUS', preferred_username: '', roles: []};
+  public static readonly ANONYMOUS: AuthenticatedUser = {name: '', preferred_username: 'ANONYMOUS', roles: []};
 
   public loggedIn: Subject<boolean> = new ReplaySubject(1);
   public currentUser: Subject<AuthenticatedUser> = new ReplaySubject(1);
@@ -33,7 +33,7 @@ export class AuthTokenProviderService {
   }
 
   public static isAnonymous(user: AuthenticatedUser): boolean {
-    return (user.name === AuthTokenProviderService.ANONYMOUS.name);
+    return (user.preferred_username === AuthTokenProviderService.ANONYMOUS.preferred_username);
   }
 
   constructor() {
@@ -65,8 +65,8 @@ export class AuthTokenProviderService {
   public storeToken(value: string): AuthenticatedUser {
     if (!value || this.jwtHelper.isTokenExpired(value)) {
       this.loggedIn.next(false);
-      const user =  AuthTokenProviderService.ANONYMOUS
-      this.currentUser.next(user)
+      const user = AuthTokenProviderService.ANONYMOUS;
+      this.currentUser.next(user);
       return user;
     }
 

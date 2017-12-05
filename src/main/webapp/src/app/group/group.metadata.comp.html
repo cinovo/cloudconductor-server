@@ -1,9 +1,12 @@
 <cc-panel [title]="'Group Details'" icon="fa-users">
   <ng-container cc-panel-body>
     <form [formGroup]="userGroupForm" (ngSubmit)="saveGroup(userGroupForm.value)" novalidate cc-panel-body>
-      <div class="form-group">
+      <div class="form-group" [ngClass]="{ 'has-error': !userGroupForm.controls.name.pristine && !userGroupForm.controls.name.valid}">
         <label for="name" class="control-label">Name</label>
         <input type="text" class="form-control" id="name" formControlName="name" [readOnly]="mode == modes.EDIT">
+        <span *ngIf="!userGroupForm.controls.name.pristine && !userGroupForm.controls.name.valid" class="help-block">
+          This field is required
+        </span>
       </div>
 
       <div class="form-group">

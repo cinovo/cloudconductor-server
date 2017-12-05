@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
+
 import { User } from './user.http.service';
 
 /**
@@ -19,33 +20,43 @@ export interface Group {
 @Injectable()
 export class GroupHttpService {
 
-  public static emptyGroup: Group = {name: '', description: '', permissions: []};
+  private static readonly emptyGroup: Group = {name: '', description: '', permissions: []};
 
   private _basePath = 'api/usergroup'
 
+  public static getEmptyGroup(): Group {
+    return Object.assign({}, GroupHttpService.emptyGroup);
+  }
+
   constructor(private http: HttpClient) { }
 
-  getGroups(): Observable<Group[]> {
+  public getGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(this._basePath);
   }
 
-  getGroupNames(): Observable<string[]> {
+  public getGroupNames(): Observable<string[]> {
     return this.getGroups().map(groups => groups.map(g => g.name));
   }
 
-  getGroup(groupName: string): Observable<Group> {
+  public getGroup(groupName: string): Observable<Group> {
     return this.http.get<Group>(`${this._basePath}/${groupName}`);
   }
 
-  getMembers(groupName: string): Observable<User[]> {
+  public existsGroup(groupName: string): Observable<boolean> {
+    return this.getGroup(groupName)
+                .map((g) => g.name && g.name.length > 0)
+                .catch(err => Observable.of(false));
+  }
+
+  public getMembers(groupName: string): Observable<User[]> {
     return this.http.get<User[]>(`${this._basePath}/${groupName}/members`);
   }
 
-  saveGroup(groupToSave: Group): Observable<boolean> {
+  public saveGroup(groupToSave: Group): Observable<boolean> {
     return this.http.put<boolean>(this._basePath, groupToSave);
   }
 
-  deleteGroup(groupName: string): Observable<boolean> {
+  public deleteGroup(groupName: string): Observable<boolean> {
     return this.http.delete<boolean>(`${this._basePath}/${groupName}`)
   }
 

@@ -10,6 +10,7 @@ import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';
 import { PermissionHttpService } from '../util/http/permission.http.service';
 import { Mode } from '../util/enums.util';
+import { forbiddenNamesValidator } from '../util/validator.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -41,7 +42,7 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
               private permissionHttp: PermissionHttpService,
               private alertService: AlertService) {
     this.userGroupForm = fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, forbiddenNamesValidator(['new', 'Administrator', 'Agent', 'Anonymous'])]],
       description: ['']
     });
   }
@@ -49,7 +50,7 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._groupSub = this.groupObs.subscribe(
       (group) => {
-        group.permissions = group.permissions.sort();
+        group.permissions = group.permissions.slice().sort();
         this.group = group;
         this.userGroupForm.patchValue(group);
       }
@@ -71,7 +72,10 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
   }
 
   public addPermission(newPermission: string): void {
-    this.group.permissions = [...this.group.permissions, newPermission].sort();
+    const newPermissions = this.group.permissions.slice();
+    newPermissions.push(newPermission);
+    newPermissions.sort();
+    this.group.permissions = newPermissions;
   }
 
   public removePermission(permissionToRemove: string): void {
@@ -86,7 +90,16 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
   public saveGroup(groupForm: Group): void {
     const groupToSave = Object.assign({}, this.group, groupForm);
     const groupName = groupToSave.name;
-    this.groupHttp.saveGroup(groupToSave).subscribe(
+
+    const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.groupHttp.existsGroup(groupName) : Observable.of(false);
+
+    check.flatMap((exists) => {
+      if (exists) {
+        return Observable.throw(`A user group named '${groupName}' already exists!`);
+      } else {
+        return this.groupHttp.saveGroup(groupToSave)
+      }
+    }).subscribe(
       () => {
         this.alertService.success(`Successfully saved user group '${groupName}'.`);
         this.userGroupForm.reset();
@@ -96,7 +109,7 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
         this.onReload.emit(groupName);
       },
       (err) => {
-        this.alertService.danger(`Error saving user group '${groupName}'!`);
+        this.alertService.danger(`Error saving user group '${groupName}': ${err}`);
         console.log(err);
       }
     );

@@ -1,12 +1,13 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import de.cinovo.cloudconductor.api.model.UserGroup;
-import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
-import de.cinovo.cloudconductor.server.model.EUserGroup;
+import javax.ws.rs.WebApplicationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.WebApplicationException;
+import de.cinovo.cloudconductor.api.model.UserGroup;
+import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
+import de.cinovo.cloudconductor.server.model.EUserGroup;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -16,10 +17,11 @@ import javax.ws.rs.WebApplicationException;
  */
 @Service
 public class UserGroupHandler {
-
+	
 	@Autowired
 	private IUserGroupDAO userGroupDAO;
-
+	
+	
 	/**
 	 * @param userGroup the data
 	 * @return the saved entity
@@ -28,13 +30,14 @@ public class UserGroupHandler {
 	public EUserGroup createEntity(UserGroup userGroup) throws WebApplicationException {
 		EUserGroup group = new EUserGroup();
 		group.setName(userGroup.getName());
+		group.setDescription(userGroup.getDescription());
 		group.setPermissions(userGroup.getPermissions());
 		return this.userGroupDAO.save(group);
 	}
-
+	
 	/**
 	 * @param eUserGroup the entity to update
-	 * @param userGroup  the update data
+	 * @param userGroup the update data
 	 * @return the updated, saved entity
 	 * @throws WebApplicationException on error
 	 */

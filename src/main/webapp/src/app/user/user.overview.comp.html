@@ -17,7 +17,10 @@
 
 <div *ngIf="(users$ | async) as users" class="row">
   <div class="col-sm-12">
-    <cc-panel [title]="'Users'" icon="fa-user">
+    <div *ngIf="!users || users.length < 1" class="alert alert-warning">
+      No users found
+    </div>
+    <cc-panel *ngIf="users && users.length > 0" [title]="'Users'" icon="fa-user">
       <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
         <thead>
           <tr>
@@ -33,7 +36,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of users" (dblclick)="goToDetails(user)">
-            <td><i class="fa fa-fw" [class.fa-circle]="user.active" [class.fa-circle-o]="!user.active"></i></td>
+            <td>
+              <i *ngIf="user.active" class="fa fa-circle fa-fw" title="active"></i>
+              <i *ngIf="!user.active" class="fa fa-circle-o fa-fw" title="not active"></i>
+            </td>
             <td>{{user.loginName}}</td>
             <td>
               <span *ngIf="user.email && user.email.length > 0">{{user.email}}</span>

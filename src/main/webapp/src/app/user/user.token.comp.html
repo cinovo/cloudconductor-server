@@ -10,8 +10,8 @@
       </tr>
       </thead>
       <tbody>
-        <tr *ngIf="authTokens.length < 1">
-          <td colspan="4">There are no auth tokens for this user!</td>
+        <tr *ngIf="authTokens.length < 1" class="danger">
+          <td class="text-center" colspan="4">There are no auth tokens for this user!</td>
         </tr>
         <tr *ngFor="let authToken of authTokens">
           <td>{{authToken.token}}</td>

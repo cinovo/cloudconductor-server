@@ -3,6 +3,8 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +69,7 @@ public class UserImpl implements IUser {
 	public User getUser(String userName) {
 		RESTAssert.assertNotEmpty(userName);
 		EUser eUser = this.userDAO.findByLoginName(userName);
-		RESTAssert.assertNotNull(eUser);
+		RESTAssert.assertNotNull(eUser, Response.Status.NOT_FOUND);
 		return eUser.toApi();
 	}
 	

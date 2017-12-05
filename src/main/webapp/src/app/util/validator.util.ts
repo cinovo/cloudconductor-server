@@ -32,9 +32,13 @@ export function gtValidator(n: number): ValidatorFn {
   };
 }
 
-export function forbiddenNameValidator(forbiddenName: string): ValidatorFn {
+export function forbiddenNamesValidator(forbiddenNames: string[]): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} => {
-    const forbidden = (control.value === forbiddenName);
+    const forbidden = (forbiddenNames.some((forbiddenName) => forbiddenName === control.value));
     return forbidden ? { 'forbiddenName': { value: control.value } } : null;
-  };
+  }
+}
+
+export function forbiddenNameValidator(forbiddenName: string): ValidatorFn {
+  return forbiddenNamesValidator([forbiddenName]);
 }

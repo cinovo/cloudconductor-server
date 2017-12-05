@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -34,12 +34,14 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   constructor(private userHttp: UserHttpService,
               private route: ActivatedRoute,
+              private router: Router,
               private alertService: AlertService) { }
 
   ngOnInit(): void {
     this._routeSub = this.route.paramMap.subscribe(paraMap => {
       this.loginName = paraMap.get('loginName');
       if (this.loginName) {
+        this.mode = Mode.EDIT;
         this.reloadUser();
       } else {
         this.mode = Mode.NEW;
@@ -63,6 +65,18 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     if (this._routeSub) {
       this._routeSub.unsubscribe();
     }
+  }
+
+  public deleteUser(): void {
+    this.userHttp.deleteUser(this.loginName).subscribe(
+      () => {
+        this.alertService.success(`Successfully deleted user '${this.loginName}'.`);
+        this.router.navigate(['/user']);
+      }, (err) => {
+        this.alertService.danger(`Error deleting user '${this.loginName}'!`);
+        console.error(err);
+      }
+    );
   }
 
 }
