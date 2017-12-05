@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+
 
 import { UserHttpService, User } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
@@ -17,7 +19,7 @@ import { Mode } from '../util/enums.util';
 })
 export class UserNewComponent implements OnInit {
 
-  private _userSubject: BehaviorSubject<User> = new BehaviorSubject(UserHttpService.emptyUser);
+  private _userSubject: Subject<User> = new ReplaySubject(1);
   public user$: Observable<User> = this._userSubject.asObservable();
 
   public modes = Mode;
@@ -25,7 +27,8 @@ export class UserNewComponent implements OnInit {
   constructor(userHttp: UserHttpService) { }
 
   ngOnInit(): void {
-    this._userSubject.next(UserHttpService.emptyUser)
+    const emptyUser = UserHttpService.getEmptyUser();
+    this._userSubject.next(emptyUser);
   }
 
 }

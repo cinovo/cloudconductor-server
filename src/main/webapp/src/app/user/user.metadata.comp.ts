@@ -1,9 +1,10 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { GroupHttpService } from '../util/http/group.http.service';
@@ -21,7 +22,7 @@ import { Validator } from '../util/validator.util';
   selector: 'user-metadata',
   templateUrl: './user.metadata.comp.html'
 })
-export class UserMetaDataComponent implements OnInit {
+export class UserMetaDataComponent implements OnInit, OnDestroy {
 
   @Input() userObs: Observable<User>;
   @Input() mode: Mode;
@@ -32,6 +33,9 @@ export class UserMetaDataComponent implements OnInit {
   public showNewGroup = false;
   public newGroup = '';
   public allGroups: string[] = [];
+
+  private _userSub: Subscription;
+  private _groupSub: Subscription;
 
   constructor(private fb: FormBuilder,
               private location: Location,
@@ -50,8 +54,9 @@ export class UserMetaDataComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userObs.subscribe(
+    this._userSub = this.userObs.subscribe(
       (user) => {
+        console.log({user});
         if (user) {
           this.user = user;
           this.userForm.patchValue(user);
@@ -61,10 +66,22 @@ export class UserMetaDataComponent implements OnInit {
       }
     );
 
-    this.groupHttp.getGroupNames().subscribe(
+    this._groupSub = this.groupHttp.getGroupNames().subscribe(
       (groupNames) => this.allGroups = groupNames,
       (err) => console.error(err)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.userForm.reset();
+
+    if (this._userSub) {
+      this._userSub.unsubscribe();
+    }
+
+    if (this._groupSub) {
+      this._groupSub.unsubscribe();
+    }
   }
 
   public goBack(): void {

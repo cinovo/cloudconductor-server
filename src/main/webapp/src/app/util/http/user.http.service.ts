@@ -36,10 +36,14 @@ export interface PasswordChangeRequest {
 @Injectable()
 export class UserHttpService {
 
-  public static emptyUser: User = {loginName: '', displayName: '', email: '', registrationDate: new Date(), active: false,
+  private static readonly emptyUser: User = {loginName: '', displayName: '', email: '', registrationDate: new Date(), active: false,
   userGroups: [], agents: [], authTokens: []};
 
   private _basePath = 'api/user';
+
+  public static getEmptyUser(): User {
+    return Object.assign({}, UserHttpService.emptyUser);
+  }
 
   constructor(private http: HttpClient) { }
 
@@ -49,7 +53,7 @@ export class UserHttpService {
 
   public getUser(username: string): Observable<User> {
     return this.http.get<User>(`${this._basePath}/${username}`)
-                              .map(u => Object.assign(UserHttpService.emptyUser, u));
+                              .map(u => Object.assign(UserHttpService.getEmptyUser(), u));
   }
 
   public saveUser(userToSave: User): Observable<boolean> {
