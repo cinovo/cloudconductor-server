@@ -118,7 +118,7 @@
                    placement="left"
                    confirmButtonType="danger"
                    (confirm)="removePackage(package)">
-                  <i class="fa fa-trash-o fa-fw" title="remove"></i>
+                  <i class="fa fa-trash-o fa-fw" title="Remove package"></i>
                 </a>
               </td>
             </tr>
@@ -157,6 +157,9 @@
         </cc-panel>
 
         <div class="pull-right">
+          <button type="button" class="btn btn-default" (click)="goBack()">
+            Back
+          </button>
           <button type="submit" class="btn btn-info" [disabled]="settingsForm.invalid">
             Save
           </button>

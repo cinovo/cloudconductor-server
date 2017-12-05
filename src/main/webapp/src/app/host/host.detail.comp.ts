@@ -1,7 +1,10 @@
 import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject, Subject, Subscription, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';

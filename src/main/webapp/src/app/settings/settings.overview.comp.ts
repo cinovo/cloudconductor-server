@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -30,7 +31,8 @@ export class SettingsOverview implements OnInit {
   constructor(private settingHttp: SettingHttpService,
               private packageHttp: PackageHttpService,
               private alerts: AlertService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private location: Location) {
     this.settingsForm = fb.group({
       name: ['Default', [Validators.required]],
       description: [''],
@@ -117,5 +119,9 @@ export class SettingsOverview implements OnInit {
 
   private filterUsedPackages(pkg: Package): boolean {
     return !this.settingsForm.value.disallowUninstall.includes(pkg.name);
+  }
+
+  public goBack(): void {
+    this.location.back();
   }
 }
