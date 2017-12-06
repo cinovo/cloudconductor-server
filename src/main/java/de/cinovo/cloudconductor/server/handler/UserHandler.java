@@ -37,7 +37,7 @@ public class UserHandler {
 	 */
 	public EUser createEntity(User user) {
 		EUser eUser = new EUser();
-		eUser.setActive(true);
+		eUser.setActive(user.isActive());
 		eUser.setDisplayName(user.getDisplayName());
 		eUser.setEmail(user.getEmail());
 		eUser.setLoginName(user.getLoginName());

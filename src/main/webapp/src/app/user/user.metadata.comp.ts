@@ -106,7 +106,8 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
       loginName: userForm.loginName,
       displayName: userForm.displayName,
       email: userForm.email,
-      userGroups: this.user.userGroups
+      userGroups: this.user.userGroups,
+      active: userForm.active
     };
 
     if (this.mode === this.modes.NEW) {
@@ -131,8 +132,8 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
     }).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
-        this.userForm.reset();
         if (this.mode === this.modes.NEW) {
+          this.userForm.reset();
           this.router.navigate(['/user', u.loginName]);
         }
       }, (err) => {

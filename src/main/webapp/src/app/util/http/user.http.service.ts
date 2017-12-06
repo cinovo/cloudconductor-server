@@ -36,8 +36,10 @@ export interface PasswordChangeRequest {
 @Injectable()
 export class UserHttpService {
 
-  private static readonly emptyUser: User = {loginName: '', displayName: '', email: '', registrationDate: new Date(), active: false,
-  userGroups: [], agents: [], authTokens: []};
+  private static readonly emptyUser: User = {
+    loginName: '', displayName: '', email: '', registrationDate: new Date(), active: true,
+    userGroups: [], agents: [], authTokens: []
+  };
 
   private _basePath = 'api/user';
 

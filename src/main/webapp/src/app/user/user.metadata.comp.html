@@ -28,14 +28,16 @@
       <input type="password" class="form-control" formControlName="repeatPassword" id="repeatPassword">
     </div>
 
-    <div class="form-group hidden">
-      <label for="registrationDate" class="control-label">Registration Date</label>
-      <input type="text" class="form-control" formControlName="registrationDate" id="registrationDate">
+    <div class="form-group">
+      <label for="active">
+        <input type="checkbox" id="active" formControlName="active">
+        Active
+      </label>
     </div>
 
     <div class="form-group hidden">
-      <label for="active" class="control-label">Active</label>
-      <input type="text" class="form-control" formControlName"active" id="active">
+      <label for="registrationDate" class="control-label">Registration Date</label>
+      <input type="text" class="form-control" formControlName="registrationDate" id="registrationDate">
     </div>
 
     <cc-panel-list [title]="'Groups'" icon="fa-users" [type]="'group'"
