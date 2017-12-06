@@ -19,7 +19,6 @@ package de.cinovo.cloudconductor.api.lib.manager;
 
 import java.util.Set;
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.Package;
@@ -53,7 +52,7 @@ public class ServiceHandler extends DefaultRestHandler<Service> {
 	
 	@Override
 	protected String getDefaultPath() {
-		return IRestPath.SERVICE;
+		return "/service";
 	}
 	
 	@Override
@@ -68,7 +67,7 @@ public class ServiceHandler extends DefaultRestHandler<Service> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<Package> getPackages(String service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.SERVICE_PKG, service);
+		String path = this.pathGenerator("/{service}/packages", service);
 		return (Set<Package>) this._get(path, this.getSetType(Package.class));
 	}
 	
@@ -78,7 +77,7 @@ public class ServiceHandler extends DefaultRestHandler<Service> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void addPackage(String service, String pkg) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.SERVICE_PKG_SINGLE, service, pkg);
+		String path = this.pathGenerator("/{service}/packages/{pkg}", service, pkg);
 		this._put(path);
 	}
 	
@@ -88,7 +87,7 @@ public class ServiceHandler extends DefaultRestHandler<Service> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void removePackage(String service, String pkg) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.SERVICE_PKG_SINGLE, service, pkg);
+		String path = this.pathGenerator("/{service}/packages/{pkg}", service, pkg);
 		this._delete(path);
 	}
 	
@@ -98,7 +97,7 @@ public class ServiceHandler extends DefaultRestHandler<Service> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void approveStarted(String service, String host) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.SERVICE_APPROVE_STARTED, service, host);
+		String path = this.pathGenerator("/{service}/approvestarted/{host}", service, host);
 		this._put(path);
 	}
 }

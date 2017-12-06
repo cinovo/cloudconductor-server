@@ -17,7 +17,6 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 
@@ -49,7 +48,7 @@ public class SSHKeyHandler extends DefaultRestHandler<SSHKey> {
 	
 	@Override
 	protected String getDefaultPath() {
-		return IRestPath.SSHKEY;
+		return "/ssh";
 	}
 	
 	@Override

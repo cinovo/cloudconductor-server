@@ -52,7 +52,7 @@ public class PackageImpl implements IPackage {
 			for (EPackage pkg : this.packageDAO.findList()) {
 				result.add(pkg.toApi());
 			}
-			return Response.ok(result).build();
+			return Response.ok(result).header("x-total-count", result.size()).build();
 		}
 		
 		int first = (page - 1) * pageSize;

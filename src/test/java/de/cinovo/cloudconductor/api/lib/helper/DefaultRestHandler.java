@@ -21,7 +21,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.JavaType;
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 
@@ -62,7 +61,7 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void save(T apiObject) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.DEFAULT_NAME, apiObject.getName());
+		String path = this.pathGenerator("/{name}", apiObject.getName());
 		this._put(path, apiObject);
 	}
 	
@@ -72,7 +71,7 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public T get(String name) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.DEFAULT_NAME, name);
+		String path = this.pathGenerator("/{name}", name);
 		return this._get(path, this.getAPIClass());
 	}
 	
@@ -81,7 +80,7 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void delete(String name) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.DEFAULT_NAME, name);
+		String path = this.pathGenerator("/{name}", name);
 		this._delete(path);
 	}
 	

@@ -19,7 +19,6 @@ package de.cinovo.cloudconductor.api.lib.manager;
 
 import java.util.Set;
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.Package;
@@ -53,7 +52,7 @@ public class PackageHandler extends DefaultRestHandler<Package> {
 	
 	@Override
 	protected String getDefaultPath() {
-		return IRestPath.PKG;
+		return "/package";
 	}
 	
 	@Override
@@ -68,7 +67,7 @@ public class PackageHandler extends DefaultRestHandler<Package> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<PackageVersion> getRPMS(String packageName) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.PKG_VERSION, packageName);
+		String path = this.pathGenerator("/{pkg}/versions", packageName);
 		return (Set<PackageVersion>) this._get(path, this.getSetType(PackageVersion.class));
 	}
 	
@@ -78,7 +77,7 @@ public class PackageHandler extends DefaultRestHandler<Package> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void addRPM(String packageName, PackageVersion version) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.PKG_VERSION_SINGLE, packageName, version.getVersion());
+		String path = this.pathGenerator("/{pkg}/versions/{version}", packageName, version.getVersion());
 		this._put(path, version);
 	}
 	
@@ -88,7 +87,7 @@ public class PackageHandler extends DefaultRestHandler<Package> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void removeRPM(String packageName, String version) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.PKG_VERSION_SINGLE, packageName, version);
+		String path = this.pathGenerator("/{pkg}/versions/{version}", packageName, version);
 		this._delete(path);
 	}
 }

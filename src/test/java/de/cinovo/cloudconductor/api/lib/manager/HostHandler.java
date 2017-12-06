@@ -19,7 +19,6 @@ package de.cinovo.cloudconductor.api.lib.manager;
 
 import java.util.Set;
 
-import de.cinovo.cloudconductor.api.IRestPath;
 import de.cinovo.cloudconductor.api.lib.exceptions.ClientErrorException;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
@@ -54,7 +53,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	
 	@Override
 	protected String getDefaultPath() {
-		return IRestPath.HOST;
+		return "/host";
 	}
 	
 	@Override
@@ -69,7 +68,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<Service> getServices(String name) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICES, name);
+		String path = this.pathGenerator("/{host}/service", name);
 		return (Set<Service>) this._get(path, this.getSetType(Service.class));
 	}
 	
@@ -79,7 +78,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void setService(String name, Service service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICE_SVC, name, service.getName());
+		String path = this.pathGenerator("/{host}/{service}", name, service.getName());
 		this._put(path, service);
 	}
 	
@@ -89,7 +88,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void removeService(String name, String service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICE_SVC, name, service);
+		String path = this.pathGenerator("/{host}/{service}", name, service);
 		this._delete(path);
 	}
 	
@@ -99,7 +98,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public Boolean inSync(String host) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SYNC, host);
+		String path = this.pathGenerator("/{host}/synced", host);
 		return this._get(path, Boolean.class);
 	}
 	
@@ -110,7 +109,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public Boolean startService(String host, String service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICE_START, host, service);
+		String path = this.pathGenerator("/{host}/{service}/start", host, service);
 		try {
 			this._put(path);
 			return true;
@@ -126,7 +125,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public Boolean stopService(String host, String service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICE_STOP, host, service);
+		String path = this.pathGenerator("/{host}/{service}/stop", host, service);
 		try {
 			this._put(path);
 			return true;
@@ -142,7 +141,7 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public Boolean restartService(String host, String service) throws CloudConductorException {
-		String path = this.pathGenerator(IRestPath.HOST_SERVICE_RESTART, host, service);
+		String path = this.pathGenerator("/{host}/{service}/restart", host, service);
 		try {
 			this._put(path);
 			return true;
