@@ -1,14 +1,18 @@
 import { Component, Input } from '@angular/core';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @Component({
   selector: 'cc-pagination',
-  templateUrl: './ccpagination.comp.html'
+  templateUrl: './ccpagination.comp.html',
+  styleUrls: ['./ccpagination.comp.scss']
 })
 export class CCPagination {
 
-  @Input() start: number;
-  @Input() end: number;
-  @Input() totalCount: number;
   @Input() pageCount: number;
   @Input() pages: number[];
   @Input() currentPage: number;

@@ -99,6 +99,7 @@ import { PermissionHttpService } from './app/util/http/permission.http.service';
 import { GroupNewComponent } from './app/group/group.new.comp';
 import { UserAgentsComponent } from './app/user/user.agents.comp';
 import { GroupMemberComponent } from './app/group/group.member.comp';
+import { CCPaginationInfoComponent } from './app/util/ccpaginationinfo/ccpaginationinfo.comp';
 
 @NgModule({
   imports: [
@@ -118,6 +119,7 @@ import { GroupMemberComponent } from './app/group/group.member.comp';
     CCTitle,
     CCFilter,
     CCPagination,
+    CCPaginationInfoComponent,
     CCPanelListComponent,
     HomeComponent,
     ConfigValueOverview,

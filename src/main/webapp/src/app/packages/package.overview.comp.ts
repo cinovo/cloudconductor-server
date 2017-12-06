@@ -137,8 +137,14 @@ export class PackageOverview implements OnInit, OnDestroy {
   }
 
   set searchQuery(value: string) {
-    this._searchQuery = value;
-    this.router.navigate(['/package'], { queryParams: { page: 1 }});
+    this._searchQuery = value.trim();
+    if (this._searchQuery.length > 0) {
+      this._page = 0;
+      this._limit = 0;
+    } else {
+      this._page = 1;
+      this._limit = 15
+    }
     this.loadPackages();
   }
 

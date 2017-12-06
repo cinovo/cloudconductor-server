@@ -4,9 +4,6 @@
   <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-6 col-lg-3">
-    <cc-filter [mode]="'select'" [label]="'Limit'" [data]="limits" [selected]="limit" (onQueryChange)="limit = $event"></cc-filter>
-  </div>
 </div>
 
 <div class="row" *ngIf="!packagesLoaded">
@@ -30,6 +27,21 @@
   <div class="col-md-12">
     <cc-panel [title]="'All available packages'" icon="fa-book">
       <ng-container cc-panel-body>
+        <div *ngIf="page > 0" class="row">
+          <div class="col-md-4">
+            <div class="form-inline">
+              <label>Show</label>
+              <select class="form-control" [(ngModel)]="limit" id="labelquery">
+                <option *ngFor="let l of limits" value="{{l}}">{{l}}</option>
+              </select>
+              <label>packages per page</label>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <cc-pagination [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-12">
             <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
@@ -65,8 +77,14 @@
           </div>
         </div>
 
-        <cc-pagination [start]="start" [end]="end" [totalCount]="totalPackageCount" [pageCount]="pageCount" [pages]="pages" [currentPage]="page">
-        </cc-pagination>
+        <div *ngIf="page > 0" class="row">
+            <div class="col-md-6">
+              <cc-pagination-info [start]="start" [end]="end" [totalCount]="totalPackageCount"></cc-pagination-info>
+            </div>
+            <div class="col-md-6">
+              <cc-pagination  [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
+            </div>
+        </div>
 
       </ng-container>
     </cc-panel>
