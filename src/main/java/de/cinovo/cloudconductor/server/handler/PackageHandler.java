@@ -65,6 +65,7 @@ public class PackageHandler {
 	
 	/**
 	 * @param pv the package version
+	 * @param pkg the package
 	 * @return the saved entity
 	 * @throws WebApplicationException on error
 	 */

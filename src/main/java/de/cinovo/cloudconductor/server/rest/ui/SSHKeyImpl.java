@@ -5,8 +5,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +25,6 @@ import de.taimos.restutils.RESTAssert;
  */
 @JaxRsComponent
 public class SSHKeyImpl implements ISSHKey {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SSHKeyImpl.class);
 	
 	@Autowired
 	private ISSHKeyDAO sshDAO;
