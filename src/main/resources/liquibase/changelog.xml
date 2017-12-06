@@ -1131,4 +1131,7 @@
 			</column>
     	</addColumn>
     </changeSet>
+    <changeSet id="32" author="mweise">
+    	<dropUniqueConstraint schemaName="cloudconductor" tableName="serveroptions" constraintName="serveroptions_name_key"/>
+    </changeSet>
 </databaseChangeLog>

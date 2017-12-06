@@ -37,11 +37,11 @@ public class ServerTaskHelper {
 	
 	/**
 	 * @param oldOptions the old options
+	 * @param newOptions the new options
 	 */
-	public void updateTasks(EServerOptions oldOptions) {
-		EServerOptions options = this.optionsDao.get();
+	public void updateTasks(EServerOptions oldOptions, EServerOptions newOptions) {
 		for (IServerTasks task : this.tasks) {
-			task.update(oldOptions, options);
+			task.update(oldOptions, newOptions);
 		}
 	}
 	

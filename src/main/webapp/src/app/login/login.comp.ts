@@ -64,11 +64,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.router.navigate([this._redirect]);
         } else {
           this.alertService.danger('Authentication failed!');
-          this.loginForm.reset();
         }
+        this.loginForm.reset();
       }, (err) => {
         this.alertService.danger('Authentication failed!');
-        console.error(err);
+        this.loginForm.reset();
       }
     );
   }

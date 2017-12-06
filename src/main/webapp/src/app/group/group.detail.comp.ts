@@ -56,6 +56,10 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     this.groupHttp.getGroup(this.groupName).subscribe(
       (group) => this._groupSubject.next(group),
       (err) => {
+        if (err.status && err.status === 404) {
+          this.router.navigate(['/not-found', 'group', this.groupName]);
+          return;
+        }
         this.alertService.danger(`Error loading group '${this.groupName}'!`);
         console.error(err);
       }

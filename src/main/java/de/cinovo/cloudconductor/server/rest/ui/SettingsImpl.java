@@ -50,15 +50,17 @@ public class SettingsImpl implements ISettings {
 		RESTAssert.assertTrue(settings.getPageRefreshTimer() > 0);
 		RESTAssert.assertTrue(settings.getIndexScanTimer() > 0);
 		
-		EServerOptions newOptions = GenericModelApiConverter.convert(settings, EServerOptions.class);
 		EServerOptions oldOptions = this.serverOptionsDAO.get();
-		newOptions.setId(oldOptions.getId());
+		
+		EServerOptions newOptions = GenericModelApiConverter.convert(settings, EServerOptions.class);
 		newOptions = this.serverOptionsDAO.save(newOptions);
 		
 		if (!newOptions.isAllowautoupdate()) {
 			this.templateHandler.disableAutoUpdate();
 		}
 		
-		this.taskHelper.updateTasks(oldOptions);
+		this.taskHelper.updateTasks(oldOptions, newOptions);
+		
+		this.serverOptionsDAO.delete(oldOptions);
 	}
 }

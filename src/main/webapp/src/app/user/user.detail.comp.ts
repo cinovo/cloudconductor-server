@@ -55,6 +55,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
         user.authTokens.sort((a, b) => Sorter.byFieldDesc(a, b, 'creationDate'));
         this._userSubject.next(user)
       }, (err) => {
+        if (err.status && err.status === 404) {
+          this.router.navigate(['/not-found', 'user', this.loginName]);
+          return;
+        }
         this.alertService.danger(`Error loading user '${this.loginName}'!`);
         console.error(err);
       }
