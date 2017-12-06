@@ -49,7 +49,6 @@ export class TopNavComponent implements AfterContentInit, OnInit {
   public logOut() {
     this.authHttpService.logout().subscribe(
       () => {
-        this.alertService.success('Successfully logged out.');
         this.authTokenProvider.removeToken();
         this.router.navigate(['/login']);
       }, (err) => {

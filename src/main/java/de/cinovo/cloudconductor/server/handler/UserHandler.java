@@ -84,7 +84,7 @@ public class UserHandler {
 	 * @return whether pwchange was successfull or not
 	 */
 	public boolean changePassword(EUser eUser, String oldPassword, String newPassword) {
-		if (eUser.getPassword().validate(oldPassword)) {
+		if (!eUser.getPassword().validate(oldPassword)) {
 			return false;
 		}
 		eUser.setPassword(new HashedPassword(newPassword));

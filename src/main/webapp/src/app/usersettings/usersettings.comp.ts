@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
 
@@ -32,6 +33,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder,
               private location: Location,
+              private router: Router,
               private alertService: AlertService,
               private authTokenProvider: AuthTokenProviderService,
               private userHttp: UserHttpService) {
@@ -71,6 +73,10 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       () => {
         this.passwordForm.reset();
         this.alertService.success(`Successfully changed password for user '${changeRequest.userName}'.`);
+
+        // changing password revokes all JWTs of the user, new login is required
+        this.authTokenProvider.removeToken();
+        this.router.navigate(['/login']);
       }, (err) => {
         this.passwordForm.reset();
         this.alertService.danger(`Error changing password for user '${changeRequest.userName}'!`);
