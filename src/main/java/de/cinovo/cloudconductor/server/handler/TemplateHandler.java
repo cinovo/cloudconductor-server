@@ -1,17 +1,5 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.ws.rs.WebApplicationException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
@@ -25,6 +13,16 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -202,10 +200,12 @@ public class TemplateHandler {
 		et.setRepos(new ArrayList<ERepo>());
 		et.setAutoUpdate(t.getAutoUpdate() == null ? false : t.getAutoUpdate());
 		et.setSmoothUpdate(t.getSmoothUpdate() == null ? false : t.getSmoothUpdate());
-		
-		for (ERepo repo : this.repoDAO.findList()) {
-			if (t.getRepos().contains(repo.getName())) {
-				et.getRepos().add(repo);
+
+		if(t.getRepos() != null) {
+			for(ERepo repo : this.repoDAO.findList()) {
+				if(t.getRepos().contains(repo.getName())) {
+					et.getRepos().add(repo);
+				}
 			}
 		}
 		et.setPackageVersions(this.findPackageVersions(et.getPackageVersions(), t.getVersions(), et.getRepos()));
@@ -240,15 +240,16 @@ public class TemplateHandler {
 				}
 			}
 		}
-		for (Entry<String, String> target : targetVersions.entrySet()) {
-			EPackageVersion ePackageVersion = this.packageVersionDAO.find(target.getKey(), target.getValue());
-			if (ePackageVersion != null) {
-				if (this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
-					result.add(ePackageVersion);
+		if(targetVersions != null) {
+			for(Entry<String, String> target : targetVersions.entrySet()) {
+				EPackageVersion ePackageVersion = this.packageVersionDAO.find(target.getKey(), target.getValue());
+				if(ePackageVersion != null) {
+					if(this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
+						result.add(ePackageVersion);
+					}
 				}
 			}
 		}
-		
 		return result;
 	}
 	

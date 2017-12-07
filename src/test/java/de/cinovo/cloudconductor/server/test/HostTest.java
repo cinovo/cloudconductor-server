@@ -17,20 +17,16 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
+import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+import de.cinovo.cloudconductor.api.lib.manager.HostHandler;
+import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.server.APITest;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
-import de.cinovo.cloudconductor.api.lib.manager.HostHandler;
-import de.cinovo.cloudconductor.api.lib.manager.ServiceHandler;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -49,7 +45,7 @@ public class HostTest extends APITest {
 	
 	@Test
 	public void test1() throws CloudConductorException {
-		HostHandler h = new HostHandler(this.getCSApi());
+		HostHandler h = new HostHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Host> hosts = h.get();
 			Assert.assertEquals(1, hosts.size());
@@ -61,65 +57,5 @@ public class HostTest extends APITest {
 			Assert.assertNotNull(host);
 			Assert.assertEquals(HostTest.HOST1, host.getName());
 		}
-		{
-			Host host = new Host();
-			host.setName(HostTest.HOST22);
-			host.setAgent(HostTest.HOST22);
-			host.setTemplate("dev");
-			h.save(host);
-			Set<Host> hosts = h.get();
-			Assert.assertEquals(2, hosts.size());
-			Host host2 = h.get(HostTest.HOST22);
-			Assert.assertNotNull(host2);
-			Assert.assertEquals(HostTest.HOST22, host2.getName());
-		}
-		{
-			h.delete(HostTest.HOST22);
-			Set<Host> hosts = h.get();
-			Assert.assertEquals(1, hosts.size());
-		}
-	}
-	
-	@Test
-	public void testServices() throws CloudConductorException {
-		HostHandler h = new HostHandler(this.getCSApi());
-		{
-			Set<Service> services = h.getServices(HostTest.HOST1);
-			Assert.assertEquals(0, services.size());
-		}
-		{
-			Boolean inSync = h.inSync(HostTest.HOST1);
-			Assert.assertEquals(false, inSync);
-		}
-		{
-			ServiceHandler sh = new ServiceHandler(this.getCSApi());
-			h.setService(HostTest.HOST1, sh.get(HostTest.TEST_SERVICE));
-			this.assertState(h, ServiceState.STOPPED);
-		}
-		{
-			h.startService(HostTest.HOST1, HostTest.TEST_SERVICE);
-			this.assertState(h, ServiceState.STARTING);
-		}
-		{
-			h.stopService(HostTest.HOST1, HostTest.TEST_SERVICE);
-			this.assertState(h, ServiceState.STOPPING);
-		}
-		{
-			h.restartService(HostTest.HOST1, HostTest.TEST_SERVICE);
-			this.assertState(h, ServiceState.RESTARTING_STOPPING);
-		}
-		{
-			h.removeService(HostTest.HOST1, HostTest.TEST_SERVICE);
-			Set<Service> services = h.getServices(HostTest.HOST1);
-			Assert.assertEquals(0, services.size());
-		}
-	}
-	
-	private void assertState(HostHandler h, ServiceState state) throws CloudConductorException {
-		Set<Service> services = h.getServices(HostTest.HOST1);
-		Assert.assertEquals(1, services.size());
-		Service svc = services.iterator().next();
-		Assert.assertEquals(HostTest.TEST_SERVICE, svc.getName());
-		Assert.assertEquals(state, svc.getState());
 	}
 }

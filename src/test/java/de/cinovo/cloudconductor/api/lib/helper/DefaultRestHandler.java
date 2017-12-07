@@ -17,36 +17,33 @@ package de.cinovo.cloudconductor.api.lib.helper;
  * #L%
  */
 
-import java.util.Set;
-
 import com.fasterxml.jackson.databind.JavaType;
-
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  *
- * @author psigloch
- *
  * @param <T> the model class
- *
+ * @author psigloch
  */
 public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHandler {
-	
-	protected DefaultRestHandler(String cloudconductorUrl) {
-		super(cloudconductorUrl);
+
+	protected DefaultRestHandler(String cloudconductorUrl, String token) {
+		super(cloudconductorUrl, token);
 	}
-	
+
 	protected abstract String getDefaultPath();
-	
+
 	protected abstract Class<T> getAPIClass();
-	
+
 	protected JavaType getSetType() {
 		return this.getSetType(this.getAPIClass());
 	}
-	
+
 	/**
 	 * @return set of T
 	 * @throws CloudConductorException Error indicating connection or data problems
@@ -55,16 +52,16 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 	public Set<T> get() throws CloudConductorException {
 		return (Set<T>) this._get(this.getDefaultPath(), this.getSetType());
 	}
-	
+
 	/**
 	 * @param apiObject T
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void save(T apiObject) throws CloudConductorException {
-		String path = this.pathGenerator("/{name}", apiObject.getName());
+		String path = this.getDefaultPath();
 		this._put(path, apiObject);
 	}
-	
+
 	/**
 	 * @param name the identifier of the object T
 	 * @return T
@@ -74,7 +71,7 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 		String path = this.pathGenerator("/{name}", name);
 		return this._get(path, this.getAPIClass());
 	}
-	
+
 	/**
 	 * @param name the identifier of the object T
 	 * @throws CloudConductorException Error indicating connection or data problems
@@ -83,7 +80,7 @@ public abstract class DefaultRestHandler<T extends INamed> extends AbstractApiHa
 		String path = this.pathGenerator("/{name}", name);
 		this._delete(path);
 	}
-	
+
 	@Override
 	protected final String pathGenerator(String path, String... replace) {
 		String s = this.getDefaultPath() + path;

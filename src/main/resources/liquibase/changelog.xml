@@ -12,6 +12,7 @@
     <property name="now" value="sysdate" dbms="oracle"/>
     <property name="now" value="now()" dbms="mysql"/>
     <property name="now" value="now()" dbms="postgresql"/>
+    <property name="now" value="now()" dbms="hsqldb"/>
 
     <changeSet id="1" author="psigloch" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
         <sql dbms="hsqldb,postgresql"><![CDATA[
@@ -1096,7 +1097,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="userid" type="bigint">
-                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_authtoken_user"
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_jwttoken_user"
                              deleteCascade="true"/>
             </column>
             <column name="token" type="text"/>
@@ -1112,7 +1113,7 @@
         <dropColumn tableName="agent" schemaName="cloudconductor" columnName="tokenassociationdate"/>
         <addColumn tableName="agent" schemaName="cloudconductor">
             <column name="userid" type="bigint">
-                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_authtoken_user"
+                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_agent_user"
                              deleteCascade="true"/>
             </column>
         </addColumn>
@@ -1132,6 +1133,12 @@
     	</addColumn>
     </changeSet>
     <changeSet id="32" author="mweise">
+        <preConditions onFail="MARK_RAN">
+            <or>
+                <dbms type="postgresql" />
+                <dbms type="mysql" />
+            </or>
+        </preConditions>
     	<dropUniqueConstraint schemaName="cloudconductor" tableName="serveroptions" constraintName="serveroptions_name_key"/>
     </changeSet>
     <changeSet id="33" author="mweise">

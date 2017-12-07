@@ -17,16 +17,16 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Map;
-
+import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
+import de.cinovo.cloudconductor.api.lib.manager.ConfigValueHandler;
+import de.cinovo.cloudconductor.api.model.ConfigValue;
+import de.cinovo.cloudconductor.server.APITest;
+import de.taimos.daemon.spring.SpringDaemonTestRunner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
-import de.cinovo.cloudconductor.api.lib.manager.ConfigValueHandler;
-import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import java.util.Set;
 
 /**
  * 
@@ -42,21 +42,21 @@ public class ConfigTest extends APITest {
 	
 	@Test
 	public void loadConfigTemplate() throws CloudConductorException {
-		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi());
-		Map<String, String> config = h.getConfig("dev");
+		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
+		Set<ConfigValue> config = h.getConfig("dev");
 		Assert.assertNotNull(config);
 	}
 	
 	@Test
 	public void loadConfigService() throws CloudConductorException {
-		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi());
-		Map<String, String> config = h.getConfig("dev", "service1");
+		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
+		Set<ConfigValue> config = h.getConfig("dev", "service1");
 		Assert.assertNotNull(config);
 	}
 	
 	@Test
 	public void loadConfigKey() throws CloudConductorException {
-		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi());
+		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 		String config = h.getConfig("dev", "service1", "loggly.tags");
 		Assert.assertNotNull(config);
 		Assert.assertEquals("foo", config);
@@ -64,32 +64,44 @@ public class ConfigTest extends APITest {
 	
 	@Test
 	public void testAddRemove() throws CloudConductorException {
-		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi());
 		{
+			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// Check config does not exist
-			Assert.assertFalse(h.getConfig("dev").containsKey("foo"));
-			Assert.assertFalse(h.getConfig("dev", "svc").containsKey("foo"));
+			for(ConfigValue configValue : h.getConfig("dev")) {
+				Assert.assertFalse(configValue.getKey().equals("foo"));
+			}
+			for(ConfigValue configValue : h.getConfig("dev", "svc")) {
+				Assert.assertFalse(configValue.getKey().equals("foo"));
+			}
 		}
 		{
+			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// add template level config
 			h.addConfig("dev", "foo", "bar");
 			Assert.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
 		}
 		{
+			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// add service level config
 			h.addConfig("dev", "svc", "foo", "baz");
 			Assert.assertEquals("baz", h.getConfig("dev", "svc", "foo"));
 		}
 		{
+			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// remove service level config
 			h.removeConfig("dev", "svc", "foo");
 			Assert.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
 		}
 		{
+			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// remove template level config
-			h.removeConfig("dev", "foo");
-			Assert.assertFalse(h.getConfig("dev").containsKey("foo"));
-			Assert.assertFalse(h.getConfig("dev", "svc").containsKey("foo"));
+			h.removeConfig("dev", "", "foo");
+			for(ConfigValue configValue : h.getConfig("dev")) {
+				Assert.assertFalse(configValue.getKey().equals("foo"));
+			}
+			for(ConfigValue configValue : h.getConfig("dev", "svc")) {
+				Assert.assertFalse(configValue.getKey().equals("foo"));
+			}
 		}
 	}
 }

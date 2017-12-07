@@ -17,17 +17,16 @@ package de.cinovo.cloudconductor.server.test;
  * #L%
  */
 
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.SSHKeyHandler;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.Set;
 
 /**
  * 
@@ -48,7 +47,7 @@ public class SSHKeyTest extends APITest {
 		String newContent = "key content 2";
 		String newOwner = "admin";
 		
-		SSHKeyHandler handler = new SSHKeyHandler(this.getCSApi());
+		SSHKeyHandler handler = new SSHKeyHandler(this.getCSApi(), this.getToken());
 		{
 			Set<SSHKey> keys = handler.get();
 			Assert.assertEquals(1, keys.size());
@@ -62,7 +61,8 @@ public class SSHKeyTest extends APITest {
 			Assert.assertEquals(firstContent, load.getKey());
 		}
 		{
-			SSHKey newKey = new SSHKey(newContent, newOwner);
+			SSHKey newKey = new SSHKey(newOwner, newContent);
+			newKey.setUsername("root");
 			handler.save(newKey);
 		}
 		{

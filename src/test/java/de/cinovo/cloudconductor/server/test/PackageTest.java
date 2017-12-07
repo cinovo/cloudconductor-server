@@ -27,7 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -43,8 +42,8 @@ import java.util.Set;
 public class PackageTest extends APITest {
 	
 	@Test
-	public void test1() throws CloudConductorException {
-		PackageHandler h = new PackageHandler(this.getCSApi());
+	public void testPackages() throws CloudConductorException {
+		PackageHandler h = new PackageHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Package> set = h.get();
 			Assert.assertEquals(6, set.size());
@@ -52,49 +51,13 @@ public class PackageTest extends APITest {
 		{
 			Package pkg = h.get("nginx");
 			Assert.assertEquals("nginx", pkg.getName());
-			Assert.assertEquals("Auto-generated from repository updateEntity on 2013-09-04 14:20:08.", pkg.getDescription());
-		}
-		{
-			Package p = new Package();
-			p.setName("package1");
-			p.setDescription("package1");
-			h.save(p);
-			Set<Package> set = h.get();
-			Assert.assertEquals(7, set.size());
-			Package pkg = h.get("package1");
-			Assert.assertEquals("package1", pkg.getName());
-		}
-		{
-			h.delete("package1");
-			Set<Package> set = h.get();
-			Assert.assertEquals(6, set.size());
+			Assert.assertEquals("Auto-generated from repository selected on 2013-09-04 14:20:08.", pkg.getDescription());
 		}
 	}
 	
 	@Test
-	public void testRPM() throws CloudConductorException {
-		PackageHandler h = new PackageHandler(this.getCSApi());
-		{
-			Set<PackageVersion> rpms = h.getRPMS("nginx");
-			Assert.assertEquals(1, rpms.size());
-			PackageVersion pv = rpms.iterator().next();
-			Assert.assertEquals("nginx", pv.getName());
-			Assert.assertEquals("1.5.3-1", pv.getVersion());
-		}
-		{
-			PackageVersion pv = new PackageVersion();
-			pv.setName("nginx");
-			pv.setVersion("1.5.4-1");
-			pv.setRepos(new HashSet<String>());
-			pv.getRepos().add("TESTREPO");
-
-			h.addRPM("nginx", pv);
-			Set<PackageVersion> rpms = h.getRPMS("nginx");
-			Assert.assertEquals(2, rpms.size());
-		}
-		{
-			h.removeRPM("nginx", "1.5.4-1");
-		}
+	public void testVersion() throws CloudConductorException {
+		PackageHandler h = new PackageHandler(this.getCSApi(), this.getToken());
 		{
 			Set<PackageVersion> rpms = h.getRPMS("nginx");
 			Assert.assertEquals(1, rpms.size());

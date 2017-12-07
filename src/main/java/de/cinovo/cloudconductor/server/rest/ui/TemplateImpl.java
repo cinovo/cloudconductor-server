@@ -1,14 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.core.Response.Status;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
@@ -34,6 +25,13 @@ import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.template.TemplatesWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.core.Response.Status;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -66,12 +64,12 @@ public class TemplateImpl implements ITemplate {
 	
 	@Override
 	@Transactional
-	public Set<Template> get() {
+	public Template[] get() {
 		Set<Template> result = new HashSet<>();
 		for (ETemplate template : this.templateDAO.findList()) {
 			result.add(template.toApi());
 		}
-		return result;
+		return result.toArray(new Template[result.size()]);
 	}
 	
 	@Override

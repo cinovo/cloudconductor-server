@@ -49,8 +49,8 @@ public class ConfigValueImpl implements IConfigValue {
 	private IConfigValueDAO configValueDAO;
 
 	@Override
-	public Collection<String> getAvailableTemplates() {
-		return this.configValueDAO.findTemplates();
+	public String[] getAvailableTemplates() {
+		return this.configValueDAO.findTemplates().toArray(new String[0]);
 	}
 	
 	@Override

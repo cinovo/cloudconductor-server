@@ -17,13 +17,13 @@ package de.cinovo.cloudconductor.server;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.lib.helper.AuthHandler;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfiguration;
-import de.taimos.dvalin.jaxrs.MapperFactory;
 import de.taimos.httputils.HTTPRequest;
 import de.taimos.httputils.WS;
-import org.apache.http.HttpResponse;
-import org.junit.Assert;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -35,7 +35,13 @@ import org.junit.Assert;
  */
 @RunnerConfiguration(config = TestConfig.class, svc = "cloudconductor", loggingConfigurer = Log4jLoggingConfigurer.class)
 public abstract class APITest {
-	
+
+	private String token;
+
+	protected APITest() {
+		this.token = new AuthHandler(this.getCSApi()).auth();
+	}
+
 	/**
 	 * create call to http://server/<path>
 	 * 
@@ -60,6 +66,10 @@ public abstract class APITest {
 	protected final String getCSApi() {
 		return this.getCSUrl() + "/api";
 	}
+
+	protected final String getToken() {
+		return this.token;
+	}
 	
 	/**
 	 * create call to http://server/api/<path>
@@ -70,64 +80,14 @@ public abstract class APITest {
 	protected final HTTPRequest api(String path) {
 		return this.url("/api" + path);
 	}
-	
-	/**
-	 * create call to http://server/web/<path>
-	 * 
-	 * @param path the path
-	 * @return the HTTPRequest
-	 */
-	protected final HTTPRequest web(String path) {
-		return this.url("/web" + path);
-	}
-	
-	/**
-	 * assert that the response has a status 2XX
-	 * 
-	 * @param res the HttpResponse to check
-	 */
-	protected final void assertOK(HttpResponse res) {
-		Assert.assertTrue("Status: " + res.getStatusLine().getStatusCode(), WS.isStatusOK(res));
-	}
-	
-	/**
-	 * assert that the response has the given status
-	 * 
-	 * @param res the HttpResponse to check
-	 * @param status the status to assert
-	 */
-	protected final void assertStatus(HttpResponse res, int status) {
-		Assert.assertEquals("Status: " + res.getStatusLine().getStatusCode(), status, WS.getStatus(res));
-	}
-	
-	/**
-	 * add the given object as JSON and set content type
-	 * 
-	 * @param req the HTTPRequest
-	 * @param o the object to send
-	 * @return the enriched HTTPRequest
-	 */
-	protected final HTTPRequest json(HTTPRequest req, Object o) {
+
+	protected void delay() {
 		try {
-			return req.contentType("application/json;charset=UTF-8").body(MapperFactory.createDefault().writeValueAsString(o));
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
+			TimeUnit.MILLISECONDS.sleep(250);
+		} catch(InterruptedException e) {
+			return;
 		}
 	}
 	
-	/**
-	 * read the given HttpResponse as JSON and convert into given object
-	 * 
-	 * @param <T> content type
-	 * @param res the HttpResponse
-	 * @param clazz the class to deserialize into
-	 * @return the deserialized object
-	 */
-	protected final <T> T readAsObject(HttpResponse res, Class<T> clazz) {
-		try {
-			return MapperFactory.createDefault().readValue(res.getEntity().getContent(), clazz);
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+
 }

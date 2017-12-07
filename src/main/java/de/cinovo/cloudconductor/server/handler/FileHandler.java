@@ -1,19 +1,5 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.WebApplicationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
@@ -25,6 +11,18 @@ import de.cinovo.cloudconductor.server.model.EFileData;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.ws.rs.WebApplicationException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -34,9 +32,9 @@ import de.taimos.restutils.RESTAssert;
  */
 @Service
 public class FileHandler {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileHandler.class);
-	
+
 	@Autowired
 	private IFileDAO fileDAO;
 	@Autowired
@@ -47,8 +45,8 @@ public class FileHandler {
 	private IServiceDAO serviceDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-	
-	
+
+
 	/**
 	 * @param cf the config file
 	 * @return the saved file entity
@@ -60,7 +58,7 @@ public class FileHandler {
 		RESTAssert.assertNotNull(ef);
 		return this.fileDAO.save(ef);
 	}
-	
+
 	/**
 	 * @param ef the file entity to update
 	 * @param cf the config file used to update the entity
@@ -72,11 +70,10 @@ public class FileHandler {
 		RESTAssert.assertNotNull(ef);
 		return this.fileDAO.save(ef);
 	}
-	
+
 	/**
-	 * 
 	 * @param efile the file
-	 * @param data the data as a string
+	 * @param data  the data as a string
 	 * @return the new create file data
 	 */
 	public EFileData createEntity(EFile efile, String data) {
@@ -86,10 +83,10 @@ public class FileHandler {
 		RESTAssert.assertNotNull(edata);
 		return this.fileDataDAO.save(edata);
 	}
-	
+
 	/**
 	 * @param edata the file data
-	 * @param data the updated data as a string
+	 * @param data  the updated data as a string
 	 * @return the updated file data
 	 */
 	public EFileData updateEntity(EFileData edata, String data) {
@@ -97,7 +94,7 @@ public class FileHandler {
 		RESTAssert.assertNotNull(edata);
 		return this.fileDataDAO.save(edata);
 	}
-	
+
 	private EFile fillFields(EFile ef, ConfigFile cf) {
 		ef.setName(cf.getName());
 		ef.setFileMode(cf.getFileMode());
@@ -109,32 +106,33 @@ public class FileHandler {
 		ef.setDirectory(cf.isDirectory());
 		ef.setTargetPath(cf.getTargetPath());
 		ef.setPkg(this.packageDAO.findByName(cf.getPkg()));
-		
-		ef.setDependentServices(new ArrayList<EService>());
-		for (String serviceDep : cf.getDependentServices()) {
-			EService service = this.serviceDAO.findByName(serviceDep);
-			if (service != null) {
-				ef.getDependentServices().add(service);
+
+		ef.setDependentServices(new ArrayList<>());
+		if(cf.getDependentServices() != null) {
+			for(String serviceDep : cf.getDependentServices()) {
+				EService service = this.serviceDAO.findByName(serviceDep);
+				if(service != null) {
+					ef.getDependentServices().add(service);
+				}
 			}
 		}
-		
+
 		ef.setTemplates(new ArrayList<ETemplate>());
-		for (String templateName : cf.getTemplates()) {
+		for(String templateName : cf.getTemplates()) {
 			ETemplate template = this.templateDAO.findByName(templateName);
-			if (template != null) {
+			if(template != null) {
 				ef.getTemplates().add(template);
 			}
 		}
 		return ef;
 	}
-	
+
 	private EFileData fillFields(EFileData edata, String data) {
 		edata.setData(data);
 		return edata;
 	}
-	
+
 	/**
-	 * 
 	 * @param data the data for which to compute the checksum
 	 * @return the checksum
 	 */
@@ -142,16 +140,16 @@ public class FileHandler {
 		try {
 			byte[] array = MessageDigest.getInstance("MD5").digest(data.getBytes("UTF-8"));
 			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < array.length; ++i) {
+			for(int i = 0; i < array.length; ++i) {
 				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
 			}
 			return sb.toString();
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+		} catch(NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			FileHandler.LOGGER.error("Error creating checksum: ", e);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param templateName the name of the template
 	 * @return array of configuration files which are used in the given template
@@ -159,15 +157,15 @@ public class FileHandler {
 	public ConfigFile[] getFilesForTemplate(String templateName) {
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
-		
+
 		Set<ConfigFile> templateFiles = new HashSet<>();
-		for (EFile file : this.fileDAO.findList()) {
-			if (file.getTemplates().contains(template)) {
+		for(EFile file : this.fileDAO.findList()) {
+			if(file.getTemplates().contains(template)) {
 				templateFiles.add(file.toApi());
 			}
 		}
-		
+
 		return templateFiles.toArray(new ConfigFile[templateFiles.size()]);
 	}
-	
+
 }

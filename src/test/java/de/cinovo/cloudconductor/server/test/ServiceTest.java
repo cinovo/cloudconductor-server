@@ -20,7 +20,6 @@ package de.cinovo.cloudconductor.server.test;
 import com.google.common.collect.Sets;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ServiceHandler;
-import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
@@ -42,7 +41,7 @@ public class ServiceTest extends APITest {
 
 	@Test
 	public void test1() throws CloudConductorException {
-		ServiceHandler h = new ServiceHandler(this.getCSApi());
+		ServiceHandler h = new ServiceHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Service> set = h.get();
 			Assert.assertEquals(3, set.size());
@@ -86,26 +85,4 @@ public class ServiceTest extends APITest {
 		}
 	}
 
-	@Test
-	public void testRPM() throws CloudConductorException {
-		ServiceHandler h = new ServiceHandler(this.getCSApi());
-		{
-			Set<Package> pkgs = h.getPackages("nginx");
-			Assert.assertEquals(1, pkgs.size());
-			Package pv = pkgs.iterator().next();
-			Assert.assertEquals("nginx", pv.getName());
-		}
-		{
-			h.addPackage("nginx", "jdk");
-			Set<Package> rpms = h.getPackages("nginx");
-			Assert.assertEquals(2, rpms.size());
-		}
-		{
-			h.removePackage("nginx", "jdk");
-		}
-		{
-			Set<Package> pkgs = h.getPackages("nginx");
-			Assert.assertEquals(1, pkgs.size());
-		}
-	}
 }

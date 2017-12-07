@@ -1,16 +1,5 @@
 package de.cinovo.cloudconductor.server.security;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.concurrent.ThreadLocalRandom;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IJWTTokenDAO;
 import de.cinovo.cloudconductor.server.model.EAuthToken;
@@ -20,6 +9,16 @@ import de.cinovo.cloudconductor.server.model.enums.AuthType;
 import de.cinovo.cloudconductor.server.security.exception.TokenGenerationException;
 import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -70,10 +69,15 @@ public class TokenHandler {
 		newUser.setDisplayName(user.getDisplayName());
 		newUser.setId(String.valueOf(user.getId()));
 		newUser.setRoles(user.getRoles());
-		
+		String token = this.jwtAuth.signToken(newUser);
+		EJWTToken existing = this.jwtTokenDao.findByToken(token);
+		if(existing != null) {
+			return this.generateJWTToken(user, type, refToken);
+		}
+
 		EJWTToken ejwtToken = new EJWTToken();
 		ejwtToken.setActive(true);
-		ejwtToken.setToken(this.jwtAuth.signToken(newUser));
+		ejwtToken.setToken(token);
 		ejwtToken.setUser(user);
 		ejwtToken.setAuthType(type);
 		ejwtToken.setRefToken(referenceToken);

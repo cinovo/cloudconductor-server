@@ -1,13 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IHost;
 import de.cinovo.cloudconductor.api.model.Host;
@@ -20,6 +12,12 @@ import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -29,7 +27,7 @@ import de.taimos.restutils.RESTAssert;
  */
 @JaxRsComponent
 public class HostImpl implements IHost {
-	
+
 	@Autowired
 	private IHostDAO hostDAO;
 	@Autowired
@@ -38,18 +36,18 @@ public class HostImpl implements IHost {
 	private HostsWSHandler hostsWsHandler;
 	@Autowired
 	private HostDetailWSHandler hostDetailWsHandler;
-	
-	
+
+
 	@Override
 	@Transactional
-	public List<Host> getHosts() {
+	public Host[] getHosts() {
 		List<Host> result = new ArrayList<>();
-		for (EHost eHost : this.hostDAO.findList()) {
+		for(EHost eHost : this.hostDAO.findList()) {
 			result.add(eHost.toApi());
 		}
-		return result;
+		return result.toArray(new Host[result.size()]);
 	}
-	
+
 	@Override
 	@Transactional
 	public Host getHost(String hostName) {
@@ -58,7 +56,7 @@ public class HostImpl implements IHost {
 		RESTAssert.assertNotNull(eHost, Response.Status.NOT_FOUND);
 		return eHost.toApi();
 	}
-	
+
 	@Override
 	@Transactional
 	public void deleteHost(String hostName) {
@@ -67,7 +65,7 @@ public class HostImpl implements IHost {
 		this.hostDAO.delete(eHost);
 		this.hostsWsHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.DELETED, eHost.toApi()));
 	}
-	
+
 	@Override
 	@Transactional
 	public void setServiceState(String hostName, String serviceName, ServiceState newState) {

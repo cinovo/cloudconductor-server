@@ -17,8 +17,6 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
-import java.util.Set;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.Host;
@@ -26,6 +24,8 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
+
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -39,20 +39,11 @@ public class TemplateHandler extends DefaultRestHandler<Template> {
 	/**
 	 * @param cloudconductorUrl the config server url
 	 */
-	public TemplateHandler(String cloudconductorUrl) {
-		super(cloudconductorUrl);
+	public TemplateHandler(String cloudconductorUrl, String token) {
+		super(cloudconductorUrl, token);
 	}
 	
-	/**
-	 * @param cloudconductorUrl the config server url
-	 * @param token the token
-	 * @param agent the agent
-	 */
-	public TemplateHandler(String cloudconductorUrl, String token, String agent) {
-		super(cloudconductorUrl);
-		this.setTokenMode(token, agent);
-	}
-	
+
 	@Override
 	protected String getDefaultPath() {
 		return "/template";
@@ -75,6 +66,7 @@ public class TemplateHandler extends DefaultRestHandler<Template> {
 	}
 	
 	/**
+
 	 * @param template the template name
 	 * @return set of sshkeys used by the template
 	 * @throws CloudConductorException Error indicating connection or data problems
@@ -84,27 +76,7 @@ public class TemplateHandler extends DefaultRestHandler<Template> {
 		String path = this.pathGenerator("/{template}/sshkeys", template);
 		return (Set<SSHKey>) this._get(path, this.getSetType(SSHKey.class));
 	}
-	
-	/**
-	 * @param template the template name
-	 * @param key the sshkey identifier
-	 * @throws CloudConductorException Error indicating connection or data problems
-	 */
-	public void addSSHKey(String template, String key) throws CloudConductorException {
-		String path = this.pathGenerator("/{template}/sshkeys/{name}", template, key);
-		this._put(path);
-	}
-	
-	/**
-	 * @param template the template name
-	 * @param key the sshkey identifier
-	 * @throws CloudConductorException Error indicating connection or data problems
-	 */
-	public void removeSSHKey(String template, String key) throws CloudConductorException {
-		String path = this.pathGenerator("/{template}/sshkeys/{name}", template, key);
-		this._delete(path);
-	}
-	
+
 	/**
 	 * @param template the template name
 	 * @return set of package versions used by the template
@@ -115,27 +87,7 @@ public class TemplateHandler extends DefaultRestHandler<Template> {
 		String path = this.pathGenerator("/{template}/package/versions", template);
 		return (Set<PackageVersion>) this._get(path, this.getSetType(PackageVersion.class));
 	}
-	
-	/**
-	 * @param template the template name
-	 * @param version the package version identifier
-	 * @throws CloudConductorException Error indicating connection or data problems
-	 */
-	public void addVersion(String template, PackageVersion version) throws CloudConductorException {
-		String path = this.pathGenerator("/{template}/package/versions", template);
-		this._post(path, version);
-	}
-	
-	/**
-	 * @param template the template name
-	 * @param version the package version identifier
-	 * @throws CloudConductorException Error indicating connection or data problems
-	 */
-	public void removeVersion(String template, PackageVersion version) throws CloudConductorException {
-		String path = this.pathGenerator("/{template}/package/versions/{pkg}/{version}", template, version.getName(), version.getVersion());
-		this._delete(path);
-	}
-	
+
 	/**
 	 * @param template the template name
 	 * @return set of services used by the template

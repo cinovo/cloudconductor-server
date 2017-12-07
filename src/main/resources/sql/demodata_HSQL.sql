@@ -26,11 +26,6 @@ INSERT INTO cloudconductor.package VALUES (4, 'jdk', 'Auto-generated from reposi
 INSERT INTO cloudconductor.package VALUES (5, 'postgresql92-server', 'Auto-generated from repository selected on 2013-09-04 14:20:09.');
 INSERT INTO cloudconductor.package VALUES (6, 'nodejs', 'Auto-generated from repository selected on 2013-09-04 14:20:09.');
 
-INSERT INTO cloudconductor.auditlog VALUES (1, 1385544948453, 'Admin', 'Added template dev', 1, 0, null, null, null);
-INSERT INTO cloudconductor.auditlog VALUES (2, 1390125583142, 'Admin', 'Added service service1', 6, 0, null, null, null);
-INSERT INTO cloudconductor.auditlog VALUES (3, 1390125802050, 'Admin', 'Modified file file1', 5, 0, null, null, null);
-INSERT INTO cloudconductor.auditlog VALUES (4, 1390125817657, 'Admin', 'Modified key null', 3, 0, null, null, null);
-
 INSERT INTO cloudconductor.configvalues VALUES (4, 'GLOBAL', '', 'cloudconductor.username', 'admin', 0, false, 4);
 INSERT INTO cloudconductor.configvalues VALUES (14, 'GLOBAL', '', 'syslog.host', 'localhost', 0, false, 14);
 INSERT INTO cloudconductor.configvalues VALUES (17, 'GLOBAL', '', 'syslog.port', '514', 0, false, 17);
@@ -41,7 +36,7 @@ INSERT INTO cloudconductor.configvalues VALUES (13, 'GLOBAL', NULL, 'cloudconduc
 INSERT INTO cloudconductor.configvalues VALUES (67, 'GLOBAL', 'service1', 'logger.loggly', 'true', 0, false, 67);
 INSERT INTO cloudconductor.configvalues VALUES (68, 'GLOBAL', 'service1', 'loggly.tags', 'foo', 0, false, 68);
 
-INSERT INTO cloudconductor.file VALUES (1, 'file1', '/root/foo', 'root', 'root', '755', false, false, '59cc417c3e8e463d2d2bdac8743ac04c', NULL, 0, false, 1);
+INSERT INTO cloudconductor.file VALUES (1, 'file1', '/root/foo', 'root', 'root', '755', false, false, '59cc417c3e8e463d2d2bdac8743ac04c', NULL, 0, false, 1, false);
 
 INSERT INTO cloudconductor.filedata VALUES (1, 1, 'Testfile for root',0, false, 1);
 
@@ -53,37 +48,35 @@ INSERT INTO cloudconductor.service VALUES (1, 'postgresql-9.2', 'postgresql-9.2'
 INSERT INTO cloudconductor.service VALUES (2, 'nginx', 'nginx', 'nginx');
 INSERT INTO cloudconductor.service VALUES (3, 'service1', 'service1', 'service1');
 
-INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar');
+INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar', null, 'root');
 
 INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
+INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', false, true);
 
-INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', 1, false, true);
 
+INSERT INTO cloudconductor.repo VALUES (1, 'TESTREPO', '1', '', null);
+INSERT INTO cloudconductor.repo VALUES (2, 'Ein etwas anderes REPO', '1', '', null);
+INSERT INTO cloudconductor.repo VALUES (3, 'CloudConductor', '1', '', null);
 
-INSERT INTO cloudconductor.packageservergroup VALUES (1, 'TESTREPO', '1');
-INSERT INTO cloudconductor.packageservergroup VALUES (2, 'Ein etwas anderes REPO', '1');
-INSERT INTO cloudconductor.packageservergroup VALUES (3, 'CloudConductor', '1');
+INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 1, 2, '/static/yum');
+INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (2, 'Ein TestRepo', 'http://irgendwo.com/yum',  2, 0, 2, '/static/yum');
+INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (3, 'Irgendwo Repo', 'http://irgendwoAnderst.com/yum',  2, 0, 2, '/static/yum');
+INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (4, 'Yanz weit weg', 'http://yanzweitweg.com/yum',  2, 0, 2, '/static/yum');
+INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repos',  3, 1, 2, 'http://yum.cloudconductor.net/cloudconductor.repos');
 
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 1, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (2, 'Ein TestRepo', 'http://irgendwo.com/yum',  2, 0, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (3, 'Irgendwo Repo', 'http://irgendwoAnderst.com/yum',  2, 0, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (4, 'Yanz weit weg', 'http://yanzweitweg.com/yum',  2, 0, 2, '/static/yum');
-INSERT INTO cloudconductor.packageserver (id, description, path, servergroupid, indexertype, providertype, basepath)  VALUES (5, 'CloudConductor Repo', 'http://yum.cloudconductor.net/cloudconductor.repos',  3, 1, 2, 'http://yum.cloudconductor.net/cloudconductor.repos');
+INSERT INTO cloudconductor.map_template_repo VALUES (1, 1);
 
-INSERT INTO cloudconductor.mappingpackageservertemplate VALUES (1, 1);
+INSERT INTO cloudconductor.authtoken VALUES (1, 1, 'testblahToken01', '2017-01-01 11:54:20.598', NULL);
+INSERT INTO cloudconductor.authtoken VALUES (2, 1, 'testblahToken02', '2017-01-01 11:54:20.598', '2017-01-02 11:54:20.598');
 
-INSERT INTO cloudconductor.agentauthtoken VALUES (1, 'testblahToken01', 1381489459832, NULL, 'a comment');
-
-INSERT INTO cloudconductor.agentauthtoken VALUES (2, 'testblahToken02', 1381489459832, 1381489489832, 'another comment');
-
-INSERT INTO cloudconductor.agent VALUES (1, 'testAgent01', 1, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (2, 'testAgent02', 1, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (3, 'testAgent03', 2, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (4, 'testAgent04', 2, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (5, 'testAgent05', NULL, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', NULL, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', NULL, 1381489459832);
-INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', NULL, 1381489459832);
+INSERT INTO cloudconductor.agent VALUES (1, 'testAgent01', 1);
+INSERT INTO cloudconductor.agent VALUES (2, 'testAgent02', 1);
+INSERT INTO cloudconductor.agent VALUES (3, 'testAgent03', 2);
+INSERT INTO cloudconductor.agent VALUES (4, 'testAgent04', 2);
+INSERT INTO cloudconductor.agent VALUES (5, 'testAgent05', 1);
+INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', 1);
+INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', 1);
+INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', 1);
 
 INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1);
 
@@ -94,13 +87,12 @@ INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1');
 INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs');
 INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1');
 
-INSERT INTO cloudconductor.mappingversiongroup VALUES (1,1);
-INSERT INTO cloudconductor.mappingversiongroup VALUES (2,1);
-INSERT INTO cloudconductor.mappingversiongroup VALUES (3,1);
-INSERT INTO cloudconductor.mappingversiongroup VALUES (4,1);
-INSERT INTO cloudconductor.mappingversiongroup VALUES (5,1);
-INSERT INTO cloudconductor.mappingversiongroup VALUES (6,1);
-
+INSERT INTO cloudconductor.map_version_repo VALUES (1,1);
+INSERT INTO cloudconductor.map_version_repo VALUES (2,1);
+INSERT INTO cloudconductor.map_version_repo VALUES (3,1);
+INSERT INTO cloudconductor.map_version_repo VALUES (4,1);
+INSERT INTO cloudconductor.map_version_repo VALUES (5,1);
+INSERT INTO cloudconductor.map_version_repo VALUES (6,1);
 
 INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1, 1);
 INSERT INTO cloudconductor.mappingrpmtemplate VALUES (2, 1, 2);

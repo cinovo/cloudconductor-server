@@ -1,21 +1,20 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -80,10 +79,12 @@ public class SSHHandler {
 		entityKey.setUsername(newSSHKey.getUsername());
 		entityKey.setLastChangedDate(new Date().getTime());
 		
-		entityKey.setTemplates(new ArrayList<ETemplate>());
-		for (ETemplate template : this.templateDao.findList()) {
-			if (newSSHKey.getTemplates().contains(template.getName())) {
-				entityKey.getTemplates().add(template);
+		entityKey.setTemplates(new ArrayList<>());
+		if(newSSHKey.getTemplates() != null) {
+			for(ETemplate template : this.templateDao.findList()) {
+				if(newSSHKey.getTemplates().contains(template.getName())) {
+					entityKey.getTemplates().add(template);
+				}
 			}
 		}
 	}

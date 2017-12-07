@@ -23,37 +23,27 @@ import de.cinovo.cloudconductor.api.model.SSHKey;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public class SSHKeyHandler extends DefaultRestHandler<SSHKey> {
-	
+
 	/**
 	 * @param cloudconductorUrl the config server url
 	 */
-	public SSHKeyHandler(String cloudconductorUrl) {
-		super(cloudconductorUrl);
+	public SSHKeyHandler(String cloudconductorUrl, String token) {
+		super(cloudconductorUrl, token);
 	}
-	
-	/**
-	 * @param cloudconductorUrl the config server url
-	 * @param token the token
-	 * @param agent the agent
-	 */
-	public SSHKeyHandler(String cloudconductorUrl, String token, String agent) {
-		super(cloudconductorUrl);
-		this.setTokenMode(token, agent);
-	}
-	
+
+
 	@Override
 	protected String getDefaultPath() {
 		return "/ssh";
 	}
-	
+
 	@Override
 	protected Class<SSHKey> getAPIClass() {
 		return SSHKey.class;
 	}
-	
+
 }

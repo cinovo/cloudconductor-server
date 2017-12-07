@@ -1,14 +1,5 @@
 package de.cinovo.cloudconductor.server.test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.AgentHandler;
 import de.cinovo.cloudconductor.api.model.Dependency;
@@ -18,6 +9,14 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.server.APITest;
 import de.taimos.daemon.spring.SpringDaemonTestRunner;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringDaemonTestRunner.class)
 @SuppressWarnings("javadoc")
@@ -32,9 +31,9 @@ public class AgentTest extends APITest {
 	
 	@Test
 	public void testPackagesBasic() throws CloudConductorException {
-		AgentHandler agent = new AgentHandler(this.getCSApi());
+		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
 		{
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), "");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), "asd");
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
@@ -43,33 +42,33 @@ public class AgentTest extends APITest {
 	
 	@Test
 	public void testPackageMultiHost() throws CloudConductorException {
-		AgentHandler agent = new AgentHandler(this.getCSApi());
+		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
 		{
 			// block the second host on update
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), "");
-			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), "asd");
+			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "asd");
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on host a
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), "");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), "asd");
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
-			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()), "");
+			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()), "asd");
 		}
 		{
 			// finally start update on host b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "asd");
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), "");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), "asd");
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());

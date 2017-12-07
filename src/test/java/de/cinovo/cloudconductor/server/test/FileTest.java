@@ -42,7 +42,7 @@ public class FileTest extends APITest {
 	
 	@Test
 	public void test() throws CloudConductorException {
-		ConfigFileHandler h = new ConfigFileHandler(this.getCSApi());
+		ConfigFileHandler h = new ConfigFileHandler(this.getCSApi(), this.getToken());
 		{
 			Set<ConfigFile> set = h.get();
 			Assert.assertEquals(1, set.size());

@@ -17,70 +17,55 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.JavaType;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.AbstractApiHandler;
-import de.cinovo.cloudconductor.api.model.KeyValue;
+import de.cinovo.cloudconductor.api.model.ConfigValue;
+
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public class ConfigValueHandler extends AbstractApiHandler {
-	
+
 	/**
 	 * @param cloudconductorUrl the config server url
 	 */
-	public ConfigValueHandler(String cloudconductorUrl) {
-		super(cloudconductorUrl);
+	public ConfigValueHandler(String cloudconductorUrl, String token) {
+		super(cloudconductorUrl, token);
 	}
-	
-	/**
-	 * @param cloudconductorUrl the config server url
-	 * @param token the token
-	 * @param agent the agent
-	 */
-	public ConfigValueHandler(String cloudconductorUrl, String token, String agent) {
-		super(cloudconductorUrl);
-		this.setTokenMode(token, agent);
-	}
-	
+
+
 	/**
 	 * @param template the template name
 	 * @return map containing config kv-pairs of the template
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getConfig(String template) throws CloudConductorException {
+	public Set<ConfigValue> getConfig(String template) throws CloudConductorException {
 		String path = this.pathGenerator("/config/{template}", template);
-		JavaType type = AbstractApiHandler.mapper.getTypeFactory().constructMapType(HashMap.class, String.class, String.class);
-		return (Map<String, String>) this._get(path, type);
+		return (Set<ConfigValue>) this._get(path, this.getSetType(ConfigValue.class));
 	}
-	
+
 	/**
 	 * @param template the template name
-	 * @param service the serice name
+	 * @param service  the serice name
 	 * @return map containing config kv-pairs of the service
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getConfig(String template, String service) throws CloudConductorException {
+	public Set<ConfigValue> getConfig(String template, String service) throws CloudConductorException {
 		String path = this.pathGenerator("/config/{template}/{service}", template, service);
-		JavaType type = AbstractApiHandler.mapper.getTypeFactory().constructMapType(HashMap.class, String.class, String.class);
-		return (Map<String, String>) this._get(path, type);
+		return (Set<ConfigValue>) this._get(path, this.getSetType(ConfigValue.class));
 	}
-	
+
 	/**
 	 * @param template the template name
-	 * @param service the serice name
-	 * @param key the config key
+	 * @param service  the serice name
+	 * @param key      the config key
 	 * @return the value
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
@@ -88,51 +73,48 @@ public class ConfigValueHandler extends AbstractApiHandler {
 		String path = this.pathGenerator("/config/{template}/{service:.*}/{key}", template, service, key);
 		return this._get(path, String.class);
 	}
-	
+
 	/**
 	 * @param template the template name
-	 * @param key the config key
-	 * @param value the config value
+	 * @param key      the config key
+	 * @param value    the config value
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void addConfig(String template, String key, String value) throws CloudConductorException {
-		String path = this.pathGenerator("/config/{template}", template);
-		KeyValue kv = new KeyValue(key, value);
-		this._put(path, kv);
+		String path = this.pathGenerator("/config");
+		ConfigValue cv = new ConfigValue();
+		cv.setKey(key);
+		cv.setTemplate(template);
+		cv.setValue(value);
+		this._put(path, cv);
 	}
-	
+
 	/**
 	 * @param template the template name
-	 * @param service the service name
-	 * @param key the config key
-	 * @param value the config value
+	 * @param service  the service name
+	 * @param key      the config key
+	 * @param value    the config value
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void addConfig(String template, String service, String key, String value) throws CloudConductorException {
-		String path = this.pathGenerator("/config/{template}/{service}", template, service);
-		KeyValue kv = new KeyValue(key, value);
-		this._put(path, kv);
+		String path = this.pathGenerator("/config");
+		ConfigValue cv = new ConfigValue();
+		cv.setKey(key);
+		cv.setTemplate(template);
+		cv.setValue(value);
+		cv.setService(service);
+		this._put(path, cv);
 	}
-	
+
 	/**
 	 * @param template the template name
-	 * @param key the config key
-	 * @throws CloudConductorException Error indicating connection or data problems
-	 */
-	public void removeConfig(String template, String key) throws CloudConductorException {
-		String path = this.pathGenerator("/config/{template}/{key}", template, key);
-		this._delete(path);
-	}
-	
-	/**
-	 * @param template the template name
-	 * @param service the service name
-	 * @param key the config key
+	 * @param service  the service name
+	 * @param key      the config key
 	 * @throws CloudConductorException Error indicating connection or data problems
 	 */
 	public void removeConfig(String template, String service, String key) throws CloudConductorException {
 		String path = this.pathGenerator("/config/{template}/{service:.*}/{key}", template, service, key);
 		this._delete(path);
 	}
-	
+
 }
