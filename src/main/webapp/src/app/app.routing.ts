@@ -1,4 +1,4 @@
-///<reference path="host/host.overview.comp.ts"/>
+import { ModuleWithProviders } from '@angular/core';
 import { UserSettingsComponent } from './usersettings/usersettings.comp';
 import { UserNewComponent } from './user/user.new.comp';
 import { GroupDetailComponent } from './group/group.detail.comp';
@@ -35,6 +35,7 @@ import { AuthenticationGuard } from './util/auth/authentication.guard';
 import { ForbiddenComponent } from './forbidden/forbidden.comp';
 import { UserDetailComponent } from './user/user.detail.comp';
 import { GroupNewComponent } from './group/group.new.comp';
+import { RouterModule } from '@angular/router';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -42,8 +43,7 @@ import { GroupNewComponent } from './group/group.new.comp';
  *
  * @author psigloch
  */
-export const APP_ROUTES: Routes = [
-
+const APP_ROUTES: Routes = [
   {path: 'home', component: HomeComponent, canActivate: [AuthenticationGuard] },
 
   {path: 'host', component: HostOverview, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
@@ -132,3 +132,5 @@ export const APP_ROUTES: Routes = [
 
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
+
+export const routing: ModuleWithProviders = RouterModule.forRoot(APP_ROUTES);

@@ -1,5 +1,11 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @Component({
   selector: 'cc-dashboard-panel',
   templateUrl: './ccdashboardpanel.comp.html',
@@ -12,5 +18,7 @@ export class CCDashboardPanel {
   @Input() label: string;
   @Input() detailLink: string;
   @Input() minValue: number;
+
+  constructor() { }
 
 }
