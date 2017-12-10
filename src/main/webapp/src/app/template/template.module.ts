@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
@@ -12,6 +12,18 @@ import { TemplateDetail } from './template.detail.comp';
 import { TemplateNew } from './template.new.comp';
 import { TemplateMetaData } from './template.metadata.comp';
 import { TemplateAgentOptions } from './template.agentoption.comp';
+import { Role } from '../util/enums.util';
+import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { AuthorizationGuard } from '../util/auth/authorization.guard';
+
+const templateRoute: Routes = [
+  {path: '', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'new', component: TemplateNew, data: {rolesAllowed: [Role.EDIT_TEMPLATE]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: ':templateName', component: TemplateDetail, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+];
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,7 +36,7 @@ import { TemplateAgentOptions } from './template.agentoption.comp';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule.forChild(templateRoute),
 
     ConfirmationPopoverModule,
 

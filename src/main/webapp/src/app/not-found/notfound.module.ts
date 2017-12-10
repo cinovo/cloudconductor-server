@@ -1,8 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { NotFoundComponent } from './not-found.comp';
+
+const notFoundRoutes: Routes = [
+  {path: ':type/:name', component: NotFoundComponent},
+];
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -13,6 +18,7 @@ import { NotFoundComponent } from './not-found.comp';
 @NgModule({
   imports: [
     CommonModule,
+    RouterModule.forChild(notFoundRoutes),
 
     SharedModule
   ],

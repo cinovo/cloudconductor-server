@@ -13,7 +13,7 @@ import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
 import { Role } from '../util/enums.util';
 
-const routes: Routes = [
+const cvRoutes: Routes = [
   {path: 'preview', component: ConfigValuePreview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template', component: ConfigValueOverview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
@@ -21,9 +21,8 @@ const routes: Routes = [
   {path: ':template/:service/new', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template/:service/:key', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]}
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
 ];
-
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -35,11 +34,10 @@ const routes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule.forChild(cvRoutes),
 
     ConfirmationPopoverModule,
 
-    CoreModule,
     SharedModule
   ],
   declarations: [

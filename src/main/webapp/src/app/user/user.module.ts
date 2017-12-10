@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
@@ -12,6 +12,18 @@ import { UserMetaDataComponent } from './user.metadata.comp';
 import { UserTokenComponent } from './user.token.comp';
 import { UserAgentsComponent } from './user.agents.comp';
 import { UserDetailComponent } from './user.detail.comp';
+import { Role } from '../util/enums.util';
+import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { AuthorizationGuard } from '../util/auth/authorization.guard';
+
+const userRoutes: Routes = [
+  {path: '', component: UserOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: 'new', component: UserNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: ':loginName', component: UserDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
+  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+];
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -23,7 +35,7 @@ import { UserDetailComponent } from './user.detail.comp';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule.forChild(userRoutes),
 
     ConfirmationPopoverModule,
 

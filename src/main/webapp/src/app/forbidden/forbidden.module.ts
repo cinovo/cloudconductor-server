@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 
 import { ForbiddenComponent } from './forbidden.comp';
+
+const forbiddenRoutes: Routes = [
+  {path: '', component: ForbiddenComponent}
+];
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -14,6 +19,7 @@ import { ForbiddenComponent } from './forbidden.comp';
 @NgModule({
   imports: [
     CommonModule,
+    RouterModule.forChild(forbiddenRoutes),
 
     SharedModule
   ],

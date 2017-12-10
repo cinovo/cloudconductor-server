@@ -10,22 +10,6 @@ import './rxjs-extensions';
 
 import { CoreModule } from './app/core/core.module';
 import { SharedModule } from './app/shared/shared.module';
-import { ConfigValueModule } from './app/configvalues/configvalue.module';
-import { FileModule } from './app/files/file.module';
-import { ForbiddenModule } from './app/forbidden/forbidden.module';
-import { GroupModule } from './app/group/group.module';
-import { HomeModule } from './app/home/home.module';
-import { HostModule } from './app/host/host.module';
-import { LoginModule } from './app/login/login.module';
-import { NotFoundModule } from './app/not-found/notfound.module';
-import { PackageModule } from './app/packages/package.module';
-import { RepoModule } from './app/repo/repo.module';
-import { ServiceModule } from './app/service/service.module';
-import { SettingsModule } from './app/settings/settings.module';
-import { SSHModule } from './app/ssh/ssh.module';
-import { TemplateModule } from './app/template/template.module';
-import { UserModule } from './app/user/user.module';
-import { UserSettingsModule } from './app/usersettings/usersettings.module';
 
 import { AlertComponent } from './app/util/alert/alert.comp';
 import { AppComponent } from './app/app.comp';
@@ -51,22 +35,6 @@ import { routing } from './app/app.routing';
     ConfirmationPopoverModule.forRoot(),
     CoreModule,
     SharedModule,
-    ConfigValueModule,
-    FileModule,
-    ForbiddenModule,
-    GroupModule,
-    HomeModule,
-    HostModule,
-    LoginModule,
-    NotFoundModule,
-    PackageModule,
-    RepoModule,
-    ServiceModule,
-    SettingsModule,
-    SSHModule,
-    TemplateModule,
-    UserModule,
-    UserSettingsModule
   ],
   declarations: [
     AppComponent,
