@@ -2,17 +2,17 @@
 ## DATABASE CONFIGURTAION
 #######
 #define the database to use. Options are: HSQL, MYSQL, POSTGRESQL
-ds.type=POSTGRESQL #postgres database
+ds.type=POSTGRESQL
 #database host
-ds.host=localhost
+ds.pgsql.host=localhost
 #database port
-ds.port=5432
+ds.pgsql.port=5432
 #database username
-ds.username=postgres
+ds.pgsql.user=postgres
 #database password
-ds.pw=password
+ds.pgsql.password=huihui
 #database name
-ds.dbname=cloudconductor
+ds.pgsql.db=cloudconductor
 
 #use some demodata to initialize the database (should not used in prod environments)
 #ds.demodata=false
@@ -24,10 +24,16 @@ ds.dbname=cloudconductor
 #the service ip, default is 0.0.0.0
 #svc.ip=0.0.0.0
 #the service port, default ist 8090
-#svc.port=8090
+svc.port=8090
 
 #######
 ## WEBSOCKET CONFIGURTAION
 #######
 #the websocket timeout in ms, default is 60000
 #ws.timeout=60000
+
+#######
+## JAVA WEB TOKEN CONFIGURTAION
+#######
+jwtauth.issuer=cinovo
+jwtauth.secret=4ED267FE5BBA826F6D2EE71A3A5EE491275051234F997B19068FECF9729FC2AC
