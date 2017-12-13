@@ -1,26 +1,33 @@
-#ds.type=HSQL
-#ds.type=MYSQL
-ds.type=POSTGRESQL
+#######
+## DATABASE CONFIGURTAION
+#######
+#define the database to use. Options are: HSQL, MYSQL, POSTGRESQL
+ds.type=POSTGRESQL #postgres database
+#database host
 ds.host=localhost
+#database port
 ds.port=5432
+#database username
 ds.username=postgres
+#database password
 ds.pw=password
+#database name
 ds.dbname=cloudconductor
+
+#use some demodata to initialize the database (should not used in prod environments)
 #ds.demodata=false
 #ds.demofile=foobar.sql
+
+#######
+## SERVICE CONFIGURTAION
+#######
+#the service ip, default is 0.0.0.0
 #svc.ip=0.0.0.0
+#the service port, default ist 8090
 #svc.port=8090
-cloudconductor.name=CC-Server
-cloudconductor.username=admin
-cloudconductor.password=password
-#repos.indexscan=true
-#repos.indexer=IndexFileIndexer
-#repos.indexer=RPMIndexer
-repos.provider=FileProvider
-repos.basedir=static/yum/
-#repos.provider=HTTPProvider
-#repos.baseurl=http://yum.cloudconductor.net/
-#repos.provider=AWSS3Provider
-#repos.bucket=bucketname
-#aws.accessKeyId=
-#aws.secretKey=
+
+#######
+## WEBSOCKET CONFIGURTAION
+#######
+#the websocket timeout in ms, default is 60000
+#ws.timeout=60000

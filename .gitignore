@@ -5,3 +5,5 @@ cloudconductor.properties
 .idea
 *.iml
 /out/
+.classpath
+.project

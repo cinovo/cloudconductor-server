@@ -8,7 +8,7 @@
     </parent>
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0-RC-SNAPSHOT</version>
     <name>CloudConductor Server</name>
     <description>Server to manage deployment environments</description>
     <inceptionYear>2014</inceptionYear>
@@ -52,10 +52,6 @@
     </developers>
     <contributors>
         <contributor>
-            <name>Maximilian Hilbert</name>
-            <organization>Cinovo AG</organization>
-        </contributor>
-        <contributor>
         	<name>Marc Weise</name>
         	<organization>Cinovo AG</organization>
         </contributor>
@@ -64,7 +60,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dvalin.version>1.22</dvalin.version>
-        <cloudconductor.api.version>3.0-SNAPSHOT</cloudconductor.api.version>
+        <cloudconductor.api.version>3.0-RC-SNAPSHOT</cloudconductor.api.version>
     </properties>
 
     <dependencies>
