@@ -3,6 +3,8 @@
 #######
 #define the database to use. Options are: HSQL, MYSQL, POSTGRESQL
 ds.type=POSTGRESQL
+#root package of entities
+ds.package=de.cinovo.cloudconductor.server.model
 #database host
 ds.pgsql.host=localhost
 #database port

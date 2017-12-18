@@ -7,3 +7,4 @@ cloudconductor.properties
 /out/
 .classpath
 .project
+/bin/
