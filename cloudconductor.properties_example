@@ -3,17 +3,15 @@
 #######
 #define the database to use. Options are: HSQL, MYSQL, POSTGRESQL
 ds.type=POSTGRESQL
-#root package of entities
-ds.package=de.cinovo.cloudconductor.server.model
-#database host
+#database host  (use .pgsql, .mysql, .hsql according to your choosen database)
 ds.pgsql.host=localhost
-#database port
+#database port  (use .pgsql, .mysql, .hsql according to your choosen database)
 ds.pgsql.port=5432
-#database username
+#database username  (use .pgsql, .mysql, .hsql according to your choosen database)
 ds.pgsql.user=postgres
-#database password
-ds.pgsql.password=huihui
-#database name
+#database password  (use .pgsql, .mysql, .hsql according to your choosen database)
+ds.pgsql.password=password
+#database name  (use .pgsql, .mysql, .hsql according to your choosen database)
 ds.pgsql.db=cloudconductor
 
 #use some demodata to initialize the database (should not used in prod environments)
@@ -24,7 +22,7 @@ ds.pgsql.db=cloudconductor
 ## SERVICE CONFIGURTAION
 #######
 #the service ip, default is 0.0.0.0
-#svc.ip=0.0.0.0
+svc.ip=localhost
 #the service port, default ist 8090
 svc.port=8090
 
@@ -37,5 +35,5 @@ svc.port=8090
 #######
 ## JAVA WEB TOKEN CONFIGURTAION
 #######
-jwtauth.issuer=cinovo
+jwtauth.issuer=cloudconductor
 jwtauth.secret=4ED267FE5BBA826F6D2EE71A3A5EE491275051234F997B19068FECF9729FC2AC
