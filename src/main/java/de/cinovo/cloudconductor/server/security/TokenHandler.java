@@ -31,8 +31,8 @@ public class TokenHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 	
-	@Value("${cloudconductor.tokenlength:2-8}")
-	private static final int TOKEN_LENGTH = 32;
+	@Value("${cloudconductor.tokenlength:32}")
+	private int TOKEN_LENGTH;
 	
 	@Autowired
 	private IAuthTokenDAO authTokenDao;
@@ -173,8 +173,8 @@ public class TokenHandler {
 	}
 	
 	private String generateToken() {
-		String generatedToken = new BigInteger(TokenHandler.TOKEN_LENGTH * 5, new SecureRandom()).toString(32);
-		generatedToken = this.generatePartialUppercasedToken(TokenHandler.TOKEN_LENGTH, generatedToken);
+		String generatedToken = new BigInteger(this.TOKEN_LENGTH * 5, new SecureRandom()).toString(32);
+		generatedToken = this.generatePartialUppercasedToken(this.TOKEN_LENGTH, generatedToken);
 		return this.shuffleWithFisherYates(generatedToken);
 	}
 	
