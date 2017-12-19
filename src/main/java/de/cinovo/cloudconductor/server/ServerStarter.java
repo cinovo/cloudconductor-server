@@ -61,7 +61,6 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
-		System.getProperties().put("jaxrs.path", "/api");
 		Log4jLoggingConfigurer.setup();
 		if (ServerStarter.checkInstalled()) {
 			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
@@ -104,7 +103,7 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	@Override
 	protected void loadBasicProperties(Map<String, String> map) {
 		super.loadBasicProperties(map);
-		map.put("ds.package", "de/cinovo/cloudconductor/server/");
+		map.put("ds.package", "de/cinovo/cloudconductor/server");
 		map.put("jaxrs.path", "/api");
 		map.put("jetty.sessions", "true");
 	}
