@@ -30,7 +30,6 @@ export class ServiceDetail implements OnInit {
   public showAddPackage = false;
   private newPackage: string;
   protected allPackages: Array<Package> = [];
-  private back: any;
 
   public mode: Mode = 'edit';
   public serviceForm: FormGroup;
@@ -52,7 +51,6 @@ export class ServiceDetail implements OnInit {
   public ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const serviceName = params['serviceName'];
-
       if (serviceName === 'new') {
         this.mode = 'new';
       } else {
@@ -151,14 +149,14 @@ export class ServiceDetail implements OnInit {
   private localAddPackage() {
     this.service.packages.push(this.newPackage);
     this.service.packages.sort();
-    if (!Validator.notEmpty(this.service.name)) {
-      this.service.name = this.newPackage;
+    if (!Validator.notEmpty(this.serviceForm.get('name').value)) {
+      this.serviceForm.patchValue({name : this.newPackage});
     }
-    if (!Validator.notEmpty(this.service.description)) {
-      this.service.description = this.newPackage;
+    if (!Validator.notEmpty(this.serviceForm.get('description').value)) {
+      this.serviceForm.patchValue({description : this.newPackage});
     }
-    if (Validator.notEmpty(this.service.initScript)) {
-      this.service.initScript = this.newPackage;
+    if (!Validator.notEmpty(this.serviceForm.get('initScript').value)) {
+      this.serviceForm.patchValue({initScript : this.newPackage});
     }
     this.newPackage = null;
     this.showAddPackage = false;

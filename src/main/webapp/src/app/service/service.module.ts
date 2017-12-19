@@ -15,8 +15,6 @@ import { AuthorizationGuard } from '../util/auth/authorization.guard';
 const serviceRoutes: Routes = [
   {path: '', component: ServiceOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: ServiceDetail, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':serviceName', component: ServiceDetail, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
 ];
