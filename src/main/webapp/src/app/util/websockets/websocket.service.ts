@@ -29,9 +29,13 @@ export class WebSocketService {
     } else {
       return this.wsConfigService.getWSConfig()
         .map((config: WSConfig) => {
-          this._baseUrl = config.basePath;
+          if(location.protocol === "https:") {
+            this._baseUrl = "wss://"+location.host+"/websocket"
+          }else {
+            this._baseUrl = "ws://"+location.host+"/websocket"
+          }
           this._timeout = config.timeout;
-          return this.createWebSocket(config.basePath, name, objName);
+          return this.createWebSocket( this._baseUrl , name, objName);
         });
     }
   }
