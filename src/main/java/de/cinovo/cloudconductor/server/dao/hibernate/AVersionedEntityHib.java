@@ -47,8 +47,8 @@ public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends 
 		element.setVersion(0L);
 		element.setDeleted(false);
 		E ele = super.save(element);
-		ele.setOrigId(ele.getId());
-		return this.entityManager.merge(ele);
+		element.setOrigId(ele.getId());
+		return element;
 	}
 
 	@Override
