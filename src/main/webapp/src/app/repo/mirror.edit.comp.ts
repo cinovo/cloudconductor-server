@@ -36,7 +36,7 @@ export class MirrorEdit implements OnInit {
     this.mirrorForm = fb.group({
       id: '',
       description: ['', [Validators.required, forbiddenNameValidator('new')]],
-      path: ['', Validators.required],
+      path: [, Validators.required],
       indexerType: ['NONE'],
       providerType: ['NONE'],
       repoName: '',
@@ -52,6 +52,9 @@ export class MirrorEdit implements OnInit {
     this.route.url.subscribe((value) => {
       if (value[value.length - 1].path === 'new') {
         this.mode = 'new'
+        if(window.location.port) {
+          this.mirrorForm.patchValue({path: 'http://' + window.location.host + '/api/repos/'});
+        }
       }
     });
     this.route.params.subscribe((params) => {

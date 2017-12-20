@@ -17,10 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Template;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -34,10 +33,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -224,7 +223,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	/**
 	 * @return the repos
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
 	@JoinTable(name = "map_template_repo", schema = "cloudconductor", //
 	joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
 	public List<ERepo> getRepos() {

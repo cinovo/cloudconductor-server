@@ -31,7 +31,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Collection;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -43,7 +42,7 @@ import java.util.Collection;
 @Provider
 @Produces(de.cinovo.cloudconductor.api.MediaType.APPLICATION_JAVAARGS)
 @JaxRsComponent
-public class JavaArgsWriter implements MessageBodyWriter<Collection<ConfigValue>> {
+public class JavaArgsWriter implements MessageBodyWriter<ConfigValue[]> {
 	
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -51,12 +50,12 @@ public class JavaArgsWriter implements MessageBodyWriter<Collection<ConfigValue>
 	}
 	
 	@Override
-	public long getSize(Collection<ConfigValue> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+	public long getSize(ConfigValue[] t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
 		return -1;
 	}
 	
 	@Override
-	public void writeTo(Collection<ConfigValue> t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
+	public void writeTo(ConfigValue[] t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
 		final PrintStream printStream = new PrintStream(entityStream, false, "UTF8");
 		for (ConfigValue entry : t) {
 			printStream.print("-D");
