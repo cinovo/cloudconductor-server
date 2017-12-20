@@ -26,11 +26,11 @@ public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends 
 		if ((element.getId() == null) || (element.getId() < 0)) {
 			return this.saveNewElement(element);
 		}
+		this.delete(element);
 		return super.save(this.createNewRevision(element));
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional
 	private E createNewRevision(E element) {
 		E r = (E) element.cloneNew();
 		if ((r.getVersion() == null) || (r.getVersion() < 0)) {
@@ -43,7 +43,6 @@ public abstract class AVersionedEntityHib<E extends IVersionized<Long>> extends 
 		return r;
 	}
 
-	@Transactional
 	private E saveNewElement(E element) {
 		element.setVersion(0L);
 		element.setDeleted(false);
