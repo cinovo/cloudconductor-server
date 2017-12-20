@@ -35,10 +35,7 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
               private serviceHttp: ServiceHttpService) { };
 
   ngOnInit(): void {
-    this._templateNamesSub = this.templateHttp.getTemplateNames().subscribe(
-      (templateNames) => this.templateNames = templateNames,
-      (err) => console.error(err)
-    );
+    this._templateNamesSub = this.configHttp.templates.subscribe((result) => this.templateNames = result);
 
     this._serviceNamesSub = this.serviceHttp.getServiceNames().subscribe(
       (serviceNames) => this.serviceNames = serviceNames,
@@ -75,11 +72,15 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
       return obj;
     }).subscribe(
       (result) => {
+        console.log(result)
         if (result instanceof Array) {
           this.preview = result;
         } else if (result._body) {
           this.preview = result._body;
+        }else {
+          this.preview = result;
         }
+
       }
     )
   }

@@ -24,7 +24,7 @@ export class ConfigValueEdit implements OnInit {
   public kvForm: FormGroup;
 
   public template: string;
-  public mode = 'edit';
+  public mode = 'new';
   public templates: Array<String> = [];
   public services: Array<String> = [];
 

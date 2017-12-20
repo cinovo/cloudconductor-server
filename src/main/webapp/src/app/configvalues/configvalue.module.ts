@@ -18,8 +18,10 @@ const cvRoutes: Routes = [
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template', component: ConfigValueOverview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':template/:service/new', component: ConfigValueNew, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+  {path: ':template/:service/newTemplate', component: ConfigValueNew, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: ':template/:service/new', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template/:service/:key', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
 ];

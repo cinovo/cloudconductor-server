@@ -5,6 +5,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
 import { Validator } from '../../util/validator.util';
+import { HttpParams } from "@angular/common/http/src/params";
+import { HttpResponse } from "@angular/common/http/src/response";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -93,7 +95,13 @@ export class ConfigValueHttpService {
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {
-    const options = { headers: new HttpHeaders({'Accept': mode})};
+    let options ={};
+    if(mode.indexOf("json")>0) {
+       options = {headers: new HttpHeaders({'Accept': mode})};
+    }else {
+       options = {headers: new HttpHeaders({'Accept': mode}), responseType: 'text' as 'text'};
+    }
+
 
     let preview$: Observable<any>;
     if (Validator.notEmpty(service)) {
