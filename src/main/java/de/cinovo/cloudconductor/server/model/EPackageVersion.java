@@ -17,8 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,10 +34,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -74,7 +73,7 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	/**
 	 * @return the package
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(name = "packageid")
 	public EPackage getPkg() {
 		return this.pkg;
