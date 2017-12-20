@@ -6,19 +6,19 @@ import { Routes, RouterModule } from '@angular/router';
 import { ConfigValueEdit } from './cs.edit.comp';
 import { ConfigValueOverview } from './cv.overview.comp';
 import { ConfigValuePreview } from './cv.preview.comp';
-import { CoreModule } from '../core/core.module';
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
 import { Role } from '../util/enums.util';
+import { ConfigValueNew } from "./cs.new.comp";
 
 const cvRoutes: Routes = [
   {path: 'preview', component: ConfigValuePreview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template', component: ConfigValueOverview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':template/:service/new', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+  {path: ':template/:service/new', component: ConfigValueNew, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template/:service/:key', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
@@ -43,7 +43,8 @@ const cvRoutes: Routes = [
   declarations: [
     ConfigValueEdit,
     ConfigValueOverview,
-    ConfigValuePreview
+    ConfigValuePreview,
+    ConfigValueNew
   ]
 })
 export class ConfigValueModule { }

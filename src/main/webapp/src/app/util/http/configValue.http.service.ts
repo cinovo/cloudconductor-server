@@ -87,7 +87,7 @@ export class ConfigValueHttpService {
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {
     if (!Validator.notEmpty(service)) {
-      return this.http.get<string>(`${this._basePathURL}/${template}/null/'${key}`);
+      return this.http.get<string>(`${this._basePathURL}/${template}/null/${key}`);
     }
     return this.http.get<string>(`${this._basePathURL}/${template}/${service}/${key}`);
   }

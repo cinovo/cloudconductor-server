@@ -24,7 +24,7 @@ export class ConfigValueEdit implements OnInit {
   public kvForm: FormGroup;
 
   public template: string;
-  public mode = 'new';
+  public mode = 'edit';
   public templates: Array<String> = [];
   public services: Array<String> = [];
 
@@ -54,7 +54,7 @@ export class ConfigValueEdit implements OnInit {
       if (template === 'newTemplate') {
         template = '';
       }
-      const formObj = {key, value, template, service};
+      let formObj = {key, value, template, service};
       this.kvForm.setValue(formObj);
 
       if (Validator.notEmpty(key)) {
