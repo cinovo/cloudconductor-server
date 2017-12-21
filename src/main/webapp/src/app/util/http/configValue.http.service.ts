@@ -82,7 +82,7 @@ export class ConfigValueHttpService {
   }
 
   public existsConfigValue(template: string, service: string, key: string): Observable<boolean> {
-    return this.getConfigValue(template, service, key)
+    return this.getConfigValueExact(template, service, key)
                 .map(s => (s && s.length > 0))
                 .catch(err => Observable.of(false));
   }
@@ -92,6 +92,13 @@ export class ConfigValueHttpService {
       return this.http.get<string>(`${this._basePathURL}/${template}/null/${key}`);
     }
     return this.http.get<string>(`${this._basePathURL}/${template}/${service}/${key}`);
+  }
+
+  public getConfigValueExact(template: string, service: string, key: string): Observable<string> {
+    if (!Validator.notEmpty(service)) {
+      return this.http.get<string>(`${this._basePathURL}/${template}/null/${key}/exact`);
+    }
+    return this.http.get<string>(`${this._basePathURL}/${template}/${service}/${key}/exact`);
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {

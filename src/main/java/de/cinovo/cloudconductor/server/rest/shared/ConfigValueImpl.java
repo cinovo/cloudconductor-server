@@ -126,6 +126,26 @@ public class ConfigValueImpl implements IConfigValue {
 		}
 		return result.getValue();
 	}
+
+	@Override
+	@Transactional
+	public String getExact(String template, String service, String key) {
+		RESTAssert.assertNotEmpty(template);
+		RESTAssert.assertNotEmpty(key);
+
+		EConfigValue result;
+		if (ReservedConfigKeyStore.instance.isReserved(key)) {
+			return ReservedConfigKeyStore.instance.getValue(key);
+		}
+		if ((service == null) || service.isEmpty() || service.equals("null")) {
+			service = null;
+		}
+		result = this.configValueDAO.findBy(template, service, key);
+		if (result == null) {
+			throw new NotFoundException();
+		}
+		return result.getValue();
+	}
 	
 	@Override
 	@Transactional
