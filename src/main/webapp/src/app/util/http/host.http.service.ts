@@ -51,16 +51,19 @@ export class HostHttpService {
 
   public startService(hostName: string, serviceName: string): Observable<boolean> {
     let val: ChangeServiceState = {host: hostName, service: serviceName, targetState: ServiceState.STARTING};
-    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, val, {headers: new HttpHeaders({'ContentType': 'application/json'})}).share();
+    val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
+    return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).share();
   }
 
   public stopService(hostName: string, serviceName: string): Observable<boolean> {
     let val: ChangeServiceState = {host: hostName, service: serviceName, targetState: ServiceState.STOPPING};
-    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, val).share();
+    val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
+    return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).share();
   }
 
   public restartService(hostName: string, serviceName: string): Observable<boolean> {
     let val: ChangeServiceState = {host: hostName, service: serviceName, targetState: ServiceState.RESTARTING_STOPPING};
-    return this.http.put<boolean>(`${this._basePathURL}/${hostName}/${serviceName}`, val).share();
+    val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
+    return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).share();
   }
 }
