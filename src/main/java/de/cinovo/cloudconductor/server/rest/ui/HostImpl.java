@@ -1,7 +1,7 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.IHost;
+import de.cinovo.cloudconductor.api.model.ChangeServiceState;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
@@ -68,13 +68,13 @@ public class HostImpl implements IHost {
 
 	@Override
 	@Transactional
-	public void setServiceState(String hostName, String serviceName, ServiceState newState) {
-		RESTAssert.assertNotEmpty(hostName);
-		RESTAssert.assertNotEmpty(serviceName);
-		RESTAssert.assertNotNull(newState);
-		EHost eHost = this.hostDAO.findByName(hostName);
-		this.hostHandler.changeServiceState(eHost, serviceName, newState);
+	public void setServiceState(ChangeServiceState changeServiceState) {
+		RESTAssert.assertNotEmpty(changeServiceState.getHost());
+		RESTAssert.assertNotEmpty(changeServiceState.getService());
+		RESTAssert.assertNotNull(changeServiceState.getTargetState());
+		EHost eHost = this.hostDAO.findByName(changeServiceState.getHost());
+		this.hostHandler.changeServiceState(eHost, changeServiceState.getService(), changeServiceState.getTargetState());
 		eHost = this.hostDAO.save(eHost);
-		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, eHost.toApi()));
+		this.hostDetailWsHandler.broadcastChange(changeServiceState.getHost(), new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
 	}
 }
