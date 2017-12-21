@@ -124,7 +124,10 @@ export class Sorter {
     for (let i = 0; i < aNumbers.length; i++) {
       let res: number;
       if (isNaN(aNumbers[i]) || isNaN(bNumbers[i])) {
-        res = aNumbers[i].localeCompare(bNumbers[i]);
+        if(aNumbers[i].startsWith("SNAPSHOT") && !bNumbers[i].startsWith("SNAPSHOT")) res = -1;
+        else if(!aNumbers[i].startsWith("SNAPSHOT") && bNumbers[i].startsWith("SNAPSHOT")) res = 1;
+        else if (aNumbers[i] < bNumbers[i]) res = -1;
+        else if (aNumbers[i] > bNumbers[i]) res = 1;
       } else {
         res = aNumbers[i] - bNumbers[i];
       }
