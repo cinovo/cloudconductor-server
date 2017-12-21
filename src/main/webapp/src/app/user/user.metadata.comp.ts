@@ -110,14 +110,12 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
       active: userForm.active
     };
 
-    if (this.mode === this.modes.NEW) {
-      if (userForm.newPassword && userForm.newPassword.length > 0) {
-        if (userForm.newPassword === userForm.repeatPassword) {
-          u.password = userForm.newPassword
-        } else {
-          this.alertService.danger('Passwords do not match!');
-          return;
-        }
+    if (userForm.newPassword && userForm.newPassword.length > 0) {
+      if (userForm.newPassword === userForm.repeatPassword) {
+        u.password = userForm.newPassword
+      } else {
+        this.alertService.danger('Passwords do not match!');
+        return;
       }
     }
 
@@ -135,6 +133,10 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
         if (this.mode === this.modes.NEW) {
           this.userForm.reset();
           this.router.navigate(['/user', u.loginName]);
+        } else {
+          // only clear new password
+          this.userForm.controls.newPassword.reset();
+          this.userForm.controls.repeatPassword.reset();
         }
       }, (err) => {
         this.alertService.danger(`Error saving user '${u.loginName}': ${err}`);
