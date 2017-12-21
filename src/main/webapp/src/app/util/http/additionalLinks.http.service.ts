@@ -37,21 +37,21 @@ export class AdditionalLinkHttpService {
   }
 
   public deleteLink(id: number): Observable<boolean> {
-    let res = this.http.delete<boolean>(id.toString());
+    let res = this.http.delete<boolean>(`${this.basePathURL}/${id.toString()}`).share();
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
   public newLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this.http.post<AdditionalLink>('', link);
+    let res = this.http.post<AdditionalLink>(this.basePathURL, link).share();
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
   public editLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this.http.put<AdditionalLink>('', link).share();
+    let res = this.http.put<AdditionalLink>(this.basePathURL, link).share();
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }

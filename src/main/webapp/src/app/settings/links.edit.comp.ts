@@ -51,7 +51,7 @@ export class LinksEdit implements OnInit, OnDestroy {
     }
     this.linksHttp.editLink(this.editLink).subscribe(
       () => this.abortEditLink(),
-      (error) => this.alerts.danger('The choosen label already exists. Please choose an unused label name.')
+      (error) => this.alerts.danger('Error editing link!')
     );
   }
 
@@ -61,7 +61,7 @@ export class LinksEdit implements OnInit, OnDestroy {
     }
     this.linksHttp.newLink(this.newLink).subscribe(
       () => this.abortNewLink(),
-      (error) => this.alerts.danger('The choosen label already exists. Please choose an unused label name.')
+      (error) => this.alerts.danger('Error creating link: The choosen label already exists. Please choose another label.')
     );
   }
 
