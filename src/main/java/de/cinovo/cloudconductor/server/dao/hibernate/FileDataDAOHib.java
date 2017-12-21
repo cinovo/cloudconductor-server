@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Repository;
  * @author psigloch
  */
 @Repository("FileDataDAOHib")
-public class FileDataDAOHib extends AVersionedEntityHib<EFileData> implements IFileDataDAO {
+public class FileDataDAOHib extends EntityDAOHibernate<EFileData, Long> implements IFileDataDAO {
 
 	@Override
 	public Class<EFileData> getEntityClass() {
@@ -38,7 +39,7 @@ public class FileDataDAOHib extends AVersionedEntityHib<EFileData> implements IF
 
 	@Override
 	public EFileData findDataByFile(EFile file) {
-		String query = "FROM EFileData f WHERE f.parent.id = ?1 OR f.origId = ?2 ";
-		return this.findVersionedByQuery(query, "f", file.getId(), file.getOrigId());
+		String query = "FROM EFileData f WHERE f.parent.id = ?1";
+		return this.findByQuery(query, file.getId());
 	}
 }

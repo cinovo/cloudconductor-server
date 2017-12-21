@@ -17,8 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.ConfigFile;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,10 +34,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -47,7 +46,7 @@ import de.taimos.dvalin.jpa.IEntity;
  */
 @Entity
 @Table(name = "file", schema = "cloudconductor")
-public class EFile extends AModelApiConvertable<ConfigFile> implements IVersionized<Long>, INamed {
+public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -63,11 +62,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	private String checksum;
 	private List<EService> dependentServices = new ArrayList<>();
 	private List<ETemplate> templates = new ArrayList<>();
-	
-	private Long version;
-	private boolean deleted = false;
-	private Long origId;
-	
+
 	
 	@Override
 	@Id
@@ -79,7 +74,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	/**
 	 * @param id the id to set
 	 */
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -218,7 +212,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfileservice", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "origid"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
+	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
 	public List<EService> getDependentServices() {
 		return this.dependentServices;
 	}
@@ -235,7 +229,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	 */
 	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "origid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
+	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "templateid"))
 	public List<ETemplate> getTemplates() {
 		return this.templates;
 	}
@@ -263,42 +257,7 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 		this.name = name;
 	}
 	
-	@Override
-	public boolean isDeleted() {
-		return this.deleted;
-	}
-	
-	/**
-	 * @param deleted the deleted to set
-	 */
-	@Override
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
-	
-	@Override
-	public void setOrigId(Long id) {
-		this.origId = id;
-	}
-	
-	@Override
-	public Long getOrigId() {
-		return this.origId;
-	}
-	
-	@Override
-	public Long getVersion() {
-		return this.version;
-	}
-	
-	/**
-	 * @param version the version to set
-	 */
-	@Override
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof EFile)) {
@@ -311,27 +270,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IVersioni
 	@Override
 	public int hashCode() {
 		return (this.getName() == null) ? 0 : this.getName().hashCode();
-	}
-	
-	@Override
-	public IEntity<Long> cloneNew() {
-		EFile r = new EFile();
-		r.setChecksum(this.checksum);
-		r.setDeleted(this.deleted);
-		r.setTemplates(this.templates);
-		r.setDependentServices(this.dependentServices);
-		r.setFileMode(this.fileMode);
-		r.setGroup(this.group);
-		r.setName(this.name);
-		r.setOrigId(this.origId);
-		r.setOwner(this.owner);
-		r.setPkg(this.pkg);
-		r.setReloadable(this.isReloadable);
-		r.setTargetPath(this.targetPath);
-		r.setTemplate(this.isTemplate);
-		r.setVersion(this.version);
-		r.setDirectory(this.isDirectory);
-		return r;
 	}
 	
 	@Override

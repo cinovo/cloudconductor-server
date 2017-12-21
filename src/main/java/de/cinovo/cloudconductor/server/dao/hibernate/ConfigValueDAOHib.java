@@ -19,6 +19,7 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.List;
  * @author psigloch
  */
 @Repository("ConfigValueDAOHib")
-public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> implements IConfigValueDAO {
+public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> implements IConfigValueDAO {
 
     public static final String RESERVED_GLOBAL = "GLOBAL";
 
@@ -41,7 +42,7 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
     private static final String WHERE_KEY = " AND c.configkey = ?";
 
     @SuppressWarnings("JpaQlInspection")
-    private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf WHERE conf.deleted = false";
+    private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
 
     @Override
     public Class<EConfigValue> getEntityClass() {
@@ -74,16 +75,16 @@ public class ConfigValueDAOHib extends AVersionedEntityHib<EConfigValue> impleme
 
     @Override
     public List<EConfigValue> findAll(String template) {
-        return this.findVersionedListByQuery(ConfigValueDAOHib.BASE_QUERY, "c", template);
+        return this.findListByQuery(ConfigValueDAOHib.BASE_QUERY, template);
     }
 
     private List<EConfigValue> findList(String template, String service) {
-        return this.findVersionedListByQuery(this.createQuery(template, service, null), "c", (Object[]) this.getParams(template, service, null));
+        return this.findListByQuery(this.createQuery(template, service, null),  (Object[]) this.getParams(template, service, null));
     }
 
 
     private EConfigValue find(String template, String service, String key) {
-        return this.findVersionedByQuery(this.createQuery(template, service, key), "c", (Object[]) this.getParams(template, service, key));
+        return this.findByQuery(this.createQuery(template, service, key),  (Object[]) this.getParams(template, service, key));
     }
 
 

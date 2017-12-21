@@ -1147,4 +1147,33 @@
     		<column name="permission">2</column>
     	</insert>
    	</changeSet>
+    <changeSet id="34" author="psigloch">
+        <dropForeignKeyConstraint baseTableName="configvalues" baseTableSchemaName="cloudconductor" constraintName="fk_cv_versionized"/>
+        <sql>
+            DELETE FROM cloudconductor.configvalues WHERE id IN(SELECT out.id FROM cloudconductor.configvalues as out LEFT JOIN cloudconductor.configvalues as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            DELETE FROM cloudconductor.configvalues WHERE deleted = true
+        </sql>
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="version" />
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="deleted" />
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="origid" />
+
+        <dropForeignKeyConstraint baseTableName="file" baseTableSchemaName="cloudconductor" constraintName="fk_file_versionized"/>
+        <sql>
+            DELETE FROM cloudconductor.file WHERE id IN(SELECT out.id FROM cloudconductor.file as out LEFT JOIN cloudconductor.file as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            DELETE FROM cloudconductor.file WHERE deleted = true
+        </sql>
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="version" />
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="deleted" />
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="origid" />
+
+        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor" constraintName="fk_filedata_versionized"/>
+        <sql>
+            DELETE FROM cloudconductor.filedata WHERE id IN(SELECT out.id FROM cloudconductor.filedata as out LEFT JOIN cloudconductor.filedata as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            DELETE FROM cloudconductor.filedata WHERE deleted = true
+        </sql>
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="version" />
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="deleted" />
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="origid" />
+
+    </changeSet>
 </databaseChangeLog>

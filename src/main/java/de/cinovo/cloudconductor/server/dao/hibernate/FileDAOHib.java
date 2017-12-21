@@ -19,8 +19,11 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
+import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +35,7 @@ import java.util.List;
  *
  */
 @Repository("FileDAOHib")
-public class FileDAOHib extends AVersionedEntityHib<EFile> implements IFileDAO {
+public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFileDAO {
 	
 	@Override
 	public Class<EFile> getEntityClass() {
@@ -41,18 +44,21 @@ public class FileDAOHib extends AVersionedEntityHib<EFile> implements IFileDAO {
 	
 	@Override
 	public EFile findByName(String name) {
-		return this.findVersionedByQuery("FROM EFile c WHERE c.name = ?1", "c", name);
+		return this.findByQuery("FROM EFile c WHERE c.name = ?1", name);
 	}
 	
 	@Override
 	public Long count() {
-		return (Long) this.entityManager.createQuery(this.getVersionizedQuerry("SELECT COUNT(*) FROM EFile", "f")).getSingleResult();
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> query = builder.createQuery(Long.class);
+		query.select(builder.count(query.from(EFile.class)));
+		return this.entityManager.createQuery(query).getSingleResult();
 	}
 	
 	@Override
 	public List<EFile> findByTag(String... tagnames) {
 		String query = "FROM EFile f WHERE f.tags.name IN ?1";
-		return this.findVersionedListByQuery(query, "f", Arrays.asList(tagnames));
+		return this.findListByQuery(query,  Arrays.asList(tagnames));
 	}
 	
 }
