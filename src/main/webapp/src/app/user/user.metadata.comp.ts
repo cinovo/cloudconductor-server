@@ -103,9 +103,9 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
 
   public saveUser(userForm: UserForm): void {
     const u: User = {
-      loginName: userForm.loginName,
-      displayName: userForm.displayName,
-      email: userForm.email,
+      loginName: userForm.loginName.trim(),
+      displayName: userForm.displayName.trim(),
+      email: userForm.email.trim(),
       userGroups: this.user.userGroups,
       active: userForm.active
     };
