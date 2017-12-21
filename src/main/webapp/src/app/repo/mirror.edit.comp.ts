@@ -36,7 +36,7 @@ export class MirrorEdit implements OnInit {
     this.mirrorForm = fb.group({
       id: '',
       description: ['', [Validators.required, forbiddenNameValidator('new')]],
-      path: [, Validators.required],
+      path: ['', Validators.required],
       indexerType: ['NONE'],
       providerType: ['NONE'],
       repoName: '',
