@@ -17,11 +17,11 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
+import java.util.Set;
+
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
-
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -34,12 +34,12 @@ public class ConfigFileHandler extends DefaultRestHandler<ConfigFile> {
 	
 	/**
 	 * @param cloudconductorUrl the config server url
+	 * @param token the token to be used
 	 */
 	public ConfigFileHandler(String cloudconductorUrl, String token) {
 		super(cloudconductorUrl, token);
 	}
 	
-
 	@Override
 	protected String getDefaultPath() {
 		return "/file";

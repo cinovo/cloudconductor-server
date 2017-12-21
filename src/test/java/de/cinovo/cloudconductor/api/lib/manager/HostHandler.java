@@ -17,13 +17,13 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
+import java.util.Set;
+
 import de.cinovo.cloudconductor.api.lib.exceptions.ClientErrorException;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.DefaultRestHandler;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.Service;
-
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -36,12 +36,12 @@ public class HostHandler extends DefaultRestHandler<Host> {
 	
 	/**
 	 * @param cloudconductorUrl the config server url
+	 * @param token the token to be used
 	 */
 	public HostHandler(String cloudconductorUrl, String token) {
 		super(cloudconductorUrl, token);
 	}
 	
-
 	@Override
 	protected String getDefaultPath() {
 		return "/host";

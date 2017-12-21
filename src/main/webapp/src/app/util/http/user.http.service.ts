@@ -74,7 +74,7 @@ export class UserHttpService {
   }
 
   public createAuthToken(username: string): Observable<User> {
-    return this.http.post<User>(`${this._basePath}/${username}/authtoken`, {});
+    return this.http.put<User>(`${this._basePath}/${username}/authtoken`, {});
   }
 
   public revokeAuthToken(username: string, authToken: AuthToken): Observable<User> {

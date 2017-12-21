@@ -17,6 +17,8 @@ package de.cinovo.cloudconductor.api.lib.manager;
  * #L%
  */
 
+import java.util.Set;
+
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.helper.AbstractApiHandler;
 import de.cinovo.cloudconductor.api.model.AgentOption;
@@ -27,8 +29,6 @@ import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
 import de.cinovo.cloudconductor.api.model.Template;
-
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -41,6 +41,7 @@ public class AgentHandler extends AbstractApiHandler {
 	
 	/**
 	 * @param cloudconductorUrl the config server url
+	 * @param token the token to be used
 	 */
 	public AgentHandler(String cloudconductorUrl, String token) {
 		super(cloudconductorUrl, token);

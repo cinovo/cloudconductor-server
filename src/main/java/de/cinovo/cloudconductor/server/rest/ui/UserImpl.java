@@ -43,12 +43,12 @@ public class UserImpl implements IUser {
 	
 	@Override
 	@Transactional
-	public List<User> getUsers() {
+	public User[] getUsers() {
 		List<User> result = new ArrayList<>();
 		for (EUser eUser : this.userDAO.findList()) {
 			result.add(eUser.toApi());
 		}
-		return result;
+		return result.toArray(new User[result.size()]);
 	}
 	
 	@Override
@@ -95,15 +95,13 @@ public class UserImpl implements IUser {
 	
 	@Override
 	@Transactional
-	public User revokeAuthToken(String userName, String token) {
+	public void revokeAuthToken(String userName, String token) {
 		RESTAssert.assertNotEmpty(userName);
 		RESTAssert.assertNotEmpty(token);
 		EUser eUser = this.userDAO.findByLoginName(userName);
 		RESTAssert.assertNotNull(eUser);
-		if (this.tokenHandler.revokeAuthToken(eUser, token)) {
-			eUser = this.userDAO.findByLoginName(userName);
-		}
-		return eUser.toApi();
+		boolean success = this.tokenHandler.revokeAuthToken(eUser, token);
+		RESTAssert.assertTrue(success);
 	}
 	
 	@Override

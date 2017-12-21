@@ -38,12 +38,12 @@ public class UserGroupImpl implements IUserGroup {
 	
 	@Override
 	@Transactional
-	public List<UserGroup> getUserGroups() {
+	public UserGroup[] getUserGroups() {
 		List<UserGroup> result = new ArrayList<>();
 		for (EUserGroup group : this.userGroupDAO.findList()) {
 			result.add(group.toApi());
 		}
-		return result;
+		return result.toArray(new UserGroup[result.size()]);
 	}
 	
 	@Override
@@ -82,7 +82,7 @@ public class UserGroupImpl implements IUserGroup {
 	
 	@Override
 	@Transactional
-	public List<User> getGroupMembers(String userGroupName) {
+	public User[] getGroupMembers(String userGroupName) {
 		RESTAssert.assertNotEmpty(userGroupName);
 		EUserGroup eUserGroup = this.userGroupDAO.findByName(userGroupName);
 		RESTAssert.assertNotNull(eUserGroup);
@@ -91,7 +91,7 @@ public class UserGroupImpl implements IUserGroup {
 		for (EUser user : this.userDAO.findByGroup(eUserGroup)) {
 			groupMembers.add(user.toApi());
 		}
-		return groupMembers;
+		return groupMembers.toArray(new User[groupMembers.size()]);
 	}
 	
 }
