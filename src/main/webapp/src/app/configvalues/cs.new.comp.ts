@@ -36,7 +36,7 @@ export class ConfigValueNew implements OnInit {
     this.configHttp.templates.subscribe((result) => this.templates = result);
   }
 
-  private save() {
+  public save() {
     this.configHttp.getValues(this.kvForm.value.template).subscribe((result) => {
       if (result.length < 1) {
         this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
