@@ -35,8 +35,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
 
   public settings: Settings = {};
 
-  protected allRepos: Array<Repo> = [];
-  public newRepo = '';
+  protected allRepos: Repo[] = [];
   public showNewRepo = false;
 
   public templateForm: FormGroup;
@@ -134,7 +133,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
           }
         }).subscribe(() => {
           this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
-          this.router.navigate(['template', templateToSave]);
+          this.router.navigate(['template', templateToSave.name]);
         }, (err) => {
           this.alerts.danger(`Failed to save template: ${err}`);
           console.error(err);
@@ -167,11 +166,13 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   }
 
   protected addNewRepo(newRepo: string): void {
-    if (newRepo) {
-      this.template.repos.push(this.newRepo);
-      this.template.repos.sort();
+    if (Validator.notEmpty(newRepo)) {
+      const newRepos = [...this.template.repos, newRepo];
+      newRepos.sort();
+
+      this.template.repos = newRepos;
       this.settings.disallowUninstall.sort();
-      this.newRepo = null;
+      this.templateForm.controls.newRepo.setValue('');
       this.showNewRepo = false;
     }
   }
@@ -186,7 +187,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   }
 
   protected goToAddRepo(): void {
-    this.newRepo = '';
+    this.templateForm.controls.newRepo.setValue('');
     this.showNewRepo = true;
     this.repoHttp.getRepos().subscribe(
       (result) => {
@@ -195,9 +196,6 @@ export class TemplateMetaData implements OnInit, OnDestroy {
             return !this.template.repos.includes(repo.name)
           }
         ).sort(Sorter.repo);
-        if (this.allRepos.length > 0) {
-          this.newRepo = this.allRepos[0].name;
-        }
       }
     );
   }

@@ -57,7 +57,7 @@
               <td width="30px">
                 <a href="javascript:void(0)" mwlConfirmationPopover
                    [title]="'Please verify!'"
-                   [message]="'Are you sure you want to remove the following repo and it\'s packages from the template?'"
+                   [message]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
                    placement="left"
                    confirmButtonType="danger"
                    (confirm)="removeRepo(repo)">
@@ -74,16 +74,15 @@
                     There are currently no more repositories available
                   </div>
                   <select *ngIf="allRepos.length > 0" class="form-control" formControlName="newRepo" id="addrepo">
-                    <option value="" selected>
-                    </option>
+                    <option value="" selected></option>
                     <option *ngFor="let rep of allRepos" value="{{rep.name}}">{{rep.name}}</option>
                   </select>
                 </div>
 
                 <div class="pull-right">
                   <button type="button" (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
-                  <button type="button" (click)="addNewRepo(templateForm.controls.newRepo.value)" class="btn btn-success"
-                          [disabled]="!newRepo || allRepos.length < 1">Add
+                  <button type="button" (click)="addNewRepo(templateForm.controls['newRepo'].value)" class="btn btn-success"
+                          [disabled]="templateForm.controls['newRepo'].length < 1 || allRepos.length < 1">Add
                   </button>
                 </div>
               </td>

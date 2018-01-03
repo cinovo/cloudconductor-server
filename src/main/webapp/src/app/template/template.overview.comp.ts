@@ -143,14 +143,19 @@ export class TemplateOverview implements OnInit, OnDestroy {
     return Object.keys(versions).length;
   }
 
-  get templates(): Array<Template> {
+  get templates(): Template[] {
     return this._templates;
   }
 
-  set templates(value: Array<Template>) {
+  set templates(value: Template[]) {
     this._templates = value
       .filter(template => TemplateOverview.filterByRepo(template, this._repoQuery))
       .filter(template => TemplateOverview.filterData(template, this._searchQuery))
+      .map(template => {
+        template.repos = [...template.repos].sort();
+        template.hosts = [...template.hosts].sort();
+        return template;
+      })
       .sort(Sorter.template);
   }
 
@@ -171,8 +176,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private deleteTemplate(template: Template): void {
     this.templateHttp.deleteTemplate(template).subscribe(
       () => {
-        this._templates.splice(this._templates.indexOf(template), 1);
-        this.alerts.success('The template ' + template.name + ' has been deleted.')
+        // template list is updated via websocket
+        this.alerts.success(`Successfully deleted template '${template.name}'.`)
       }, (err) => {
         this.alerts.danger(`Error deleting template '${template.name}'!`);
         console.error(err);
@@ -180,9 +185,18 @@ export class TemplateOverview implements OnInit, OnDestroy {
   }
 
   protected deleteAllTemplates(): void {
-    for (let template of this._templates) {
-      this.deleteTemplate(template);
-    }
+    const deleteOps: Observable<boolean>[] = this._templates.map(template => this.templateHttp.deleteTemplate(template));
+
+    Observable.forkJoin(deleteOps).subscribe(
+      () => {
+        // template list is updated via websocket
+        this.alerts.success(`Successfully deleted ${deleteOps.length} templates.`);
+      },
+      (err) => {
+        this.alerts.danger(`Error deleting all ${deleteOps.length} templates!`)
+        console.error(err);
+      }
+    )
   }
 
   protected gotoDetails(template: Template): void {
