@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -8,7 +8,6 @@ import { PackageHttpService, PackageVersion } from '../util/http/package.http.se
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
-import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -64,51 +63,55 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-  private load(template: Template): void {
+  private load(template: Template) {
     if (!template) {
       return;
     }
     this.template = template;
     this.loadVersions();
     this.cancelAddPackage();
-    this.packageTree = {};
 
     if (this.template.repos) {
-      for (let repo of this.template.repos) {
-        this.packageHttp.getVersionsOfRepo(repo).subscribe((result) => {
-           this.preparePVS(result);
-        });
-      }
+      const repoOps: Observable<PackageVersion[]>[] = this.template.repos.map(repo => this.packageHttp.getVersionsOfRepo(repo));
+
+      Observable.forkJoin(repoOps).subscribe((results) => {
+        const flattetResults = results.reduce((flat, toFlatten) => {
+          return flat.concat(toFlatten);
+        }, []);
+
+        this.packageTree = this.preparePVS(flattetResults);
+      });
     }
   }
 
   private loadVersions(): void {
-    let oldPackageVersions = this.packageVersions;
-    this.packageVersions = [];
+    const newPackageVersions = [];
     for (let key in this.template.versions) {
       if (this.template.versions.hasOwnProperty(key)) {
         let selected = this.allSelected;
         if (!selected) {
-          for (let old of oldPackageVersions) {
+          for (let old of this.packageVersions) {
             if (old.pkg === key) {
               selected = old.selected;
               break;
             }
           }
         }
-        this.packageVersions.push({pkg: key, version: this.template.versions[key], selected: selected});
+        newPackageVersions.push({pkg: key, version: this.template.versions[key], selected: selected});
       }
     }
+    newPackageVersions.sort(Sorter.templatePackageVersion);
 
-    this.packageVersions.sort(Sorter.templatePackageVersion);
+    this.packageVersions = newPackageVersions;
   }
 
-  private preparePVS(pvs: Array<PackageVersion>) {
+  private preparePVS(pvs: PackageVersion[]) {
+    const newPVTree = {}
     for (let pv of pvs) {
-      if (!this.packageTree[pv.name]) {
-        this.packageTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
+      if (!newPVTree[pv.name]) {
+        newPVTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
       }
-      let entry = this.packageTree[pv.name];
+      let entry = newPVTree[pv.name];
       if (entry.versions.findIndex((version) => version.name === pv.name && version.version === pv.version) < 0) {
         entry.versions.push(pv);
         entry.versions.sort(Sorter.packageVersion);
@@ -117,6 +120,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
         }
       }
     }
+
+    return newPVTree;
   }
 
   protected updatePackage(pv: TemplatePackageVersion): void {
@@ -145,7 +150,6 @@ export class TemplatePackages implements OnInit, OnDestroy {
     const pkgToUpdate = Object.assign({}, this.packageVersions[index]);
     this.templateHttp.updatePackage(this.template, pkgToUpdate.pkg).subscribe(
       () => {
-        this.alerts.success(`The package '${pkgToUpdate.pkg}' has been successfully updated.`);
         this.updateSelected(index + 1);
       },
       (err) => {
@@ -153,7 +157,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
         console.error(err);
         this.updateSelected(index + 1);
       }
-    )
+    );
   }
 
   protected removePackage(pv: TemplatePackageVersion) {
@@ -182,7 +186,6 @@ export class TemplatePackages implements OnInit, OnDestroy {
     const pvToRemove = Object.assign({}, this.packageVersions[index]);
     this.templateHttp.deletePackage(this.template, pvToRemove.pkg).subscribe(
       () => {
-        this.alerts.success(`The package '${pvToRemove.pkg}' has been removed successfully.`);
         this.removeSelected(index);
       },
       (err) => {
@@ -213,10 +216,6 @@ export class TemplatePackages implements OnInit, OnDestroy {
 
   protected isPkgSelected(): boolean {
     return this.packageVersions.some(pv => pv.selected);
-  }
-
-  protected selectedUpToDate(): boolean {
-    return this.packageVersions.filter(pv => pv.selected).some(pv => this.isPkgLatest(pv));
   }
 
   private isPkgLatest(pv: TemplatePackageVersion) {
@@ -254,7 +253,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
 
   private getVersions(pkgName: string): Array<PackageVersion> {
     if (Validator.notEmpty(pkgName)) {
-      return this.packageTree[pkgName].versions.sort(Sorter.packageVersion);
+      return [...this.packageTree[pkgName].versions].sort(Sorter.packageVersion);
     }
     return [];
   }

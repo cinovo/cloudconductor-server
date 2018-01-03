@@ -93,7 +93,7 @@
         </tbody>
       </table>
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
-        <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected() || selectedUpToDate()">
+        <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
           <i class="fa fa-refresh fa-fw"></i>
           Update selected
         </button>
