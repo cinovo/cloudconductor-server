@@ -8,7 +8,7 @@
     <cc-filter label="User" (onQueryChange)="userQuery = $event"></cc-filter>
   </div>
   <div class="col-md-3">
-    <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"
+    <cc-filter mode="select" label="Template" [data]="(templates$ | async)" (onQueryChange)="searchTemplateQuery = $event"
       [dataField]="'name'">
     </cc-filter>
   </div>
@@ -43,6 +43,7 @@
       <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
         <thead>
           <tr>
+            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all keys"></th>
             <th class="sorting_asc">Owner</th>
             <th class="sorting">User Name</th>
             <th>Templates</th>
@@ -53,6 +54,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let sshKey of sshKeys" (dblclick)="gotoDetails(sshKey)">
+            <td><input type="checkbox" [(ngModel)]="sshKey.selected"></td>
             <td>{{sshKey.owner}}</td>
             <td>{{sshKey.username}}</td>
             <td>
@@ -79,6 +81,35 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="text-center" *ngIf="sshKeys && sshKeys.length > 0" cc-panel-body>
+        <form class="form-inline" [formGroup]="addTemplateForm" novalidate (ngSubmit)="addTemplateToSelectedKeys(addTemplateForm.value)">
+          <div class="form-group">
+            <label for="addTemplate" class="control-label">Add Template</label>
+            <select id="addTemplate" class="form-control" formControlName="addTemplate">
+              <option value="" selected></option>
+              <option *ngFor="let template of (templates$ | async)" value="{{template.name}}">
+                {{template.name}}
+              </option>
+            </select>
+            <button type="submit" class="btn btn-success" title="Add template to selected keys" [disabled]="!isKeySelected() || addTemplateForm.invalid">
+              Ok
+            </button>
+          </div>
+
+          <button type="button" class="btn btn-danger" [disabled]="!isKeySelected()" mwlConfirmationPopover
+            title="Remove selected keys"
+            [title]="'Please verify!'"
+            [message]="'Are you sure you want to remove all selected keys?'"
+            placement="left"
+            confirmButtonType="danger"
+            (confirm)="deleteSelectedKeys()">
+            <i class="fa fa-trash-o fa-fw"></i>
+            Remove selected
+          </button>
+
+        </form>
+      </div>
     </cc-panel>
   </div>
 

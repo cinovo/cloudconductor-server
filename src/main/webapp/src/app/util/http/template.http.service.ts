@@ -46,7 +46,7 @@ export class TemplateHttpService {
   constructor(private http: HttpClient) { }
 
   public getTemplates(): Observable<Template[]> {
-    return this.http.get<Template[]>(this._basePathURL);
+    return this.http.get<Template[]>(this._basePathURL).share();
   }
 
   public getTemplateNames(): Observable<string[]> {

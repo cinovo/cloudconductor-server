@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
@@ -20,13 +21,13 @@ import { SSHKey } from '../util/http/sshkey.model';
 @Component({
   templateUrl: './ssh.overview.comp.html'
 })
-export class SSHOverviewComponent implements OnInit, OnDestroy {
+export class SSHOverviewComponent implements OnInit {
 
   private _sshKeys: SSHKey[] = [];
   private _searchQuery: string = null;
   private _searchTemplateQuery = '';
   private _userQuery = null;
-  private _templatesSub: Subscription;
+  private _allSelected = false;
 
   public showAddKey = false;
   public keysLoaded = false;
@@ -34,8 +35,9 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
   public newKey: Observable<SSHKey> = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
 
   public templates$: Observable<Template[]>;
-  public templates: Template[];
   public templateNames: Observable<String[]>;
+
+  public addTemplateForm: FormGroup;
 
   private static filterSSHKeys(key: SSHKey, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -59,24 +61,18 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
   }
 
   constructor(private alertService: AlertService,
+              private fb: FormBuilder,
               private sshKeyHttp: SSHKeyHttpService,
               private templateHttp: TemplateHttpService,
-              private router: Router) { }
+              private router: Router) {
+    this.addTemplateForm = fb.group({addTemplate: ['', Validators.required]});
+  }
 
   public ngOnInit(): void {
     this.loadData();
 
     this.templates$ = this.templateHttp.getTemplates();
     this.templateNames = this.templates$.map(ts => ts.map(t => t.name));
-    this._templatesSub = this.templates$.subscribe((templates) => {
-      this.templates = templates;
-    });
-  }
-
-  public ngOnDestroy(): void {
-    if (this._templatesSub) {
-      this._templatesSub.unsubscribe();
-    }
   }
 
   get searchTemplateQuery() {
@@ -127,6 +123,26 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
       .sort(Sorter.sshKey);
   }
 
+  get allSelected() {
+    return this._allSelected;
+  }
+
+  set allSelected(value: boolean) {
+    this._allSelected = value;
+    this.sshKeys = this.sshKeys.map(k => {
+      k.selected = value;
+      return k
+    });
+  }
+
+  get selectedKeys() {
+    return this.sshKeys.filter(k => k.selected);
+  }
+
+  public isKeySelected(): boolean {
+    return this.selectedKeys.length > 0;
+  }
+
   public gotoDetails(sshKey: SSHKey) {
     this.router.navigate(['/ssh', sshKey.owner]);
   }
@@ -169,6 +185,49 @@ export class SSHOverviewComponent implements OnInit, OnDestroy {
     });
 
     this.showAddKey = false;
+  }
+
+  public addTemplateToSelectedKeys(formValue: any): void {
+    const templateToAdd = formValue.addTemplate;
+
+    const updateOps: Observable<boolean>[] = this.selectedKeys.filter(key => !key.templates.includes(templateToAdd))
+      .map(key => {
+        const updatedKey = {
+          owner: key.owner,
+          username: key.username,
+          key: key.key,
+          templates: [...key.templates, templateToAdd]
+        };
+        return this.sshKeyHttp.updateKey(updatedKey);
+      });
+
+    Observable.forkJoin(updateOps).subscribe(
+      () => {
+        this.alertService.success(`Successfully added template '${templateToAdd}' to ${updateOps.length} keys.`);
+        this.addTemplateForm.reset();
+        this.loadData();
+      },
+      (err) => {
+        this.alertService.danger(`Error adding template '${templateToAdd}' to selected keys!`);
+        console.error(err);
+      },
+      () => this.allSelected = false
+    );
+  }
+
+  public deleteSelectedKeys(): void {
+    const deleteOps: Observable<boolean>[] = this.selectedKeys.map(key => this.sshKeyHttp.deleteKey(key.owner));
+    Observable.forkJoin(deleteOps).subscribe(
+      () => {
+        this.alertService.success(`Successfully deleted ${deleteOps.length} keys.`);
+        this.loadData();
+      },
+      (err) => {
+        this.alertService.danger('Error deleting selected keys!');
+        console.error(err);
+      },
+      () => this.allSelected = false
+    );
   }
 
 }

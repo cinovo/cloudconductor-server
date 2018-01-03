@@ -9,5 +9,6 @@ export interface SSHKey {
   username: string,
   key: string,
   lastChanged?: Date
-  templates: string[]
+  templates: string[],
+  selected?: boolean
 }
