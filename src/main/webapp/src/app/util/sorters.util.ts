@@ -121,11 +121,16 @@ export class Sorter {
   public static versionComp(a: string, b: string): number {
     let aNumbers: Array<any> = Sorter.versionToArray(a);
     let bNumbers: Array<any> = Sorter.versionToArray(b);
-    for (let i = 0; i < aNumbers.length; i++) {
+
+    const maxIndex = Math.max(aNumbers.length, bNumbers.length);
+
+    for (let i = 0; i < maxIndex; i++) {
       let res: number;
-      if (isNaN(aNumbers[i]) || isNaN(bNumbers[i])) {
-        if(aNumbers[i].startsWith("SNAPSHOT") && !bNumbers[i].startsWith("SNAPSHOT")) res = -1;
-        else if(!aNumbers[i].startsWith("SNAPSHOT") && bNumbers[i].startsWith("SNAPSHOT")) res = 1;
+      if (aNumbers[i] === undefined) res = -1;
+      else if (bNumbers[i] === undefined) res = 1;
+      else if (isNaN(aNumbers[i]) || isNaN(bNumbers[i])) {
+        if (aNumbers[i].startsWith('SNAPSHOT') && !bNumbers[i].startsWith('SNAPSHOT')) res = -1;
+        else if (!aNumbers[i].startsWith('SNAPSHOT') && bNumbers[i].startsWith('SNAPSHOT')) res = 1;
         else if (aNumbers[i] < bNumbers[i]) res = -1;
         else if (aNumbers[i] > bNumbers[i]) res = 1;
       } else {
