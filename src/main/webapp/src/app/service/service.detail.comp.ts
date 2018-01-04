@@ -29,7 +29,7 @@ export class ServiceDetail implements OnInit {
   public templateRefs: Array<{template: string, pkg: string}> = [];
   public showAddPackage = false;
   private newPackage: string;
-  protected allPackages: Array<Package> = [];
+  private _allPackages: Package[] = [];
 
   public mode: Mode = 'edit';
   public serviceForm: FormGroup;
@@ -58,6 +58,15 @@ export class ServiceDetail implements OnInit {
         this.loadData(serviceName);
       }
     });
+
+    this.packageHttp.getPackages().subscribe(
+      (result) => {
+        this.allPackages = result;
+      }, (err) => {
+        this.alerts.danger('Error loading packages!');
+        console.error(err);
+      }
+    );
   }
 
   private loadData(serviceName: string) {
@@ -88,6 +97,15 @@ export class ServiceDetail implements OnInit {
         }
         this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
       });
+  }
+
+  public get allPackages() {
+    return this._allPackages;
+  }
+
+  public set allPackages(value: Package[]) {
+    this._allPackages = value.filter((pkg) => this.filterUsedPackages(pkg))
+                              .sort(Sorter.packages);
   }
 
   public save(formValue): void {
@@ -181,16 +199,7 @@ export class ServiceDetail implements OnInit {
 
   protected goToAddPackage() {
     this.newPackage = null;
-    this.packageHttp.getPackages().subscribe(
-      (result) => {
-        this.allPackages = result.filter((pkg) => this.filterUsedPackages(pkg))
-                                .sort(Sorter.packages);
-        this.showAddPackage = true;
-      }, (err) => {
-        this.alerts.danger('Error loading packages!');
-        console.error(err);
-      }
-    );
+    this.showAddPackage = true;
   }
 
   public goToBack(): void {
