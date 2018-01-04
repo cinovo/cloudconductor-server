@@ -54,6 +54,7 @@ export class ServiceDetail implements OnInit {
       if (serviceName === 'new') {
         this.mode = 'new';
       } else {
+        this.mode = 'edit';
         this.loadData(serviceName);
       }
     });
@@ -73,16 +74,20 @@ export class ServiceDetail implements OnInit {
         (err) => this.router.navigate(['/not-found', 'service', serviceName])
       );
 
-      this.serviceHttp.getServiceUsage(serviceName).subscribe(
-        (result) => {
-          this.templateRefs = [];
-          let keys = Object.keys(result);
-          for (let key of keys) {
-            this.templateRefs.push({template: key, pkg: result[key]});
-          }
-          this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
-        });
+      this.reloadServiceUsage(serviceName);
     }
+  }
+
+  private reloadServiceUsage(serviceName: string): void {
+    this.serviceHttp.getServiceUsage(serviceName).subscribe(
+      (result) => {
+        this.templateRefs = [];
+        let keys = Object.keys(result);
+        for (let key of keys) {
+          this.templateRefs.push({template: key, pkg: result[key]});
+        }
+        this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
+      });
   }
 
   public save(formValue): void {
@@ -98,12 +103,16 @@ export class ServiceDetail implements OnInit {
 
       return this.serviceHttp.save(this.service)
     }).subscribe(
-      (result) => this.alerts.success(`Successfully saved service '${this.service.name}'!`),
-      (err) => this.alerts.danger(`Error saving service: ${err}`)
+      (result) => {
+        this.alerts.success(`Successfully saved service '${this.service.name}'!`);
+
+        // use router to go into edit mode
+        this.router.navigate(['/service', this.service.name]);
+      }, (err) => this.alerts.danger(`Error saving service: ${err}`)
     );
   }
 
-  protected deletePackage(pkg) {
+  protected deletePackage(pkg: string) {
     if (Validator.idIsSet(this.service.id)) {
       this.serviceHttp.getService(this.service.name).subscribe(
         (result) => {
@@ -111,7 +120,10 @@ export class ServiceDetail implements OnInit {
           this.serviceHttp.save(result).subscribe(
             () => {
               this.service.packages.splice(this.service.packages.indexOf(pkg), 1);
-              this.alerts.success('You successfully removed the package from the service!')
+              this.alerts.success(`Successfully removed package '${pkg}' from service '${this.service.name}'!`);
+
+              // deleting a package may change service usage
+              this.reloadServiceUsage(this.service.name);
             },
             () => this.alerts.danger('The package remove failed!')
           );
@@ -160,18 +172,29 @@ export class ServiceDetail implements OnInit {
     }
     this.newPackage = null;
     this.showAddPackage = false;
+
+    // usage may have changed now
+    if (this.service.name) {
+      this.reloadServiceUsage(this.service.name);
+    }
   }
 
   protected goToAddPackage() {
     this.newPackage = null;
-    this.packageHttp.getPackages()
-      .subscribe((result) => this.allPackages = result.filter((pkg) => this.filterUsedPackages(pkg)).sort(Sorter.packages));
-    this.showAddPackage = true;
-
+    this.packageHttp.getPackages().subscribe(
+      (result) => {
+        this.allPackages = result.filter((pkg) => this.filterUsedPackages(pkg))
+                                .sort(Sorter.packages);
+        this.showAddPackage = true;
+      }, (err) => {
+        this.alerts.danger('Error loading packages!');
+        console.error(err);
+      }
+    );
   }
 
   public goToBack(): void {
-    this.location.back();
+    this.router.navigate(['/service']);
   }
 
   private gotoPackage(pkgName: string) {

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
+export interface ServiceUsage { [s: string]: string };
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -43,8 +45,8 @@ export class ServiceHttpService {
     return this.getServices().map((services: Service[]) => services.map(s => s.name).sort());
   }
 
-  public getServiceUsage(serviceName: string): Observable<any> {
-    return this.http.get(`${this._basePathURL}/${serviceName}/usage`);
+  public getServiceUsage(serviceName: string): Observable<ServiceUsage> {
+    return this.http.get<ServiceUsage>(`${this._basePathURL}/${serviceName}/usage`);
   }
 
   public deleteService(service: Service): Observable<boolean> {
