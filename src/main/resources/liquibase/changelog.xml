@@ -1176,4 +1176,15 @@
         <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="origid" />
 
     </changeSet>
+    <changeSet id="35" author="mweise">
+    	<update tableName="serveroptions" schemaName="cloudconductor">
+    		<column name="hostcleanuptimer" value="30" />
+    		<column name="hostcleanuptimerunit" value="4" />
+    		<column name="indexscantimer" value="4" />
+    		<column name="indexscantimerunit" value="4" />
+    		<column name="hostalivetimer" value="2" />
+    		<column name="hostalivetimerunit" value="4" />
+    		<where>name='Default'</where>
+    	</update>
+    </changeSet>
 </databaseChangeLog>
