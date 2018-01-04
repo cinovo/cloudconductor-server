@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-md-12">
+    <cc-panel [title]="'Service behaviour'" icon="fa-flask" [collapsable]="true" [collapseBody]="true">
+      <table class="table-condensed table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Autostart</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of services">
+            <td>{{service.service}}</td>
+            <td><input type="checkbox" [(ngModel)]="service.autostart" title="Toggle autostart for service"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pull-right" cc-panel-body>
+        <button class="btn btn-info" (click)="updateDefaultStates()">Save</button>
+      </div>
+    </cc-panel>
+  </div>
+</div>

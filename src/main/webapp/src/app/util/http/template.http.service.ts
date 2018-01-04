@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
+import { Service } from './service.http.service';
+import { Sorter } from '../sorters.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -36,6 +38,14 @@ export interface AgentOption {
   fileManagementTimerUnit?: string;
 
   templateName?: string;
+}
+
+export type ServiceState = 'STARTED' | 'STOPPED';
+
+export interface ServiceDefaultState {
+  template: string;
+  service: string;
+  state: ServiceState;
 }
 
 @Injectable()
@@ -89,6 +99,27 @@ export class TemplateHttpService {
   public saveAgentOptions(agentOption: AgentOption): Observable<AgentOption> {
     agentOption['@class'] = 'de.cinovo.cloudconductor.api.model.AgentOption';
     return this.http.put<AgentOption>(`${this._basePathURL}/${agentOption.templateName}/agentoption`, agentOption);
+  }
+
+  public getServicesForTemplate(templateName: string): Observable<Service[]> {
+    return this.http.get<Service[]>(`${this._basePathURL}/${templateName}/services`)
+              .map(services => services.sort(Sorter.nameField));
+  }
+
+  public getServiceDefaultStates(templateName: string): Observable<ServiceDefaultState[]> {
+    return this.http.get<ServiceDefaultState[]>(`${this._basePathURL}/${templateName}/servicedefaultstate`);
+  }
+
+  public getServiceDefaultState(templateName: string, serviceName: string): Observable<ServiceDefaultState> {
+    return this.http.get<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`);
+  }
+
+  public saveServiceDefaultState(templateName: string, serviceName: string, serviceDefaultState: ServiceState) {
+    const newServiceDefaultState = { template: templateName, service: serviceName, defaultState: serviceDefaultState };
+    newServiceDefaultState['@class'] = 'de.cinovo.cloudconductor.api.model.ServiceDefaultState';
+
+    return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`,
+                                              newServiceDefaultState);
   }
 
 }

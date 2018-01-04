@@ -15,6 +15,7 @@ import { TemplateAgentOptions } from './template.agentoption.comp';
 import { Role } from '../util/enums.util';
 import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { TemplateServiceComponent } from './template.service.comp';
 
 const templateRoute: Routes = [
   {path: '', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
@@ -49,6 +50,7 @@ const templateRoute: Routes = [
     TemplateNew,
     TemplateMetaData,
     TemplateAgentOptions,
+    TemplateServiceComponent
   ]
 })
 export class TemplateModule { }

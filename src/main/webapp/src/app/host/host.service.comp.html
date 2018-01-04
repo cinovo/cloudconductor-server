@@ -13,7 +13,6 @@
             <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all services"></th>
             <th class="sorting_asc">Service Name</th>
             <th class="sorting">State</th>
-            <th width="15px">Autostart</th>
             <th width="15px"></th>
             <th width="15px"></th>
             <th width="15px"></th>
@@ -24,7 +23,10 @@
             <td>
               <input type="checkbox" [(ngModel)]="service.selected" title="Select Service">
             </td>
-            <td>{{service.name}}</td>
+            <td>
+              {{service.name}}
+              <a [routerLink]="['/service', service.name]" title="Go to service"><i class="fa fa-external-link fa-fw"></i></a>
+            </td>
             <td>
               <span class="label label-default label-as-badge"
                     [class.label-success]="isServiceStarted(service)"
@@ -33,9 +35,6 @@
                 <i class="fa fa-refresh fa-spin fa-fw" *ngIf="isServiceTransient(service)"></i>
                 {{service.state}}
               </span>
-            </td>
-            <td class="text-center">
-              <input type="checkbox" [(ngModel)]="service.autostart" title="Automaticly start this service on host restart">
             </td>
             <td>
               <a class="btn btn-xs text-success" role="button" (click)="handleService('start', service)"

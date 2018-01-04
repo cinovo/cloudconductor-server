@@ -17,10 +17,19 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.taimos.dvalin.jpa.IEntity;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import javax.persistence.*;
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,7 +40,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "servicedefaultstate", schema = "cloudconductor")
-public class EServiceDefaultState implements IEntity<Long> {
+public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultState> implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
@@ -124,6 +133,12 @@ public class EServiceDefaultState implements IEntity<Long> {
 		int parent = (this.service == null) ? 0 : this.service.hashCode();
 		int parent2 = (this.template == null) ? 0 : this.template.hashCode();
 		return val * (parent + parent2);
+	}
+	
+	@Override
+	@Transient
+	public Class<ServiceDefaultState> getApiClass() {
+		return ServiceDefaultState.class;
 	}
 	
 }

@@ -1,23 +1,38 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.core.Response.Status;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
+import de.cinovo.cloudconductor.server.handler.ServiceDefaultStateHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EService;
+import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
@@ -25,13 +40,6 @@ import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.template.TemplatesWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.core.Response.Status;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -60,6 +68,10 @@ public class TemplateImpl implements ITemplate {
 	private IPackageDAO pkgDAO;
 	@Autowired
 	private HostHandler hostHandler;
+	@Autowired
+	private IServiceDefaultStateDAO serviceDefaultStateDAO;
+	@Autowired
+	private ServiceDefaultStateHandler serviceDefaultStateHandler;
 	
 	
 	@Override
@@ -221,6 +233,48 @@ public class TemplateImpl implements ITemplate {
 		}
 		
 		return packageVersions.toArray(new PackageVersion[packageVersions.size()]);
+	}
+	
+	@Override
+	@Transactional
+	public ServiceDefaultState[] getServiceDefaultStates(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		
+		List<ServiceDefaultState> serviceDefaultStates = new ArrayList<>();
+		for (EServiceDefaultState esds : this.serviceDefaultStateDAO.findByTemplate(templateName)) {
+			serviceDefaultStates.add(esds.toApi());
+		}
+		
+		return serviceDefaultStates.toArray(new ServiceDefaultState[serviceDefaultStates.size()]);
+	}
+	
+	@Override
+	@Transactional
+	public ServiceDefaultState getServiceDefaultState(String templateName, String serviceName) {
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertNotEmpty(serviceName);
+		
+		EServiceDefaultState eServiceDefaultState = this.serviceDefaultStateDAO.findByName(serviceName, templateName);
+		
+		RESTAssert.assertNotNull(eServiceDefaultState, Status.NOT_FOUND);
+		
+		return eServiceDefaultState.toApi();
+	}
+	
+	@Override
+	@Transactional
+	public ServiceDefaultState saveServiceDefaultState(String templateName, String serviceName, ServiceDefaultState newServiceDefaultState) {
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertNotEmpty(serviceName);
+		RESTAssert.assertNotNull(newServiceDefaultState);
+		ServiceState newDefaultState = newServiceDefaultState.getState();
+		RESTAssert.assertTrue(newDefaultState.equals(ServiceState.STOPPED) || newDefaultState.equals(ServiceState.STARTED));
+		
+		EServiceDefaultState esds = this.serviceDefaultStateHandler.updateServiceDefaultState(templateName, serviceName, newDefaultState);
+		
+		RESTAssert.assertNotNull(esds);
+		
+		return esds.toApi();
 	}
 	
 }
