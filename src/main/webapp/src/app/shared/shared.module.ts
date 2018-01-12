@@ -10,7 +10,7 @@ import { CCPanel } from '../util/ccpanel/ccpanel.comp';
 import { CCTitle } from '../util/cctitle/cctitle.comp';
 import { CCPaginationInfoComponent } from '../util/ccpaginationinfo/ccpaginationinfo.comp';
 import { CCPanelListComponent } from '../util/ccpanellist/ccpanellist.comp';
-import { ConfirmationPopoverModule } from 'angular-confirmation-popover/dist/esm/src/confirmationPopover.module';
+import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
 // TODO move components to shared folder, create alias
 

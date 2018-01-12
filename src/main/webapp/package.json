@@ -23,7 +23,7 @@
     "@angular/platform-browser-dynamic": "^4.4.6",
     "@angular/platform-server": "^4.4.6",
     "@angular/router": "^4.4.6",
-    "angular-confirmation-popover": "^3.1.1",
+    "angular-confirmation-popover": "^3.4.2",
     "angular2-jwt": "^0.2.3",
     "angular2-uuid": "^1.1.1",
     "bootstrap": "^3.3.7",
