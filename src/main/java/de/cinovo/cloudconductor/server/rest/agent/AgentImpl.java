@@ -33,7 +33,7 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotEmpty(uuid);
 		RESTAssert.assertNotNull(rpmState);
 		
-		PackageStateChanges changes = this.agentHandler.handlePackageState(host, template, rpmState);
+		PackageStateChanges changes = this.agentHandler.handlePackageState(host, template, rpmState, uuid);
 		
 		return changes;
 	}

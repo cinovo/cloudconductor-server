@@ -2,6 +2,7 @@ package de.cinovo.cloudconductor.server.test;
 
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.AgentHandler;
+import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageState;
 import de.cinovo.cloudconductor.api.model.PackageStateChanges;
@@ -32,8 +33,9 @@ public class AgentTest extends APITest {
 	@Test
 	public void testPackagesBasic() throws CloudConductorException {
 		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
+		AgentOption optionsC = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_C, null, "asd");
 		{
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), "asd");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), optionsC.getUuid());
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
@@ -43,32 +45,35 @@ public class AgentTest extends APITest {
 	@Test
 	public void testPackageMultiHost() throws CloudConductorException {
 		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
+		AgentOption optionsA = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_A, null, "asd");
+		AgentOption optionsB = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_B, null, "asd2");
+
 		{
 			// block the second host on update
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), "asd");
-			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "asd");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), optionsA.getUuid());
+			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(),  optionsB.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on host a
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), "asd");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(),  optionsA.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
-			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()), "asd");
+			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()),  optionsA.getUuid());
 		}
 		{
 			// finally start update on host b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), "asd");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(),  optionsB.getUuid());
 			Assert.assertEquals(4, result.getToInstall().size());
 			Assert.assertTrue(!result.getToErase().isEmpty());
 			Assert.assertTrue(!result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), "asd");
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(),  optionsB.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());

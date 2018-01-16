@@ -32,6 +32,12 @@ public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
 	/**
 	 * @return the number of hosts
 	 */
-	public Long count();
+	Long count();
+
+	/**
+	 * @param uuid the uuid
+	 * @return the host or null
+	 */
+	EHost findByUuid(String uuid);
 	
 }

@@ -1193,4 +1193,9 @@
             <column name="lastindexhash" type="varchar(255)" />
         </addColumn>
     </changeSet>
+    <changeSet id="37" author="psigloch">
+        <addColumn tableName="host" schemaName="cloudconductor">
+            <column name="uuid" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

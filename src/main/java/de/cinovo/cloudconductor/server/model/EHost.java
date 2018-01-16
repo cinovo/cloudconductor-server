@@ -17,10 +17,10 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Host;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,23 +32,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Host;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "host", schema = "cloudconductor")
 public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, INamed {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
@@ -62,22 +60,22 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	private boolean executedFiles = false;
 	private boolean executedPkg = false;
 	private EAgent agent;
-	
-	
+	private String uuid;
+
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-	
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the name
 	 */
@@ -85,28 +83,28 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * @return the services
 	 */
@@ -114,14 +112,14 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public List<EServiceState> getServices() {
 		return this.services;
 	}
-	
+
 	/**
 	 * @param services the services to set
 	 */
 	public void setServices(List<EServiceState> services) {
 		this.services = services;
 	}
-	
+
 	/**
 	 * @return the packages
 	 */
@@ -129,14 +127,14 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public List<EPackageState> getPackages() {
 		return this.packages;
 	}
-	
+
 	/**
 	 * @param packages the packages to set
 	 */
 	public void setPackages(List<EPackageState> packages) {
 		this.packages = packages;
 	}
-	
+
 	/**
 	 * @return the template
 	 */
@@ -145,84 +143,84 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public ETemplate getTemplate() {
 		return this.template;
 	}
-	
+
 	/**
 	 * @param template the template to set
 	 */
 	public void setTemplate(ETemplate template) {
 		this.template = template;
 	}
-	
+
 	/**
 	 * @return the lastSeen
 	 */
 	public Long getLastSeen() {
 		return this.lastSeen;
 	}
-	
+
 	/**
 	 * @param lastSeen the lastSeen to set
 	 */
 	public void setLastSeen(Long lastSeen) {
 		this.lastSeen = lastSeen;
 	}
-	
+
 	/**
 	 * @return the onUpdate
 	 */
 	public Long getStartedUpdate() {
 		return this.startedUpdate;
 	}
-	
+
 	/**
 	 * @param onUpdate the onUpdate to set
 	 */
 	public void setStartedUpdate(Long onUpdate) {
 		this.startedUpdate = onUpdate;
 	}
-	
+
 	/**
 	 * @return the executedSSH
 	 */
 	public boolean getExecutedSSH() {
 		return this.executedSSH;
 	}
-	
+
 	/**
 	 * @param executedSSH the executedSSH to set
 	 */
 	public void setExecutedSSH(boolean executedSSH) {
 		this.executedSSH = executedSSH;
 	}
-	
+
 	/**
 	 * @return the executedFiles
 	 */
 	public boolean getExecutedFiles() {
 		return this.executedFiles;
 	}
-	
+
 	/**
 	 * @param executedFiles the executedFiles to set
 	 */
 	public void setExecutedFiles(boolean executedFiles) {
 		this.executedFiles = executedFiles;
 	}
-	
+
 	/**
 	 * @return the executedPkg
 	 */
 	public boolean getExecutedPkg() {
 		return this.executedPkg;
 	}
-	
+
 	/**
 	 * @param executedPkg the executedPkg to set
 	 */
 	public void setExecutedPkg(boolean executedPkg) {
 		this.executedPkg = executedPkg;
 	}
-	
+
 	/**
 	 * @return the Agent running on this Host
 	 */
@@ -231,37 +229,52 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	public EAgent getAgent() {
 		return this.agent;
 	}
-	
+
 	/**
 	 * @param agent the agent running on this host to set
 	 */
 	public void setAgent(EAgent agent) {
 		this.agent = agent;
 	}
-	
+
+	/**
+	 * @return the uuid
+	 */
+	public String getUuid() {
+		return this.uuid;
+	}
+
+	/**
+	 * @param uuid the uuid to set
+	 */
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	@Override
 	@Transient
 	public Class<Host> getApiClass() {
 		return Host.class;
 	}
-	
+
 	@Override
 	@Transient
 	public Host toApi() {
 		Host api = super.toApi();
-		
+
 		Map<String, ServiceState> serviceMap = new HashMap<>();
-		for (EServiceState service : this.services) {
+		for(EServiceState service : this.services) {
 			serviceMap.put(service.getService().getName(), service.getState());
 		}
 		api.setServices(serviceMap);
-		
+		api.setAgent(this.getAgent().getName());
+		api.setUuid(this.uuid);
 		Map<String, String> packageMap = new HashMap<>();
-		for (EPackageState pkg : this.getPackages()) {
+		for(EPackageState pkg : this.getPackages()) {
 			packageMap.put(pkg.getVersion().getPkg().getName(), pkg.getVersion().getVersion());
 		}
 		api.setPackages(packageMap);
-		
+
 		return api;
 	}
 }

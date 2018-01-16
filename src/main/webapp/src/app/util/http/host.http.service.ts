@@ -15,6 +15,7 @@ export interface Host {
   name: string;
   template: string;
   agent?: string;
+  uuid?: string;
   description?: string;
   lastSeen?: number;
   services?: { [serviceName: string]: ServiceState };

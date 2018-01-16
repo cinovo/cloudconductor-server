@@ -31,13 +31,13 @@ public class HostDetailWSAdapter extends AParamWSAdapter<Host> {
 	@Override
 	public void onWebSocketConnect(Session session) {
 		super.onWebSocketConnect(session);
-		HostDetailWSAdapter.LOGGER.info("Host Detail WS connected!");
+		HostDetailWSAdapter.LOGGER.debug("Host Detail WS connected!");
 	}
 	
 	@Override
 	public void onWebSocketClose(int statuscode, String reason) {
 		super.onWebSocketClose(statuscode, reason);
-		HostDetailWSAdapter.LOGGER.info("Host Detail WS closed: {} Reason {}", statuscode, reason);
+		HostDetailWSAdapter.LOGGER.debug("Host Detail WS closed: {} Reason {}", statuscode, reason);
 	}
 	
 }

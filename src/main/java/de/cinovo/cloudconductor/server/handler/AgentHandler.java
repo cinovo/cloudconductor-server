@@ -5,7 +5,6 @@ import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.enums.TaskState;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
-import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.PackageState;
 import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
@@ -44,6 +43,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -92,19 +92,19 @@ public class AgentHandler {
 	 * @param hostName     the name of the host
 	 * @param templateName the name of the template
 	 * @param rpmState     the package state to be updated
+	 * @param uuid         the uuid
 	 * @return computed changes for package state
 	 */
 	@Transactional
-	public PackageStateChanges handlePackageState(String hostName, String templateName, PackageState rpmState) {
+	public PackageStateChanges handlePackageState(String hostName, String templateName, PackageState rpmState, String uuid) {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
 
 		RESTAssert.assertNotEmpty(hostName);
-		EHost host = this.hostDAO.findByName(hostName);
-		if(host == null) {
-			host = this.hostHandler.createNewHost(hostName, template);
-		}
+		EHost host = this.hostDAO.findByUuid(uuid);
+		RESTAssert.assertNotNull(host);
+
 		host.setLastSeen((new DateTime()).getMillis());
 
 		List<EPackage> packages = this.packageDAO.findList();
@@ -163,10 +163,7 @@ public class AgentHandler {
 				hostsOnUpdate++;
 			}
 		}
-		if(maxHostsOnUpdate > hostsOnUpdate) {
-			return true;
-		}
-		return false;
+		return maxHostsOnUpdate > hostsOnUpdate;
 	}
 
 	/**
@@ -181,15 +178,13 @@ public class AgentHandler {
 	@Transactional
 	public ServiceStatesChanges handleServiceState(String hostName, String templateName, ServiceStates serviceState, String uuid) {
 		ETemplate template = this.templateDAO.findByName(templateName);
-
-		EHost host = this.hostDAO.findByName(hostName);
 		RESTAssert.assertNotNull(template);
-		if(host == null) {
-			host = this.hostHandler.createNewHost(hostName, template);
-		}
+
+		EHost host = this.hostDAO.findByUuid(uuid);
+		RESTAssert.assertNotNull(host);
 
 		if(this.serviceHandler.assertHostServices(template, host)) {
-			host = this.hostDAO.findByName(hostName);
+			host = this.hostDAO.findByUuid(uuid);
 		}
 
 		Set<String> toStop = new HashSet<>();
@@ -209,7 +204,7 @@ public class AgentHandler {
 							state.nextState();
 							this.serviceStateDAO.save(state);
 							// service is now started, inform user interface via WS
-							this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+							this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 							break;
 						case STOPPING:
 							toStop.add(state.getService().getInitScript());
@@ -243,7 +238,7 @@ public class AgentHandler {
 					state.nextState();
 					this.serviceStateDAO.save(state);
 					// service is now stopped, inform user interface via WS
-					this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+					this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 					break;
 				case STARTED:
 					toStart.add(state.getService().getInitScript());
@@ -282,15 +277,13 @@ public class AgentHandler {
 		if(agent == null) {
 			agent = this.createNewAgent(agentName);
 		}
-		EHost host = this.hostDAO.findByName(hostName);
-		if(host == null) {
-			host = this.hostHandler.createNewHost(hostName, this.templateDAO.findByName(templateName));
-		}
+
+		EHost host = this.getHost(templateName, hostName, uuid);
 		host.setLastSeen((new DateTime()).getMillis());
 		host.setAgent(agent);
 		host = this.hostDAO.save(host);
 
-		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(host.getTemplate());
 		if(options == null) {
@@ -300,7 +293,7 @@ public class AgentHandler {
 		}
 		AgentOption result = options.toApi();
 		result.setTemplateName(host.getTemplate().getName());
-		result.setUuid(uuid);
+		result.setUuid(host.getUuid());
 		boolean onceExecuted = false;
 		if(options.getDoSshKeys() == TaskState.ONCE) {
 			if(host.getExecutedSSH()) {
@@ -342,6 +335,25 @@ public class AgentHandler {
 		agent.setName(agentName);
 		agent.setUser(currentUser);
 		return this.agentDAO.save(agent);
+	}
+
+	private EHost getHost(String templateName, String hostName, String uuid) {
+		EHost host = null;
+		if(uuid != null && !uuid.isEmpty()) {
+			host = this.hostDAO.findByUuid(uuid);
+		}
+		if(host == null) {
+			EHost temphost = this.hostDAO.findByName(hostName);
+			if(temphost != null && (temphost.getUuid() == null || temphost.getUuid().isEmpty())) {
+				host = temphost;
+				host.setUuid(UUID.randomUUID().toString());
+				host = this.hostDAO.save(host);
+			}
+		}
+		if(host == null) {
+			host = this.hostHandler.createNewHost(hostName, this.templateDAO.findByName(templateName));
+		}
+		return host;
 	}
 
 }

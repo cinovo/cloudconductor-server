@@ -78,7 +78,7 @@ INSERT INTO cloudconductor.agent VALUES (6, 'testAgent06', 1);
 INSERT INTO cloudconductor.agent VALUES (7, 'testAgent07', 1);
 INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', 1);
 
-INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1);
+INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1, null);
 
 INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6');
 INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6');

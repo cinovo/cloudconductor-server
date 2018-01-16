@@ -31,13 +31,13 @@ public class TemplateDetailWSAdapter extends AParamWSAdapter<Template> {
 	@Override
 	public void onWebSocketConnect(Session session) {
 		super.onWebSocketConnect(session);
-		TemplateDetailWSAdapter.LOGGER.info("Template Detail WS connected!");
+		TemplateDetailWSAdapter.LOGGER.debug("Template Detail WS connected!");
 	}
 	
 	@Override
 	public void onWebSocketClose(int statuscode, String reason) {
 		super.onWebSocketClose(statuscode, reason);
-		TemplateDetailWSAdapter.LOGGER.info("Template Detail WS closed: {} Reason", statuscode, reason);
+		TemplateDetailWSAdapter.LOGGER.debug("Template Detail WS closed: {} Reason", statuscode, reason);
 	}
 	
 }
