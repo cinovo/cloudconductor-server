@@ -8,17 +8,26 @@ $fa-font-path: "../../node_modules/font-awesome/fonts";
 
 // Global Styles
 
+html {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
 body {
   background-color: $gray-lightest;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
 }
 
 // Load Screen
 .loadscreen {
-  text-align:center;
+  text-align: center;
   margin-top: 50px;
 }
 
-.loadscreen>.card {
+.loadscreen > .card {
   padding: 30px;
 }
 
@@ -30,16 +39,16 @@ body {
 // Wrappers
 
 #wrapper {
-  width: 100%;
+  width: 100vw;
 }
 
 .page-wrapper {
-  padding: 0 15px;
-  min-height: 568px;
+  padding: 0 15px 25px 0;
+  min-height: calc(100vh - 95px);
   background-color: white;
 }
 
-@media(min-width:768px) {
+@media(min-width: 768px) {
   .page-wrapper {
     position: inherit;
     margin: 0 0 0 250px;
@@ -54,7 +63,7 @@ h1 h4 {
 
 .inline-form {
   margin-bottom: 5px;
-  width:100%;
+  width: 100%;
 }
 
 // Buttons
@@ -93,9 +102,6 @@ h1 h4 {
   color: white;
 }
 
-
-
-
 // Login Page
 
 .login-panel {
@@ -128,7 +134,7 @@ table.dataTable thead .sorting:after {
   content: "\f0dc";
   float: right;
   font-family: fontawesome;
-  color: rgba(50,50,50,.5);
+  color: rgba(50, 50, 50, .5);
 }
 
 // Circle Buttons
