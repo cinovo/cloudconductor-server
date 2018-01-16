@@ -61,9 +61,15 @@ public class PackageStateHandler {
 					rpm.setPkg(packageState.getVersion().getPkg());
 					rpm.setVersion(installedPV.getVersion());
 					rpm.setDeprecated(true);
+					for (String repoName : installedPV.getRepos()) {
+						ERepo repo = this.repoDAO.findByName(repoName);
+						if (repo != null) {
+							rpm.getRepos().add(repo);
+						}
+					}
 					rpm = this.versionDAO.save(rpm);
 				}
-				
+
 				leftPackages.remove(packageState);
 				
 				// update package state and save it

@@ -25,9 +25,9 @@ import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.security.AuthHandler;
-import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
@@ -88,7 +88,6 @@ public class AgentHandler {
 	private AuthHandler userHandler;
 
 
-
 	/**
 	 * @param hostName     the name of the host
 	 * @param templateName the name of the template
@@ -111,27 +110,21 @@ public class AgentHandler {
 		List<EPackage> packages = this.packageDAO.findList();
 		HashSet<EPackageState> leftPackages = new HashSet<>(host.getPackages());
 		for(PackageVersion installedPV : rpmState.getInstalledRpms()) {
-			EPackage pkg = null;
-			for(EPackage p : packages) {
-				if(p.getName().equals(installedPV.getName())) {
-					pkg = p;
-					break;
-				}
-			}
-			if(pkg == null) {
+			EPackage knownPackage = packages.stream().filter(p -> p.getName().equals(installedPV.getName())).findFirst().orElse(null);
+			if(knownPackage == null) {
 				continue;
 			}
 			EPackageState state = this.packageStateHandler.updateExistingState(host, installedPV, leftPackages);
 			if(state == null) {
-				state = this.packageStateHandler.createMissingState(host, installedPV, pkg);
+				state = this.packageStateHandler.createMissingState(host, installedPV, knownPackage);
 				host.getPackages().add(state);
 			}
 		}
 		this.packageStateHandler.removePackageState(host, leftPackages);
 		host = this.hostDAO.save(host);
 
-		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
-		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
+		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 
 		// check whether the host may updateEntity or has to wait for another host to finish updating
 		if(this.sendPackageChanges(template, host)) {
@@ -141,7 +134,7 @@ public class AgentHandler {
 			for(EPackageState state : host.getPackages()) {
 				actual.add(state.getVersion());
 			}
-			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.psChangeHandler.computePackageDiff(template.getPackageVersions(), actual);
+			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.psChangeHandler.computePackageDiff(template, actual);
 			if(!diff.get(PackageCommand.INSTALL).isEmpty() || !diff.get(PackageCommand.UPDATE).isEmpty() || !diff.get(PackageCommand.ERASE).isEmpty()) {
 				host.setStartedUpdate(DateTime.now().getMillis());
 			}
