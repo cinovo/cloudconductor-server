@@ -1,17 +1,5 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
@@ -25,6 +13,16 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -111,7 +109,7 @@ public class ServiceHandler {
 				}
 			}
 		}
-		ServiceHandler.LOGGER.info("Found " + templateServices.size() + " services for template '" + template.getName() + "' on  host '" + host.getName() + "'");
+		ServiceHandler.LOGGER.debug("Found " + templateServices.size() + " services for template '" + template.getName() + "' on  host '" + host.getName() + "'");
 		
 		Set<EService> missingServices = new HashSet<>(templateServices);
 		Set<EServiceState> nonUsedServiceStates = new HashSet<>(host.getServices());
@@ -130,7 +128,7 @@ public class ServiceHandler {
 			}
 		}
 		
-		ServiceHandler.LOGGER.info(missingServices.size() + " services missing and " + nonUsedServiceStates.size() + " unused.");
+		ServiceHandler.LOGGER.debug(missingServices.size() + " services missing and " + nonUsedServiceStates.size() + " unused.");
 		
 		boolean changes = false;
 		// add new service states

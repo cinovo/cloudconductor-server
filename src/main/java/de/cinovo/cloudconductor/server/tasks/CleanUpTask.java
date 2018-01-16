@@ -17,8 +17,9 @@ package de.cinovo.cloudconductor.server.tasks;
  * #L%
  */
 
-import java.util.List;
-
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EServerOptions;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
 import org.slf4j.Logger;
@@ -26,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EServerOptions;
+import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -90,7 +89,7 @@ public class CleanUpTask implements IServerTasks {
 		}
 		
 		if (change) {
-			SchedulerService.instance.resetTask(this.getTaskIdentifier(), newSettings.getHostCleanUpTimer(), newSettings.getHostCleanUpTimerUnit());
+			SchedulerService.instance.resetTask(this.getTaskIdentifier(), newSettings.getHostCleanUpTimer(), newSettings.getHostCleanUpTimerUnit(), null);
 		}
 	}
 }

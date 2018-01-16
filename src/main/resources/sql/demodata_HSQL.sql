@@ -54,9 +54,9 @@ INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
 INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', false, true);
 
 
-INSERT INTO cloudconductor.repo VALUES (1, 'TESTREPO', '1', '', null);
-INSERT INTO cloudconductor.repo VALUES (2, 'Ein etwas anderes REPO', '1', '', null);
-INSERT INTO cloudconductor.repo VALUES (3, 'CloudConductor', '1', '', null);
+INSERT INTO cloudconductor.repo VALUES (1, 'TESTREPO', '1', '', null, null);
+INSERT INTO cloudconductor.repo VALUES (2, 'Ein etwas anderes REPO', '1', '', null, null);
+INSERT INTO cloudconductor.repo VALUES (3, 'CloudConductor', '1', '', null, null);
 
 INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (1, 'http://localhost:8090/static/yum', 'localhost',  1, 1, 2, '/static/yum');
 INSERT INTO cloudconductor.repomirror (id, description, path, repoid, indexertype, providertype, basepath)  VALUES (2, 'Ein TestRepo', 'http://irgendwo.com/yum',  2, 0, 2, '/static/yum');

@@ -25,19 +25,19 @@ public class TemplateDetailWSHandler extends AParamWSHandler<AParamWSAdapter<Tem
 	@Override
 	public void addSocketAdapter(String templateName, AParamWSAdapter<Template> a) {
 		super.addSocketAdapter(templateName, a);
-		TemplateDetailWSHandler.LOGGER.info("Added WS for details of template {}", templateName);
+		TemplateDetailWSHandler.LOGGER.debug("Added WS for details of template {}", templateName);
 	}
 	
 	@Override
 	public boolean removeSocketAdapter(String templateName, AParamWSAdapter<Template> a) {
 		boolean success = super.removeSocketAdapter(templateName, a);
-		TemplateDetailWSHandler.LOGGER.info("Removed WS for details of template {}", templateName);
+		TemplateDetailWSHandler.LOGGER.debug("Removed WS for details of template {}", templateName);
 		return success;
 	}
 	
 	@Override
 	public void broadcastChange(String templateName, WSChangeEvent<Template> event) {
 		super.broadcastChange(templateName, event);
-		TemplateDetailWSHandler.LOGGER.info("Broadcasted change for template {}", templateName);
+		TemplateDetailWSHandler.LOGGER.debug("Broadcasted change for template {}", templateName);
 	}
 }

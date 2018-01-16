@@ -5,6 +5,8 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -29,18 +31,13 @@ import java.util.zip.GZIPInputStream;
  * @author Thorsten Hoeger
  */
 public class RPMIndexer implements IRepoIndexer {
-
 	private static final String REPO_INDEX = "repodata/repomd.xml";
-	private RepoEntry latest;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public Set<PackageVersion> getRepoIndex(IRepoProvider provider) {
 		RepoEntry entry = provider.getEntry(RPMIndexer.REPO_INDEX);
 		if(entry != null) {
-			if(!entry.hasChanged(this.latest)) {
-				return null;
-			}
-			this.latest = entry;
 			Document repoXML = this.xmlDOM(provider.getEntryStream(RPMIndexer.REPO_INDEX));
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			try {
@@ -56,6 +53,11 @@ public class RPMIndexer implements IRepoIndexer {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public RepoEntry getRepoEntry(IRepoProvider provider) {
+		return provider.getEntry(RPMIndexer.REPO_INDEX);
 	}
 
 	private Document xmlDOM(InputStream xmlStream) {
@@ -78,7 +80,7 @@ public class RPMIndexer implements IRepoIndexer {
 	private enum RPMPrimaryState {
 		Repo, Package, Requires, Provides, Conflicts;
 
-		public static EnumSet<RPMPrimaryState> depStates = EnumSet.of(Requires, Provides, Conflicts);
+		public static EnumSet<RPMPrimaryState> depStates = EnumSet.of(RPMPrimaryState.Requires, RPMPrimaryState.Provides, RPMPrimaryState.Conflicts);
 	}
 
 	private static class RPMPrimaryParser extends DefaultHandler {
@@ -101,7 +103,7 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes attributes) {
 			if((this.state == RPMPrimaryState.Repo) && qName.equals("package") && attributes.getValue("type").equals("rpm")) {
 				this.state = RPMPrimaryState.Package;
 				this.name = null;
@@ -160,7 +162,7 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName) {
 			if((this.state == RPMPrimaryState.Package) && qName.equals("name")) {
 				this.name = this.tmpValue;
 			} else if((this.state == RPMPrimaryState.Package) && qName.equals("package")) {
@@ -190,7 +192,7 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 
 		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length) {
 			this.tmpValue = new String(ch, start, length);
 		}
 

@@ -1187,4 +1187,10 @@
     		<where>name='Default'</where>
     	</update>
     </changeSet>
+
+    <changeSet id="36" author="psigloch">
+        <addColumn tableName="repo" schemaName="cloudconductor">
+            <column name="lastindexhash" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

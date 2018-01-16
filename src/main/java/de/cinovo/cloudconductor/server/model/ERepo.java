@@ -1,6 +1,8 @@
 package de.cinovo.cloudconductor.server.model;
 
-import java.util.List;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Repo;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,10 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Repo;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.List;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -25,32 +24,33 @@ import de.taimos.dvalin.jpa.IEntity;
 @Entity
 @Table(name = "repo", schema = "cloudconductor")
 public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, INamed {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	
+
 	private String name;
 	private String description;
 	private List<ERepoMirror> repoMirrors;
 	private Long primaryMirrorId;
-	
+
 	private Long lastIndex;
-	
-	
+	private String lastIndexHash;
+
+
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return this.id;
 	}
-	
+
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the name
 	 */
@@ -58,14 +58,14 @@ public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, 
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return the repoMirrors
 	 */
@@ -73,78 +73,91 @@ public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, 
 	public List<ERepoMirror> getRepoMirrors() {
 		return this.repoMirrors;
 	}
-	
+
 	/**
 	 * @param repoMirrors the repoMirrors to set
 	 */
 	public void setRepoMirrors(List<ERepoMirror> repoMirrors) {
 		this.repoMirrors = repoMirrors;
 	}
-	
+
 	/**
 	 * @return the id of the primary mirror
 	 */
 	public Long getPrimaryMirrorId() {
 		return this.primaryMirrorId;
 	}
-	
+
 	/**
-	 * 
 	 * @param primaryMirrorId the id of the primary mirror to be set
 	 */
 	public void setPrimaryMirrorId(Long primaryMirrorId) {
 		this.primaryMirrorId = primaryMirrorId;
 	}
-	
+
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * @return the lastIndex
 	 */
 	public Long getLastIndex() {
 		return this.lastIndex;
 	}
-	
+
 	/**
 	 * @param lastIndex the lastIndex to set
 	 */
 	public void setLastIndex(Long lastIndex) {
 		this.lastIndex = lastIndex;
 	}
-	
+
+	/**
+	 * @return the lastIndexHash
+	 */
+	public String getLastIndexHash() {
+		return this.lastIndexHash;
+	}
+
+	/**
+	 * @param lastIndexHash the lastIndexHash to set
+	 */
+	public void setLastIndexHash(String lastIndexHash) {
+		this.lastIndexHash = lastIndexHash;
+	}
+
 	@Override
 	@Transient
 	public Class<Repo> getApiClass() {
 		return Repo.class;
 	}
-	
+
 	@Override
 	@Transient
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ERepo)) {
+		if(!(obj instanceof ERepo)) {
 			return false;
 		}
-		
+
 		ERepo other = (ERepo) obj;
-		if ((this.getId() != null) && this.getId().equals(other.getId()) && (this.getName() != null) && this.getName().equals(other.getName())) {
+		if((this.getId() != null) && this.getId().equals(other.getId()) && (this.getName() != null) && this.getName().equals(other.getName())) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	@Transient
 	public int hashCode() {
@@ -152,7 +165,7 @@ public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, 
 		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
 		return val * idVal;
 	}
-	
+
 	@Override
 	public Repo toApi() {
 		Repo repo = super.toApi();

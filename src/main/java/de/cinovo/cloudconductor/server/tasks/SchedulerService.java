@@ -43,11 +43,22 @@ public class SchedulerService {
 	 * @param unit       the time unit
 	 */
 	public void register(String identifier, Runnable task, long period, TimeUnit unit) {
+		this.register(identifier, task, period, unit, null);
+	}
+
+	/**
+	 * @param identifier the task identifier
+	 * @param task       the task
+	 * @param period     the period
+	 * @param unit       the time unit
+	 * @param delay      initial delay
+	 */
+	public void register(String identifier, Runnable task, long period, TimeUnit unit, Long delay) {
 		if(!this.tasks.containsKey(identifier)) {
 			this.tasks.put(identifier, task);
 		}
 		if(!this.runningTasks.containsKey(identifier)) {
-			this.resetTask(identifier, period, unit);
+			this.resetTask(identifier, period, unit, delay);
 		}
 	}
 
@@ -84,12 +95,14 @@ public class SchedulerService {
 	 * @param period     the new period
 	 * @param unit       the new unit
 	 */
-	public void resetTask(String identifier, long period, TimeUnit unit) {
+	public void resetTask(String identifier, long period, TimeUnit unit, Long delay) {
 		SchedulerService.LOGGER.info("Resetting Task " + identifier);
 		if(!this.tasks.containsKey(identifier)) {
 			throw new RuntimeException("Unknown task: " + identifier);
 		}
-		long delay = 0;
+		if(delay == null) {
+			delay = 0L;
+		}
 		if(this.runningTasks.containsKey(identifier)) {
 			ScheduledFuture<?> task = this.runningTasks.get(identifier);
 			delay = task.getDelay(unit);
@@ -132,4 +145,6 @@ public class SchedulerService {
 	public void shutdown() {
 		this.ses.shutdown();
 	}
+
+
 }

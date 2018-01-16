@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright 2018 Cinovo AG<br>
@@ -40,23 +41,29 @@ public class RepoIndexTask implements IServerRepoTask {
 	@Override
 	public void create(EServerOptions settings) {
 		List<ERepo> repos = this.repoDAO.findList();
+		Long delay = 0L;
 		for(ERepo repo : repos) {
-			this.create(settings, repo);
+			this.create(settings, repo, delay);
+			delay += settings.getIndexScanTimerUnit().convert(30, TimeUnit.SECONDS);
 		}
 	}
 
-	private void create(EServerOptions settings, ERepo repo) {
+	private void create(EServerOptions settings, ERepo repo, Long delay) {
 		if(settings == null) {
 			settings = this.serverOptionsDAO.get();
 		}
 		IndexTask indexTask = new IndexTask(this.repoDAO, this.repoHandler, this.packageImport, repo.getId());
 		this.indexer.add(repo.getName());
-		SchedulerService.instance.register(repo.getName(), indexTask, settings.getIndexScanTimer(), settings.getIndexScanTimerUnit());
+		if(delay == null) {
+			SchedulerService.instance.register(repo.getName(), indexTask, settings.getIndexScanTimer(), settings.getIndexScanTimerUnit());
+		} else {
+			SchedulerService.instance.register(repo.getName(), indexTask, settings.getIndexScanTimer(), settings.getIndexScanTimerUnit(), delay);
+		}
 	}
 
 	@Override
 	public void newRepo(ERepo repo) {
-		this.create(null, repo);
+		this.create(null, repo, null);
 	}
 
 	@Override
@@ -97,8 +104,10 @@ public class RepoIndexTask implements IServerRepoTask {
 			}
 		}
 		if(change) {
+			Long delay = 0L;
 			for(String index : this.indexer) {
-				SchedulerService.instance.resetTask(index, newSettings.getIndexScanTimer(), newSettings.getIndexScanTimerUnit());
+				SchedulerService.instance.resetTask(index, newSettings.getIndexScanTimer(), newSettings.getIndexScanTimerUnit(), delay);
+				delay += newSettings.getIndexScanTimerUnit().convert(30, TimeUnit.SECONDS);
 			}
 		}
 	}

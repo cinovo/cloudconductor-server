@@ -17,6 +17,7 @@ import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.importer.IPackageImport;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
@@ -62,16 +63,26 @@ public class IndexTask implements Runnable {
 		}
 		this.logger.debug("Start Index Task!");
 		ERepo repo = this.repoDAO.findById(this.repoId);
+		if(repo == null) {
+			this.logger.error("Failed to find the repo with id {}", repoId);
+			return;
+		}
 		ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
+		if(mirror == null) {
+			this.logger.error("Failed to find a mirror for the repo {}", repo.getName());
+		}
+
 		this.logger.debug("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
-		if(this.indexRepo(mirror)) {
+		String checksum = this.indexRepo(mirror, repo.getLastIndexHash());
+		if(checksum != null) {
 			repo.setLastIndex(DateTime.now().getMillis());
+			repo.setLastIndexHash(checksum);
 			this.repoDAO.save(repo);
 		}
 		this.logger.debug("End of Index Task.");
 	}
 
-	private boolean indexRepo(ERepoMirror mirror) {
+	private String indexRepo(ERepoMirror mirror, String oldChecksum) {
 		try {
 			IRepoProvider repoProvider = this.repoHandler.findRepoProvider(mirror);
 			if(repoProvider == null) {
@@ -81,17 +92,24 @@ public class IndexTask implements Runnable {
 			if(indexer == null) {
 				throw new CloudConductorException("No indexer for mirror '" + mirror.getPath() + "'!");
 			}
-
+			RepoEntry entry = indexer.getRepoEntry(repoProvider);
+			if(entry == null) {
+				throw new CloudConductorException("No repo entry to index for mirror '" + mirror.getPath() + "' found!");
+			}
+			if(oldChecksum != null && oldChecksum.equals(entry.getChecksum())) {
+				this.logger.debug("Skipped repo indexing, no new files for mirror {}", mirror.getPath());
+				return entry.getChecksum();
+			}
 			Set<PackageVersion> latestIndex = indexer.getRepoIndex(repoProvider);
 			if(latestIndex != null) {
 				this.logger.debug("Latest index includes " + latestIndex.size() + " package versions!");
 				this.packageImport.importVersions(latestIndex);
-				return true;
+				return entry.getChecksum();
 			}
 		} catch(Exception e) {
 			this.logger.error("Error indexing repo '" + mirror.getPath() + "'", e);
 		}
-		return false;
+		return null;
 	}
 
 }
