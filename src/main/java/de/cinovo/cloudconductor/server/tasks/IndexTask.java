@@ -11,25 +11,20 @@ package de.cinovo.cloudconductor.server.tasks;
  * and limitations under the License. #L%
  */
 
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
-import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.repo.importer.IPackageImport;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -37,84 +32,66 @@ import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
  *
  * @author Thorsten Hoeger
  */
-@Service()
-public class IndexTask implements IServerTasks {
-	
-	private static final Logger logger = LoggerFactory.getLogger(IndexTask.class);
-	
-	@Autowired
-	private IPackageImport packageImport;
-	
-	@Autowired
+public class IndexTask implements Runnable {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private IRepoDAO repoDAO;
-	@Autowired
 	private RepoHandler repoHandler;
-	
-	
+	private IPackageImport packageImport;
+
+	private Long repoId;
+
+	/**
+	 * @param repoDAO       the repo dao
+	 * @param repoHandler   the repo handler
+	 * @param packageImport the package import
+	 * @param repoId        the repo id
+	 */
+	public IndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId) {
+		this.repoDAO = repoDAO;
+		this.repoHandler = repoHandler;
+		this.packageImport = packageImport;
+		this.repoId = repoId;
+	}
+
 	@Override
 	public void run() {
-		IndexTask.logger.debug("Start Index Task!");
-		List<ERepo> repos = this.repoDAO.findList();
-		for (ERepo repo : repos) {
-			ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
-			IndexTask.logger.info("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
-			if (this.indexRepo(mirror)) {
-				repo.setLastIndex(DateTime.now().getMillis());
-				this.repoDAO.save(repo);
-			}
+		if(this.repoId == null) {
+			return;
 		}
-		IndexTask.logger.debug("End of Index Task.");
+		this.logger.debug("Start Index Task!");
+		ERepo repo = this.repoDAO.findById(this.repoId);
+		ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
+		this.logger.debug("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
+		if(this.indexRepo(mirror)) {
+			repo.setLastIndex(DateTime.now().getMillis());
+			this.repoDAO.save(repo);
+		}
+		this.logger.debug("End of Index Task.");
 	}
-	
+
 	private boolean indexRepo(ERepoMirror mirror) {
 		try {
 			IRepoProvider repoProvider = this.repoHandler.findRepoProvider(mirror);
-			if (repoProvider == null) {
+			if(repoProvider == null) {
 				throw new CloudConductorException("No repo provider for mirror '" + mirror.getPath() + "'!");
 			}
 			IRepoIndexer indexer = this.repoHandler.findRepoIndexer(mirror);
-			if (indexer == null) {
+			if(indexer == null) {
 				throw new CloudConductorException("No indexer for mirror '" + mirror.getPath() + "'!");
 			}
-			
+
 			Set<PackageVersion> latestIndex = indexer.getRepoIndex(repoProvider);
-			if (latestIndex != null) {
-				IndexTask.logger.info("Latest index includes " + latestIndex.size() + " package versions!");
+			if(latestIndex != null) {
+				this.logger.debug("Latest index includes " + latestIndex.size() + " package versions!");
 				this.packageImport.importVersions(latestIndex);
 				return true;
 			}
-		} catch (Exception e) {
-			IndexTask.logger.error("Error indexing repo '" + mirror.getPath() + "'", e);
+		} catch(Exception e) {
+			this.logger.error("Error indexing repo '" + mirror.getPath() + "'", e);
 		}
 		return false;
 	}
-	
-	@Override
-	public String getTaskIdentifier() {
-		return "INDEXER_TASK";
-	}
-	
-	@Override
-	public void create(EServerOptions settings) {
-		SchedulerService.instance.register(this.getTaskIdentifier(), this, settings.getIndexScanTimer(), settings.getIndexScanTimerUnit());
-	}
-	
-	@Override
-	public void update(EServerOptions oldSettings, EServerOptions newSettings) {
-		boolean change = false;
-		if (oldSettings == null) {
-			change = true;
-		} else {
-			if (oldSettings.getIndexScanTimer() != newSettings.getIndexScanTimer()) {
-				change = true;
-			}
-			if (!oldSettings.getIndexScanTimerUnit().equals(newSettings.getIndexScanTimerUnit())) {
-				change = true;
-			}
-		}
-		if (change) {
-			SchedulerService.instance.resetTask(this.getTaskIdentifier(), newSettings.getIndexScanTimer(), newSettings.getIndexScanTimerUnit());
-		}
-	}
-	
+
 }
