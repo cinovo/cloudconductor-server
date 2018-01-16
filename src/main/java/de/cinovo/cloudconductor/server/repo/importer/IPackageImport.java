@@ -17,11 +17,5 @@ public interface IPackageImport {
 	 * @param packageVersions the package versions
 	 */
 	void importVersions(Set<PackageVersion> packageVersions);
-	
-	/**
-	 * @param packageVersions the package versions
-	 * @param repoName the repo name
-	 */
-	void importVersions(Set<PackageVersion> packageVersions, String repoName);
-	
+
 }

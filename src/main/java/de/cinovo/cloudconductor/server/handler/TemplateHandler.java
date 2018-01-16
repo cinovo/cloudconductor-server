@@ -11,7 +11,6 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
-import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,9 +104,7 @@ public class TemplateHandler {
 	 *
 	 * @param template the template to update the packages for
 	 */
-	public void updateAllPackages(ETemplate template) {
-		PackageVersionComparator versionComp = new PackageVersionComparator();
-		
+	private void updateAllPackages(ETemplate template) {
 		if ((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
 			return;
 		}
@@ -139,7 +136,7 @@ public class TemplateHandler {
 	/**
 	 * @param t collection of templates to disable autoupdate.
 	 */
-	public void disableAutoUpdate(Collection<ETemplate> t) {
+	private void disableAutoUpdate(Collection<ETemplate> t) {
 		if (t == null) {
 			t = this.templateDAO.findList();
 		}
