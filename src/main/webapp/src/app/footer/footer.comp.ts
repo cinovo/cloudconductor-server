@@ -8,9 +8,6 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 export class FooterComponent {
 
-  private currentTime: number = Date.now();
-
-
-
+  public currentTime: number = Date.now();
 
 }
