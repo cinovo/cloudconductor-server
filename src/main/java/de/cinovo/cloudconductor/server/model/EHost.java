@@ -267,7 +267,9 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 			serviceMap.put(service.getService().getName(), service.getState());
 		}
 		api.setServices(serviceMap);
-		api.setAgent(this.getAgent().getName());
+		if(this.getAgent() != null) {
+			api.setAgent(this.getAgent().getName());
+		}
 		api.setUuid(this.uuid);
 		Map<String, String> packageMap = new HashMap<>();
 		for(EPackageState pkg : this.getPackages()) {
