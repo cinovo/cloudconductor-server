@@ -136,9 +136,9 @@ public class PackageImpl implements IPackage {
 
 	@Override
 	@Transactional
-	public PackageStateChanges getPackageChanges(String hostName) {
-		RESTAssert.assertNotEmpty(hostName);
-		EHost host = this.hostDAO.findByName(hostName);
+	public PackageStateChanges getPackageChanges(String hostUuid) {
+		RESTAssert.assertNotEmpty(hostUuid);
+		EHost host = this.hostDAO.findByUuid(hostUuid);
 		RESTAssert.assertNotNull(host);
 		if(host.getTemplate() == null) {
 			return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
