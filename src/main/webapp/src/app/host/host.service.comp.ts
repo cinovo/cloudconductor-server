@@ -31,7 +31,7 @@ export class HostServices implements AfterViewInit {
   @Input() obsHost: Observable<Host>;
 
   public services: Array<ServiceStateElement> = [];
-  public host: Host = {name: '', template: ''};
+  public host: Host = {name: '', template: '', uuid: ''};
 
   private _allSelected = false;
 
