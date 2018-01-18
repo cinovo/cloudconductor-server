@@ -16,7 +16,7 @@ import { AuthorizationGuard } from '../util/auth/authorization.guard';
 const hostRoutes: Routes = [
   {path: '', component: HostOverview, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':hostName', component: HostDetail, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
+  {path: ':hostUuid', component: HostDetail, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]}
 ];
 

@@ -39,12 +39,12 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	public Class<EHost> getEntityClass() {
 		return EHost.class;
 	}
-	
+
 	@Override
 	public EHost findByName(String name) {
 		return this.findByQuery("FROM EHost h WHERE h.name = ?1", name);
 	}
-	
+
 	@Override
 	public Long count() {
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();

@@ -24,7 +24,7 @@ export class HostPackages implements OnInit, OnDestroy {
 
   public packages: PackageChange[] = [];
   public packageChanges = false;
-  public host: Host = {name: '', template: ''};
+  public host: Host = {name: '', template: '', uuid:''};
 
   private hostSub: Subscription;
   private packageChangesSub: Subscription;

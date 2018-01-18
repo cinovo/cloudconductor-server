@@ -24,7 +24,7 @@ export class PackageChangesService {
   }
 
   public computePackageChanges(host: Host): Observable<PackageChange[]> {
-    return this.packageHttp.getPackageChanges(host.name).flatMap((psc: PackageStateChanges) => {
+    return this.packageHttp.getPackageChanges(host.uuid).flatMap((psc: PackageStateChanges) => {
       const packageChanges: PackageChange[] = [];
       for (let pkg of psc.toInstall) {
         packageChanges.push({

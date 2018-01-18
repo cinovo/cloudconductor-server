@@ -168,7 +168,7 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   protected gotoDetails(host: Host) {
-    this.router.navigate(['host', host.name]);
+    this.router.navigate(['host', host.uuid]);
   }
 
   public deleteHosts() {

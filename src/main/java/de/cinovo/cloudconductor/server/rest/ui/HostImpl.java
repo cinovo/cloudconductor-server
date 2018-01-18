@@ -50,18 +50,18 @@ public class HostImpl implements IHost {
 
 	@Override
 	@Transactional
-	public Host getHost(String hostName) {
-		RESTAssert.assertNotEmpty(hostName);
-		EHost eHost = this.hostDAO.findByName(hostName);
+	public Host getHost(String hostUuid) {
+		RESTAssert.assertNotEmpty(hostUuid);
+		EHost eHost = this.hostDAO.findByUuid(hostUuid);
 		RESTAssert.assertNotNull(eHost, Response.Status.NOT_FOUND);
 		return eHost.toApi();
 	}
 
 	@Override
 	@Transactional
-	public void deleteHost(String hostName) {
-		RESTAssert.assertNotEmpty(hostName);
-		EHost eHost = this.hostDAO.findByName(hostName);
+	public void deleteHost(String hostUuid) {
+		RESTAssert.assertNotEmpty(hostUuid);
+		EHost eHost = this.hostDAO.findByUuid(hostUuid);
 		this.hostDAO.delete(eHost);
 		this.hostsWsHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.DELETED, eHost.toApi()));
 	}
@@ -69,12 +69,12 @@ public class HostImpl implements IHost {
 	@Override
 	@Transactional
 	public void setServiceState(ChangeServiceState changeServiceState) {
-		RESTAssert.assertNotEmpty(changeServiceState.getHost());
+		RESTAssert.assertNotEmpty(changeServiceState.getHostUuid());
 		RESTAssert.assertNotEmpty(changeServiceState.getService());
 		RESTAssert.assertNotNull(changeServiceState.getTargetState());
-		EHost eHost = this.hostDAO.findByName(changeServiceState.getHost());
+		EHost eHost = this.hostDAO.findByUuid(changeServiceState.getHostUuid());
 		this.hostHandler.changeServiceState(eHost, changeServiceState.getService(), changeServiceState.getTargetState());
 		eHost = this.hostDAO.save(eHost);
-		this.hostDetailWsHandler.broadcastChange(changeServiceState.getHost(), new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
+		this.hostDetailWsHandler.broadcastChange(changeServiceState.getHostUuid(), new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
 	}
 }

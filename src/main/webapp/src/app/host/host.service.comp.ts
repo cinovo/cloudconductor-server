@@ -97,34 +97,15 @@ export class HostServices implements AfterViewInit {
   private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: (err) => void): void {
     switch (type) {
       case 'start':
-        this.hostHTTP.startService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
+        this.hostHTTP.startService(this.host.uuid, serviceName).subscribe(successCallback, errorCallBack);
         break;
       case 'stop':
-        this.hostHTTP.stopService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
+        this.hostHTTP.stopService(this.host.uuid, serviceName).subscribe(successCallback, errorCallBack);
         break;
       case 'restart':
-        this.hostHTTP.restartService(this.host.name, serviceName).subscribe(successCallback, errorCallBack);
+        this.hostHTTP.restartService(this.host.uuid, serviceName).subscribe(successCallback, errorCallBack);
         break;
     }
-  }
-
-  private startSelected(index = 0): void {
-    while (index < this.services.length && !this.services[index].selected) {
-      index++;
-    }
-    if (index >= this.services.length) {
-      this.allSelected = false;
-      return;
-    }
-
-    this.hostHTTP.startService(this.host.name, this.services[index].name).subscribe(
-      () => {
-        this.startSelected(index + 1);
-      },
-      () => {
-        this.startSelected(index + 1);
-      }
-    )
   }
 
   private isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {

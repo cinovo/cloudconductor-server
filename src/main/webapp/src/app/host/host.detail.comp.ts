@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -9,8 +9,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
-import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
-import { Template } from '../util/http/template.http.service';
+import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 
 /**
@@ -25,9 +24,9 @@ import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 })
 export class HostDetail implements OnInit, OnDestroy {
 
-  private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: '', template: ''});
+  private _behavHost: BehaviorSubject<Host> = new BehaviorSubject({name: '', template: '', uuid: ''});
   public obsHost: Observable<Host> = this._behavHost.asObservable();
-  public host: Host = {name: '', template: ''};
+  public host: Host = {name: '', template: '', uuid: ''};
 
   private autorefresh = false;
 
@@ -39,14 +38,15 @@ export class HostDetail implements OnInit, OnDestroy {
               private router: Router,
               private hostHttp: HostHttpService,
               private alerts: AlertService,
-              private wsService: WebSocketService) { };
+              private wsService: WebSocketService) {
+  };
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      const hostName = params['hostName'];
+      const hostUuid = params['hostUuid'];
 
-      this.loadData(hostName);
-      this.connectWS(hostName);
+      this.loadData(hostUuid);
+      this.connectWS(hostUuid);
     });
     this.obsHost.subscribe((result) => this.host = result);
   }
@@ -73,7 +73,7 @@ export class HostDetail implements OnInit, OnDestroy {
       const iv = (this.wsService.timeout * 0.4);
       this._heartBeatSub = Observable.interval(iv).subscribe(() => {
         // send heart beat message via WebSockets
-        this._webSocket.next({ data: 'Alive!' });
+        this._webSocket.next({data: 'Alive!'});
       });
     });
   }
@@ -82,11 +82,11 @@ export class HostDetail implements OnInit, OnDestroy {
     this.wsService.disconnect();
   }
 
-  private loadData(hostName: string): void {
-    if (Validator.notEmpty(hostName) && hostName !== 'new') {
-      this.hostHttp.getHost(hostName).subscribe(
+  private loadData(hostUuid: string): void {
+    if (Validator.notEmpty(hostUuid) && hostUuid !== 'new') {
+      this.hostHttp.getHost(hostUuid).subscribe(
         (result) => this._behavHost.next(result),
-        (error) => this.router.navigate(['/not-found', 'host', hostName]));
+        (error) => this.router.navigate(['/not-found', 'host', hostUuid]));
     }
   }
 

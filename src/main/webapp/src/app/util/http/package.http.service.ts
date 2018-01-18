@@ -69,7 +69,7 @@ export class PackageHttpService {
     return this.http.get<PackageVersion[]>(`${this._basePathURL}/versions/repo/${repoName}`);
   }
 
-  public getPackageChanges(hostName: string): Observable<PackageStateChanges> {
-    return this.http.get<PackageStateChanges>(`${this._basePathURL}/changes/${hostName}`);
+  public getPackageChanges(hostUuid: string): Observable<PackageStateChanges> {
+    return this.http.get<PackageStateChanges>(`${this._basePathURL}/changes/${hostUuid}`);
   }
 }
