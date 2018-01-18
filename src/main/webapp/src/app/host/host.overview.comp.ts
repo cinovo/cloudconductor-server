@@ -82,13 +82,13 @@ export class HostOverview implements OnInit, OnDestroy {
 
           case 'UPDATED':
             const updatedHost = data.content;
-            const indexToUpdate = this._hosts.findIndex((h) => h.name === updatedHost.name);
+            const indexToUpdate = this._hosts.findIndex((h) => h.uuid === updatedHost.uuid);
             updatedHosts.splice(indexToUpdate, 1, updatedHost);
             break;
 
           case 'DELETED':
             const deletedHost = data.content;
-            const indexToDelete = this._hosts.findIndex((h) => h.name === deletedHost.name);
+            const indexToDelete = this._hosts.findIndex((h) => h.uuid === deletedHost.uuid);
 
             updatedHosts.splice(indexToDelete, 1);
             break;

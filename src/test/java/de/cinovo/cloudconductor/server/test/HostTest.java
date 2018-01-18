@@ -38,8 +38,6 @@ import java.util.Set;
 @SuppressWarnings("javadoc")
 public class HostTest extends APITest {
 	
-	private static final String TEST_SERVICE = "nginx";
-	private static final String HOST22 = "host2";
 	private static final String HOST1 = "host1";
 	
 	
@@ -53,7 +51,7 @@ public class HostTest extends APITest {
 			Assert.assertEquals(HostTest.HOST1, next.getName());
 		}
 		{
-			Host host = h.get(HostTest.HOST1);
+			Host host = h.get("123123-123123-123123");
 			Assert.assertNotNull(host);
 			Assert.assertEquals(HostTest.HOST1, host.getName());
 		}

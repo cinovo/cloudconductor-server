@@ -51,8 +51,8 @@ export class HostDetail implements OnInit, OnDestroy {
     this.obsHost.subscribe((result) => this.host = result);
   }
 
-  private connectWS(hostName: string): void {
-    this.wsService.connect('host', hostName).subscribe((webSocket) => {
+  private connectWS(hostUuid: string): void {
+    this.wsService.connect('host', hostUuid).subscribe((webSocket) => {
       this._webSocket = webSocket;
 
       this._webSocketSub = this._webSocket.subscribe((event) => {

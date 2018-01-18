@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Host } from "../http/host.http.service";
 import { PackageHttpService, PackageStateChanges } from "../http/package.http.service";
+import { Validator } from "../validator.util";
 
 export interface PackageChange {
   name: string;
@@ -24,6 +25,10 @@ export class PackageChangesService {
   }
 
   public computePackageChanges(host: Host): Observable<PackageChange[]> {
+    if(!Validator.notEmpty(host.uuid)) {
+      const packageChanges: PackageChange[] = [];
+      return Observable.of(packageChanges);
+    }
     return this.packageHttp.getPackageChanges(host.uuid).flatMap((psc: PackageStateChanges) => {
       const packageChanges: PackageChange[] = [];
       for (let pkg of psc.toInstall) {
