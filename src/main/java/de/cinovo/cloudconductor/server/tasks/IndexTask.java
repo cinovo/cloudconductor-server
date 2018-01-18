@@ -64,7 +64,7 @@ public class IndexTask implements Runnable {
 		this.logger.debug("Start Index Task!");
 		ERepo repo = this.repoDAO.findById(this.repoId);
 		if(repo == null) {
-			this.logger.error("Failed to find the repo with id {}", repoId);
+			this.logger.error("Failed to find the repo with id {}", this.repoId);
 			return;
 		}
 		ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);

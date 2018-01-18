@@ -1,8 +1,10 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import com.google.common.collect.ArrayListMultimap;
+import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
+import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
@@ -12,6 +14,7 @@ import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,21 +34,42 @@ public class PackageStateChangeHandler {
 	@Autowired
 	private IServerOptionsDAO serverOptionsDAO;
 
+	/**
+	 * @param host the host
+	 * @return the package state changes
+	 */
+	public PackageStateChanges computePackageDiff(EHost host) {
+		return this.computePackageDiff(host, host.getTemplate());
+	}
+
+	/**
+	 * @param host the host
+	 * @param template the template to compare with
+	 * @return the package state changes
+	 */
+	public PackageStateChanges computePackageDiff(EHost host, ETemplate template) {
+		// Compute instruction lists (install/updateEntity/erase) from difference between packages actually installed packages that
+		// should be installed.
+		Set<EPackageVersion> actual = new HashSet<>();
+		for(EPackageState state : host.getPackages()) {
+			actual.add(state.getVersion());
+		}
+		return this.computePackageDiff(template, actual);
+	}
 
 	/**
 	 * @param template the referenced template
 	 * @param actual   list of package versions which are actually installed
 	 * @return multimap including package versions and the command which should be applied to them (e.g install, update, delete)
 	 */
-	public ArrayListMultimap<PackageCommand, PackageVersion> computePackageDiff(ETemplate template, Set<EPackageVersion> actual) {
+	public PackageStateChanges computePackageDiff(ETemplate template, Set<EPackageVersion> actual) {
 		List<EPackageVersion> nominal = template.getPackageVersions();
 		TreeSet<EPackageVersion> toInstall = this.findInstalls(actual, nominal);
 		TreeSet<EPackageVersion> toErase = this.findDeletes(actual, nominal, template.getRepos());
 		TreeSet<EPackageVersion> toUpdate = this.findUpdates(toInstall, toErase);
 
-
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).
-		ArrayListMultimap<PackageCommand, PackageVersion> result = ArrayListMultimap.create();
+		PackageStateChanges result = new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 		result = this.fillPackageDiff(result, PackageCommand.INSTALL, toInstall);
 		result = this.fillPackageDiff(result, PackageCommand.UPDATE, toUpdate);
 		result = this.fillPackageDiff(result, PackageCommand.ERASE, toErase);
@@ -101,12 +125,22 @@ public class PackageStateChangeHandler {
 		return toUpdate;
 	}
 
-	private ArrayListMultimap<PackageCommand, PackageVersion> fillPackageDiff(ArrayListMultimap<PackageCommand, PackageVersion> map, PackageCommand command, Collection<EPackageVersion> packageVersions) {
+	private PackageStateChanges fillPackageDiff(PackageStateChanges changes, PackageCommand command, Collection<EPackageVersion> packageVersions) {
 		for(EPackageVersion pv : packageVersions) {
 			PackageVersion apiPV = pv.toApi();
-			map.put(command, apiPV);
+			switch(command) {
+				case INSTALL:
+					changes.getToInstall().add(apiPV);
+					break;
+				case UPDATE:
+					changes.getToUpdate().add(apiPV);
+					break;
+				case ERASE:
+					changes.getToErase().add(apiPV);
+					break;
+			}
 		}
-		return map;
+		return changes;
 	}
 
 }

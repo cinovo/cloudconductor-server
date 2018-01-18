@@ -1,19 +1,5 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ws.rs.WebApplicationException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
@@ -28,6 +14,18 @@ import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.ws.rs.WebApplicationException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -170,7 +168,7 @@ public class PackageHandler {
 		epv.setVersion(pv.getVersion());
 		epv.getRepos().addAll(this.getRepos(pv.getRepos()));
 		epv.setDeprecated(false);
-		epv.setDependencies(new HashSet<EDependency>());
+		epv.setDependencies(new HashSet<>());
 		for (Dependency dep : pv.getDependencies()) {
 			EDependency eDependency = this.dependencyDAO.find(dep);
 			if (eDependency == null) {

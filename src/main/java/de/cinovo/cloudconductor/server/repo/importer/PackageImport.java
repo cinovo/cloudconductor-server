@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +63,6 @@ public class PackageImport implements IPackageImport {
 	 * @param packageVersions the package versions
 	 */
 	@Override
-	@Transactional
 	public void importVersions(Set<PackageVersion> packageVersions) {
 		Map<String, Set<PackageVersion>> repoMap = new HashMap<>();
 		for(PackageVersion packageVersion : packageVersions) {
@@ -82,10 +80,9 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	@Transactional
-	void importVersions(Set<PackageVersion> packageVersions, String repoName) {
+	private void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
-		HashMap<String, Set<PackageVersion>> provided = new HashMap<>();
+		HashMap<String, Set<EPackageVersion>> provided = new HashMap<>();
 
 		for(PackageVersion version : packageVersions) {
 			// Retrieve the package for the given version. Create it if it doesn't exist.
@@ -101,16 +98,24 @@ public class PackageImport implements IPackageImport {
 			EPackageVersion eversion = this.versionDAO.find(name, ver);
 			if(eversion == null) {
 				PackageImport.LOGGER.debug("Create new package version '" + name + "':'" + ver + "'");
-				this.packageHandler.createEntity(version, epackage);
+				eversion = this.packageHandler.createEntity(version, epackage);
 			} else {
 				PackageImport.LOGGER.debug("Update existing package version '" + name + "':'" + ver + "'");
-				eversion.setPkg(epackage);
-				this.packageHandler.updateEntity(eversion, version);
+				boolean containsRepo = false;
+				for(ERepo eRepo : eversion.getRepos()) {
+					if(eRepo.getName().equalsIgnoreCase(repoName) && !eversion.getDeprecated()) {
+						containsRepo = true;
+						break;
+					}
+				}
+				if(!containsRepo) {
+					eversion = this.packageHandler.updateEntity(eversion, version);
+				}
 			}
 			if(!provided.containsKey(epackage.getName())) {
-				provided.put(epackage.getName(), new HashSet<>());
+				provided.put(eversion.getPkg().getName(), new HashSet<>());
 			}
-			provided.get(epackage.getName()).add(version);
+			provided.get(eversion.getPkg().getName()).add(eversion);
 		}
 
 		this.performDBClean(repoName, provided);
@@ -118,8 +123,7 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	@Transactional
-	void performDBClean(String repoName, HashMap<String, Set<PackageVersion>> provided) {
+	private void performDBClean(String repoName, HashMap<String, Set<EPackageVersion>> provided) {
 		List<EPackage> inDB = new ArrayList<>(this.packageDAO.findList());
 		List<EFile> cfgs = this.fileDAO.findList();
 
@@ -142,16 +146,15 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	@Transactional
-	void cleanUpVersions(Set<PackageVersion> newPackageVersions, Set<EPackageVersion> existing, String currentRepo) {
+	private void cleanUpVersions(Set<EPackageVersion> newPackageVersions, Set<EPackageVersion> existing, String currentRepo) {
 		if(existing == null) {
 			return;
 		}
 		for(EPackageVersion dbVersion : existing) {
 			boolean provided = false;
 			if(newPackageVersions != null) {
-				for(PackageVersion newPackageVersion : newPackageVersions) {
-					if(dbVersion.getVersion().equals(newPackageVersion.getVersion())) {
+				for(EPackageVersion newPackageVersion : newPackageVersions) {
+					if(newPackageVersion.getId().equals(dbVersion.getId())) {
 						provided = true;
 						break;
 					}
@@ -164,8 +167,7 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	@Transactional
-	void handleNotProvidedVersion(String currentRepo, EPackageVersion dbVersion) {
+	private void handleNotProvidedVersion(String currentRepo, EPackageVersion dbVersion) {
 		Set<ERepo> toRemove = new HashSet<>();
 		for(ERepo eRepo : dbVersion.getRepos()) {
 			if(eRepo.getName().equals(currentRepo)) {
@@ -175,6 +177,9 @@ public class PackageImport implements IPackageImport {
 		}
 		dbVersion.getRepos().removeAll(toRemove);
 		if(dbVersion.getRepos().size() > 0) {
+			if(toRemove.isEmpty()) {
+				return;
+			}
 			this.versionDAO.save(dbVersion);
 			return;
 		}
@@ -183,8 +188,6 @@ public class PackageImport implements IPackageImport {
 			this.versionDAO.save(dbVersion);
 			return;
 		}
-
 		this.versionDAO.delete(dbVersion);
-
 	}
 }

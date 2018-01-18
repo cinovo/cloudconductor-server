@@ -2,10 +2,14 @@ package de.cinovo.cloudconductor.server.rest.ui;
 
 import de.cinovo.cloudconductor.api.interfaces.IPackage;
 import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.handler.PackageStateChangeHandler;
+import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
@@ -18,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +44,10 @@ public class PackageImpl implements IPackage {
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-
+	@Autowired
+	private IHostDAO hostDAO;
+	@Autowired
+	private PackageStateChangeHandler packageStateChangeHandler;
 
 	@Override
 	@Transactional
@@ -124,6 +132,18 @@ public class PackageImpl implements IPackage {
 			}
 		}
 		return result.toArray(new PackageVersion[result.size()]);
+	}
+
+	@Override
+	@Transactional
+	public PackageStateChanges getPackageChanges(String hostName) {
+		RESTAssert.assertNotEmpty(hostName);
+		EHost host = this.hostDAO.findByName(hostName);
+		RESTAssert.assertNotNull(host);
+		if(host.getTemplate() == null) {
+			return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		}
+		return this.packageStateChangeHandler.computePackageDiff(host);
 	}
 
 }

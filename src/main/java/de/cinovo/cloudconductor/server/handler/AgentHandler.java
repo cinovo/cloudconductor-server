@@ -1,7 +1,5 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import com.google.common.collect.ArrayListMultimap;
-import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.enums.TaskState;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
@@ -21,11 +19,9 @@ import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageState;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.EUser;
-import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.security.AuthHandler;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
@@ -67,6 +63,8 @@ public class AgentHandler {
 	@Autowired
 	private IServiceStateDAO serviceStateDAO;
 
+	@Autowired
+	private ServiceStateHandler serviceStateHandler;
 	@Autowired
 	private HostHandler hostHandler;
 	@Autowired
@@ -128,19 +126,12 @@ public class AgentHandler {
 
 		// check whether the host may updateEntity or has to wait for another host to finish updating
 		if(this.sendPackageChanges(template, host)) {
-			// Compute instruction lists (install/updateEntity/erase) from difference between packages actually installed packages that
-			// should be installed.
-			Set<EPackageVersion> actual = new HashSet<>();
-			for(EPackageState state : host.getPackages()) {
-				actual.add(state.getVersion());
-			}
-			ArrayListMultimap<PackageCommand, PackageVersion> diff = this.psChangeHandler.computePackageDiff(template, actual);
-			if(!diff.get(PackageCommand.INSTALL).isEmpty() || !diff.get(PackageCommand.UPDATE).isEmpty() || !diff.get(PackageCommand.ERASE).isEmpty()) {
+			PackageStateChanges diff = this.psChangeHandler.computePackageDiff(host, template);
+			if(!diff.getToInstall().isEmpty() || !diff.getToUpdate().isEmpty() || !diff.getToErase().isEmpty()) {
 				host.setStartedUpdate(DateTime.now().getMillis());
 			}
-			return new PackageStateChanges(diff.get(PackageCommand.INSTALL), diff.get(PackageCommand.UPDATE), diff.get(PackageCommand.ERASE));
+			return diff;
 		}
-
 		return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 
@@ -186,11 +177,7 @@ public class AgentHandler {
 		if(this.serviceHandler.assertHostServices(template, host)) {
 			host = this.hostDAO.findByUuid(uuid);
 		}
-
-		Set<String> toStop = new HashSet<>();
-		Set<String> toStart = new HashSet<>();
-		Set<String> toRestart = new HashSet<>();
-
+		ServiceStatesChanges serviceStatesChanges = new ServiceStatesChanges(new HashSet<>(), new HashSet<>(), new HashSet<>());
 		Set<EServiceState> stateList = new HashSet<>(host.getServices());
 
 		// agent sends running services
@@ -198,66 +185,27 @@ public class AgentHandler {
 			for(EServiceState state : host.getServices()) {
 				if(state.getService().getName().equals(sname)) {
 					stateList.remove(state);
-					switch(state.getState()) {
-						case RESTARTING_STARTING:
-						case STARTING:
-							state.nextState();
-							this.serviceStateDAO.save(state);
-							// service is now started, inform user interface via WS
-							this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
-							break;
-						case STOPPING:
-							toStop.add(state.getService().getInitScript());
-							break;
-						case RESTARTING_STOPPING:
-							toRestart.add(state.getService().getInitScript());
-							state.nextState();
-							this.serviceStateDAO.save(state);
-							break;
-						case STOPPED:
-							state.nextState();
-							toStop.add(state.getService().getInitScript());
-							this.serviceStateDAO.save(state);
-							break;
-						default:
-							break;
-					}
+					this.serviceStateHandler.handleStartedService(state, serviceStatesChanges);
 				}
 			}
 		}
 
 		// remaining elements in stateList refer to services which are not running at the moment
-
-		// agent sends stopped services
-		for(EServiceState state : stateList) {
-			switch(state.getState()) {
-				case STARTING:
-					toStart.add(state.getService().getInitScript());
-					break;
-				case STOPPING:
-					state.nextState();
-					this.serviceStateDAO.save(state);
-					// service is now stopped, inform user interface via WS
-					this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
-					break;
-				case STARTED:
-					toStart.add(state.getService().getInitScript());
-					state.setState(ServiceState.STARTING);
-					this.serviceStateDAO.save(state);
-					break;
-				default:
-					break;
+		for(EServiceState hostState : stateList) {
+			EServiceState state = this.serviceStateDAO.findById(hostState.getId());
+			if(state != null) {
+				this.serviceStateHandler.handleStopedService(state, serviceStatesChanges);
 			}
+		}
+
+		if(serviceStatesChanges.getToStart().isEmpty() && serviceStatesChanges.getToStart().isEmpty() && serviceStatesChanges.getToStart().isEmpty() && (host.getStartedUpdate() != null)) {
+			host = this.hostDAO.findById(host.getId());
+			host.setStartedUpdate(null);
+			this.hostDAO.save(host);
 		}
 
 		HashSet<ConfigFile> configFiles = new HashSet<>();
 		Collections.addAll(configFiles, this.fileHandler.getFilesForTemplate(templateName));
-
-		if(toStart.isEmpty() && toStop.isEmpty() && toRestart.isEmpty() && (host.getStartedUpdate() != null)) {
-			host.setStartedUpdate(null);
-			this.hostDAO.save(host);
-		}
-		ServiceStatesChanges serviceStatesChanges = new ServiceStatesChanges(toStart, toStop, toRestart);
 		serviceStatesChanges.setConfigFiles(configFiles);
 		return serviceStatesChanges;
 	}

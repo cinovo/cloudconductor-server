@@ -29,12 +29,19 @@ export interface Dependency {
   type: string;
 }
 
+export interface PackageStateChanges {
+  toInstall: Array<PackageVersion>;
+  toUpdate: Array<PackageVersion>;
+  toErase: Array<PackageVersion>;
+}
+
 @Injectable()
 export class PackageHttpService {
 
   private _basePathURL = 'api/package';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   public getPackages(): Observable<Package[]> {
     return this.http.get<Package[]>(this._basePathURL);
@@ -42,7 +49,7 @@ export class PackageHttpService {
 
   public getPackagesPagewise(page = 0, pageSize = 0): Observable<HttpResponse<Package[]>> {
     const params = new HttpParams().set('page', page.toString())
-                                    .set('per_page', pageSize.toString());
+      .set('per_page', pageSize.toString());
     return this.http.get<Package[]>(this._basePathURL, {observe: 'response', params: params});
   }
 
@@ -62,4 +69,7 @@ export class PackageHttpService {
     return this.http.get<PackageVersion[]>(`${this._basePathURL}/versions/repo/${repoName}`);
   }
 
+  public getPackageChanges(hostName: string): Observable<PackageStateChanges> {
+    return this.http.get<PackageStateChanges>(`${this._basePathURL}/changes/${hostName}`);
+  }
 }
