@@ -48,6 +48,15 @@ public class RepoIndexTask implements IServerRepoTask {
 		}
 	}
 
+	/**
+	 * @param repo the repo to force the update on
+	 */
+	public void forceUpdate(ERepo repo) {
+		RepoIndexTask.logger.info("Forcing a reindex of {}", repo.getName());
+		IndexTask indexTask = new IndexTask(this.repoDAO, this.repoHandler, this.packageImport, repo.getId());
+		indexTask.run();
+	}
+
 	private void create(EServerOptions settings, ERepo repo, Long delay) {
 		if(settings == null) {
 			settings = this.serverOptionsDAO.get();

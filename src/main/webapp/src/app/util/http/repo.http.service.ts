@@ -55,4 +55,7 @@ export class RepoHttpService {
     return this.http.put<Repo>(this._basePathURL, repo);
   }
 
+  public forceReindex(repo: Repo) : Observable<boolean> {
+    return this.http.put<boolean>(`${this._basePathURL}/${repo.name}/forceupdate`, {});
+  }
 }

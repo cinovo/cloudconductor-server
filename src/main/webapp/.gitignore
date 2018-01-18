@@ -31,3 +31,4 @@ testem.log
 .DS_Store
 Thumbs.db
 /.idea/workspace.xml
+proxy.conf.json

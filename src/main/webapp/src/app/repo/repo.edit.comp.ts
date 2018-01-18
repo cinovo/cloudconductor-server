@@ -160,4 +160,7 @@ export class RepoEdit implements OnInit {
     this.location.back();
   }
 
+  public forceReindex() {
+    this.repoHttp.forceReindex(this.repo).subscribe(() => {});
+  }
 }

@@ -78,6 +78,16 @@
     <cc-panel [title]="'Provided packages'" icon="fa-server"
               subTitle="last indexed: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm'}}"
               [subTitleCondition]="repo.lastIndex" [collapsable]="true">
+      <li cc-panel-dropdown>
+        <a href="javascript:void(0)" mwlConfirmationPopover
+           [title]="'Please verify!'"
+           [message]="'Are you sure you want to force an update on this repository: <strong>'+ repo.name+'</strong>?'"
+           confirmButtonType="warning"
+           (confirm)="forceReindex()"
+           [appendToBody]="true">
+          Force a repo update
+        </a>
+      </li>
       <div cc-panel-body>
         <div class="alert alert-warning" role="alert-1" *ngIf="packages.length < 1">
           There are currently no packages provided, these will be added with the next repo scan.
