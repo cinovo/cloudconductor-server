@@ -72,7 +72,6 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
       return obj;
     }).subscribe(
       (result) => {
-        console.log(result)
         if (result instanceof Array) {
           this.preview = result;
         } else if (result._body) {

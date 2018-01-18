@@ -12,6 +12,7 @@ import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
 import { Role } from '../util/enums.util';
 import { ConfigValueNew } from "./cs.new.comp";
+import { ConfigValueExport } from "./cv.export.comp";
 
 const cvRoutes: Routes = [
   {path: 'preview', component: ConfigValuePreview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
@@ -24,6 +25,8 @@ const cvRoutes: Routes = [
     canActivate: [AuthenticationGuard, AuthorizationGuard]},
   {path: ':template/:service/:key', component: ConfigValueEdit, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
   canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {path: ':template/export', component: ConfigValueExport, data: {rolesAllowed: [Role.EDIT_CONFIGVALUES]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]},
 ];
 
 /**
@@ -46,7 +49,8 @@ const cvRoutes: Routes = [
     ConfigValueEdit,
     ConfigValueOverview,
     ConfigValuePreview,
-    ConfigValueNew
+    ConfigValueNew,
+    ConfigValueExport
   ]
 })
 export class ConfigValueModule { }

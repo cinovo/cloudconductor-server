@@ -1,24 +1,33 @@
 <cc-title [title]="'Configuration Key-Value-Pairs'" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
   <a cc-subtitle-addition *ngIf="template !== 'GLOBAL'" href="javascript:void(0)" mwlConfirmationPopover
-    title="Delete all for template"
-    [title]="'Please verify!'"
-    [placement]="'right'"
-    [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
-    confirmButtonType="danger"
-    (confirm)="deleteCurrentTemplate()"
-    [appendToBody]="true">
+     title="Delete all for template"
+     [title]="'Please verify!'"
+     [placement]="'right'"
+     [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
+     confirmButtonType="danger"
+     (confirm)="deleteCurrentTemplate()"
+     [appendToBody]="true">
     <i class="fa fa-trash-o fa-fw"></i>
   </a>
 </cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-sm-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-9">
-    <button [routerLink]="['/config', template, '', 'new']" class="btn btn-default pull-right">
-      Add a new Key-Value-Pair
-    </button>
+    <div class="row pull-right">
+      <div class="col-sm-9">
+        <button [routerLink]="['/config', template, '', 'new']" class="btn btn-default pull-right">
+          Add a new Key-Value-Pair
+        </button>
+      </div>
+      <div class="col-sm-3">
+        <button [routerLink]="['/config', template, 'export']" class="btn btn-default pull-right">
+          Export
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -82,12 +91,12 @@
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
-                title="Delete Pair"
-                [title]="'Please verify!'"
-                [message]="'Are you sure you want to delete the following key-value-pair: ' + kv.key + '?'"
-                placement="left"
-                confirmButtonType="danger"
-                (confirm)="doDelete(kv)">
+                 title="Delete Pair"
+                 [title]="'Please verify!'"
+                 [message]="'Are you sure you want to delete the following key-value-pair: ' + kv.key + '?'"
+                 placement="left"
+                 confirmButtonType="danger"
+                 (confirm)="doDelete(kv)">
                 <i class="fa fa-trash-o fa-fw"></i>
               </a>
             </td>

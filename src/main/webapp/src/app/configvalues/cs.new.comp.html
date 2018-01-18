@@ -7,22 +7,38 @@
         <div class="form-group" [ngClass]="{ 'has-error': !kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid }">
           <label class="control-label" for="newTemplate">New template name</label>
           <input type="text" class="form-control" formControlName="newTemplate" id="newTemplate">
-          <span *ngIf="!kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid" class="help-block">
+          <span *ngIf="(!kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid )" class="help-block">
             This field is required
           </span>
         </div>
 
         <div class="form-group">
-          <label class="control-label" for="template">Copy from:</label>
+          <label class="control-label" for="prefil">Select prefill type:</label>
+          <select id="prefil" class="form-control" formControlName="prefil">
+            <option value="none">Empty template</option>
+            <option value="copy">Copy from exsiting template</option>
+            <option value="import">Import from file</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'copy'" [ngClass]="{ 'has-error': !kvForm.controls.template.pristine && kvForm.invalid }">
+          <label class="control-label" for="template">Copy from exsiting template:</label>
           <input type="text" class="form-control" formControlName="template" id="template" list="tempalteList">
           <datalist id="tempalteList">
             <option *ngFor="let template of templates" value="{{template}}"></option>
           </datalist>
-          <span *ngIf="!kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid" class="help-block">
+          <span *ngIf="!kvForm.controls.template.pristine && kvForm.invalid" class="help-block">
             This field is required
           </span>
         </div>
 
+        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'import'" [ngClass]="{ 'has-error': !kvForm.controls.importValues.pristine && kvForm.invalid }">
+          <label class="control-label" for="importValues">Import values:</label>
+          <input type="file" class="form-control" id="importValues" (change)="updateFile($event)" />
+          <span *ngIf="!kvForm.controls.importValues.pristine && kvForm.invalid" class="help-block">
+            This field is required
+          </span>
+        </div>
         <div class="pull-right">
           <button type="submit" class="btn btn-info" [disabled]="kvForm.invalid">
             Create new Template

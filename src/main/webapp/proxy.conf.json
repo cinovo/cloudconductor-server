@@ -1,10 +1,10 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
+    "target": "http://cc-central-staging.dev.cinovo.de:8090",
     "secure": false
   },
   "/websocket": {
-    "target": "http://localhost:8080",
+    "target": "http://cc-central-staging.dev.cinovo.de:8090",
     "ws": true
   }
 }
