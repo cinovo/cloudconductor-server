@@ -10,12 +10,12 @@ export class FileForm {
   group: string;
   fileMode: string;
   isTemplate: boolean;
+  isReloadable:boolean;
   targetPath: string;
   dependentServices: string[];
-  servicesReload: string[];
   templates: string[];
   fileContent: string;
-  type: FileType
+  type: FileType;
 
   constructor() {
     this.name = '';
@@ -25,10 +25,10 @@ export class FileForm {
     this.fileMode = '644';
     this.fileContent = '',
     this.isTemplate = false;
+    this.isReloadable = false;
     this.type = FileType.File;
     this.dependentServices = [];
     this.templates = [];
-    this.servicesReload = [];
   }
 
   public toConfigFile(): ConfigFile {
@@ -41,7 +41,7 @@ export class FileForm {
     file.group = this.group;
     file.fileMode = this.fileMode;
     file.isDirectory = (this.type === FileType.Directory);
-    file.isReloadable = (this.servicesReload.length > 0);
+    file.isReloadable = this.isReloadable;
     file.isTemplate = this.isTemplate;
     file.dependentServices = this.dependentServices;
     file.templates = this.templates;
@@ -91,12 +91,12 @@ export class ConfigFile {
     form.owner = this.owner;
     form.group = this.group;
     form.fileMode = this.fileMode;
-    form.fileContent = '',
+    form.fileContent = '';
     form.isTemplate = this.isTemplate;
+    form.isReloadable = this.isReloadable;
     form.type = (this.isDirectory) ? FileType.Directory : FileType.File;
     form.dependentServices = this.dependentServices;
     form.templates = this.templates;
-    form.servicesReload = [];
 
     return form;
   }

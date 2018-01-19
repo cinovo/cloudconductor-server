@@ -28,9 +28,9 @@
               </thead>
               <tbody>
               <tr *ngFor="let host of currentTemplate.hosts">
-                <td>{{host}}</td>
+                <td>{{host.name}}</td>
                 <td>
-                  <a [routerLink]="['/host', host]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
+                  <a [routerLink]="['/host', host.uuid]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
                 </td>
               </tr>
               </tbody>

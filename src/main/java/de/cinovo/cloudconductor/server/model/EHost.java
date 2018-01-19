@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.model;
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.HostIdentifier;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.Entity;
@@ -263,14 +264,15 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 		Host api = super.toApi();
 
 		Map<String, ServiceState> serviceMap = new HashMap<>();
-		for(EServiceState service : this.services) {
+		for(EServiceState service : this.getServices()) {
 			serviceMap.put(service.getService().getName(), service.getState());
 		}
 		api.setServices(serviceMap);
+
 		if(this.getAgent() != null) {
 			api.setAgent(this.getAgent().getName());
 		}
-		api.setUuid(this.uuid);
+
 		Map<String, String> packageMap = new HashMap<>();
 		for(EPackageState pkg : this.getPackages()) {
 			packageMap.put(pkg.getVersion().getPkg().getName(), pkg.getVersion().getVersion());
@@ -278,5 +280,13 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 		api.setPackages(packageMap);
 
 		return api;
+	}
+
+	/**
+	 * @return the host identifier
+	 */
+	@Transient
+	public HostIdentifier toHostIdentifier() {
+		return new HostIdentifier(this.getName(), this.getUuid());
 	}
 }

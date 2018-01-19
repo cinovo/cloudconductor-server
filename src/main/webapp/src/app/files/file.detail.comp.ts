@@ -51,9 +51,9 @@ export class FileDetailComponent implements OnInit, OnDestroy {
       group: [this.file.group, Validators.required],
       fileMode: [this.file.fileMode, [Validators.required, Validators.pattern(/^[0-7]{3}$/)]],
       isTemplate: this.file.isTemplate,
+      isReloadable: this.file.isReloadable,
       targetPath: [this.file.targetPath, [Validators.required, Validators.pattern(/^(\/[^/ ]+)+\/?$/)]],
       dependentServices: [this.file.dependentServices],
-      servicesReload: [['']],
       templates: [this.file.templates],
       fileContent: '',
       type: 'File'
@@ -91,11 +91,7 @@ export class FileDetailComponent implements OnInit, OnDestroy {
   }
 
   get formTitle() {
-    return `${this.formVerb} ${this.formObj}`;
-  }
-
-  public toggleFileMode() {
-    this.formObj = this.fileForm.value.type;
+    return `${this.formVerb} ${this.fileForm.value.type}`;
   }
 
   public saveFile(fv: any): void {

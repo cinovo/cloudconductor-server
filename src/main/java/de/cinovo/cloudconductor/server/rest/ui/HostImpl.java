@@ -12,12 +12,12 @@ import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @JaxRsComponent
 public class HostImpl implements IHost {
-
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	private IHostDAO hostDAO;
 	@Autowired
@@ -41,11 +41,7 @@ public class HostImpl implements IHost {
 	@Override
 	@Transactional
 	public Host[] getHosts() {
-		List<Host> result = new ArrayList<>();
-		for(EHost eHost : this.hostDAO.findList()) {
-			result.add(eHost.toApi());
-		}
-		return result.toArray(new Host[result.size()]);
+		return this.hostDAO.findList().stream().map(EHost::toApi).toArray(Host[]::new);
 	}
 
 	@Override

@@ -11,12 +11,17 @@ import { Sorter } from '../sorters.util';
  *
  * @author psigloch
  */
+export interface HostIdentifier {
+  name: string;
+  uuid: string;
+}
+
 export interface Template {
   name: string;
   description?: string;
   repos?: string[];
-  versions?: {[packageName: string]: string};
-  hosts?: string[];
+  versions?: { [packageName: string]: string };
+  hosts?: HostIdentifier[];
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
 }
@@ -53,7 +58,8 @@ export class TemplateHttpService {
 
   private _basePathURL = 'api/template';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   public getTemplates(): Observable<Template[]> {
     return this.http.get<Template[]>(this._basePathURL).share();
@@ -103,7 +109,7 @@ export class TemplateHttpService {
 
   public getServicesForTemplate(templateName: string): Observable<Service[]> {
     return this.http.get<Service[]>(`${this._basePathURL}/${templateName}/services`)
-              .map(services => services.sort(Sorter.nameField));
+      .map(services => services.sort(Sorter.nameField));
   }
 
   public getServiceDefaultStates(templateName: string): Observable<ServiceDefaultState[]> {
@@ -115,11 +121,11 @@ export class TemplateHttpService {
   }
 
   public saveServiceDefaultState(templateName: string, serviceName: string, serviceDefaultState: ServiceState) {
-    const newServiceDefaultState = { template: templateName, service: serviceName, defaultState: serviceDefaultState };
+    const newServiceDefaultState = {template: templateName, service: serviceName, defaultState: serviceDefaultState};
     newServiceDefaultState['@class'] = 'de.cinovo.cloudconductor.api.model.ServiceDefaultState';
 
     return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`,
-                                              newServiceDefaultState);
+      newServiceDefaultState);
   }
 
 }

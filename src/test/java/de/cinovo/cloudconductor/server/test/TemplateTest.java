@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.test;
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.SSHKeyHandler;
 import de.cinovo.cloudconductor.api.lib.manager.TemplateHandler;
+import de.cinovo.cloudconductor.api.model.HostIdentifier;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
@@ -61,8 +62,8 @@ public class TemplateTest extends APITest {
 			Assert.assertEquals(TemplateTest.TEMPLATE, template.getName());
 		}
 		{
-			Set<String> servers = new HashSet<>();
-			servers.add("localhost");
+			Set<HostIdentifier> servers = new HashSet<>();
+			servers.add(new HostIdentifier("localhost", "123123"));
 			Template t = new Template();
 			t.setName("template2");
 			t.setDescription("new template");
