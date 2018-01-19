@@ -8,14 +8,14 @@ import { Observable } from 'rxjs/Observable';
 import { AlertService } from '../util/alert/alert.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { RepoMirror, RepoMirrorHttpService } from '../util/http/repomirror.http.service';
-import { Repo, RepoHttpService } from '../util/http/repo.http.service';
+import { RepoHttpService } from '../util/http/repo.http.service';
 
 /**
-  * Copyright 2017 Cinovo AG<br>
-  * <br>
-  *
-  * @author psigloch
-  */
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'mirror-edit',
   templateUrl: './mirror.edit.comp.html'
@@ -51,11 +51,17 @@ export class MirrorEdit implements OnInit {
   ngOnInit(): void {
     this.route.url.subscribe((value) => {
       if (value[value.length - 1].path === 'new') {
-        this.mode = 'new'
-        if(window.location.port) {
+        this.mode = 'new';
+        if (window.location.port) {
           this.mirrorForm.patchValue({path: 'http://' + window.location.host + '/api/repos/'});
         }
       }
+      this.mirrorForm.get('basePath').valueChanges.subscribe(val => {
+        if (this.mirrorForm.controls.providerType.value == 'HTTP') {
+          this.mirrorForm.controls.path.setValue(val);
+          this.mirrorForm.patchValue({path: val});
+        }
+      });
     });
     this.route.params.subscribe((params) => {
       this.repoName = params['repoName'];
