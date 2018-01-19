@@ -5,15 +5,15 @@ import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.WS;
 import de.taimos.httputils.WSConstants;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
 import javax.ws.rs.core.MediaType;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.Date;
 import java.util.List;
 
@@ -73,13 +73,31 @@ public class HTTPProvider implements IRepoProvider {
 	}
 	
 	private String getChecksum(HttpResponse response) {
+
 		Header header = response.getFirstHeader(WSConstants.HEADER_CONTENT_MD5);
 		if (header != null) {
 			return header.getValue();
 		}
+		if(response.getEntity() != null ) {
+			String checksum = null;
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				//Using MessageDigest update() method to provide input
+				byte[] buffer = new byte[8192];
+				int numOfBytesRead;
+				while( (numOfBytesRead = response.getEntity().getContent().read(buffer)) > 0){
+					md.update(buffer, 0, numOfBytesRead);
+				}
+				byte[] hash = md.digest();
+				checksum = new BigInteger(1, hash).toString(16); //don't use this, truncates leading zero
+			} catch (Exception ex) {
+				//do nothing
+			}
+			return checksum;
+		}
 		return null;
 	}
-	
+
 	private long getSize(HttpResponse response) {
 		Header sizeHeader = response.getFirstHeader(WSConstants.HEADER_CONTENT_LENGTH);
 		if (sizeHeader != null) {

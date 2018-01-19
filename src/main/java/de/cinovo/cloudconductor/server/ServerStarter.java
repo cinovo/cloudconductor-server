@@ -23,7 +23,6 @@ import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
 import de.taimos.dvalin.daemon.DvalinLifecycleAdapter;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -73,16 +72,7 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		return f.exists();
 	}
-	
-	@Override
-	protected void doBeforeSpringStart() {
-		// In dev mode all classes related to the config server should log on the level DEBUG.
-		if (DaemonStarter.isDevelopmentMode()) {
-			Logger.getLogger("de.cinovo.cloudconductor.server").setLevel(Level.DEBUG);
-		}
-		super.doBeforeSpringStart();
-	}
-	
+
 	@Override
 	protected void doAfterSpringStart() {
 		ServerTaskHelper initializer = this.getContext().getBean(ServerTaskHelper.class);
