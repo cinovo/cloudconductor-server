@@ -8,6 +8,7 @@ import { HostHttpService, Host } from '../util/http/host.http.service';
 import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';
 import { SettingHttpService } from '../util/http/setting.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
+import { HostsService } from "../util/hosts/hosts.service";
 
 interface PackageChangeMap { [key: string]: PackageChange[] };
 
@@ -31,7 +32,7 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
 
   private hostsSub: Subscription;
 
-  constructor(private packageChangesService: PackageChangesService) { }
+  constructor(private packageChangesService: PackageChangesService, private hostsService: HostsService) { }
 
     public ngOnInit(): void {
       this.hostsSub = this.hostsObs.subscribe((hosts) => {
@@ -40,7 +41,7 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
     }
 
     private loadChangesForHosts(hosts: Host[]): void {
-      const changes$: Observable<PackageChangeMap>[] = hosts.map(host => {
+      const changes$: Observable<PackageChangeMap>[] = hosts.filter(host => this.hostsService.isAlive(host)).map(host => {
         return this.packageChangesService.computePackageChanges(host).map(changes => {
           let container = {};
           changes = changes.filter(change => change.state !== 'ok' && change.state !== 'protected');

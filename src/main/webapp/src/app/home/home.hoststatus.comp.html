@@ -12,7 +12,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let host of hosts" (dblclick)="onHostClicked.emit(host.name)"
+      <tr *ngFor="let host of hosts" (dblclick)="onHostClicked.emit(host.uuid)"
         [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
         <td class="word-break" *ngIf="!host.agent">
           {{host.name}}

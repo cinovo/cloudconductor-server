@@ -112,8 +112,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
   }
 
-  public gotoHost(hostName: string) {
-    this.router.navigate(['/host', hostName]);
+  public gotoHost(hostUuid: string) {
+    this.router.navigate(['/host', hostUuid]);
   }
 
   public gotoService(serviceName: string) {
