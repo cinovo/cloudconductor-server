@@ -9,8 +9,7 @@ import { HostsService } from '../util/hosts/hosts.service';
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
-import { Template, TemplateHttpService } from '../util/http/template.http.service';
-import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
+import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 import { AlertService } from '../util/alert/alert.service';
 
@@ -31,10 +30,8 @@ export class HostOverview implements OnInit, OnDestroy {
 
   private _hosts: Array<Host> = [];
 
-  private autorefresh = false;
-
   public hostsLoaded = false;
-  public templates: Array<Template> = [];
+  public templates: Array<String> = [];
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
   private _webSocketSub: Subscription;
@@ -62,8 +59,8 @@ export class HostOverview implements OnInit, OnDestroy {
               private hostHttp: HostHttpService,
               public hostsService: HostsService,
               private router: Router,
-              private templateHttp: TemplateHttpService,
-              private wsService: WebSocketService) { };
+              private wsService: WebSocketService) {
+  };
 
   ngOnInit(): void {
     this.loadData();
@@ -103,7 +100,7 @@ export class HostOverview implements OnInit, OnDestroy {
       const iv = (this.wsService.timeout * 0.4);
       this._heartBeatSub = Observable.interval(iv).subscribe(() => {
         // send heart beat message via WebSockets
-        this._webSocket.next({ data: 'Alive!' });
+        this._webSocket.next({data: 'Alive!'});
       });
     });
   }
@@ -122,13 +119,15 @@ export class HostOverview implements OnInit, OnDestroy {
 
   set hosts(value: Array<Host>) {
     this._hosts = value.map(h => {
-        const nPackages = Object.keys(h.packages).length;
-        const nServices = Object.keys(h.services).length;
-        return {...h, numberOfPackages: nPackages, numberOfServices: nServices};
-      })
+      const nPackages = Object.keys(h.packages).length;
+      const nServices = Object.keys(h.services).length;
+      return {...h, numberOfPackages: nPackages, numberOfServices: nServices};
+    })
       .filter(repo => HostOverview.filterData(repo, this._searchQuery))
-      .filter(repo => HostOverview.filterTemplateData(repo,  this._searchTemplateQuery))
+      .filter(repo => HostOverview.filterTemplateData(repo, this._searchTemplateQuery))
       .sort(Sorter.host);
+
+    this._hosts.forEach((h) => this.templates.indexOf(h.template) == -1 ? this.templates.push(h.template) : null);
   }
 
   get searchQuery(): string {
@@ -138,10 +137,6 @@ export class HostOverview implements OnInit, OnDestroy {
   set searchQuery(value: string) {
     this._searchQuery = value;
     this.loadData();
-  }
-
-  get searchTemplateQuery(): string {
-    return this._searchTemplateQuery;
   }
 
   set searchTemplateQuery(value: string) {
@@ -158,9 +153,6 @@ export class HostOverview implements OnInit, OnDestroy {
       this.hostsLoaded = true;
     });
 
-    this.templateHttp.getTemplates().subscribe(
-      (result) => this.templates = result
-    );
   }
 
   public reloadHosts(): void {
@@ -177,12 +169,12 @@ export class HostOverview implements OnInit, OnDestroy {
 
   public deleteHost(hostToDelete: Host) {
     this.hostHttp.deleteHost(hostToDelete).subscribe(() => {
-      this.alertService.success(`Successfully deleted host ${hostToDelete.name}!`);
-    },
-    (err) => {
-      this.alertService.danger(`An error occured deleting host '${hostToDelete.name}'!`);
-      console.error(err);
-    });
+        this.alertService.success(`Successfully deleted host ${hostToDelete.name}!`);
+      },
+      (err) => {
+        this.alertService.danger(`An error occured deleting host '${hostToDelete.name}'!`);
+        console.error(err);
+      });
   }
 
 }
