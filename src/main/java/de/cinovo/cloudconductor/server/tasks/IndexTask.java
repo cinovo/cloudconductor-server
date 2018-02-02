@@ -17,6 +17,7 @@ import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.importer.IPackageImport;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -33,8 +35,9 @@ import java.util.Set;
  *
  * @author Thorsten Hoeger
  */
-public class IndexTask implements Runnable {
+public class IndexTask implements IServerTasks {
 
+	public static final String TASK_ID_PREFIX = "REPO_INDEX_TASK_REPOID_";
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private IRepoDAO repoDAO;
@@ -43,17 +46,53 @@ public class IndexTask implements Runnable {
 
 	private Long repoId;
 
+	private Integer timer;
+	private TimeUnit timerUnit;
+	private Integer delay;
+
+
 	/**
 	 * @param repoDAO       the repo dao
 	 * @param repoHandler   the repo handler
 	 * @param packageImport the package import
 	 * @param repoId        the repo id
+	 * @param timer         the timer
+	 * @param timerUnit     the timer unit
+	 * @param delay         the delay in timerUnit
 	 */
-	public IndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId) {
+	public IndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId, Integer timer, TimeUnit timerUnit, Integer delay) {
 		this.repoDAO = repoDAO;
 		this.repoHandler = repoHandler;
 		this.packageImport = packageImport;
 		this.repoId = repoId;
+		this.timer = timer;
+		this.timerUnit = timerUnit;
+		this.delay = delay;
+	}
+
+	@Override
+	public Integer getDelay() {
+		return this.delay;
+	}
+
+	@Override
+	public String getTaskIdentifier() {
+		return IndexTask.TASK_ID_PREFIX + this.repoId;
+	}
+
+	@Override
+	public Integer getTimer() {
+		return this.timer;
+	}
+
+	@Override
+	public TimeUnit getTimerUnit() {
+		return this.timerUnit;
+	}
+
+	@Override
+	public TaskStateChange checkStateChange(EServerOptions oldSettings, EServerOptions newSettings) {
+		return TaskStateChange.START;
 	}
 
 	@Override
@@ -111,5 +150,6 @@ public class IndexTask implements Runnable {
 		}
 		return null;
 	}
+
 
 }

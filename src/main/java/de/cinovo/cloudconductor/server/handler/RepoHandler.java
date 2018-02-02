@@ -15,7 +15,7 @@ import de.cinovo.cloudconductor.server.repo.provider.AWSS3Provider;
 import de.cinovo.cloudconductor.server.repo.provider.FileProvider;
 import de.cinovo.cloudconductor.server.repo.provider.HTTPProvider;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
-import de.cinovo.cloudconductor.server.tasks.IServerRepoTask;
+import de.cinovo.cloudconductor.server.tasks.IServerRepoTaskHandler;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -45,7 +44,7 @@ public class RepoHandler {
 	private ITemplateDAO templateDAO;
 
 	@Autowired
-	private Set<IServerRepoTask> repoTasks;
+	private IServerRepoTaskHandler repoTaskHandler;
 
 	/**
 	 * @param mirror the mirror you want the repo provider for
@@ -150,9 +149,7 @@ public class RepoHandler {
 		r = this.fillFields(r, repo);
 		RESTAssert.assertNotNull(r);
 		ERepo save = this.repoDAO.save(r);
-		for(IServerRepoTask repoTask : this.repoTasks) {
-			repoTask.newRepo(save);
-		}
+		this.repoTaskHandler.newRepo(save);
 		return save;
 	}
 
@@ -163,13 +160,10 @@ public class RepoHandler {
 	 * @throws WebApplicationException on error
 	 */
 	public ERepo updateEntity(ERepo erepo, Repo repo) throws WebApplicationException {
-		String oldRepoName = erepo.getName();
 		erepo = this.fillFields(erepo, repo);
 		RESTAssert.assertNotNull(erepo);
 		ERepo save = this.repoDAO.save(erepo);
-		for(IServerRepoTask repoTask : this.repoTasks) {
-			repoTask.updateRepo(oldRepoName, save);
-		}
+		this.repoTaskHandler.newRepo(save);
 		return save;
 	}
 
@@ -189,9 +183,7 @@ public class RepoHandler {
 			}
 		}
 		this.repoDAO.delete(erepo);
-		for(IServerRepoTask repoTask : this.repoTasks) {
-			repoTask.deleteRepo(erepo.getName());
-		}
+		this.repoTaskHandler.deleteRepo(erepo.getId());
 	}
 
 	/**

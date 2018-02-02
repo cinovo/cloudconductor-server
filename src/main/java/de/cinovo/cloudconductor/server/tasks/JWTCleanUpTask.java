@@ -6,6 +6,7 @@ import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -19,6 +20,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class JWTCleanUpTask implements IServerTasks {
+
+	@Value("${jwt-cleanup-hours:2}")
+	private int cleanUpTimer;
+
+	private TimeUnit cleanupTimerUnit = TimeUnit.HOURS;
+
 	@Autowired
 	private IJWTTokenDAO jwtTokenDAO;
 	@Autowired
@@ -30,14 +37,25 @@ public class JWTCleanUpTask implements IServerTasks {
 	}
 
 	@Override
-	public void create(EServerOptions settings) {
-		SchedulerService.instance.register(this.getTaskIdentifier(), this, 2, TimeUnit.HOURS);
+	public Integer getTimer() {
+		return this.cleanUpTimer;
 	}
 
 	@Override
-	public void update(EServerOptions oldSettings, EServerOptions newSettings) {
-		//nothing to do;
+	public TimeUnit getTimerUnit() {
+		return this.cleanupTimerUnit;
 	}
+
+	@Override
+	public Integer getDelay() {
+		return 0;
+	}
+
+	@Override
+	public TaskStateChange checkStateChange(EServerOptions oldSettings, EServerOptions newSettings) {
+		return TaskStateChange.START;
+	}
+
 
 	@Override
 	public void run() {

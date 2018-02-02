@@ -5,7 +5,7 @@ import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepo;
-import de.cinovo.cloudconductor.server.tasks.RepoIndexTask;
+import de.cinovo.cloudconductor.server.tasks.IServerRepoTaskHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class RepoImpl implements IRepo {
 	@Autowired
 	private RepoHandler repoHandler;
 	@Autowired
-	private RepoIndexTask repoIndexTask;
+	private IServerRepoTaskHandler repoTaskHandler;
 
 	@Override
 	@Transactional
@@ -88,6 +88,7 @@ public class RepoImpl implements IRepo {
 		RESTAssert.assertNotNull(repoName);
 		ERepo g = this.repoDAO.findByName(repoName);
 		RESTAssert.assertNotNull(g);
-		this.repoIndexTask.forceUpdate(g);
+		RESTAssert.assertNotNull(g.getId());
+		this.repoTaskHandler.forceRepoUpdate(g.getId());
 	}
 }

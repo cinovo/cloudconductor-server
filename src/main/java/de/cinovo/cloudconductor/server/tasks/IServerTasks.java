@@ -2,28 +2,41 @@ package de.cinovo.cloudconductor.server.tasks;
 
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
  */
 public interface IServerTasks extends Runnable {
-	
+
 	/**
 	 * @return identifier of this task
 	 */
 	String getTaskIdentifier();
-	
+
 	/**
-	 * @param settings the server settings to be passed to the task
+	 * @return the execution timer
 	 */
-	void create(EServerOptions settings);
-	
+	Integer getTimer();
+
+
+	/**
+	 * @return the execution timer unit
+	 */
+	TimeUnit getTimerUnit();
+
+	/**
+	 * @return the initial delay before execution in milliseconds
+	 */
+	Integer getDelay();
+
 	/**
 	 * @param oldSettings the old server settings
 	 * @param newSettings the new server settings
+	 * @return the neccesary state change
 	 */
-	void update(EServerOptions oldSettings, EServerOptions newSettings);
+	TaskStateChange checkStateChange(EServerOptions oldSettings, EServerOptions newSettings);
 }

@@ -16,7 +16,6 @@ package de.cinovo.cloudconductor.server;
  * and limitations under the License. #L%
  */
 
-import de.cinovo.cloudconductor.server.tasks.ServerTaskHelper;
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
@@ -75,8 +74,6 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 
 	@Override
 	protected void doAfterSpringStart() {
-		ServerTaskHelper initializer = this.getContext().getBean(ServerTaskHelper.class);
-		initializer.init();
 		super.doAfterSpringStart();
 	}
 	
