@@ -24,6 +24,11 @@ public class ServiceStateHandler {
 	@Autowired
 	private HostDetailWSHandler hostDetailWsHandler;
 
+	/**
+	 * @param serviceState the service state
+	 * @param stateChanges the stateChanges
+	 * @return the changed serice state
+	 */
 	public EServiceState handleStartedService(EServiceState serviceState, ServiceStatesChanges stateChanges) {
 		switch(serviceState.getState()) {
 			case RESTARTING_STARTING:
@@ -50,11 +55,24 @@ public class ServiceStateHandler {
 		return serviceState;
 	}
 
+	/**
+	 * @param serviceState the service state
+	 * @param stateChanges the stateChanges
+	 * @return the changed serice state
+	 */
 	public EServiceState handleStopedService(EServiceState serviceState, ServiceStatesChanges stateChanges) {
 		switch(serviceState.getState()) {
 			case STARTING:
 				stateChanges.getToStart().add(serviceState.getService().getInitScript());
 				break;
+			case RESTARTING_STARTING:
+				stateChanges.getToStart().add(serviceState.getService().getInitScript());
+				break;
+			case RESTARTING_STOPPING:
+				serviceState.nextState();
+				stateChanges.getToStart().add(serviceState.getService().getInitScript());
+				return this.serviceStateDAO.save(serviceState);
+			case STOPPED:
 			case STOPPING:
 				serviceState.nextState();
 				EServiceState save = this.serviceStateDAO.save(serviceState);
