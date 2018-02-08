@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -20,7 +20,7 @@ interface ServiceStateElement {
   selected?: boolean;
 }
 
-type ServiceActionType =  'start'|'stop'|'restart';
+type ServiceActionType = 'start' | 'stop' | 'restart';
 
 @Component({
   selector: 'host-services',
@@ -36,7 +36,8 @@ export class HostServices implements AfterViewInit {
   private _allSelected = false;
 
   constructor(private hostHTTP: HostHttpService,
-              private alerts: AlertService) { };
+              private alerts: AlertService) {
+  };
 
   ngAfterViewInit(): void {
     this.obsHost.subscribe(
@@ -52,7 +53,6 @@ export class HostServices implements AfterViewInit {
     this.services = [];
     if (host && host.services && Object.keys(host.services).length > 0) {
       for (let index of Object.keys(host.services)) {
-        let element = {name: index, state: host.services[index], autostart: false, selected: false};
         let selected = this.allSelected;
         if (!selected && old && old.length > 0) {
           for (let oldElement of old) {
@@ -70,29 +70,38 @@ export class HostServices implements AfterViewInit {
   protected handleService(type: ServiceActionType, service: ServiceStateElement): void {
     if (service) {
       this.httpServiceCall(type, service.name,
-        () => { },
+        () => {
+        },
         (err) => console.error(err)
       );
     }
   }
 
-  private handleSelected(type: ServiceActionType, index = 0) {
-    while (index < this.services.length && !this.services[index].selected) {
-      index++;
-    }
-    if (index >= this.services.length) {
-      this.allSelected = false;
-      return;
-    }
-    this.httpServiceCall(type, this.services[index].name,
-      () => {
-        this.handleSelected(type, index + 1);
-      },
-      () => {
-        this.handleSelected(type, index + 1);
+  private handleSelected(type: ServiceActionType) {
+    let serviceNames: string[] = [];
+    for (let service of this.services) {
+      if (service.selected) {
+        serviceNames.push(service.name);
       }
-    )
+    }
+    this.handleServices(type, serviceNames);
+    this.allSelected = false;
+    return;
   }
+
+  private handleServices(type: ServiceActionType, serviceNames: string[]) {
+    if (serviceNames && serviceNames.length > 0) {
+      let currentServiceName = serviceNames.pop();
+      this.httpServiceCall(type, currentServiceName,
+        () => {
+          this.handleServices(type, serviceNames);
+        }, () => {
+          this.handleServices(type, serviceNames);
+        }
+      );
+    }
+  }
+
 
   private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: (err) => void): void {
     switch (type) {
@@ -110,7 +119,7 @@ export class HostServices implements AfterViewInit {
 
   private isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
     let ret: boolean = (service.state.toString() === ServiceState[ServiceState.STARTED] ||
-                        service.state.toString() === ServiceState[ServiceState.IN_SERVICE]);
+      service.state.toString() === ServiceState[ServiceState.IN_SERVICE]);
     if (includeTrannsient && !ret) {
       ret = service.state.toString() === ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service);
     }
@@ -131,7 +140,7 @@ export class HostServices implements AfterViewInit {
 
   private isServiceRestarting(service: ServiceStateElement): boolean {
     return (service.state.toString() === ServiceState[ServiceState.RESTARTING_STARTING] ||
-           service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING]);
+      service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING]);
   }
 
   get allSelected(): boolean {
@@ -142,13 +151,6 @@ export class HostServices implements AfterViewInit {
     this._allSelected = value;
     for (let pv of this.services) {
       pv.selected = this._allSelected;
-    }
-  }
-
-  protected doSelect(service: ServiceStateElement, event: any) {
-    let index = this.services.indexOf(service);
-    if (index > -1) {
-      this.services[index].selected = event.target.checked;
     }
   }
 

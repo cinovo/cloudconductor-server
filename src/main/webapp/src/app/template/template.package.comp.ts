@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
@@ -6,8 +6,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
 import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
-import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
+import { Validator } from "../util/validator.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -42,14 +42,15 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public packageVersions: TemplatePackageVersion[] = [];
 
   public packageTree: PackageTree = {};
-  public newPackage: {pkg: string, version: string} = null;
+  public newPackage: { pkg: string, version: string } = null;
 
   private _allSelected = false;
   private templateSub: Subscription;
 
   constructor(private packageHttp: PackageHttpService,
               private templateHttp: TemplateHttpService,
-              private alerts: AlertService) { };
+              private alerts: AlertService) {
+  };
 
   ngOnInit(): void {
     this.templateSub = this.obsTemplate.subscribe((template) => {
@@ -135,29 +136,30 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-  private updateSelected(index = 0): void {
-    while (index < this.packageVersions.length && !this.packageVersions[index].selected) {
-      index++;
+  protected updatePackages(packageNames: TemplatePackageVersion[]): void {
+    if (packageNames && packageNames.length > 0) {
+      let currentPackage = packageNames.pop();
+      this.templateHttp.updatePackage(this.template, currentPackage.pkg).subscribe(
+        () => {
+          this.updatePackages(packageNames);
+          this.alerts.success('The package ' + currentPackage.pkg + ' has been successfully updated.');
+        },
+        (error) => {
+          this.updatePackages(packageNames);
+          this.alerts.danger('The package update of ' + currentPackage.pkg + ' failed.');
+        });
     }
-    if (index >= this.packageVersions.length) {
-      this.allSelected = false;
-      return;
-    }
-    if (this.isPkgLatest(this.packageVersions[index])) {
-      this.updateSelected(index + 1);
-      return;
-    }
-    const pkgToUpdate = Object.assign({}, this.packageVersions[index]);
-    this.templateHttp.updatePackage(this.template, pkgToUpdate.pkg).subscribe(
-      () => {
-        this.updateSelected(index + 1);
-      },
-      (err) => {
-        this.alerts.danger(`Error updating package '${pkgToUpdate.pkg}'!`);
-        console.error(err);
-        this.updateSelected(index + 1);
+  }
+
+  private updateSelected(): void {
+    let packageNames: TemplatePackageVersion[] = [];
+    for (let pkg of this.packageVersions) {
+      if (pkg.selected && !this.isPkgLatest(pkg)) {
+        packageNames.push(pkg);
       }
-    );
+    }
+    this.updatePackages(packageNames);
+    this.allSelected = false;
   }
 
   protected removePackage(pv: TemplatePackageVersion) {
@@ -168,32 +170,37 @@ export class TemplatePackages implements OnInit, OnDestroy {
         },
         (err) => {
           this.alerts.danger(`Error removing package '${pv.pkg}'!`);
-          console.error(err);
         }
       )
     }
   }
 
-  private removeSelected(index = 0): void {
-    while (index < this.packageVersions.length && !this.packageVersions[index].selected) {
-      index++;
+  protected removePackages(packageNames: TemplatePackageVersion[]): void {
+    if (packageNames && packageNames.length > 0) {
+      let currentPackage = packageNames.pop();
+      this.templateHttp.deletePackage(this.template, currentPackage.pkg).subscribe(
+        () => {
+          this.removePackages(packageNames);
+          this.alerts.success(`Package '${currentPackage.pkg}' has been removed successfully.`);
+        },
+        (err) => {
+          this.removePackages(packageNames);
+          this.alerts.danger(`Error removing package '${currentPackage.pkg}'!`);
+        }
+      )
     }
-    if (index >= this.packageVersions.length) {
-      this.allSelected = false;
-      return;
-    }
+  }
 
-    const pvToRemove = Object.assign({}, this.packageVersions[index]);
-    this.templateHttp.deletePackage(this.template, pvToRemove.pkg).subscribe(
-      () => {
-        this.removeSelected(index);
-      },
-      (err) => {
-        this.alerts.danger(`Error removing package '${pvToRemove.pkg}'!`);
-        console.error(err);
-        this.removeSelected(index + 1);
+
+  private removeSelected(index = 0): void {
+    let packageNames: TemplatePackageVersion[] = [];
+    for (let pkg of this.packageVersions) {
+      if (pkg.selected) {
+        packageNames.push(pkg);
       }
-    );
+    }
+    this.removePackages(packageNames);
+    this.allSelected = false;
   }
 
   get allSelected(): boolean {
@@ -218,8 +225,13 @@ export class TemplatePackages implements OnInit, OnDestroy {
     return this.packageVersions.some(pv => pv.selected);
   }
 
-  private isPkgLatest(pv: TemplatePackageVersion) {
+  private isPkgLatest(pv: TemplatePackageVersion): boolean {
     return this.packageTree[pv.pkg] && this.packageTree[pv.pkg].newestVersion.version === pv.version;
+  }
+
+  private isPkgLatestByName(packageName: string): boolean {
+    let index = this.packageVersions.findIndex((element) => element.pkg == packageName);
+    return this.isPkgLatest(this.packageVersions[index]);
   }
 
   protected goToAddPackage(): void {
@@ -227,7 +239,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
   }
 
   protected addNewPackage(): void {
-    if (this.newPackage && this.newPackage.pkg && this.newPackage.version) {
+    if (this.newPackage && this.newPackage.pkg && this.newPackage.version
+    ) {
       const addedPkg = Object.assign({}, this.newPackage);
       this.templateHttp.getTemplate(this.template.name).subscribe(
         (result) => {
@@ -252,7 +265,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
   }
 
   private getVersions(pkgName: string): Array<PackageVersion> {
-    if (Validator.notEmpty(pkgName)) {
+    if (Validator.notEmpty(pkgName)
+    ) {
       return [...this.packageTree[pkgName].versions].sort(Sorter.packageVersion);
     }
     return [];
