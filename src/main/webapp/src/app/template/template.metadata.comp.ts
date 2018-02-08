@@ -1,12 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
-import { Settings, SettingHttpService } from '../util/http/setting.http.service';
+import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
@@ -114,24 +114,24 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       }
 
       templateObs.flatMap((result) => {
-          // first overwrite repos and versions with template to be copied
-          if (result.repos && result.repos.length > 0) {
-            templateToSave.repos = result.repos;
-          }
-          if (result.versions) {
-            templateToSave.versions = result.versions;
-          }
+        // first overwrite repos and versions with template to be copied
+        if (result.repos && result.repos.length > 0) {
+          templateToSave.repos = result.repos;
+        }
+        if (result.versions) {
+          templateToSave.versions = result.versions;
+        }
 
-          // then check whether name is already in use
-          return this.templateHttp.existsTemplate(templateToSave.name);
-        }).flatMap((exists) => {
-          if (!exists) {
-            // alright, try to save template...
-            return this.templateHttp.save(templateToSave);
-          } else {
-            return Observable.throw(`Template named '${templateToSave.name}' does already exist!`);
-          }
-        }).subscribe(() => {
+        // then check whether name is already in use
+        return this.templateHttp.existsTemplate(templateToSave.name);
+      }).flatMap((exists) => {
+        if (!exists) {
+          // alright, try to save template...
+          return this.templateHttp.save(templateToSave);
+        } else {
+          return Observable.throw(`Template named '${templateToSave.name}' does already exist!`);
+        }
+      }).subscribe(() => {
           this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
           this.router.navigate(['template', templateToSave.name]);
         }, (err) => {
@@ -141,15 +141,15 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       );
     } else {
       this.templateHttp.save(templateToSave).subscribe(() => {
-          this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
-          if (this.mode === Mode.EDIT) {
-            return;
-          }
-          this.router.navigate(['template', templateToSave.name]);
-        }, (err) =>  {
-          this.alerts.danger(`Failed to save template '${formValue.copyFrom}'`);
-          console.error(err);
-        });
+        this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
+        if (this.mode === Mode.EDIT) {
+          return;
+        }
+        this.router.navigate(['template', templateToSave.name]);
+      }, (err) => {
+        this.alerts.danger(`Failed to save template '${formValue.copyFrom}'`);
+        console.error(err);
+      });
     }
   }
 
@@ -174,12 +174,19 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       this.settings.disallowUninstall.sort();
       this.templateForm.controls.newRepo.setValue('');
       this.showNewRepo = false;
+
+      if (this.mode === Mode.EDIT) {
+        this.saveTemplateMetadata(this.templateForm.value)
+      }
     }
   }
 
   protected removeRepo(repoName: string): void {
     if (Validator.notEmpty(repoName)) {
       this.template.repos.splice(this.template.repos.indexOf(repoName), 1);
+      if (this.mode === Mode.EDIT) {
+        this.saveTemplateMetadata(this.templateForm.value)
+      }
       if (this.showNewRepo) {
         this.goToAddRepo();
       }
