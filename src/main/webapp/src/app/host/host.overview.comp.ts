@@ -118,11 +118,7 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   set hosts(value: Array<Host>) {
-    this._hosts = value.map(h => {
-      const nPackages = Object.keys(h.packages).length;
-      const nServices = Object.keys(h.services).length;
-      return {...h, numberOfPackages: nPackages, numberOfServices: nServices};
-    })
+    this._hosts = value
       .filter(repo => HostOverview.filterData(repo, this._searchQuery))
       .filter(repo => HostOverview.filterTemplateData(repo, this._searchTemplateQuery))
       .sort(Sorter.host);
@@ -145,7 +141,7 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   private loadData() {
-    this.hostHttp.getHosts().subscribe((result) => {
+    this.hostHttp.getSimpleHosts().subscribe((result) => {
       this.hosts = result;
       this.hostsLoaded = true;
     }, (err) => {

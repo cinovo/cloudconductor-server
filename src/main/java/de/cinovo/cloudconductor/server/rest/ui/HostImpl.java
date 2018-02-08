@@ -3,6 +3,7 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.interfaces.IHost;
 import de.cinovo.cloudconductor.api.model.ChangeServiceState;
 import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.model.EHost;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -42,6 +44,12 @@ public class HostImpl implements IHost {
 	@Transactional
 	public Host[] getHosts() {
 		return this.hostDAO.findList().stream().map(EHost::toApi).toArray(Host[]::new);
+	}
+
+	@Override
+	public SimpleHost[] getSimpleHosts() {
+		List<SimpleHost> simpleHosts = this.hostDAO.findSimpleHosts();
+		return simpleHosts.toArray(new SimpleHost[0]);
 	}
 
 	@Override

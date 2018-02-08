@@ -1,12 +1,15 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
 
 /*
  * #%L
@@ -28,13 +31,12 @@ import javax.persistence.criteria.CriteriaQuery;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Repository("HostDAOHib")
 public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHostDAO {
-	
+
 	@Override
 	public Class<EHost> getEntityClass() {
 		return EHost.class;
@@ -56,6 +58,17 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	@Override
 	public EHost findByUuid(String uuid) {
 		return this.findByQuery("FROM EHost h where h.uuid = ?1", uuid);
+	}
+
+	@Override
+	public List<SimpleHost> findSimpleHosts() {
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT new de.cinovo.cloudconductor.api.model.SimpleHost(h.name, agent.name, h.uuid, h.template.name, h.lastSeen, ");
+		query.append("(SELECT count(ss) FROM EServiceState ss WHERE ss.host.id = h.id), ");
+		query.append("(SELECT count(ps) FROM EPackageState ps WHERE ps.host.id = h.id) ");
+		query.append(") FROM EHost h");
+		TypedQuery<SimpleHost> tq  = this.entityManager.createQuery(query.toString(), SimpleHost.class);
+		return tq.getResultList();
 	}
 
 }

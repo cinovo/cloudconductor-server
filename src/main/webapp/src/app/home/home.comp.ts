@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public loadHosts(): Observable<Host[]> {
-    return this.hostHttpService.getHosts()
+    return this.hostHttpService.getSimpleHosts()
                               .map(hosts => hosts.sort((a, b) => Sorter.byField(a, b, 'lastSeen')));
   }
 

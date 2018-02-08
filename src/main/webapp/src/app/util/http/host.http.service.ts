@@ -24,6 +24,7 @@ export interface Host {
   numberOfPackages?: number;
 }
 
+
 export interface ChangeServiceState {
   hostUuid: string;
   service: string;
@@ -40,6 +41,10 @@ export class HostHttpService {
 
   public getHosts(): Observable<Host[]> {
     return this.http.get<Host[]>(this._basePathURL).share();
+  }
+
+  public getSimpleHosts(): Observable<Host[]> {
+    return this.http.get<Host[]>(`${this._basePathURL}/simple`).share();
   }
 
   public getHost(hostUuid: string): Observable<Host> {
