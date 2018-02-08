@@ -134,7 +134,8 @@ public class PackageHandler {
 		PackageVersionComparator versionComp = new PackageVersionComparator();
 
 		List<EPackageVersion> existingVersions = new ArrayList<>(epackage.getVersions());
-		existingVersions.sort(versionComp);
+		existingVersions.sort((left, right) -> -versionComp.compare(left, right));
+
 
 		EPackageVersion version = null;
 		for(EPackageVersion existingVersion : existingVersions) {

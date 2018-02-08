@@ -43,7 +43,6 @@ public class HostHandler {
 	 * @param template the template which hosts should be updated
 	 */
 	public void updateHostDetails(ETemplate template) {
-		this.logger.info("Update host details for " + template.getHosts().size() + " hosts");
 		for(EHost host : template.getHosts()) {
 			this.hostDetailWSHandler.broadcastChange(host.getName(), new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
 		}
