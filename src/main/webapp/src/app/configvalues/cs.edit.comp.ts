@@ -8,6 +8,7 @@ import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.ht
 import { AlertService } from '../util/alert/alert.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { ServiceHttpService } from '../util/http/service.http.service';
+import { Sorter } from "../util/sorters.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -69,7 +70,7 @@ export class ConfigValueEdit implements OnInit {
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
     this.serviceHttp.getServices().subscribe((result) => {
-        this.services = result.map((val) => val.name);
+        this.services = result.sort(Sorter.service).map((val) => val.name);
       });
   }
 
