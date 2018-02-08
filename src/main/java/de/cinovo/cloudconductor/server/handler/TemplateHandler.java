@@ -112,7 +112,7 @@ public class TemplateHandler {
 		List<EPackageVersion> list = new ArrayList<>(template.getPackageVersions());
 		
 		for (EPackageVersion version : template.getPackageVersions()) {
-			EPackageVersion newest = this.packageHandler.getNewestPackageInRepo(version.getPkg(), template.getRepos());
+			EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkg(), template.getRepos());
 			if (newest == null) {
 				continue;
 			}
@@ -157,7 +157,7 @@ public class TemplateHandler {
 		Map<EPackageVersion, EPackageVersion> removeAddMap = new HashMap<>();
 		for (EPackageVersion version : template.getPackageVersions()) {
 			if (version.getPkg().getName().equals(packageName)) {
-				EPackageVersion newest = this.packageHandler.getNewestPackageInRepo(version.getPkg(), template.getRepos());
+				EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkg(), template.getRepos());
 				if (newest == null) {
 					continue;
 				}
@@ -172,6 +172,7 @@ public class TemplateHandler {
 		}
 		return template;
 	}
+
 	
 	/**
 	 * @param template the template to temove the package from

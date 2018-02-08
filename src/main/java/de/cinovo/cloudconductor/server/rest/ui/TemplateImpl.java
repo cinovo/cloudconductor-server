@@ -125,8 +125,8 @@ public class TemplateImpl implements ITemplate {
 		template = this.templateHandler.updatePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
-		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
-		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
 		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
