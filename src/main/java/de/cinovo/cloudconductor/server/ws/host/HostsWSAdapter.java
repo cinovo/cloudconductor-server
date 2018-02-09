@@ -1,13 +1,12 @@
 package de.cinovo.cloudconductor.server.ws.host;
 
-import org.eclipse.jetty.websocket.api.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.websockets.model.WSHeartbeat;
 import de.cinovo.cloudconductor.server.ws.ASimpleWSAdapter;
 import de.cinovo.cloudconductor.server.ws.ASimpleWSHandler;
 import de.taimos.dvalin.jaxrs.websocket.WebSocket;
+import org.eclipse.jetty.websocket.api.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -18,10 +17,10 @@ import de.taimos.dvalin.jaxrs.websocket.WebSocket;
  *
  */
 @WebSocket(pathSpec = "/hosts")
-public class HostsWSAdapter extends ASimpleWSAdapter<WSHeartbeat, Host> {
+public class HostsWSAdapter extends ASimpleWSAdapter<WSHeartbeat, SimpleHost> {
 	
 	@Autowired
-	protected ASimpleWSHandler<HostsWSAdapter, Host> websocketHandler;
+	protected ASimpleWSHandler<HostsWSAdapter, SimpleHost> websocketHandler;
 	
 	
 	@Override

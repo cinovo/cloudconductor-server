@@ -62,13 +62,27 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 
 	@Override
 	public List<SimpleHost> findSimpleHosts() {
+		StringBuilder query = this.getSimpleHostQuery();
+		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
+		return tq.getResultList();
+	}
+
+	@Override
+	public SimpleHost findSimpleHost(Long id) {
+		StringBuilder query = this.getSimpleHostQuery();
+		query.append(" WHERE h.id = ?1");
+		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
+		tq.setParameter(1, id);
+		return tq.getSingleResult();
+	}
+
+	private StringBuilder getSimpleHostQuery() {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT new de.cinovo.cloudconductor.api.model.SimpleHost(h.name, agent.name, h.uuid, h.template.name, h.lastSeen, ");
 		query.append("(SELECT count(ss) FROM EServiceState ss WHERE ss.host.id = h.id), ");
 		query.append("(SELECT count(ps) FROM EPackageState ps WHERE ps.host.id = h.id) ");
 		query.append(") FROM EHost h");
-		TypedQuery<SimpleHost> tq  = this.entityManager.createQuery(query.toString(), SimpleHost.class);
-		return tq.getResultList();
+		return query;
 	}
 
 }

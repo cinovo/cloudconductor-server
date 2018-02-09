@@ -8,6 +8,7 @@ import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IAgentDAO;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
@@ -120,8 +121,8 @@ public class AgentHandler {
 		}
 		this.packageStateHandler.removePackageState(host, leftPackages);
 		host = this.hostDAO.save(host);
-
-		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
+		SimpleHost simpleHost = this.hostDAO.findSimpleHost(host.getId());
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, simpleHost));
 		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 
 		// check whether the host may updateEntity or has to wait for another host to finish updating
@@ -230,8 +231,8 @@ public class AgentHandler {
 		host.setLastSeen((new DateTime()).getMillis());
 		host.setAgent(agent);
 		host = this.hostDAO.save(host);
-
-		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
+		SimpleHost simpleHost = this.hostDAO.findSimpleHost(host.getId());
+		this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, simpleHost));
 
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(host.getTemplate());
 		if(options == null) {

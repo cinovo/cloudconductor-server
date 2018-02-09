@@ -1,9 +1,8 @@
 package de.cinovo.cloudconductor.server.ws.host;
 
-import org.springframework.stereotype.Service;
-
-import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.ws.ASimpleWSHandler;
+import org.springframework.stereotype.Service;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -13,6 +12,6 @@ import de.cinovo.cloudconductor.server.ws.ASimpleWSHandler;
  *
  */
 @Service
-public class HostsWSHandler extends ASimpleWSHandler<HostsWSAdapter, Host> {
+public class HostsWSHandler extends ASimpleWSHandler<HostsWSAdapter, SimpleHost> {
 	//
 }

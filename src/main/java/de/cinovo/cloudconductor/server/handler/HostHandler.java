@@ -2,6 +2,7 @@ package de.cinovo.cloudconductor.server.handler;
 
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.model.Host;
+import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EServiceState;
@@ -89,8 +90,8 @@ public class HostHandler {
 		newHost.setLastSeen((new DateTime()).getMillis());
 		newHost.setUuid(UUID.randomUUID().toString());
 		newHost = this.hostDAO.save(newHost);
-
-		this.hostWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, newHost.toApi()));
+		SimpleHost simpleHost = this.hostDAO.findSimpleHost(newHost.getId());
+		this.hostWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, simpleHost));
 		return newHost;
 	}
 

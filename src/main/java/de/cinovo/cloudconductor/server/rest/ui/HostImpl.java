@@ -66,8 +66,9 @@ public class HostImpl implements IHost {
 	public void deleteHost(String hostUuid) {
 		RESTAssert.assertNotEmpty(hostUuid);
 		EHost eHost = this.hostDAO.findByUuid(hostUuid);
+		SimpleHost simpleHost = this.hostDAO.findSimpleHost(eHost.getId());
 		this.hostDAO.delete(eHost);
-		this.hostsWsHandler.broadcastEvent(new WSChangeEvent<Host>(ChangeType.DELETED, eHost.toApi()));
+		this.hostsWsHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, simpleHost));
 	}
 
 	@Override
