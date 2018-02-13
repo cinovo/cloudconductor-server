@@ -86,12 +86,12 @@ public class TemplateImpl implements ITemplate {
 		ETemplate eTemplate = this.templateDAO.findByName(template.getName());
 		if (eTemplate == null) {
 			eTemplate = this.templateHandler.createEntity(template);
-			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.ADDED, eTemplate.toApi()));
+			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, eTemplate.toApi()));
 		} else {
 			eTemplate = this.templateHandler.updateEntity(eTemplate, template);
 			Template aTemplate = eTemplate.toApi();
-			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
-			this.templateDetailWSHandler.broadcastChange(eTemplate.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+			this.templateDetailWSHandler.broadcastChange(eTemplate.getName(), new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
 			this.hostHandler.updateHostDetails(eTemplate);
 		}
 	}
@@ -103,7 +103,7 @@ public class TemplateImpl implements ITemplate {
 		ETemplate eTemplate = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(eTemplate);
 		this.templateDAO.delete(eTemplate);
-		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.DELETED, eTemplate.toApi()));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, eTemplate.toApi()));
 	}
 	
 	@Override

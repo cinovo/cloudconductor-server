@@ -15,6 +15,7 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.PackageHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
@@ -52,6 +53,8 @@ public class PackageImport implements IPackageImport {
 	private IFileDAO fileDAO;
 	@Autowired
 	private IPackageVersionDAO versionDAO;
+	@Autowired
+	private IRepoDAO repoDAO;
 
 	@Autowired
 	private PackageHandler packageHandler;
@@ -83,7 +86,7 @@ public class PackageImport implements IPackageImport {
 	private void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
 		HashMap<String, Set<EPackageVersion>> provided = new HashMap<>();
-
+		ERepo repo = this.repoDAO.findByName(repoName);
 		for(PackageVersion version : packageVersions) {
 			// Retrieve the package for the given version. Create it if it doesn't exist.
 			EPackage epackage = this.packageDAO.findByName(version.getName());
@@ -103,13 +106,13 @@ public class PackageImport implements IPackageImport {
 				PackageImport.LOGGER.debug("Update existing package version '" + name + "':'" + ver + "'");
 				boolean containsRepo = false;
 				for(ERepo eRepo : eversion.getRepos()) {
-					if(eRepo.getName().equalsIgnoreCase(repoName) && !eversion.getDeprecated()) {
+					if(eRepo.getName().equalsIgnoreCase(repoName)) {
 						containsRepo = true;
 						break;
 					}
 				}
 				if(!containsRepo) {
-					eversion = this.packageHandler.updateEntity(eversion, version);
+					eversion = this.packageHandler.updateEntity(eversion, repo);
 				}
 			}
 			if(!provided.containsKey(epackage.getName())) {
@@ -118,17 +121,17 @@ public class PackageImport implements IPackageImport {
 			provided.get(eversion.getPkg().getName()).add(eversion);
 		}
 
-		this.performDBClean(repoName, provided);
+		this.performDBClean(repo, provided);
 		this.templateHandler.updateAllPackages();
 	}
 
 
-	private void performDBClean(String repoName, HashMap<String, Set<EPackageVersion>> provided) {
+	private void performDBClean(ERepo repo, HashMap<String, Set<EPackageVersion>> provided) {
 		List<EPackage> inDB = new ArrayList<>(this.packageDAO.findList());
 		List<EFile> cfgs = this.fileDAO.findList();
 
 		for(EPackage pkg : inDB) {
-			this.cleanUpVersions(provided.get(pkg.getName()), pkg.getVersions(), repoName);
+			this.cleanUpVersions(provided.get(pkg.getName()), pkg.getVersions(), repo);
 		}
 
 		for(EPackage ePackage : this.packageDAO.findList()) {
@@ -146,7 +149,7 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	private void cleanUpVersions(Set<EPackageVersion> newPackageVersions, Set<EPackageVersion> existing, String currentRepo) {
+	private void cleanUpVersions(Set<EPackageVersion> newPackageVersions, Set<EPackageVersion> existing, ERepo currentRepo) {
 		if(existing == null) {
 			return;
 		}
@@ -167,24 +170,17 @@ public class PackageImport implements IPackageImport {
 	}
 
 
-	private void handleNotProvidedVersion(String currentRepo, EPackageVersion dbVersion) {
-		Set<ERepo> toRemove = new HashSet<>();
-		for(ERepo eRepo : dbVersion.getRepos()) {
-			if(eRepo.getName().equals(currentRepo)) {
-				//the dbVersion still references this repo -> get rid of it
-				toRemove.add(eRepo);
-			}
-		}
-		dbVersion.getRepos().removeAll(toRemove);
-		if(dbVersion.getRepos().size() > 0) {
-			if(toRemove.isEmpty()) {
-				return;
+	private void handleNotProvidedVersion(ERepo currentRepo, EPackageVersion dbVersion) {
+		if(this.packageHandler.checkIfInUse(dbVersion, currentRepo)) {
+			if(dbVersion.getRepos().size() <= 1) {
+				dbVersion.setDeprecated(true);
 			}
 			this.versionDAO.save(dbVersion);
 			return;
 		}
-		if(this.packageHandler.checkIfInUse(dbVersion)) {
-			dbVersion.setDeprecated(true);
+		if(dbVersion.getRepos().size() > 1) {
+			//more repos than the current one provide this package -> we keep it but remove the reference for the current repo
+			dbVersion.getRepos().remove(currentRepo);
 			this.versionDAO.save(dbVersion);
 			return;
 		}

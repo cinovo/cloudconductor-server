@@ -111,6 +111,23 @@ public class PackageHandler {
 	}
 
 	/**
+	 * @param pv      the package version
+	 * @param newRepo the new repo name to add;
+	 * @throws WebApplicationException on error
+	 */
+	public EPackageVersion updateEntity(EPackageVersion pv, ERepo newRepo) throws WebApplicationException {
+		RESTAssert.assertNotNull(pv);
+		if(pv.getRepos() == null) {
+			pv.setRepos(new HashSet<>());
+		}
+		if(newRepo != null) {
+			pv.getRepos().add(newRepo);
+			return this.packageVersionDAO.save(pv);
+		}
+		return pv;
+	}
+
+	/**
 	 * @param repos collection of repos names
 	 * @return a set of the repo entities
 	 */
@@ -157,10 +174,12 @@ public class PackageHandler {
 	 * @param version the version
 	 * @return true, if any template uses the version
 	 */
-	public boolean checkIfInUse(EPackageVersion version) {
+	public boolean checkIfInUse(EPackageVersion version, ERepo currentRepo) {
 		for(ETemplate t : this.templateDAO.findList()) {
-			if(t.getPackageVersions().contains(version)) {
-				return true;
+			if(t.getRepos().contains(currentRepo)) {
+				if(t.getPackageVersions().contains(version)) {
+					return true;
+				}
 			}
 		}
 		return false;

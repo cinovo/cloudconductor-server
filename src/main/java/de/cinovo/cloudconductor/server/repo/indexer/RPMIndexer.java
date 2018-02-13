@@ -171,7 +171,7 @@ public class RPMIndexer implements IRepoIndexer {
 				pv.setName(this.name);
 				pv.setVersion(this.version);
 				pv.setDependencies(this.dependencies);
-				pv.setRepos(new HashSet<String>());
+				pv.setRepos(new HashSet<>());
 				pv.getRepos().add(this.repoName);
 				this.versions.add(pv);
 				this.state = RPMPrimaryState.Repo;

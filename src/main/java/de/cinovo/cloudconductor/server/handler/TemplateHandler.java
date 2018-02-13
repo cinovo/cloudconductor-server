@@ -195,7 +195,7 @@ public class TemplateHandler {
 	private ETemplate fillFields(ETemplate et, Template t) {
 		et.setName(t.getName());
 		et.setDescription(t.getDescription());
-		et.setRepos(new ArrayList<ERepo>());
+		et.setRepos(new ArrayList<>());
 		et.setAutoUpdate(t.getAutoUpdate() == null ? false : t.getAutoUpdate());
 		et.setSmoothUpdate(t.getSmoothUpdate() == null ? false : t.getSmoothUpdate());
 
