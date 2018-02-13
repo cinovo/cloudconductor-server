@@ -95,8 +95,19 @@ public class IndexTask implements IServerTasks {
 		return TaskStateChange.START;
 	}
 
+	/**
+	 * forces a re index, ignoring checksum
+	 */
+	public void forceRun() {
+		this.execute(true);
+	}
+
 	@Override
 	public void run() {
+		this.execute(false);
+	}
+
+	private void execute(boolean force) {
 		if(this.repoId == null) {
 			return;
 		}
@@ -112,7 +123,7 @@ public class IndexTask implements IServerTasks {
 		}
 
 		this.logger.debug("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
-		String checksum = this.indexRepo(mirror, repo.getLastIndexHash());
+		String checksum = this.indexRepo(mirror, repo.getLastIndexHash(), force);
 		if(checksum != null) {
 			repo.setLastIndex(DateTime.now().getMillis());
 			repo.setLastIndexHash(checksum);
@@ -121,7 +132,7 @@ public class IndexTask implements IServerTasks {
 		this.logger.debug("End of Index Task.");
 	}
 
-	private String indexRepo(ERepoMirror mirror, String oldChecksum) {
+	private String indexRepo(ERepoMirror mirror, String oldChecksum, boolean force) {
 		try {
 			IRepoProvider repoProvider = this.repoHandler.findRepoProvider(mirror);
 			if(repoProvider == null) {
@@ -135,7 +146,7 @@ public class IndexTask implements IServerTasks {
 			if(entry == null) {
 				throw new CloudConductorException("No repo entry to index for mirror '" + mirror.getPath() + "' found!");
 			}
-			if(oldChecksum != null && oldChecksum.equals(entry.getChecksum())) {
+			if(oldChecksum != null && oldChecksum.equals(entry.getChecksum()) && !force) {
 				this.logger.debug("Skipped repo indexing, no new files for mirror {}", mirror.getPath());
 				return entry.getChecksum();
 			}

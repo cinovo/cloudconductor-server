@@ -178,12 +178,15 @@ public class PackageImport implements IPackageImport {
 			this.versionDAO.save(dbVersion);
 			return;
 		}
-		if(dbVersion.getRepos().size() > 1) {
-			//more repos than the current one provide this package -> we keep it but remove the reference for the current repo
-			dbVersion.getRepos().remove(currentRepo);
-			this.versionDAO.save(dbVersion);
-			return;
+		if(dbVersion.getRepos().size() > 0) {
+			if(dbVersion.getRepos().stream().anyMatch((e) -> e.equals(currentRepo))) {
+				//more repos than the current one provide this package -> we keep it but remove the reference for the current repo
+				dbVersion.getRepos().remove(currentRepo);
+				dbVersion = this.versionDAO.save(dbVersion);
+			}
 		}
-		this.versionDAO.delete(dbVersion);
+		if(dbVersion.getRepos().size() < 1) {
+			this.versionDAO.delete(dbVersion);
+		}
 	}
 }

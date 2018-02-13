@@ -176,7 +176,11 @@ public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHa
 
 	@Override
 	public void forceRepoUpdate(long repoId) {
-		Set<IServerTasks> tasksToDelete = this.tasks.stream().filter((t) -> t.getTaskIdentifier().equals(IndexTask.TASK_ID_PREFIX + repoId)).collect(Collectors.toSet());
-		tasksToDelete.forEach(IServerTasks::run);
+		Set<IServerTasks> tasksToForce = this.tasks.stream().filter((t) -> t.getTaskIdentifier().equals(IndexTask.TASK_ID_PREFIX + repoId)).collect(Collectors.toSet());
+		for(IServerTasks task : tasksToForce) {
+			if(task instanceof IndexTask) {
+				((IndexTask) task).forceRun();
+			}
+		}
 	}
 }
