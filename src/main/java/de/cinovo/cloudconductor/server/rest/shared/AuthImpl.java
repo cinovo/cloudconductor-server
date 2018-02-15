@@ -1,11 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.shared;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IAuth;
 import de.cinovo.cloudconductor.api.model.Authentication;
 import de.cinovo.cloudconductor.server.model.EJWTToken;
@@ -16,6 +10,11 @@ import de.cinovo.cloudconductor.server.security.AuthenticatedUserWithToken;
 import de.cinovo.cloudconductor.server.security.TokenHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -65,8 +64,9 @@ public class AuthImpl implements IAuth {
 		RESTAssert.assertNotEmpty(token);
 		EUser user = this.authHandler.getCurrentUser();
 		RESTAssert.assertNotNull(user);
+		String newToken = this.getToken(user, AuthType.PERSON, null);
 		this.logout();
-		return this.getToken(user, AuthType.PERSON, null);
+		return newToken;
 	}
 	
 	private String getToken(EUser user, AuthType type, String refToken) {
