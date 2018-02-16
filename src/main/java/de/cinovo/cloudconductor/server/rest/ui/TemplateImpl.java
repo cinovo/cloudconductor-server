@@ -10,7 +10,6 @@ import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
@@ -62,8 +61,6 @@ public class TemplateImpl implements ITemplate {
 	private SSHHandler sshKeyHandler;
 	@Autowired
 	private IServiceDAO serviceDAO;
-	@Autowired
-	private IPackageDAO pkgDAO;
 	@Autowired
 	private HostHandler hostHandler;
 	@Autowired
@@ -141,8 +138,8 @@ public class TemplateImpl implements ITemplate {
 		template = this.templateHandler.removePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
-		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
-		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<Template>(ChangeType.UPDATED, aTemplate));
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
 		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
@@ -267,7 +264,6 @@ public class TemplateImpl implements ITemplate {
 		EServiceDefaultState esds = this.serviceDefaultStateHandler.updateServiceDefaultState(templateName, serviceName, newDefaultState);
 		
 		RESTAssert.assertNotNull(esds);
-		
 		return esds.toApi();
 	}
 	

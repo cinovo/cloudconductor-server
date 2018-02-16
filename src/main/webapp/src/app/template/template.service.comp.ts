@@ -2,9 +2,14 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 
-import { Template, TemplateHttpService, ServiceDefaultState } from '../util/http/template.http.service';
-import { Service } from '../util/http/service.http.service';
+import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { AlertService } from '../util/alert/alert.service';
+
+interface AutoStartService {
+  service: string;
+  template: string;
+  autostart: boolean;
+}
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -22,10 +27,13 @@ export class TemplateServiceComponent implements OnInit {
 
   private _templateName: string;
 
-  public services: {service: string, template: string, autostart: boolean}[];
+  public services: AutoStartService[] = [];
+
+  private servicesToUpdate: AutoStartService[] = [];
 
   constructor(private templateHttp: TemplateHttpService,
-              private alertService: AlertService) { }
+              private alertService: AlertService) {
+  }
 
   ngOnInit(): void {
     this.obsTemplate.subscribe(
@@ -56,12 +64,20 @@ export class TemplateServiceComponent implements OnInit {
     );
   }
 
-  public updateDefaultStates(): void {
-    const updateOps: Observable<ServiceDefaultState>[] = this.services.map(s => {
-      const state = s.autostart ? 'STARTED' : 'STOPPED';
-      return this.templateHttp.saveServiceDefaultState(this._templateName, s.service, state);
-    });
+  toggleUpdate(service: AutoStartService): void {
+    const index = this.servicesToUpdate.findIndex((a) => a.service == service.service && a.template == service.template);
+    if (index > -1) {
+      this.servicesToUpdate.splice(index);
+    } else {
+      this.servicesToUpdate.push(service);
+    }
+  }
 
+  public updateDefaultStates(): void {
+    const updateOps: Observable<ServiceDefaultState>[] = this.servicesToUpdate.map(s => {
+      return this.templateHttp.saveServiceDefaultState(this._templateName, s.service, s.autostart ? 'STARTED' : 'STOPPED');
+    });
+    this.servicesToUpdate = [];
     Observable.forkJoin(updateOps).subscribe(
       () => this.alertService.success(`Successfully updated default service states for template '${this._templateName}'.`),
       (err) => {

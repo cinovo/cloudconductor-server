@@ -102,7 +102,6 @@ export class TemplatePackages implements OnInit, OnDestroy {
       }
     }
     newPackageVersions.sort(Sorter.templatePackageVersion);
-
     this.packageVersions = newPackageVersions;
   }
 

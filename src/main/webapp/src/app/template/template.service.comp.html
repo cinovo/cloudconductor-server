@@ -11,7 +11,7 @@
         <tbody>
           <tr *ngFor="let service of services">
             <td>{{service.service}}</td>
-            <td><input type="checkbox" [(ngModel)]="service.autostart" title="Toggle autostart for service"></td>
+            <td><input type="checkbox" [(ngModel)]="service.autostart" title="Toggle autostart for service" (click)="toggleUpdate(service, service.autostart)"></td>
           </tr>
         </tbody>
       </table>
