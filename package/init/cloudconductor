@@ -11,7 +11,7 @@ rundir=/opt/$progname;
 jarfile=de.cinovo.cloudconductor.cloudconductor-server.jar
 runuser=root
 gracetime=10;
-maxmem=256m;
+maxmem=2048m;
 
 do_start() {
 
