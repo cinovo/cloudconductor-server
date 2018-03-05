@@ -34,7 +34,7 @@ export class HostDetail implements OnInit, OnDestroy {
   private _webSocket: Subject<MessageEvent | Heartbeat>;
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
-  private templates: string[] = [];
+  public templates: string[] = [];
 
   constructor(private route: ActivatedRoute,
               private router: Router,
