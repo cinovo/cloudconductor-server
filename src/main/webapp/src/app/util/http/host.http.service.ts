@@ -72,4 +72,8 @@ export class HostHttpService {
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
     return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).share();
   }
+
+  public moveHost(hostUuid: string, template: string): Observable<boolean>{
+    return this.http.get<boolean>(`${this._basePathURL}/${hostUuid}/changetemplate/${template}`).share();
+  }
 }

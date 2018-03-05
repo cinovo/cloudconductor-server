@@ -82,4 +82,15 @@ public class HostImpl implements IHost {
 		eHost = this.hostDAO.save(eHost);
 		this.hostDetailWsHandler.broadcastChange(changeServiceState.getHostUuid(), new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
 	}
+
+	@Override
+	@Transactional
+	public void moveHost(String hostUuid, String newTemplate) {
+		RESTAssert.assertNotEmpty(hostUuid);
+		RESTAssert.assertNotEmpty(newTemplate);
+		EHost eHost = this.hostDAO.findByUuid(hostUuid);
+		RESTAssert.assertNotNull(eHost);
+		eHost = this.hostHandler.moveHostToNewTemplate(eHost, newTemplate);
+		this.hostDetailWsHandler.broadcastChange(eHost.getUuid(), new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
+	}
 }

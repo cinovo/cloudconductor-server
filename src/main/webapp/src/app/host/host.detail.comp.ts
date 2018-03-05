@@ -11,6 +11,7 @@ import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
+import { TemplateHttpService } from "../util/http/template.http.service";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -28,17 +29,19 @@ export class HostDetail implements OnInit, OnDestroy {
   public obsHost: Observable<Host> = this._behavHost.asObservable();
   public host: Host = {name: '', template: '', uuid: ''};
 
-  private autorefresh = false;
+  public templateChanged: boolean = false;
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
+  private templates: string[] = [];
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private hostHttp: HostHttpService,
               private alerts: AlertService,
-              private wsService: WebSocketService) {
+              private wsService: WebSocketService,
+              private templateHttp: TemplateHttpService) {
   };
 
   ngOnInit(): void {
@@ -48,6 +51,11 @@ export class HostDetail implements OnInit, OnDestroy {
       this.loadData(hostUuid);
       this.connectWS(hostUuid);
     });
+
+    this.templateHttp.getTemplateNames().subscribe(
+      (result) => {this.templates = result; console.log(result);}
+    );
+
     this.obsHost.subscribe((result) => this.host = result);
   }
 
@@ -86,8 +94,17 @@ export class HostDetail implements OnInit, OnDestroy {
     if (Validator.notEmpty(hostUuid) && hostUuid !== 'new') {
       this.hostHttp.getHost(hostUuid).subscribe(
         (result) => this._behavHost.next(result),
-        (error) => this.router.navigate(['/not-found', 'host', hostUuid]));
+        (error) => this.router.navigate(['/not-found', 'host', hostUuid])
+      );
     }
   }
 
+  changeTemplate() {
+    if (Validator.notEmpty(this.host.template)) {
+      this.hostHttp.moveHost(this.host.uuid, this.host.template).subscribe(
+        (result) => this.alerts.success("Moved Host " + this.host.name + " to new Template " + this.host.template),
+        (error) => this.alerts.danger("Failed to move Host" + this.host.name + " to new Template " + this.host.template)
+      );
+    }
+  }
 }

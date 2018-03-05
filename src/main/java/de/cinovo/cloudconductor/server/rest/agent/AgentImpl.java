@@ -32,10 +32,8 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotEmpty(host);
 		RESTAssert.assertNotEmpty(uuid);
 		RESTAssert.assertNotNull(rpmState);
-		
-		PackageStateChanges changes = this.agentHandler.handlePackageState(host, template, rpmState, uuid);
-		
-		return changes;
+
+		return this.agentHandler.handlePackageState(host, template, rpmState, uuid);
 	}
 	
 	@Override
@@ -44,9 +42,8 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotNull(serviceState);
 		RESTAssert.assertNotEmpty(uuid);
-		
-		ServiceStatesChanges changes = this.agentHandler.handleServiceState(host, template, serviceState, uuid);
-		return changes;
+
+		return this.agentHandler.handleServiceState(host, template, serviceState, uuid);
 	}
 	
 	@Override

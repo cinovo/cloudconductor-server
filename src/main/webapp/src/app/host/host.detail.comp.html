@@ -36,7 +36,14 @@
                   <i class="fa fa-external-link fa-fw" title="Jump to template"></i>
                 </a>
               </label>
-              <input type="text" class="form-control" [(ngModel)]="host.template" id="template" disabled/>
+              <select class="form-control" id="template" [(ngModel)]="host.template" (ngModelChange)="templateChanged = true">
+                <option *ngFor="let template of templates" value="{{template}}">{{template}}</option>
+              </select>
+            </div>
+            <div class="text-right">
+              <button (click)="changeTemplate()" class="btn btn-info" [disabled]="!templateChanged">
+                Transfer this Host to new Template
+              </button>
             </div>
           </div>
         </cc-panel>

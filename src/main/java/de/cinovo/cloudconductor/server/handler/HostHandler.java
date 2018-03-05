@@ -4,6 +4,7 @@ import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
@@ -32,6 +33,8 @@ public class HostHandler {
 
 	@Autowired
 	private IHostDAO hostDAO;
+	@Autowired
+	private ITemplateDAO templateDAO;
 
 	@Autowired
 	private HostsWSHandler hostWSHandler;
@@ -96,4 +99,24 @@ public class HostHandler {
 	}
 
 
+	/**
+	 * @param eHost       the host to modify
+	 * @param newTemplate the new template to move to
+	 * @return the modified host
+	 */
+	public EHost moveHostToNewTemplate(EHost eHost, String newTemplate) {
+		if(eHost == null) {
+			return null;
+		}
+		if(eHost.getTemplate().getName().equalsIgnoreCase(newTemplate)) {
+			return eHost;
+		}
+
+		ETemplate newTemp = this.templateDAO.findByName(newTemplate);
+		if(newTemp != null) {
+			eHost.setTemplate(newTemp);
+			return this.hostDAO.save(eHost);
+		}
+		return eHost;
+	}
 }
