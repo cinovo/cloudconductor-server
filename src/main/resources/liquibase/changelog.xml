@@ -1113,7 +1113,7 @@
         <dropColumn tableName="agent" schemaName="cloudconductor" columnName="tokenassociationdate"/>
         <addColumn tableName="agent" schemaName="cloudconductor">
             <column name="userid" type="bigint">
-                <constraints nullable="false" references="cloudconductor.user(id)" foreignKeyName="fk_agent_user"
+                <constraints nullable="true" references="cloudconductor.user(id)" foreignKeyName="fk_agent_user"
                              deleteCascade="true"/>
             </column>
         </addColumn>
@@ -1158,9 +1158,11 @@
         <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="origid" />
 
         <dropForeignKeyConstraint baseTableName="file" baseTableSchemaName="cloudconductor" constraintName="fk_file_versionized"/>
+        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor" constraintName="fk_cdata_cf"/>
         <sql>
+            UPDATE cloudconductor.filedata as fd SET fileId = (SELECT out.id FROM cloudconductor.file as out WHERE out.origId = fd.origId AND out.version = (SELECT MAX(int.version) FROM cloudconductor.file as int WHERE out.origId = int.origId));
             DELETE FROM cloudconductor.file WHERE id IN(SELECT out.id FROM cloudconductor.file as out LEFT JOIN cloudconductor.file as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
-            DELETE FROM cloudconductor.file WHERE deleted = true
+            DELETE FROM cloudconductor.file WHERE deleted = true;
         </sql>
         <dropColumn tableName="file" schemaName="cloudconductor" columnName="version" />
         <dropColumn tableName="file" schemaName="cloudconductor" columnName="deleted" />
@@ -1168,8 +1170,8 @@
 
         <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor" constraintName="fk_filedata_versionized"/>
         <sql>
+            DELETE FROM cloudconductor.filedata WHERE deleted = true;
             DELETE FROM cloudconductor.filedata WHERE id IN(SELECT out.id FROM cloudconductor.filedata as out LEFT JOIN cloudconductor.filedata as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
-            DELETE FROM cloudconductor.filedata WHERE deleted = true
         </sql>
         <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="version" />
         <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="deleted" />
@@ -1194,8 +1196,14 @@
         </addColumn>
     </changeSet>
     <changeSet id="37" author="psigloch">
-        <addColumn tableName="host" schemaName="cloudconductor">
-            <column name="uuid" type="varchar(255)" />
+        <addColumn tableName="host" schemaName="cloudconductor" >
+            <column name="uuid" type="varchar(255)"  />
         </addColumn>
     </changeSet>
+    <changeSet id="38" author="psigloch">
+        <sql>
+            UPDATE cloudconductor.repomirror SET basepath = path WHERE basepath IS NULL AND providertype = 1;
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog>

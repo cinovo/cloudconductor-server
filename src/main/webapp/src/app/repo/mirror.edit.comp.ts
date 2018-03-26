@@ -57,7 +57,7 @@ export class MirrorEdit implements OnInit {
         }
       }
       this.mirrorForm.get('basePath').valueChanges.subscribe(val => {
-        if (this.mirrorForm.controls.providerType.value == 'HTTP') {
+        if (this.mirrorForm.controls.providerType.value == 'HTTP' && val) {
           this.mirrorForm.controls.path.setValue(val);
           this.mirrorForm.patchValue({path: val});
         }
