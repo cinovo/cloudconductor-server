@@ -120,6 +120,7 @@ public class IndexTask implements IServerTasks {
 		ERepoMirror mirror = this.repoHandler.findPrimaryMirror(repo);
 		if(mirror == null) {
 			this.logger.error("Failed to find a mirror for the repo {}", repo.getName());
+			return;
 		}
 
 		this.logger.debug("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");

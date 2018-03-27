@@ -68,7 +68,9 @@ public class HostImpl implements IHost {
 		EHost eHost = this.hostDAO.findByUuid(hostUuid);
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(eHost.getId());
 		this.hostDAO.delete(eHost);
-		this.hostsWsHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, simpleHost));
+		if(simpleHost != null) {
+			this.hostsWsHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, simpleHost));
+		}
 	}
 
 	@Override

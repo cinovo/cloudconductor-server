@@ -73,7 +73,8 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 		query.append(" WHERE h.id = ?1");
 		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
 		tq.setParameter(1, id);
-		return tq.getSingleResult();
+		List<SimpleHost> resultList = tq.getResultList();
+		return resultList.isEmpty() ? null : resultList.get(0);
 	}
 
 	private StringBuilder getSimpleHostQuery() {

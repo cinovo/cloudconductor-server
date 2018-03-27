@@ -94,7 +94,9 @@ public class HostHandler {
 		newHost.setUuid(UUID.randomUUID().toString());
 		newHost = this.hostDAO.save(newHost);
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(newHost.getId());
-		this.hostWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, simpleHost));
+		if(simpleHost != null) {
+			this.hostWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, simpleHost));
+		}
 		return newHost;
 	}
 
