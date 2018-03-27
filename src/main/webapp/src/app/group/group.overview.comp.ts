@@ -108,7 +108,6 @@ export class GroupOverviewComponent implements OnInit, OnDestroy {
         this.reloadGroups();
       }, (err) => {
         this.alertService.danger(`Error deleting user group '${groupToDelete.name}'!`);
-        console.log(err);
       }
     );
   }

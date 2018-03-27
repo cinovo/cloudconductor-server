@@ -109,7 +109,6 @@ export class FileDetailComponent implements OnInit, OnDestroy {
       if (exists) {
         return Observable.throw(`File or directory named '${updatedFile.name}' already exists!`);
       } else {
-        console.log(`Update file '${updatedFile.name}'`);
         return this.fileHttpService.updateFile(updatedFile);
       }
     }).flatMap(() => {
@@ -117,7 +116,6 @@ export class FileDetailComponent implements OnInit, OnDestroy {
         // updating content is useless here
         return Observable.of(true);
       } else {
-        console.log('Update file content...');
         return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
       }
     }).subscribe(
@@ -129,7 +127,6 @@ export class FileDetailComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.alertService.danger(`Error saving ${this.formObj.toLowerCase()} '${updatedFile.name}': ${err}`);
-        console.error(err);
       }
     );
   }

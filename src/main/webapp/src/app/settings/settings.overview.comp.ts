@@ -86,7 +86,6 @@ export class SettingsOverview implements OnInit {
       (result) => this.alerts.success('Settings have been successfully saved.'),
       (error) => {
         this.alerts.danger('Error saving settings!');
-        console.log(error);
       }
     )
   }

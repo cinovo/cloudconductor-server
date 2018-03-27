@@ -93,6 +93,7 @@ public class HostHandler {
 		newHost.setLastSeen((new DateTime()).getMillis());
 		newHost.setUuid(UUID.randomUUID().toString());
 		newHost = this.hostDAO.save(newHost);
+		this.hostDetailWSHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, newHost.toApi()));
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(newHost.getId());
 		if(simpleHost != null) {
 			this.hostWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, simpleHost));

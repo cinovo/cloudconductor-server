@@ -53,7 +53,9 @@ export class HostDetail implements OnInit, OnDestroy {
     });
 
     this.templateHttp.getTemplateNames().subscribe(
-      (result) => {this.templates = result; console.log(result);}
+      (result) => {
+        this.templates = result;
+      }
     );
 
     this.obsHost.subscribe((result) => this.host = result);

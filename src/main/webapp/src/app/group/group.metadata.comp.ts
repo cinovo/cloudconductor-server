@@ -110,7 +110,6 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
       },
       (err) => {
         this.alertService.danger(`Error saving user group '${groupName}': ${err}`);
-        console.log(err);
       }
     );
   }

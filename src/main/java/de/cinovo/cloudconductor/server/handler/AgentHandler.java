@@ -121,10 +121,10 @@ public class AgentHandler {
 		}
 		this.packageStateHandler.removePackageState(host, leftPackages);
 		host = this.hostDAO.save(host);
+		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(host.getId());
 		if(simpleHost != null) {
 			this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, simpleHost));
-			this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 		}
 		// check whether the host may updateEntity or has to wait for another host to finish updating
 		if(this.sendPackageChanges(template, host)) {
@@ -203,7 +203,8 @@ public class AgentHandler {
 		if(serviceStatesChanges.getToStart().isEmpty() && serviceStatesChanges.getToStart().isEmpty() && serviceStatesChanges.getToStart().isEmpty() && (host.getStartedUpdate() != null)) {
 			host = this.hostDAO.findById(host.getId());
 			host.setStartedUpdate(null);
-			this.hostDAO.save(host);
+			EHost eHost = this.hostDAO.save(host);
+			this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, eHost.toApi()));
 		}
 
 		HashSet<ConfigFile> configFiles = new HashSet<>();
@@ -232,6 +233,7 @@ public class AgentHandler {
 		host.setLastSeen((new DateTime()).getMillis());
 		host.setAgent(agent);
 		host = this.hostDAO.save(host);
+		this.hostDetailWsHandler.broadcastChange(hostName, new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(host.getId());
 		if(simpleHost != null) {
 			this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, simpleHost));
