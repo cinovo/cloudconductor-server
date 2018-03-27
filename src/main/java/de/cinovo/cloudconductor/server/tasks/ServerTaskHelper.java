@@ -141,6 +141,9 @@ public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHa
 		}
 		//create repo index tasks
 		List<ERepo> list = this.repoDAO.findList();
+		if(list == null || list.isEmpty()) {
+			return;
+		}
 		long delaySpan = TimeUnit.MILLISECONDS.convert(settings.getIndexScanTimer(), settings.getIndexScanTimerUnit());
 		delaySpan = delaySpan / list.size() + 1;
 		int repoCount = 0;
