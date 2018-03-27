@@ -166,6 +166,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
+                    <arguments>-Psonatype-oss-release,webapp</arguments>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
@@ -178,7 +179,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.cinovo.cloudconductor.server.ServerStarter</mainClass>
+                            <mainClass>de.cinovo.cloudconductor.server.ServerStagit rter</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <classpathLayoutType>custom</classpathLayoutType>
                             <customClasspathLayout>
