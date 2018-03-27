@@ -6,7 +6,6 @@ import de.cinovo.cloudconductor.server.model.EAuthToken;
 import de.cinovo.cloudconductor.server.model.EJWTToken;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.enums.AuthType;
-import de.cinovo.cloudconductor.server.security.exception.TokenGenerationException;
 import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
 import org.joda.time.DateTime;
@@ -47,7 +46,6 @@ public class TokenHandler {
 	 * @param type the authentication type
 	 * @param refToken the referenced login token
 	 * @return the token
-	 * @throws TokenGenerationException on token generation errors
 	 */
 	public EJWTToken generateJWTToken(EUser user, AuthType type, String refToken) {
 		if (user == null) {
@@ -124,7 +122,6 @@ public class TokenHandler {
 	 *
 	 * @param user the user the toke is created for
 	 * @return a generated AuthToken if generated successful, or null if something went wrong
-	 * @throws TokenGenerationException - when generation of unqiue token failed in loop after 10 attempts
 	 */
 	public EAuthToken generateAuthToken(EUser user) {
 		String generatedToken = null;

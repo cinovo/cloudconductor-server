@@ -52,8 +52,8 @@
     </developers>
     <contributors>
         <contributor>
-        	<name>Marc Weise</name>
-        	<organization>Cinovo AG</organization>
+            <name>Marc Weise</name>
+            <organization>Cinovo AG</organization>
         </contributor>
     </contributors>
     <!-- Shared version number properties -->
@@ -260,27 +260,27 @@
                                 </goals>
                                 <phase>compile</phase>
                                 <configuration>
-                                	<executable>npm</executable>
-                                	<workingDirectory>src/main/webapp</workingDirectory>
-                                	<arguments>
-                                		<argument>install</argument>
-                                	</arguments>
+                                    <executable>npm</executable>
+                                    <workingDirectory>src/main/webapp</workingDirectory>
+                                    <arguments>
+                                        <argument>install</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                             <execution>
-                            	<id>npm build webapp</id>
-                            	<goals>
-                            		<goal>exec</goal>
-                            	</goals>
-                            	<phase>package</phase>
-                            	<configuration>
-                            		<executable>npm</executable>
-                            		<workingDirectory>src/main/webapp</workingDirectory>
-                            		<arguments>
-                            			<argument>run-script</argument>
-                            			<argument>build</argument>
-                            		</arguments>
-                            	</configuration>
+                                <id>npm build webapp</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <executable>npm</executable>
+                                    <workingDirectory>src/main/webapp</workingDirectory>
+                                    <arguments>
+                                        <argument>run-script</argument>
+                                        <argument>build</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -376,15 +376,15 @@
                                     </sources>
                                 </mapping>
                                 <mapping>
-                                	<directory>/opt/cloudconductor/web</directory>
-                                	<filemode>755</filemode>
-                                	<username>root</username>
-                                	<groupname>root</groupname>
-                                	<sources>
-                                		<source>
-                                			<location>src/main/webapp/dist</location>
-                                		</source>
-                                	</sources>
+                                    <directory>/opt/cloudconductor/web</directory>
+                                    <filemode>755</filemode>
+                                    <username>root</username>
+                                    <groupname>root</groupname>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/dist</location>
+                                        </source>
+                                    </sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/etc/cron.d</directory>
@@ -415,6 +415,20 @@
                                 <scriptFile>package/scripts/postun</scriptFile>
                                 <fileEncoding>utf-8</fileEncoding>
                             </postremoveScriptlet>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <configuration>
+                            <additionalDependencies>
+                                <dependency>
+                                    <groupId>javax.interceptor</groupId>
+                                    <artifactId>javax.interceptor-api</artifactId>
+                                    <version>1.2.2</version>
+                                </dependency>
+                            </additionalDependencies>
                         </configuration>
                     </plugin>
                     <plugin>

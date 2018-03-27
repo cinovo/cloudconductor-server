@@ -49,6 +49,7 @@ public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
 	List<SimpleHost> findSimpleHosts();
 
 	/**
+	 * @param id the host id
 	 * @return a list of simple hosts
 	 */
 	SimpleHost findSimpleHost(Long id);

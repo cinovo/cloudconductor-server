@@ -114,6 +114,7 @@ public class PackageHandler {
 	 * @param pv      the package version
 	 * @param newRepo the new repo name to add;
 	 * @throws WebApplicationException on error
+	 * @return the package version
 	 */
 	public EPackageVersion updateEntity(EPackageVersion pv, ERepo newRepo) throws WebApplicationException {
 		RESTAssert.assertNotNull(pv);
@@ -172,6 +173,7 @@ public class PackageHandler {
 
 	/**
 	 * @param version the version
+	 * @param currentRepo the current repo
 	 * @return true, if any template uses the version
 	 */
 	public boolean checkIfInUse(EPackageVersion version, ERepo currentRepo) {
