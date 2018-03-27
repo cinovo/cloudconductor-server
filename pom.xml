@@ -59,8 +59,8 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.24</dvalin.version>
-        <cloudconductor.api.version>3.0-RC-SNAPSHOT</cloudconductor.api.version>
+        <dvalin.version>1.25</dvalin.version>
+        <cloudconductor.api.version>3.0</cloudconductor.api.version>
     </properties>
 
     <dependencies>
