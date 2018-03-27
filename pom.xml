@@ -8,7 +8,7 @@
     </parent>
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
-    <version>3.0-RC-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <name>CloudConductor Server</name>
     <description>Server to manage deployment environments</description>
     <inceptionYear>2014</inceptionYear>
