@@ -28,7 +28,14 @@ import { AuthHttpService } from '../util/http/auth.http.service';
 import { UserHttpService } from '../util/http/user.http.service';
 import { GroupHttpService } from '../util/http/group.http.service';
 import { PermissionHttpService } from '../util/http/permission.http.service';
+import { UnauthorizedInterceptor } from '../util/http/unauthorized.interceptor';
 
+/**
+ * Copyright 2018 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @NgModule({
   imports: [
     CommonModule
@@ -44,6 +51,7 @@ import { PermissionHttpService } from '../util/http/permission.http.service';
     RepoScansService,
     WebSocketService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true },
     AdditionalLinkHttpService,
     AuthHttpService,
     ConfigValueHttpService,
