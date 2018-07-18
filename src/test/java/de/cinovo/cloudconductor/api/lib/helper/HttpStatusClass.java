@@ -20,10 +20,7 @@ package de.cinovo.cloudconductor.api.lib.helper;
  * #L%
  */
 
-
-import org.apache.http.HttpResponse;
-
-import de.taimos.httputils.WS;
+import de.taimos.httputils.HTTPResponse;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -59,8 +56,8 @@ public enum HttpStatusClass {
 	 * @param response the HTTP response
 	 * @return the status code class of the response
 	 */
-	public static final HttpStatusClass get(HttpResponse response) {
-		int status = WS.getStatus(response);
+	public static final HttpStatusClass get(HTTPResponse response) {
+		int status = response.getStatus();
 		for (HttpStatusClass clazz : HttpStatusClass.values()) {
 			if ((clazz.min <= status) && (clazz.max > status)) {
 				return clazz;
