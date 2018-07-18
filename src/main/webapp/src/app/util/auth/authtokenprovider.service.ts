@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
-import { JwtHelper } from 'angular2-jwt';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
 
@@ -21,7 +21,7 @@ export class AuthTokenProviderService {
   private _token: string;
   private _nextRefresh: number
 
-  private jwtHelper: JwtHelper;
+  private jwtHelper: JwtHelperService;
 
   private static getUserFromJwt(jwt: JwtClaimSet): AuthenticatedUser {
     const user: AuthenticatedUser = {
@@ -37,7 +37,7 @@ export class AuthTokenProviderService {
   }
 
   constructor() {
-    this.jwtHelper = new JwtHelper();
+    this.jwtHelper = new JwtHelperService();
 
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
