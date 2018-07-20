@@ -81,20 +81,8 @@ export class RepoEdit implements OnInit {
     const repo = this.repo;
     repo.name = formValue.name;
 
-    let check;
-    if (this.mode === 'new') {
-      check = this.repoHttp.existsRepo(repo.name);
-    } else {
-      check = Observable.of(false);
-    }
-
-    check.flatMap(exists => {
-      if (exists) {
-        return Observable.throw(`Repository named '${repo.name}' already exists!`);
-      } else {
-        return this.doSave(repo);
-      }
-    }).subscribe(
+    this.doSave(repo)
+    .subscribe(
       () => {
         this.alerts.success(`Successfully saved repository '${repo.name}'.`);
         if (this.mode === 'new') {
@@ -109,29 +97,37 @@ export class RepoEdit implements OnInit {
   }
 
   public addMirror(): void {
-    const repo = this.repo;
-    repo.name = this.repoForm.controls.name.value;
-    this.doSave(repo).subscribe(() => {
-      this.router.navigate(['/repo', this.repo.name, 'mirror', 'new']);
-    });
+    const newEmptyRepo = {...this.repo, name: this.repoForm.controls.name.value};
+
+    this.doSave(newEmptyRepo).subscribe(
+      () => this.router.navigate(['/repo', newEmptyRepo.name, 'mirror', 'new']),
+      (err) => {
+        this.alerts.danger(`Error saving repository '${newEmptyRepo.name}': ${err}`);
+        console.error(err);
+      });
   }
 
   public editMirror(id: number): void {
-    const repo = this.repo;
-    repo.name = this.repoForm.controls.name.value;
-    this.doSave(repo).subscribe(() => this.router.navigate(['/repo', this.repo.name, 'mirror', id]));
+    const updatedRepo = {...this.repo, name: this.repoForm.controls.name.value};
+
+    this.doSave(updatedRepo).subscribe(
+      () => this.router.navigate(['/repo', updatedRepo.name, 'mirror', id]),
+      (err) => console.error(err)
+    );
   }
 
   public deleteMirror(id: number): void {
     if (Validator.idIsSet(id)) {
-      this.mirrorHttp.deleteMirror(id.toString()).subscribe(
+      this.mirrorHttp.deleteMirror(id.toString())
+      .subscribe(
         () => {
           this.repo.mirrors.forEach(function (item, index, object) {
             if (item.id === id) {
               object.splice(index, 1);
             }
           });
-        });
+        }
+      );
     }
   }
 
@@ -146,14 +142,26 @@ export class RepoEdit implements OnInit {
   }
 
   private doSave(repo: Repo): Observable<Repo> {
-    let call: Observable<Repo>;
-    if (Validator.idIsSet(repo.id)) {
-      call = this.repoHttp.editRepo(repo);
-    } else {
-      call = this.repoHttp.newRepo(repo);
+    return this.checkIfNecessary(repo)
+    .flatMap(exists => {
+      if (exists) {
+        return Observable.throw(`Repository named '${repo.name}' already exists!`);
+      }
+
+      if (Validator.idIsSet(repo.id)) {
+        return this.repoHttp.editRepo(repo);
+      }
+
+      return this.repoHttp.newRepo(repo);
+    });
+  }
+
+  private checkIfNecessary(repo: Repo): Observable<boolean> {
+    if (this.mode !== 'new') {
+      return Observable.of(false);
     }
 
-    return call;
+    return this.repoHttp.existsRepo(repo.name)
   }
 
   public goBack(): void {
@@ -161,6 +169,12 @@ export class RepoEdit implements OnInit {
   }
 
   public forceReindex() {
-    this.repoHttp.forceReindex(this.repo).subscribe(() => {});
+    this.repoHttp.forceReindex(this.repo).subscribe(
+      () => this.alerts.success(`Successfully scheduled manual reindex of repo '${this.repo.name}'.`),
+      (err) => {
+        this.alerts.danger(`Error forcing reindex of repo '${this.repo.name}': ${err}`);
+        console.log(err)
+      }
+    );
   }
 }

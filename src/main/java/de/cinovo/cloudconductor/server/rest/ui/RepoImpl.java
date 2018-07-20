@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,12 +52,11 @@ public class RepoImpl implements IRepo {
 	public Repo get(String name) {
 		RESTAssert.assertNotNull(name);
 		ERepo repo = this.repoDAO.findByName(name);
-		RESTAssert.assertNotNull(repo);
+		RESTAssert.assertNotNull(repo, Status.NOT_FOUND);
 		return repo.toApi();
 	}
 	
 	@Override
-	@Transactional
 	public Long newRepo(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getName());
@@ -66,7 +66,6 @@ public class RepoImpl implements IRepo {
 	}
 	
 	@Override
-	@Transactional
 	public void edit(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getId());

@@ -95,20 +95,22 @@ public class RepoHandler {
 	public ERepoMirror createMirror(RepoMirror newMirror) {
 		ERepoMirror emirror = this.createEntity(newMirror);
 		
-		// trigger repo index tasks
 		ERepo erepo = this.updatePrimaryMirrorOfRepo(newMirror.getRepo(), emirror.getId());
+		// trigger repo index tasks
 		this.repoTaskHandler.newRepo(erepo);
 		
 		return emirror;
 	}
 	
 	@Transactional
-	private ERepo updatePrimaryMirrorOfRepo(String repoName, long id) {
+	private ERepo updatePrimaryMirrorOfRepo(String repoName, Long id) {
+		RESTAssert.assertNotEmpty(repoName);
+		RESTAssert.assertNotNull(id);
+		
 		ERepo erepo = this.repoDAO.findByName(repoName);
 		
 		// set to primary if this is the first mirror
-		if (erepo.getRepoMirrors().size() < 1) {
-			RESTAssert.assertNotNull(id);
+		if (erepo.getRepoMirrors().size() == 1) {
 			erepo.setPrimaryMirrorId(id);
 			erepo = this.repoDAO.save(erepo);
 		}

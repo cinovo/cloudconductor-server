@@ -38,6 +38,9 @@ import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
  */
 public class IndexTask implements IServerTasks {
 	
+	/**
+	 * prefix for id of repository index tasks
+	 */
 	public static final String TASK_ID_PREFIX = "REPO_INDEX_TASK_REPOID_";
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -112,7 +115,6 @@ public class IndexTask implements IServerTasks {
 		if (this.repoId == null) {
 			return;
 		}
-		this.logger.info("Start Index Task '{}'!", this.getTaskIdentifier());
 		ERepo repo = this.repoDAO.findById(this.repoId);
 		if (repo == null) {
 			this.logger.error("Failed to find the repo with id {}", this.repoId);
@@ -124,14 +126,14 @@ public class IndexTask implements IServerTasks {
 			return;
 		}
 		
-		this.logger.debug("Start indexing mirror '" + mirror.getPath() + "' of Repository '" + repo.getName() + "'");
+		this.logger.debug("Start task '{}' indexing mirror '{}' of Repository '{}'", this.getTaskIdentifier(), mirror.getPath(), repo.getName());
 		String checksum = this.indexRepo(mirror, repo.getLastIndexHash(), force);
 		if (checksum != null) {
 			repo.setLastIndex(DateTime.now().getMillis());
 			repo.setLastIndexHash(checksum);
 			this.repoDAO.save(repo);
 		}
-		this.logger.info("End of Index Task '{}'.", this.getTaskIdentifier());
+		this.logger.debug("End of Index Task '{}'.", this.getTaskIdentifier());
 	}
 	
 	private String indexRepo(ERepoMirror mirror, String oldChecksum, boolean force) {
@@ -149,7 +151,7 @@ public class IndexTask implements IServerTasks {
 				throw new CloudConductorException("No repo entry to index for mirror '" + mirror.getPath() + "' found!");
 			}
 			if ((oldChecksum != null) && oldChecksum.equals(entry.getChecksum()) && !force) {
-				this.logger.info("Skipped repo indexing, no new files for mirror {}", mirror.getPath());
+				this.logger.debug("Skipped repo indexing, no new files for mirror '{}'", mirror.getPath());
 				return entry.getChecksum();
 			}
 			Set<PackageVersion> latestIndex = indexer.getRepoIndex(repoProvider);
