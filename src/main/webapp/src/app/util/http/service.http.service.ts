@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 
-export interface ServiceUsage { [s: string]: string };
+export interface ServiceUsage { [templateName: string]: PackageName };
+type PackageName = string;
 
 /**
  * Copyright 2017 Cinovo AG<br>

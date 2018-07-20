@@ -5,13 +5,12 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
-import { Package, PackageHttpService } from '../util/http/package.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { Sorter } from '../util/sorters.util';
 import { StatsHttpService, Stats } from '../util/http/stats.http.service';
-import { TemplateHttpService, Template } from '../util/http/template.http.service';
+import { ServiceUsageHttpService } from '../util/http/serviceUsage.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -40,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               private settingHttpService: SettingHttpService,
               private hostHttpService: HostHttpService,
               private serviceHttpService: ServiceHttpService,
+              private serviceUsageHttpService: ServiceUsageHttpService,
               private repoHttpService: RepoHttpService,
               private statsHttpService: StatsHttpService) { };
 
@@ -61,19 +61,19 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.hosts$ = this.hostTimer.switchMap((interval) => {
         return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadHosts());
-    });
+    }).share();
 
     this.repos$ = this.scanTimer.switchMap((interval) => {
         return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadRepos())
-    });
+    }).share();
 
     this.services$ = this.serviceTimer.switchMap((interval) => {
       return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadServices());
-    });
+    }).share();
 
     this.stats$ = this.statsTimer.switchMap((interval) => {
       return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadStats());
-    });
+    }).share();
   }
 
   public loadSettings(): Observable<Settings> {
@@ -91,17 +91,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public loadServices(): Observable<Service[]> {
-    return this.serviceHttpService.getServices().map(services => services.sort(Sorter.service))
-    .flatMap(services => {
-      const usages$: Observable<any>[] = services.map(s => this.serviceHttpService.getServiceUsage(s.name));
-
-      return Observable.forkJoin(usages$).map(usages => {
-        return usages.map((usage, index) => {
-            let ts = (usage) ? Object.keys(usage) : [];
-            return {...services[index], templates: ts};
-        });
-      });
-    });
+    return this.serviceHttpService.getServices()
+    .flatMap(services => this.serviceUsageHttpService.getUsages()
+      .map(serviceUsages => Object.entries(serviceUsages).map(([serviceName, usage]) => {
+          const templates = (usage) ? Object.keys(usage) : [];
+          const serviceIndex = services.findIndex(s => s.name === serviceName);
+          return {...services[serviceIndex], templates};
+        })
+      )
+    ).map(svsWithUsage => svsWithUsage.sort(Sorter.service));
   }
 
   public loadStats(): Observable<Stats> {

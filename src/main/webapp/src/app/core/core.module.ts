@@ -29,6 +29,7 @@ import { UserHttpService } from '../util/http/user.http.service';
 import { GroupHttpService } from '../util/http/group.http.service';
 import { PermissionHttpService } from '../util/http/permission.http.service';
 import { UnauthorizedInterceptor } from '../util/http/unauthorized.interceptor';
+import { ServiceUsageHttpService } from '../util/http/serviceUsage.http.service';
 
 /**
  * Copyright 2018 Cinovo AG<br>
@@ -63,6 +64,7 @@ import { UnauthorizedInterceptor } from '../util/http/unauthorized.interceptor';
     RepoHttpService,
     RepoMirrorHttpService,
     ServiceHttpService,
+    ServiceUsageHttpService,
     SettingHttpService,
     SSHKeyHttpService,
     StatsHttpService,
