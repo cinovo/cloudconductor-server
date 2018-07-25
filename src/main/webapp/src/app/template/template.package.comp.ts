@@ -7,7 +7,7 @@ import { Template, TemplateHttpService } from '../util/http/template.http.servic
 import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
-import { Validator } from "../util/validator.util";
+import { Validator } from '../util/validator.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>

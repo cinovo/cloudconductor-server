@@ -1,5 +1,18 @@
 package de.cinovo.cloudconductor.server.handler;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
@@ -11,17 +24,10 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.taimos.restutils.RESTAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -42,6 +48,8 @@ public class TemplateHandler {
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
 	private PackageHandler packageHandler;
+	@Autowired
+	private TemplateDetailWSHandler templateDetailWSHandler;
 	
 	
 	/**
@@ -93,10 +101,16 @@ public class TemplateHandler {
 	/**
 	 * updates all packages of all templates to the newest version
 	 */
+	@Transactional
 	public void updateAllPackages() {
 		for (ETemplate t : this.templateDAO.findList()) {
-			this.updateAllPackages(t);
+			ETemplate updatedTemplate = this.updateAllPackages(t);
+			this.sendTemplateUpdate(updatedTemplate);
 		}
+	}
+	
+	private void sendTemplateUpdate(ETemplate template) {
+		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<>(ChangeType.UPDATED, template.toApi()));
 	}
 	
 	/**
@@ -104,9 +118,9 @@ public class TemplateHandler {
 	 *
 	 * @param template the template to update the packages for
 	 */
-	private void updateAllPackages(ETemplate template) {
+	private ETemplate updateAllPackages(ETemplate template) {
 		if ((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
-			return;
+			return template;
 		}
 		
 		List<EPackageVersion> list = new ArrayList<>(template.getPackageVersions());
@@ -123,7 +137,7 @@ public class TemplateHandler {
 		}
 		
 		template.setPackageVersions(list);
-		this.templateDAO.save(template);
+		return this.templateDAO.save(template);
 	}
 	
 	/**
@@ -172,7 +186,6 @@ public class TemplateHandler {
 		}
 		return template;
 	}
-
 	
 	/**
 	 * @param template the template to temove the package from
@@ -198,10 +211,10 @@ public class TemplateHandler {
 		et.setRepos(new ArrayList<>());
 		et.setAutoUpdate(t.getAutoUpdate() == null ? false : t.getAutoUpdate());
 		et.setSmoothUpdate(t.getSmoothUpdate() == null ? false : t.getSmoothUpdate());
-
-		if(t.getRepos() != null) {
-			for(ERepo repo : this.repoDAO.findList()) {
-				if(t.getRepos().contains(repo.getName())) {
+		
+		if (t.getRepos() != null) {
+			for (ERepo repo : this.repoDAO.findList()) {
+				if (t.getRepos().contains(repo.getName())) {
 					et.getRepos().add(repo);
 				}
 			}
@@ -238,11 +251,11 @@ public class TemplateHandler {
 				}
 			}
 		}
-		if(targetVersions != null) {
-			for(Entry<String, String> target : targetVersions.entrySet()) {
+		if (targetVersions != null) {
+			for (Entry<String, String> target : targetVersions.entrySet()) {
 				EPackageVersion ePackageVersion = this.packageVersionDAO.find(target.getKey(), target.getValue());
-				if(ePackageVersion != null) {
-					if(this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
+				if (ePackageVersion != null) {
+					if (this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
 						result.add(ePackageVersion);
 					}
 				}
