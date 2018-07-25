@@ -45,14 +45,12 @@ public class RepoMirrorImpl implements IRepoMirror {
 	}
 	
 	@Override
-	@Transactional
 	public Long newMirror(RepoMirror mirror) {
 		RESTAssert.assertNotNull(mirror);
 		RESTAssert.assertNotEmpty(mirror.getRepo());
 		
-		ERepoMirror emirror = this.repoHandler.createEntity(mirror);
+		ERepoMirror emirror = this.repoHandler.createMirror(mirror);
 		RESTAssert.assertNotNull(emirror);
-		emirror = this.repoMirrorDAO.save(emirror);
 		return emirror.getId();
 	}
 	
@@ -61,9 +59,8 @@ public class RepoMirrorImpl implements IRepoMirror {
 	public void editMirror(RepoMirror mirror) {
 		RESTAssert.assertNotNull(mirror);
 		RESTAssert.assertNotNull(mirror.getRepo());
-		ERepoMirror emirror = this.repoMirrorDAO.findById(mirror.getId());
-		RESTAssert.assertNotNull(emirror);
-		emirror = this.repoHandler.updateEntity(emirror, mirror);
+		
+		ERepoMirror emirror = this.repoHandler.updateMirror(mirror);
 		RESTAssert.assertNotNull(emirror);
 		this.repoMirrorDAO.save(emirror);
 	}

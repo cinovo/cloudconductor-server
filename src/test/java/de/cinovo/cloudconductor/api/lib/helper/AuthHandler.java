@@ -1,9 +1,8 @@
 package de.cinovo.cloudconductor.api.lib.helper;
 
-import org.apache.http.HttpResponse;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.model.Authentication;
+import de.taimos.httputils.HTTPResponse;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -27,7 +26,7 @@ public class AuthHandler extends AbstractApiHandler {
 	
 	public String authenticate(Authentication auth) {
 		try {
-			HttpResponse response = this._put("/auth", auth);
+			HTTPResponse response = this._put("/auth", auth);
 			AbstractApiHandler.assertSuccess("/auth", response);
 			return this.objectFromResponse(response, String.class);
 		} catch (CloudConductorException e) {
