@@ -5,13 +5,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Template, TemplateHttpService } from '../util/http/template.http.service';
+import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Mode } from '../util/enums.util';
+
+interface TemplateForm extends Partial<Template> {
+  copyFrom: string;
+}
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -93,8 +97,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     }
   }
 
-  public saveTemplateMetadata(formValue): void {
-    const templateToSave: Template = {
+  public saveTemplateMetadata(formValue: TemplateForm): void {
+    let templateToSave: Template = {
       name: formValue.name,
       description: formValue.description || '',
       repos: this.template.repos,
@@ -102,43 +106,41 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       hosts: this.template.hosts,
       autoUpdate: formValue.autoUpdate,
       smoothUpdate: formValue.smoothUpdate
-    }
+    };
 
     if (this.mode === Mode.NEW) {
-      let templateObs: Observable<any>;
+      let serviceDefaultStates: ServiceDefaultState[] = [];
 
-      if (Validator.notEmpty(formValue.copyFrom)) {
-        templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
-      } else {
-        templateObs = Observable.of({});
-      }
+      this.templateHttp.existsTemplate(templateToSave.name)
+        .flatMap((templateExists) => {
+          if (templateExists) {
+            return Observable.throw(`Template '${templateToSave.name}' does already exist!`);
+          }
 
-      templateObs.flatMap((result) => {
-        // first overwrite repos and versions with template to be copied
-        if (result.repos && result.repos.length > 0) {
-          templateToSave.repos = result.repos;
-        }
-        if (result.versions) {
-          templateToSave.versions = result.versions;
-        }
+          let templateObs: Observable<Partial<Template>> = Observable.of({});
+          let sdsObs:Observable<ServiceDefaultState[]> = Observable.of([]);
+          if (Validator.notEmpty(formValue.copyFrom)) {
+            templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
+            sdsObs = this.templateHttp.getServiceDefaultStates(formValue.copyFrom)
+          }
 
-        // then check whether name is already in use
-        return this.templateHttp.existsTemplate(templateToSave.name);
-      }).flatMap((exists) => {
-        if (!exists) {
-          // alright, try to save template...
-          return this.templateHttp.save(templateToSave);
-        } else {
-          return Observable.throw(`Template named '${templateToSave.name}' does already exist!`);
-        }
-      }).subscribe(() => {
-          this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
-          this.router.navigate(['template', templateToSave.name]);
-        }, (err) => {
-          this.alerts.danger(`Failed to save template: ${err}`);
-          console.error(err);
-        }
-      );
+          return Observable.forkJoin(templateObs, sdsObs)
+        }).flatMap(([templateToCopy = { }, sds = []]) => {
+          serviceDefaultStates = sds;
+
+          // overwrite repos and versions with template to be copied
+          templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
+          return this.templateHttp.save(templateToSave)
+        }).flatMap(() => {
+          return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
+        }).subscribe(() => {
+            this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
+            this.router.navigate(['template', templateToSave.name]);
+          }, (err) => {
+            this.alerts.danger(`Failed to create template '${templateToSave.name}': ${err}`);
+            console.error(err);
+          }
+        );
     } else {
       this.templateHttp.save(templateToSave).subscribe(() => {
         this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
@@ -151,6 +153,13 @@ export class TemplateMetaData implements OnInit, OnDestroy {
         console.error(err);
       });
     }
+  }
+
+  private updateServiceStates(templateName: string, serviceDefaultStates): Observable<ServiceDefaultState[]> {
+    const sdsUpdates = serviceDefaultStates.map(sds => {
+      return this.templateHttp.saveServiceDefaultState(templateName, sds.service, sds.state);
+    });
+    return Observable.forkJoin(sdsUpdates);
   }
 
   protected deleteTemplate(): void {
