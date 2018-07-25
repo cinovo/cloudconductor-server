@@ -33,11 +33,11 @@
 
         <div class="form-group">
           <label class="control-label" for="service">Service</label>
-          <select *ngIf="mode !== 'edit'" class="form-control" formControlName="service" id="service">
-            <option value="" selected>None</option>
-            <option *ngFor="let service of services" [value]="service">{{service}}</option>
-          </select>
-          <input *ngIf="mode === 'edit'" class="form-control" formControlName="service" readonly>
+          <input type="text" class="form-control" formControlName="service" id="service" [readonly]="mode === 'edit'"
+            list="serviceList">
+          <datalist id="serviceList">
+            <option *ngFor="let service of services" value="{{service}}"></option>
+          </datalist>
         </div>
 
         <div class="pull-right">

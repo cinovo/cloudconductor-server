@@ -11,8 +11,8 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
 import { Role } from '../util/enums.util';
-import { ConfigValueNew } from "./cs.new.comp";
-import { ConfigValueExport } from "./cv.export.comp";
+import { ConfigValueNew } from './cs.new.comp';
+import { ConfigValueExport } from './cv.export.comp';
 
 const cvRoutes: Routes = [
   {path: 'preview', component: ConfigValuePreview, data: {rolesAllowed: [Role.VIEW_CONFIGVALUES, Role.EDIT_CONFIGVALUES]},
