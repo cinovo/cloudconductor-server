@@ -16,16 +16,19 @@ import org.springframework.stereotype.Service;
 import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
+import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
+import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.taimos.restutils.RESTAssert;
 
@@ -47,9 +50,15 @@ public class TemplateHandler {
 	@Autowired
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
+	private IHostDAO hostDAO;
+	
+	@Autowired
 	private PackageHandler packageHandler;
+	
 	@Autowired
 	private TemplateDetailWSHandler templateDetailWSHandler;
+	@Autowired
+	private HostDetailWSHandler hostDetailWSHandler;
 	
 	
 	/**
@@ -123,6 +132,7 @@ public class TemplateHandler {
 			return template;
 		}
 		
+		boolean updatedPackage = false;
 		List<EPackageVersion> list = new ArrayList<>(template.getPackageVersions());
 		
 		for (EPackageVersion version : template.getPackageVersions()) {
@@ -133,11 +143,22 @@ public class TemplateHandler {
 			if (!newest.equals(version)) {
 				list.remove(version);
 				list.add(newest);
+				updatedPackage = true;
 			}
 		}
 		
-		template.setPackageVersions(list);
-		return this.templateDAO.save(template);
+		if (updatedPackage) {
+			template.setPackageVersions(list);
+			ETemplate updatedTemplate = this.templateDAO.save(template);
+			List<EHost> affectedHosts = this.hostDAO.findHostsForTemplate(updatedTemplate.getName());
+			affectedHosts.stream().forEach(host -> {
+				this.hostDetailWSHandler.broadcastChange(host.getUuid(), new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
+			});
+			
+			return updatedTemplate;
+		}
+		
+		return template;
 	}
 	
 	/**
