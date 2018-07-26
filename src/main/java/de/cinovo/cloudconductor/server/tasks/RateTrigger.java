@@ -58,7 +58,7 @@ public class RateTrigger extends AbstractTrigger {
 			nextExecution = nextExecution.plusMillis((int) task.getTimerUnit().toMillis(task.getTimer()));
 		}
 		
-		this.logger.info("Next execution of '{}' @{}", task.getTaskIdentifier(), nextExecution);
+		this.logger.debug("Next execution of '{}' @{}", task.getTaskIdentifier(), nextExecution);
 		return nextExecution.toDate();
 	}
 	
