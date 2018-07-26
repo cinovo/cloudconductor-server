@@ -1,17 +1,14 @@
-<div id="wrapper">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+  <top-navbar></top-navbar>
+  <main-navbar *ngIf="(loggedIn | async)"></main-navbar>
+</nav>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-    <top-navbar></top-navbar>
-    <main-navbar *ngIf="(loggedIn | async)"></main-navbar>
-  </nav>
+<div [ngClass]="(loggedIn | async) ? 'page-wrapper' : 'container'">
+  <alert-area></alert-area>
 
-  <div [ngClass]="(loggedIn | async) ? 'page-wrapper' : 'container'">
-    <alert-area></alert-area>
+  <router-outlet></router-outlet>
 
-    <router-outlet></router-outlet>
-
-  </div>
-
-  <app-footer *ngIf="(loggedIn | async)"></app-footer>
 </div>
+
+<app-footer *ngIf="(loggedIn | async)"></app-footer>
