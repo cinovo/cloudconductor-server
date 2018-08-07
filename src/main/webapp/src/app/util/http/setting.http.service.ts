@@ -43,7 +43,7 @@ export class SettingHttpService {
 
   private reloading = false;
 
-  private _basePathURL = 'api/settings/';
+  private _basePathURL = 'api/settings';
 
   public static calcIntervalInMillis(n: number, label: string) {
     const unit = timeUnits.find(u => u.value === label);
@@ -62,7 +62,7 @@ export class SettingHttpService {
   }
 
   public getSettings(): Observable<Settings> {
-    return this.http.get<Settings>(this._basePathURL);
+    return this.http.get<Settings>(this._basePathURL).share();
   }
 
   public save(settings: Settings): Observable<boolean> {

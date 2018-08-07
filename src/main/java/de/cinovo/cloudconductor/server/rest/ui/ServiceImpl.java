@@ -17,9 +17,7 @@ package de.cinovo.cloudconductor.server.rest.ui;
  * #L%
  */
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,9 +31,7 @@ import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.ServiceHandler;
-import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
 
@@ -92,18 +88,8 @@ public class ServiceImpl implements IService {
 	@Transactional
 	public Map<String, String> getUsage(String service) {
 		RESTAssert.assertNotEmpty(service);
-		EService model = this.serviceDAO.findByName(service);
-		RESTAssert.assertNotNull(model);
 		
-		Map<String, String> result = new HashMap<>();
-		for (EPackage pkg : model.getPackages()) {
-			List<ETemplate> templates = this.dtemplate.findByPackage(pkg);
-			for (ETemplate template : templates) {
-				result.put(template.getName(), pkg.getName());
-			}
-		}
-		
-		return result;
+		return this.serviceHandler.getServiceUsage(service);
 	}
 	
 	@Override

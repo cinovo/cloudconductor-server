@@ -1,10 +1,27 @@
 package de.cinovo.cloudconductor.server.handler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
@@ -13,16 +30,6 @@ import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.EServiceState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -43,6 +50,8 @@ public class ServiceHandler {
 	private IServiceStateDAO serviceStateDAO;
 	@Autowired
 	private IServiceDefaultStateDAO serviceDefaultStateDAO;
+	@Autowired
+	private ITemplateDAO templateDAO;
 	
 	
 	/**
@@ -151,5 +160,33 @@ public class ServiceHandler {
 			this.serviceStateDAO.delete(ss);
 		}
 		return changes;
+	}
+	
+	/**
+	 * @param serviceName the name of the service
+	 * @return service usage map
+	 */
+	public Map<String, String> getServiceUsage(String serviceName) {
+		EService model = this.serviceDAO.findByName(serviceName);
+		RESTAssert.assertNotNull(model);
+		
+		Map<String, String> result = new HashMap<>();
+		for (EPackage pkg : model.getPackages()) {
+			List<ETemplate> templates = this.templateDAO.findByPackage(pkg);
+			for (ETemplate template : templates) {
+				result.put(template.getName(), pkg.getName());
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * @return map of all service usages
+	 */
+	@Transactional
+	public Map<String, Map<String, String>> getServiceUsage() {
+		return this.serviceDAO.findList().stream()//
+		.collect(Collectors.toMap(EService::getName, s -> this.getServiceUsage(s.getName())));
 	}
 }
