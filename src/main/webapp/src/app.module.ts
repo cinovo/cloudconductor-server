@@ -2,10 +2,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { Routes } from '@angular/router';
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
-import { Ng2Webstorage } from 'ng2-webstorage';
 import './rxjs-extensions';
 
 import { CoreModule } from './app/core/core.module';
@@ -27,7 +25,6 @@ import { routing } from './app/app.routing';
 @NgModule({
   imports: [
     BrowserModule,
-    Ng2Webstorage,
     HttpClientModule,
     routing,
     FormsModule,

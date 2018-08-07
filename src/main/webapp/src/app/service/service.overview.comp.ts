@@ -42,7 +42,8 @@ export class ServiceOverview implements OnInit {
   }
 
   private loadData() {
-    this.serviceHttp.getServices().flatMap(services => {
+    this.serviceHttp.getServices()
+    .flatMap(services => {
       this.services = services;
 
       const usageOps: Observable<ServiceUsage>[] = services.map(service => this.serviceHttp.getServiceUsage(service.name));
@@ -55,13 +56,13 @@ export class ServiceOverview implements OnInit {
         return servicesWithUsage;
       });
     })
+    .finally(() => this.servicesLoaded = true)
     .subscribe(
       (services) => {
         this.services = services;
-        this.servicesLoaded = true;
       }, (err) => {
         this.alerts.danger('Error loading services!');
-        this.servicesLoaded = true;
+        console.error(err);
       }
     );
   }

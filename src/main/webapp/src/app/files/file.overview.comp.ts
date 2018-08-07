@@ -135,7 +135,7 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
 
   public deleteFile(fileToDelete: ConfigFile) {
     this.fileHttp.deleteFile(fileToDelete.name).subscribe(() => {
-      this.alertService.success(`File '${fileToDelete}' successfully deleted!`);
+      this.alertService.success(`File '${fileToDelete.name}' successfully deleted!`);
       this.reloadData();
     },
     (err) => {
