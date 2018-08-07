@@ -17,11 +17,11 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import java.util.List;
+
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.taimos.dvalin.jpa.IEntityDAO;
-
-import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -36,18 +36,25 @@ public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
 	 * @return the number of hosts
 	 */
 	Long count();
-
+	
 	/**
 	 * @param uuid the uuid
 	 * @return the host or null
 	 */
 	EHost findByUuid(String uuid);
-
+	
+	/**
+	 * 
+	 * @param templateName the name of the template
+	 * @return list of hosts with given template
+	 */
+	List<EHost> findHostsForTemplate(String templateName);
+	
 	/**
 	 * @return a list of simple hosts
 	 */
 	List<SimpleHost> findSimpleHosts();
-
+	
 	/**
 	 * @param id the host id
 	 * @return a list of simple hosts

@@ -116,7 +116,6 @@ public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHa
 			aTrigger.setFuture(future);
 			
 			this.running.put(task.getTaskIdentifier(), aTrigger);
-			this.logger.info("Started task '{}', next execution @{}", task.getTaskIdentifier(), aTrigger.getNextExecutionAsString());
 		} else {
 			this.logger.error("Failed to start task {}: no unit was set.", task.getTaskIdentifier());
 		}
@@ -141,7 +140,11 @@ public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHa
 		delaySpan = (delaySpan / list.size()) + 1;
 		int repoCount = 0;
 		for (ERepo repo : list) {
-			this.createRepoIndexTask(settings, (int) (repoCount * delaySpan), repo.getId());
+			if ((repo.getLastIndex() == null) || repo.getLastIndex().equals(0)) {
+				this.createRepoIndexTask(settings, 0, repo.getId());
+			} else {
+				this.createRepoIndexTask(settings, (int) (repoCount * delaySpan), repo.getId());
+			}
 			repoCount++;
 		}
 	}

@@ -1,9 +1,9 @@
 package de.cinovo.cloudconductor.server.ws;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 
@@ -19,7 +19,7 @@ import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
  */
 public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	
-	private Map<String, List<A>> connectedWS = new HashMap<>();
+	private Map<String, List<A>> connectedWS = new ConcurrentHashMap<String, List<A>>();
 	
 	
 	/**
@@ -58,10 +58,12 @@ public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	public void broadcastChange(String name, WSChangeEvent<T> event) {
 		List<A> adapters = this.connectedWS.get(name);
 		
-		if (adapters != null) {
-			for (A adapter : adapters) {
-				adapter.sendChangeEvent(event);
-			}
+		if ((adapters == null) || adapters.isEmpty()) {
+			return;
+		}
+		
+		for (A adapter : adapters) {
+			adapter.sendChangeEvent(event);
 		}
 	}
 	

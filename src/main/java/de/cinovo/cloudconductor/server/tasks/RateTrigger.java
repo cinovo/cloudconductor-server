@@ -6,6 +6,8 @@ package de.cinovo.cloudconductor.server.tasks;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TriggerContext;
 
 /**
@@ -16,6 +18,9 @@ import org.springframework.scheduling.TriggerContext;
  *
  */
 public class RateTrigger extends AbstractTrigger {
+	
+	private Logger logger = LoggerFactory.getLogger(RateTrigger.class);
+	
 	
 	RateTrigger(IServerTasks task) {
 		super(task);
@@ -44,7 +49,7 @@ public class RateTrigger extends AbstractTrigger {
 		
 		DateTime nextExecution;
 		if (lastCompletion == null) {
-			nextExecution = now;
+			nextExecution = now.plus(task.getDelay());
 		} else {
 			nextExecution = lastCompletion.plusMillis((int) task.getTimerUnit().toMillis(task.getTimer()));
 		}
@@ -52,6 +57,8 @@ public class RateTrigger extends AbstractTrigger {
 		while (nextExecution.isBefore(now)) {
 			nextExecution = nextExecution.plusMillis((int) task.getTimerUnit().toMillis(task.getTimer()));
 		}
+		
+		this.logger.debug("Next execution of '{}' @{}", task.getTaskIdentifier(), nextExecution);
 		return nextExecution.toDate();
 	}
 	
