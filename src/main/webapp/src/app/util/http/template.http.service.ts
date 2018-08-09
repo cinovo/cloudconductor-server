@@ -91,7 +91,7 @@ export class TemplateHttpService {
   }
 
   public updatePackage(template: Template, packageName: string): Observable<Template> {
-    return this.http.put<Template>(`${this._basePathURL}/${template.name}/package/${packageName}`, '');
+    return this.http.put<Template>(`${this._basePathURL}/${template.name}/package/${packageName}`, {});
   }
 
   public deletePackage(template: Template, packageName: string): Observable<Template> {
