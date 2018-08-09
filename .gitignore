@@ -8,3 +8,4 @@ cloudconductor.properties
 .classpath
 .project
 /bin/
+log/

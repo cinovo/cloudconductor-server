@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server;
 
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
+import de.taimos.daemon.log4j.Log4jDaemonProperties;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
@@ -35,7 +36,7 @@ import java.util.Map;
  * @author mhilbert
  */
 public class ServerStarter extends DvalinLifecycleAdapter {
-	
+
 	/**
 	 * C2 properties file name
 	 */
@@ -44,15 +45,15 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	 * the name of the server daemon
 	 */
 	public static final String DAEMON_NAME = "cloudconductor";
-	
+
 	// Exception messages.
 	private static final String EXCEPTION_IN_PHASE = "Exception in phase %s.";
 	/**
 	 * the logger
 	 */
 	private static final Logger log = Logger.getLogger(ServerStarter.class);
-	
-	
+
+
 	/**
 	 * Main method.
 	 *
@@ -60,13 +61,13 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	 */
 	public static void main(final String[] args) {
 		Log4jLoggingConfigurer.setup();
-		if (ServerStarter.checkInstalled()) {
+		if(ServerStarter.checkInstalled()) {
 			DaemonStarter.startDaemon(ServerStarter.DAEMON_NAME, new ServerStarter());
 		} else {
 			ServerStarter.log.error("Properties file '" + ServerStarter.CLOUDCONDUCTOR_PROPERTIES + "' is missing!");
 		}
 	}
-	
+
 	private static boolean checkInstalled() {
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		return f.exists();
@@ -76,22 +77,23 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	protected void doAfterSpringStart() {
 		super.doAfterSpringStart();
 	}
-	
+
 	@Override
 	public void exception(LifecyclePhase phase, Throwable exception) {
 		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
 	}
-	
+
 	@Override
 	public IPropertyProvider getPropertyProvider() {
 		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 	}
-	
+
 	@Override
 	protected void loadBasicProperties(Map<String, String> map) {
 		super.loadBasicProperties(map);
 		map.put("ds.package", "de/cinovo/cloudconductor/server");
 		map.put("jaxrs.path", "/api");
 		map.put("jetty.sessions", "true");
+		map.put(Log4jDaemonProperties.LOGGER_FILE, "true");
 	}
 }

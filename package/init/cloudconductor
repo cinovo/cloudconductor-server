@@ -33,7 +33,7 @@ do_start() {
 
         cd $rundir
 
-        pid=$(su -m -c "java -XX:MaxPermSize=128m -Xmx$maxmem -XX:OnOutOfMemoryError='kill -9 %p' -DdevelopmentMode=false -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8091 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dhazelcast.jmx=true $JAVAOPTS -jar $jarfile $JAVAARGS > /dev/null & echo \$! " "$runuser")
+        pid=$(su -m -c "java -XX:MaxPermSize=128m -Xmx$maxmem -XX:OnOutOfMemoryError='kill -9 %p' -DstartupMode=prod -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8091 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dhazelcast.jmx=true $JAVAOPTS -jar $jarfile $JAVAARGS > /dev/null & echo \$! " "$runuser")
 
         echo "$pid" > $pidfile
 
