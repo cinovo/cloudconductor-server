@@ -73,17 +73,9 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  protected deleteCurrentTemplate() {
-    let ops: Observable<boolean>[] = [];
-    for (let index in this.tree) {
-      if (this.tree.hasOwnProperty(index)) {
-        for (let kv of this.tree[index].kvs) {
-          ops.push(this.deleteKey(kv));
-        }
-      }
-    }
-
-    Observable.forkJoin(ops).subscribe(
+  protected deleteCurrentTemplate(): void {
+    this.configHttp.deleteForTemplate(this.template)
+    .subscribe(
       () => {
         this.alerts.success(`All config values for template '${this.template}' were deleted successfully!`);
         this.router.navigate(['config', 'GLOBAL']);
@@ -95,28 +87,18 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
     );
   }
 
-  protected deleteService(serviceName: string) {
-    let element: ConfigValueTreeNode;
-    for (let nodeIndex in this.tree) {
-      if (this.tree[nodeIndex].name === serviceName) {
-        element = this.tree[nodeIndex];
+  protected deleteService(serviceName: string): void {
+    this.configHttp.deleteForService(this.template, serviceName)
+    .subscribe(
+      () => {
+        this.alerts.success(`Successfully deleted all configuration values for service '${serviceName}'`);
+        this.loadData();
+      },
+      (err) => {
+        this.alerts.danger(`Error deleting configuration values for service '${serviceName}'!`);
+        console.error(err);
       }
-    }
-
-    if (element && element.kvs) {
-      const ops: Observable<boolean>[] = element.kvs.map(kv => this.deleteKey(kv));
-
-      Observable.forkJoin(ops).subscribe(
-        () => {
-          this.alerts.success(`Successfully deleted all configuration values for service '${serviceName}'`);
-          this.loadData();
-        },
-        (err) => {
-          this.alerts.danger(`Error deleting configuration values for service '${serviceName}'!`);
-          console.error(err);
-        }
-      );
-    }
+    );
   }
 
   private doDelete(kv: ConfigValue) {
@@ -180,6 +162,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
       this.kvLoaded = true;
     }, (err) => {
       this.alerts.danger(`Error loading config values for template '${this.template}'!`);
+      console.error(err);
       this.kvLoaded = true;
     });
   }

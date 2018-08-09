@@ -5,8 +5,6 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
 import { Validator } from '../../util/validator.util';
-import { HttpParams } from "@angular/common/http/src/params";
-import { HttpResponse } from "@angular/common/http/src/response";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -46,11 +44,15 @@ export class ConfigValueHttpService {
       ret = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/${val.service}/${val.key}`);
     }
 
-    ret.subscribe(
-      () => this.reloadTemplates(),
-      (err) => console.error(err)
-    );
-    return ret;
+    return ret.do(() => this.reloadTemplates())
+  }
+
+  public deleteForTemplate(template: string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this._basePathURL}/${template}`).do(() => this.reloadTemplates());
+  }
+
+  public deleteForService(template: string, service: string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this._basePathURL}/${template}/${service}`);
   }
 
   public save(val: ConfigValue): Observable<ConfigValue> {
@@ -102,13 +104,12 @@ export class ConfigValueHttpService {
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {
-    let options ={};
-    if(mode.indexOf("json")>0) {
+    let options = {};
+    if (mode.indexOf('json') > 0) {
        options = {headers: new HttpHeaders({'Accept': mode})};
-    }else {
+    } else {
        options = {headers: new HttpHeaders({'Accept': mode}), responseType: 'text' as 'text'};
     }
-
 
     let preview$: Observable<any>;
     if (Validator.notEmpty(service)) {

@@ -177,6 +177,7 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public void delete(String template, String service, String key) {
 		RESTAssert.assertNotNull(template);
 		RESTAssert.assertNotEmpty(key);
@@ -194,13 +195,20 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public void deleteForTemplate(String templateName) {
-		// TODO Auto-generated method stub
+		RESTAssert.assertNotEmpty(templateName);
+		
+		List<EConfigValue> configs = this.configValueDAO.findAll(templateName);
+		
+		configs.stream().forEach(cv -> this.configValueDAO.delete(cv));
 	}
 	
 	@Override
 	public void deleteForService(String template, String service) {
-		// TODO Auto-generated method stub
+		RESTAssert.assertNotEmpty(template);
+		RESTAssert.assertNotEmpty(service);
+		
+		this.configValueDAO.findBy(template, service).stream().forEach(cv -> this.configValueDAO.delete(cv));
 	}
-	
 }
