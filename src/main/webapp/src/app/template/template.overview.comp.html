@@ -8,9 +8,18 @@
     <cc-filter mode="select" label="Repository" [data]="repos" [dataField]="'name'" (onQueryChange)="repoQuery = $event"></cc-filter>
   </div>
   <div class="col-md-6">
-    <button [routerLink]="['new']" class="btn btn-default pull-right">
-      Add a new Template
-    </button>
+    <div class="row pull-right">
+      <div class="col-sm-6">
+        <button [routerLink]="['diff']" class="btn btn-default pull-right">
+          Compare Templates
+        </button>
+      </div>
+      <div class="col-sm-6">
+        <button [routerLink]="['new']" class="btn btn-default pull-right">
+          Add a new Template
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -65,16 +74,16 @@
         </thead>
         <tbody>
         <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)"
-            [class.warning]="template.hosts.length < 1"
-            [class.danger]="template.hosts.length < 1 && countVersion(template.versions) < 1">
+            [class.warning]="template.hostCount < 1"
+            [class.danger]="template.hostCount < 1 && template.packageCount < 1">
           <td>
             {{template.name}}
           </td>
           <td>
-            {{template.hosts.length}}
+            {{template.hostCount}}
           </td>
           <td>
-            {{countVersion(template.versions)}}
+            {{template.packageCount}}
           </td>
           <td>
             <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">

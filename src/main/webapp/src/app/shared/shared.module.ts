@@ -11,6 +11,7 @@ import { CCTitle } from '../util/cctitle/cctitle.comp';
 import { CCPaginationInfoComponent } from '../util/ccpaginationinfo/ccpaginationinfo.comp';
 import { CCPanelListComponent } from '../util/ccpanellist/ccpanellist.comp';
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
+import { CCExport } from "../util/ccexport/ccexport.comp";
 
 // TODO move components to shared folder, create alias
 
@@ -35,11 +36,12 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
     CCPaginationInfoComponent,
     CCPanel,
     CCPanelListComponent,
-    CCTitle
+    CCTitle,
+    CCExport
   ],
   exports: [
     CommonModule,
-    FormsModule ,
+    FormsModule,
 
     CCDashboardPanel,
     CCFilter,
@@ -47,7 +49,8 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
     CCPaginationInfoComponent,
     CCPanel,
     CCPanelListComponent,
-    CCTitle
+    CCTitle,
+    CCExport
   ]
 })
-export class SharedModule { }
+export class SharedModule {}

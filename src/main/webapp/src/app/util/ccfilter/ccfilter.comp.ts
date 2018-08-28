@@ -30,6 +30,7 @@ export class CCFilter implements OnInit {
   ngOnInit(): void {
     if (this.selected != null) {
       this._query = this.selected;
+      console.log("HERE", this._query);
     }
   }
 

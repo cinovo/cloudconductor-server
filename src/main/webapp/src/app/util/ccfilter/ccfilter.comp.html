@@ -17,7 +17,9 @@
     <select class="form-control" [(ngModel)]="query" id="labelquery">
       <option [value]="''">None</option>
       <ng-template [ngIf]="dataField">
-        <option *ngFor="let elem of data" value="{{elem[dataField]}}">{{elem[dataField]}}</option>
+        <option *ngFor="let elem of data" value="{{elem[dataField]}}">
+          {{elem[dataField]}}
+        </option>
       </ng-template>
       <ng-template [ngIf]="!dataField">
         <option *ngFor="let elem of data" value="{{elem}}">{{elem}}</option>

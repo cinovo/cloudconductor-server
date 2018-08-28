@@ -45,19 +45,5 @@ export class ConfigValueExport implements OnInit, OnDestroy {
     });
   }
 
-  copyToClipboard(exportCV: HTMLInputElement) {
-    exportCV.select();
-    this.dom.execCommand("copy");
-    exportCV.setSelectionRange(0, 0);
-  }
 
-  download(exportCV: HTMLInputElement) {
-    let json = exportCV.value;
-    let blob = new Blob([json], {type: 'application/json;charset=utf-8;'});
-    let link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = this.template + ".json";
-    link.click();
-    link.remove();
-  }
 }

@@ -16,6 +16,14 @@ export interface HostIdentifier {
   uuid: string;
 }
 
+export interface SimpleTemplate {
+  name: string;
+  hostCount?: number;
+  packageCount?: number;
+  repos?: string[];
+  group?: string;
+}
+
 export interface Template {
   name: string;
   description?: string;
@@ -24,6 +32,11 @@ export interface Template {
   hosts?: HostIdentifier[];
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
+}
+
+export interface PackageDiff {
+  name: string;
+  version: string;
 }
 
 export interface AgentOption {
@@ -81,7 +94,7 @@ export class TemplateHttpService {
     });
   }
 
-  public deleteTemplate(template: Template): Observable<boolean> {
+  public deleteTemplate(template: Template | SimpleTemplate): Observable<boolean> {
     return this.http.delete<boolean>(`${this._basePathURL}/${template.name}`);
   }
 
@@ -128,5 +141,12 @@ export class TemplateHttpService {
       newServiceDefaultState);
   }
 
+  public getSimpleTemplates(): Observable<SimpleTemplate[]> {
+    return this.http.get<SimpleTemplate[]>(`${this._basePathURL}/simple`).share();
+  }
+
+  public getDiff(templateAName: string, templateBName: string): Observable<PackageDiff[]> {
+    return this.http.get<PackageDiff[]>(`${this._basePathURL}/packagediff/${templateAName}/${templateBName}`).share();
+  }
 }
 

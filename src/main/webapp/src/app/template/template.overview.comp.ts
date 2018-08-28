@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
-import { TemplateHttpService, Template } from '../util/http/template.http.service';
+import { TemplateHttpService, Template, SimpleTemplate } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
 import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
@@ -30,7 +30,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
-  private _templates: Array<Template> = [];
+  private _templates: Array<SimpleTemplate> = [];
 
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
@@ -39,14 +39,14 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   public templatesLoaded = false;
 
-  private static filterByRepo(template: Template, repoName: string): boolean {
+  private static filterByRepo(template: SimpleTemplate, repoName: string): boolean {
     if (Validator.notEmpty(repoName)) {
       return template.repos.indexOf(repoName) > -1
     }
     return true;
   }
 
-  private static filterData(template: Template, query: string): boolean {
+  private static filterData(template: SimpleTemplate, query: string): boolean {
     if (Validator.notEmpty(query)) {
       return template.name.indexOf(query.trim()) >= 0;
     }
@@ -121,7 +121,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
   }
 
   private loadTemplates(): void {
-    this.templateHttp.getTemplates().subscribe((result) => {
+    this.templateHttp.getSimpleTemplates().subscribe((result) => {
       this.templates = result;
       this.templatesLoaded = true;
     }, (err) => {
@@ -139,21 +139,16 @@ export class TemplateOverview implements OnInit, OnDestroy {
     )
   }
 
-  protected countVersion(versions: any): number {
-    return Object.keys(versions).length;
-  }
-
-  get templates(): Template[] {
+  get templates(): SimpleTemplate[] {
     return this._templates;
   }
 
-  set templates(value: Template[]) {
+  set templates(value: SimpleTemplate[]) {
     this._templates = value
       .filter(template => TemplateOverview.filterByRepo(template, this._repoQuery))
       .filter(template => TemplateOverview.filterData(template, this._searchQuery))
       .map(template => {
         template.repos = [...template.repos].sort();
-        template.hosts = [...template.hosts].sort();
         return template;
       })
       .sort(Sorter.template);
@@ -173,7 +168,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
     this.loadTemplates();
   }
 
-  private deleteTemplate(template: Template): void {
+  private deleteTemplate(template: SimpleTemplate): void {
     this.templateHttp.deleteTemplate(template).subscribe(
       () => {
         // template list is updated via websocket
