@@ -1,6 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
@@ -15,6 +15,7 @@ import { FooterComponent } from './app/footer/footer.comp';
 import { NavComponent } from './app/nav/nav.comp';
 import { TopNavComponent } from './app/nav/topNav.comp';
 import { routing } from './app/app.routing';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -26,6 +27,7 @@ import { routing } from './app/app.routing';
   imports: [
     BrowserModule,
     HttpClientModule,
+    BrowserAnimationsModule,
     routing,
     FormsModule,
     ReactiveFormsModule,
@@ -42,4 +44,4 @@ import { routing } from './app/app.routing';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

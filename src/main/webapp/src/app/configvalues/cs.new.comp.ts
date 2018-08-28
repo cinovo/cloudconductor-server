@@ -22,6 +22,7 @@ export class ConfigValueNew implements OnInit {
 
   public kvForm: FormGroup;
   public templates: Array<String> = [];
+  public working = false;
 
   constructor(private configHttp: ConfigValueHttpService,
               private route: ActivatedRoute,
@@ -41,13 +42,19 @@ export class ConfigValueNew implements OnInit {
     this.configHttp.templates.subscribe((result) => this.templates = result);
   }
 
+  public test() {
+    console.log(this.kvForm.value.importValues)
+  }
+
   public save() {
+    this.working = true;
     if (this.kvForm.value.prefil == 'none') {
       this.configHttp.save({
         key: "firstKey",
         value: "empty",
         template: this.kvForm.value.newTemplate
       }).subscribe((result) => {
+          this.working = false;
           this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}' .`);
           this.router.navigate(['/config', this.kvForm.value.newTemplate]);
         }
@@ -57,8 +64,11 @@ export class ConfigValueNew implements OnInit {
     if (this.kvForm.value.prefil == 'copy') {
       this.copyFromTemplate();
     }
+    if (this.kvForm.value.prefil == 'importjson') {
+      this.importFromJSON();
+    }
     if (this.kvForm.value.prefil == 'import') {
-      this.importFromFile();
+      this.importFromJSON();
     }
   }
 
@@ -66,12 +76,14 @@ export class ConfigValueNew implements OnInit {
     this.configHttp.getValues(this.kvForm.value.template).subscribe((result) => {
       if (result.length < 1) {
         this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
+        this.working = false;
         return;
       }
       for (let i = 0; i < result.length; i++) {
         result[i].template = this.kvForm.value.newTemplate;
         if (i == result.length - 1) {
           this.configHttp.save(result[i]).subscribe((result) => {
+              this.working = false;
               this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}' and copied values from '${this.kvForm.value.template}'.`);
               this.router.navigate(['/config', this.kvForm.value.newTemplate]);
             }
@@ -81,32 +93,36 @@ export class ConfigValueNew implements OnInit {
         }
       }
     }, (err) => {
+      this.working = false;
       this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
     });
   }
 
-  private importFromFile() {
+  private importFromJSON() {
     if (!Validator.notEmpty(this.kvForm.value.importValues)) {
+      this.working = false;
       return;
     }
     try {
-      const json:any[] = JSON.parse(this.kvForm.value.importValues);
+      const json: any[] = JSON.parse(this.kvForm.value.importValues);
       let values: ConfigValue[] = [];
-      for(let val of json) {
-        if('key' in val && 'value' in val) {
+      for (let val of json) {
+        if ('key' in val && 'value' in val) {
           let newElement: ConfigValue = {key: val.key, value: val.value, template: this.kvForm.value.newTemplate, service: val.service};
           values.push(newElement);
         }
       }
 
       if (values.length < 1) {
-        this.alerts.danger("Failed to import the given file, there where no config values!");
+        this.alerts.danger("Failed to import the given json, there where no config values!");
+        this.working = false;
         return;
       }
       for (let i = 0; i < values.length; i++) {
         values[i].template = this.kvForm.value.newTemplate;
         if (i == values.length - 1) {
           this.configHttp.save(values[i]).subscribe((result) => {
+              this.working = false;
               this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}'.`);
               this.router.navigate(['/config', this.kvForm.value.newTemplate]);
             }
@@ -116,7 +132,8 @@ export class ConfigValueNew implements OnInit {
         }
       }
     } catch (e) {
-      this.alerts.danger("Failed to read the given file. No proper json!");
+      this.working = false;
+      this.alerts.danger("Failed to read the given json. No proper json!");
     }
 
 
