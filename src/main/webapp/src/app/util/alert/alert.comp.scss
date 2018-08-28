@@ -1,6 +1,17 @@
 @import "../../../glob/_variables";
+//@import '~bootstrap/scss/bootstrap';
+//@import '~bootstrap-sass/assets/stylesheets/bootstrap/navbar';
 
-.alert-space{
+.alert-space {
   margin-top: 10px;
   margin-bottom: 0px;
+}
+
+.allert-container {
+  position: fixed;
+  visibility: visible;
+  width: calc(100vw - 40%);
+  left: calc((100vw - (100vw - 40%)) / 2);
+  top: 70px;
+  z-index: 9000;
 }

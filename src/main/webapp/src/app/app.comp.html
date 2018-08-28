@@ -1,11 +1,14 @@
 <!-- Navigation -->
+
+<alert-area></alert-area>
+
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <top-navbar></top-navbar>
   <main-navbar *ngIf="(loggedIn | async)"></main-navbar>
 </nav>
 
 <div [ngClass]="(loggedIn | async) ? 'page-wrapper' : 'container'">
-  <alert-area></alert-area>
+
 
   <router-outlet></router-outlet>
 
