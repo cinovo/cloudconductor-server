@@ -12,7 +12,6 @@ import { Validator } from '../util/validator.util';
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
-import { animate, keyframes, query, stagger, style, transition, trigger } from "@angular/animations";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -28,8 +27,7 @@ export interface TemplateGroup {
 
 @Component({
   selector: 'template-overview',
-  templateUrl: './template.overview.comp.html',
-  styleUrls: ['./template.overview.comp.scss'],
+  templateUrl: './template.overview.comp.html'
 })
 export class TemplateOverview implements OnInit, OnDestroy {
 
@@ -227,5 +225,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
     });
     this.templateTree.sort(Sorter.groupFieldNoneLast);
     this.templateTree.forEach((e) => e.templates.sort(Sorter.template));
+    if (this.templateTree.length == 1) {
+      this.templateTree[0].expanded = true;
+    }
   }
 }

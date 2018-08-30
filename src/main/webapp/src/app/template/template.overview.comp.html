@@ -97,8 +97,7 @@
             </td>
             <td>
               <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
-                {{repo}}
-                <ng-template [ngIf]="!last"><br/></ng-template>
+                {{repo}}<ng-template [ngIf]="!last">, </ng-template>
               </ng-template>
             </td>
             <td>
