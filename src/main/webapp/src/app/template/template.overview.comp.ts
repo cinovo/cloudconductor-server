@@ -7,11 +7,12 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
-import { TemplateHttpService, Template, SimpleTemplate } from '../util/http/template.http.service';
+import { SimpleTemplate, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { Validator } from '../util/validator.util';
-import { WebSocketService, Heartbeat } from '../util/websockets/websocket.service';
+import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
-import { RepoHttpService, Repo } from '../util/http/repo.http.service';
+import { Repo, RepoHttpService } from '../util/http/repo.http.service';
+import { animate, keyframes, query, stagger, style, transition, trigger } from "@angular/animations";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -19,9 +20,16 @@ import { RepoHttpService, Repo } from '../util/http/repo.http.service';
  *
  * @author psigloch
  */
+export interface TemplateGroup {
+  group?: string;
+  templates: Array<SimpleTemplate>;
+  expanded: boolean;
+}
+
 @Component({
   selector: 'template-overview',
-  templateUrl: './template.overview.comp.html'
+  templateUrl: './template.overview.comp.html',
+  styleUrls: ['./template.overview.comp.scss'],
 })
 export class TemplateOverview implements OnInit, OnDestroy {
 
@@ -31,6 +39,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
   private _templates: Array<SimpleTemplate> = [];
+  private templateTree: Array<TemplateGroup> = [];
 
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
@@ -57,7 +66,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
               private repoHttp: RepoHttpService,
               private router: Router,
               private alerts: AlertService,
-              private wsService: WebSocketService) {  };
+              private wsService: WebSocketService) {
+  };
 
   ngOnInit(): void {
     this.loadTemplates();
@@ -65,47 +75,47 @@ export class TemplateOverview implements OnInit, OnDestroy {
     this.loadRepos();
 
     this.wsService.connect('templates').subscribe((webSocket) => {
-      this._webSocket = webSocket;
+        this._webSocket = webSocket;
 
-      this._webSocketSub = this._webSocket.subscribe((event) => {
-        const data: WSChangeEvent<Template> = JSON.parse(event.data);
+        this._webSocketSub = this._webSocket.subscribe((event) => {
+          const data: WSChangeEvent<Template> = JSON.parse(event.data);
 
-        let updatedTemplates = this._templates;
-        switch (data.type) {
-          case 'ADDED':
-            updatedTemplates = this._templates.concat(data.content)
-            break;
+          let updatedTemplates = this._templates;
+          switch (data.type) {
+            case 'ADDED':
+              updatedTemplates = this._templates.concat(data.content)
+              break;
 
-          case 'UPDATED':
-            const updatedTemplate = data.content;
-            const indexToUpdate = this._templates.findIndex((t) => t.name === updatedTemplate.name);
+            case 'UPDATED':
+              const updatedTemplate = data.content;
+              const indexToUpdate = this._templates.findIndex((t) => t.name === updatedTemplate.name);
 
-            updatedTemplates.splice(indexToUpdate, 1, updatedTemplate);
-            break;
+              updatedTemplates.splice(indexToUpdate, 1, updatedTemplate);
+              break;
 
-          case 'DELETED':
-            const deletedTemplate = data.content;
-            const indexToDelete = this._templates.findIndex((t) => t.name === deletedTemplate.name);
+            case 'DELETED':
+              const deletedTemplate = data.content;
+              const indexToDelete = this._templates.findIndex((t) => t.name === deletedTemplate.name);
 
-            updatedTemplates.splice(indexToDelete, 1);
-            break;
+              updatedTemplates.splice(indexToDelete, 1);
+              break;
 
-          default:
-            console.error('Unknown WS message type!');
-            break;
-        }
+            default:
+              console.error('Unknown WS message type!');
+              break;
+          }
 
-        this.templates = updatedTemplates;
-      });
+          this.templates = updatedTemplates;
+        });
 
-      const iv = (this.wsService.timeout * 0.4);
+        const iv = (this.wsService.timeout * 0.4);
 
-      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
-        // send heart beat message via WebSockets
-        this._webSocket.next({ data: 'Alive!' });
-      });
-    },
-    (err) => console.error(err));
+        this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+          // send heart beat message via WebSockets
+          this._webSocket.next({data: 'Alive!'});
+        });
+      },
+      (err) => console.error(err));
   }
 
   ngOnDestroy(): void {
@@ -152,6 +162,8 @@ export class TemplateOverview implements OnInit, OnDestroy {
         return template;
       })
       .sort(Sorter.template);
+
+    this.refreshTree();
   }
 
   get searchQuery(): string {
@@ -200,4 +212,20 @@ export class TemplateOverview implements OnInit, OnDestroy {
     }
   }
 
+  private refreshTree() {
+    this.templateTree = [];
+    this._templates.forEach((element) => {
+      if (!element.group) {
+        element.group = "";
+      }
+      let te = this.templateTree.find((treeElement) => treeElement.group == element.group);
+      if (!te) {
+        te = {group: element.group, templates: [], expanded: false};
+        this.templateTree.push(te);
+      }
+      te.templates.push(element);
+    });
+    this.templateTree.sort(Sorter.groupFieldNoneLast);
+    this.templateTree.forEach((e) => e.templates.sort(Sorter.template));
+  }
 }

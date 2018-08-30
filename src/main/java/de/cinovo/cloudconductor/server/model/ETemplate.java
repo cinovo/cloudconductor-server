@@ -23,6 +23,7 @@ import de.cinovo.cloudconductor.api.model.Template;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -69,6 +70,8 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	private Boolean autoUpdate;
 
 	private Boolean smoothUpdate;
+
+	private String group;
 
 
 	@Override
@@ -239,6 +242,21 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 		this.repos = repos;
 	}
 
+	/**
+	 * @return the group
+	 */
+	@Column(name = "\"group\"")
+	public String getGroup() {
+		return this.group;
+	}
+
+	/**
+	 * @param group the group to set
+	 */
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
 	@Override
 	@Transient
 	public Class<Template> getApiClass() {
@@ -268,7 +286,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	 */
 	public SimpleTemplate toSimple() {
 		SimpleTemplate res = new SimpleTemplate();
-		res.setGroup("");
+		res.setGroup(this.group);
 		res.setHostCount(0);
 		if(!this.hosts.isEmpty()) {
 			res.setHostCount(this.hosts.size());

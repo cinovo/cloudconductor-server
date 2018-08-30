@@ -111,7 +111,7 @@ public class ConfigValueImpl implements IConfigValue {
 	@Override
 	public ConfigValue[] getCleanVars(String template) {
 		if(template == null || template.isEmpty() || template.equals("null")) {
-			return this.getClean(ConfigValueDAOHib.RESERVED_VARIABLE);
+			return this.getCleanUnstacked(ConfigValueDAOHib.RESERVED_VARIABLE);
 		}
 		List<ConfigValue> result = new ArrayList<>();
 		for(EConfigValue ecv : this.configValueDAO.findBy(template, ConfigValueDAOHib.RESERVED_VARIABLE)) {

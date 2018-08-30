@@ -45,6 +45,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   public templateForm: FormGroup;
   public copyFrom: FormControl;
 
+  public groups: string[] = [];
+
   private _templateSub: Subscription;
   private _settingsSub: Subscription;
 
@@ -62,7 +64,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       autoUpdate: false,
       smoothUpdate: false,
       copyFrom: this.copyFrom,
-      newRepo: ''
+      newRepo: '',
+      group: ''
     });
   }
 
@@ -75,12 +78,21 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       this.templateForm.controls.description.setValue(template.description);
       this.templateForm.controls.autoUpdate.setValue(template.autoUpdate);
       this.templateForm.controls.smoothUpdate.setValue(template.smoothUpdate);
+      this.templateForm.controls.group.setValue(template.group);
     });
 
     this._settingsSub = this.settingsHttp.getSettings().subscribe(
       (result) => this.settings = result,
       (err) => console.error(err)
     );
+
+    this.templateHttp.getSimpleTemplates().subscribe((result) => {
+      result.forEach((t) => {
+        if (!this.groups.some((e) => e === t.group)) {
+          this.groups.push(t.group);
+        }
+      });
+    });
 
     if (this.mode === Mode.NEW) {
       this.existingTemplateNames = this.templateHttp.getTemplateNames();
@@ -105,7 +117,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       versions: this.template.versions,
       hosts: this.template.hosts,
       autoUpdate: formValue.autoUpdate,
-      smoothUpdate: formValue.smoothUpdate
+      smoothUpdate: formValue.smoothUpdate,
+      group: formValue.group
     };
 
     if (this.mode === Mode.NEW) {
@@ -118,29 +131,29 @@ export class TemplateMetaData implements OnInit, OnDestroy {
           }
 
           let templateObs: Observable<Partial<Template>> = Observable.of({});
-          let sdsObs:Observable<ServiceDefaultState[]> = Observable.of([]);
+          let sdsObs: Observable<ServiceDefaultState[]> = Observable.of([]);
           if (Validator.notEmpty(formValue.copyFrom)) {
             templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
             sdsObs = this.templateHttp.getServiceDefaultStates(formValue.copyFrom)
           }
 
           return Observable.forkJoin(templateObs, sdsObs)
-        }).flatMap(([templateToCopy = { }, sds = []]) => {
-          serviceDefaultStates = sds;
+        }).flatMap(([templateToCopy = {}, sds = []]) => {
+        serviceDefaultStates = sds;
 
-          // overwrite repos and versions with template to be copied
-          templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
-          return this.templateHttp.save(templateToSave)
-        }).flatMap(() => {
-          return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
-        }).subscribe(() => {
-            this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
-            this.router.navigate(['template', templateToSave.name]);
-          }, (err) => {
-            this.alerts.danger(`Failed to create template '${templateToSave.name}': ${err}`);
-            console.error(err);
-          }
-        );
+        // overwrite repos and versions with template to be copied
+        templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
+        return this.templateHttp.save(templateToSave)
+      }).flatMap(() => {
+        return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
+      }).subscribe(() => {
+          this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
+          this.router.navigate(['template', templateToSave.name]);
+        }, (err) => {
+          this.alerts.danger(`Failed to create template '${templateToSave.name}': ${err}`);
+          console.error(err);
+        }
+      );
     } else {
       this.templateHttp.save(templateToSave).subscribe(() => {
         this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
@@ -149,7 +162,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
         }
         this.router.navigate(['template', templateToSave.name]);
       }, (err) => {
-        this.alerts.danger(`Failed to save template '${formValue.copyFrom}'`);
+        this.alerts.danger(`Failed to save template '${templateToSave.name}'`);
         console.error(err);
       });
     }

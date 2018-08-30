@@ -2,7 +2,8 @@
   <div class="col-md-12">
     <cc-panel [title]="'Template details'" icon="fa-institution" [collapsable]="true">
       <form [formGroup]="templateForm" novalidate (ngSubmit)="saveTemplateMetadata(templateForm.value)" cc-panel-body>
-        <div class="form-group" [ngClass]="{ 'has-error': !templateForm.controls.name.pristine && !templateForm.controls.name.valid }">
+        <div class="form-group"
+             [ngClass]="{ 'has-error': !templateForm.controls.name.pristine && !templateForm.controls.name.valid }">
           <label class="control-label" for="name">Name</label>
           <input type="text" class="form-control" formControlName="name" id="name" [readOnly]="mode == modes.EDIT">
           <span *ngIf="!templateForm.controls.name.pristine && !templateForm.controls.name.valid" class="help-block">
@@ -14,6 +15,18 @@
           <label class="control-label" for="description">Description</label>
           <textarea type="text" class="form-control" formControlName="description" id="description" rows="3">
           </textarea>
+        </div>
+
+        <div class="form-group"
+             [ngClass]="{ 'has-error': !templateForm.controls.group.pristine && !templateForm.controls.group.valid }">
+          <label class="control-label" for="group">Gruppe</label>
+          <input type="text" class="form-control" formControlName="group" id="group" list="groupList">
+          <datalist id="groupList">
+            <option *ngFor="let elem of groups" value="{{elem}}"></option>
+          </datalist>
+          <span *ngIf="!templateForm.controls.group.pristine && !templateForm.controls.group.valid" class="help-block">
+            This field is required
+          </span>
         </div>
 
         <div class="form-group" *ngIf="settings.allowautoupdate">
@@ -81,7 +94,8 @@
 
                 <div class="pull-right">
                   <button type="button" (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
-                  <button type="button" (click)="addNewRepo(templateForm.controls['newRepo'].value)" class="btn btn-success"
+                  <button type="button" (click)="addNewRepo(templateForm.controls['newRepo'].value)"
+                          class="btn btn-success"
                           [disabled]="templateForm.controls['newRepo'].length < 1 || allRepos.length < 1">Add
                   </button>
                 </div>
@@ -116,7 +130,7 @@
                   placement="left"
                   confirmButtonType="danger"
                   (confirm)="deleteTemplate()">
-                  Delete
+            Delete
           </button>
         </div>
 

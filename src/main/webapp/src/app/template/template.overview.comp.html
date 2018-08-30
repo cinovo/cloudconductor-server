@@ -5,7 +5,8 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-3">
-    <cc-filter mode="select" label="Repository" [data]="repos" [dataField]="'name'" (onQueryChange)="repoQuery = $event"></cc-filter>
+    <cc-filter mode="select" label="Repository" [data]="repos" [dataField]="'name'"
+               (onQueryChange)="repoQuery = $event"></cc-filter>
   </div>
   <div class="col-md-6">
     <div class="row pull-right">
@@ -64,6 +65,7 @@
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
+          <th class="sorting_asc" width="5px"></th>
           <th class="sorting_asc" width="30%">Template</th>
           <th class="sorting"># Hosts</th>
           <th class="sorting"># Packages</th>
@@ -73,39 +75,48 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)"
-            [class.warning]="template.hostCount < 1"
-            [class.danger]="template.hostCount < 1 && template.packageCount < 1">
-          <td>
-            {{template.name}}
-          </td>
-          <td>
-            {{template.hostCount}}
-          </td>
-          <td>
-            {{template.packageCount}}
-          </td>
-          <td>
-            <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
-              {{repo}}
-              <ng-template [ngIf]="!last"><br/></ng-template>
-            </ng-template>
-          </td>
-          <td>
-            <a title="Edit Template" [routerLink]="[template.name]"><i class="fa fa-edit fa-fw"></i></a>
-          </td>
-          <td>
-            <a href="javascript:void(0)" mwlConfirmationPopover
-              title="Delete Template"
-              [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
-              placement="left"
-              confirmButtonType="danger"
-              (confirm)="deleteTemplate(template)">
-              <i class="fa fa-trash-o fa-fw"></i>
-            </a>
-          </td>
-        </tr>
+        <ng-template ngFor let-treeElement [ngForOf]="templateTree">
+          <tr *ngIf="treeElement.group" class="info" (click)="treeElement.expanded = !treeElement.expanded">
+            <td *ngIf="treeElement.expanded"><i class="fa fa-folder-open" aria-hidden="true"></i></td>
+            <td *ngIf="!treeElement.expanded"><i class="fa fa-folder" aria-hidden="true"></i></td>
+            <td colspan="6">{{treeElement.group}}</td>
+          </tr>
+          <tr *ngFor="let template of treeElement.templates" (dblclick)="gotoDetails(template)"
+              [class.warning]="template.hostCount < 1"
+              [class.danger]="template.hostCount < 1 && template.packageCount < 1"
+              [hidden]="treeElement.group != '' && !treeElement.expanded">
+
+            <td *ngIf="!treeElement.group" colspan="2">{{template.name}}</td>
+            <td *ngIf="treeElement.group"></td>
+            <td *ngIf="treeElement.group">{{template.name}}</td>
+            <td>
+              {{template.hostCount}}
+            </td>
+            <td>
+              {{template.packageCount}}
+            </td>
+            <td>
+              <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
+                {{repo}}
+                <ng-template [ngIf]="!last"><br/></ng-template>
+              </ng-template>
+            </td>
+            <td>
+              <a title="Edit Template" [routerLink]="[template.name]"><i class="fa fa-edit fa-fw"></i></a>
+            </td>
+            <td>
+              <a href="javascript:void(0)" mwlConfirmationPopover
+                 title="Delete Template"
+                 [title]="'Please verify!'"
+                 [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
+                 placement="left"
+                 confirmButtonType="danger"
+                 (confirm)="deleteTemplate(template)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+            </td>
+          </tr>
+        </ng-template>
         </tbody>
       </table>
     </cc-panel>

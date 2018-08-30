@@ -32,6 +32,7 @@ export interface Template {
   hosts?: HostIdentifier[];
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
+  group?: string;
 }
 
 export interface PackageDiff {
