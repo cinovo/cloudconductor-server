@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
-import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
+import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { AlertService } from '../util/alert/alert.service';
-import { forbiddenNameValidator, Validator } from '../util/validator.util';
+import { forbiddenNameValidator } from '../util/validator.util';
 import { ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 
@@ -25,7 +25,6 @@ export class ConfigValueEdit implements OnInit {
   public kvForm: FormGroup;
 
   public template: string;
-  public mode = 'new';
   public templates: Array<String> = [];
   public services: Array<String> = [];
 
@@ -57,31 +56,15 @@ export class ConfigValueEdit implements OnInit {
       }
       let formObj = {key, value, template, service};
       this.kvForm.setValue(formObj);
-
-      if (Validator.notEmpty(key)) {
-        this.mode = 'edit';
-        this.configHttp.getConfigValue(template, service, key).subscribe(
-          (result) => {
-            formObj.value = result;
-            this.kvForm.setValue(formObj);
-          },
-          (err) => console.error(err));
-      }
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
     this.serviceHttp.getServices().subscribe((result) => {
-        this.services = result.sort(Sorter.service).map((val) => val.name);
-      });
+      this.services = result.sort(Sorter.service).map((val) => val.name);
+    });
   }
 
   public save(newConfigPair: ConfigValue): void {
-    let check: Observable<boolean>;
-    if (this.mode === 'new') {
-      check = this.configHttp.existsConfigValue(newConfigPair.template, newConfigPair.service, newConfigPair.key);
-    } else {
-      check = Observable.of(false);
-    }
-
+    let check: Observable<boolean> = this.configHttp.existsConfigValue(newConfigPair.template, newConfigPair.service, newConfigPair.key);
     check.flatMap(exists => {
       if (exists) {
         return Observable.throw(`Configuration for '${newConfigPair.key}' does already exist!`);
@@ -90,8 +73,7 @@ export class ConfigValueEdit implements OnInit {
       }
     }).subscribe(
       () => {
-        let verb = (this.mode === 'new') ? 'created' : 'updated';
-        this.alerts.success(`Successfully ${verb} key-value pair: '${newConfigPair.key} - ${newConfigPair.value}'.`);
+        this.alerts.success(`Successfully created key-value pair: '${newConfigPair.key} - ${newConfigPair.value}'.`);
         this.router.navigate(['/config', newConfigPair.template])
       }, (err) => {
         this.alerts.danger(`Error creating new key-value pair '${newConfigPair.key} - ${newConfigPair.value}': ${err}`);

@@ -1,0 +1,82 @@
+<cc-title [title]="'Compare configs of two templates'" titleIcon="fa-code-fork"></cc-title>
+
+
+<div class="row" *ngIf="!templatesLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading templates...
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="templatesLoaded">
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template A" [data]="templates" [selected]="templateA"
+               (onQueryChange)="templateA = $event"></cc-filter>
+  </div>
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template B" [data]="templates" [selected]="templateB"
+               (onQueryChange)="templateB = $event"></cc-filter>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="templatesLoaded && !loaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading templates...
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="loaded && diffResult.length < 1">
+  <div class="col-sm-12">
+    <div class="alert alert-warning" role="alert-1">
+      No difference found between the two templates
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="loaded && diffResult.length > 0">
+  <div class="col-md-12">
+    <cc-panel [icon]="'fa-institution'" [title]="'All package differences'">
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+        <tr>
+          <th class="sorting" width="2px"></th>
+          <th class="sorting_asc">Key</th>
+          <th class="sorting">Value {{templateA}}</th>
+          <th class="sorting">Value {{templateB}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-template ngFor let-diffgrp [ngForOf]="diffTree">
+          <tr *ngIf="diffgrp.group" class="info">
+            <td colspan="4">{{diffgrp.group}}</td>
+          </tr>
+          <tr *ngFor="let diff of diffgrp.diffs">
+            <td *ngIf="diffgrp.group">
+            </td>
+            <td *ngIf="diffgrp.group">
+              {{diff.key}}
+            </td>
+            <td colspan="2" *ngIf="!diffgrp.group">
+              {{diff.key}}
+            </td>
+            <td>
+              {{diff.valueA}}
+            </td>
+            <td>
+              {{diff.valueB}}
+            </td>
+          </tr>
+        </ng-template>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>

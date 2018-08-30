@@ -35,6 +35,7 @@ import java.util.List;
 public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> implements IConfigValueDAO {
 
     public static final String RESERVED_GLOBAL = "GLOBAL";
+    public static final String RESERVED_VARIABLE = "VARIABLES";
 
     private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
     private static final String WHERE_SERVICE = " AND c.service = ?2";

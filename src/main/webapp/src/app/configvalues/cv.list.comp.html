@@ -1,0 +1,88 @@
+<cc-title [title]="'Config templates'" titleIcon="fa-code-fork"></cc-title>
+
+
+<div class="row ">
+  <div class="col-md-12">
+    <div class="row form-group input-group pull-right">
+      <div class="col-md-6 ">
+        <button [routerLink]="['diff']" class="btn btn-default pull-right">
+          Compare two config templates
+        </button>
+      </div>
+      <div class="col-md-6 ">
+        <button [routerLink]="['newTemplate', '', 'newTemplate']" class="btn btn-default pull-right">
+          Add a new config template
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <cc-panel [icon]="'fa-code-fork'" [title]="'Configured config templates'">
+
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+        <tr>
+          <th class="sorting_asc" width="100%">Template</th>
+          <th width="15px"></th>
+          <th width="15px"></th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)">
+          <td>{{template}}</td>
+          <td>
+            <a title="Preview config template" [routerLink]="['preview', template]"><i class="fa fa-eye fa-fw"></i></a>
+          </td>
+          <td>
+            <a title="Edit config template" [routerLink]="[template]"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td>
+            <a *ngIf="mayEdit" href="javascript:void(0)" mwlConfirmationPopover
+               title="Delete Template"
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following template: '+ template+'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteTemplate(template)">
+              <i class="fa fa-trash-o fa-fw"></i>
+            </a>
+            <i *ngIf="!mayEdit" class="fa fa-trash-o fa-fw"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+
+  <div class="col-md-6">
+    <cc-panel [icon]="'fa-code-fork'" [title]="'Reserved config templates'">
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+        <tr>
+          <th class="sorting_asc" width="100%">Template</th>
+          <th width="15px"></th>
+          <th width="15px"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let template of reservedValues" (dblclick)="gotoDetails(template)">
+          <td>{{template}}</td>
+
+          <td>
+            <a title="Edit config template" [routerLink]="[template]"><i class="fa fa-edit fa-fw"></i></a>
+          </td>
+          <td width="15px">
+            <i class="fa fa-trash-o fa-fw"></i>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+</div>
+
+

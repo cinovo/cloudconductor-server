@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
 
 import { AuthTokenProviderService } from './authtokenprovider.service';
+import { Role } from "../enums.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -15,7 +16,8 @@ import { AuthTokenProviderService } from './authtokenprovider.service';
 export class AuthorizationGuard implements CanActivate {
 
   constructor(private authTokenProvider: AuthTokenProviderService,
-              private router: Router) { }
+              private router: Router) {
+  }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (route.data && route.data.rolesAllowed && route.data.rolesAllowed.length > 0) {
@@ -33,6 +35,14 @@ export class AuthorizationGuard implements CanActivate {
     }
 
     return Observable.of(true);
+  }
+
+  hasRole(role: Role): Observable<boolean> {
+    return this.authTokenProvider.currentUser
+      .map(user => user.roles.filter(r => r == role))
+      .map(matchingRoles => {
+        return matchingRoles.length > 0
+      });
   }
 
 }

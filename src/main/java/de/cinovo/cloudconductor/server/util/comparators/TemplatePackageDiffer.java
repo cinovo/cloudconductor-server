@@ -18,7 +18,7 @@ import java.util.Set;
  * @author psigloch
  */
 @Service
-public class TemplatePackageComparator {
+public class TemplatePackageDiffer {
 
 	private static final VersionStringComparator versionStringComparator = new VersionStringComparator();
 
@@ -52,7 +52,7 @@ public class TemplatePackageComparator {
 			for(EPackageVersion ePackageVersionA : templateA.getPackageVersions()) {
 				if(ePackageVersionB.getPkg().equals(ePackageVersionA.getPkg())) {
 					missingFromA.remove(ePackageVersionA);
-					int vComp = TemplatePackageComparator.versionStringComparator.compare(ePackageVersionA.getVersion(), ePackageVersionB.getVersion());
+					int vComp = TemplatePackageDiffer.versionStringComparator.compare(ePackageVersionA.getVersion(), ePackageVersionB.getVersion());
 					if(vComp > 0) {
 						res.add(this.packageVersionToPackageDiff(ePackageVersionA));
 					} else if(vComp < 0) {

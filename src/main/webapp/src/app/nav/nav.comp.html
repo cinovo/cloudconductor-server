@@ -14,23 +14,7 @@
       <li role="presentation" class="nav-divider"></li>
 
       <li>
-        <a role="button"><i class="fa fa-code-fork fa-fw"></i> Config<i class="fa arrow"></i></a>
-        <ul class="nav nav-second-level">
-          <li *ngFor="let template of (templates$ | async)">
-            <a [routerLink]="['config',template]" routerLinkActive="active">{{template}}</a>
-          </li>
-          <li>
-            <a [routerLink]="['config', 'newTemplate', '', 'newTemplate']" routerLinkActive="active">
-              <i class="fa fa-plus fa-fw"></i>
-              New Template
-            </a>
-          </li>
-          <li>
-            <a [routerLink]="['config','preview']" routerLinkActive="active">
-              <i class="fa fa-eye fa-fw"></i> Preview
-            </a>
-          </li>
-        </ul>
+        <a [routerLink]="['config']" routerLinkActive="active"><i class="fa fa-code-fork fa-fw"></i> Config</a>
       </li>
       <li>
         <a [routerLink]="['files']" routerLinkActive="active"><i class="fa fa-file-text fa-fw"></i> Files and Directories</a>

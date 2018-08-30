@@ -25,7 +25,7 @@ import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.cinovo.cloudconductor.server.util.comparators.TemplatePackageComparator;
+import de.cinovo.cloudconductor.server.util.comparators.TemplatePackageDiffer;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
@@ -71,7 +71,7 @@ public class TemplateImpl implements ITemplate {
 	@Autowired
 	private ServiceDefaultStateHandler serviceDefaultStateHandler;
 	@Autowired
-	private TemplatePackageComparator templatePackageComparator;
+	private TemplatePackageDiffer templatePackageComparator;
 
 
 	@Override
