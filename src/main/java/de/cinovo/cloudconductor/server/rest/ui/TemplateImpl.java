@@ -3,11 +3,13 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
 import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.PackageDiff;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
@@ -23,6 +25,7 @@ import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.util.comparators.TemplatePackageDiffer;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
@@ -46,7 +49,7 @@ import java.util.Set;
  */
 @JaxRsComponent
 public class TemplateImpl implements ITemplate {
-	
+
 	@Autowired
 	private ITemplateDAO templateDAO;
 	@Autowired
@@ -67,21 +70,29 @@ public class TemplateImpl implements ITemplate {
 	private IServiceDefaultStateDAO serviceDefaultStateDAO;
 	@Autowired
 	private ServiceDefaultStateHandler serviceDefaultStateHandler;
-	
-	
+	@Autowired
+	private TemplatePackageDiffer templatePackageComparator;
+
+
 	@Override
 	@Transactional
 	public Template[] get() {
 		return this.templateDAO.findList().stream().map(ETemplate::toApi).toArray(Template[]::new);
 	}
-	
+
+	@Override
+	@Transactional
+	public SimpleTemplate[] getSimpleTemplates() {
+		return this.templateDAO.findList().stream().map(ETemplate::toSimple).toArray(SimpleTemplate[]::new);
+	}
+
 	@Override
 	@Transactional
 	public void save(Template template) {
 		RESTAssert.assertNotNull(template);
 		RESTAssert.assertNotEmpty(template.getName());
 		ETemplate eTemplate = this.templateDAO.findByName(template.getName());
-		if (eTemplate == null) {
+		if(eTemplate == null) {
 			eTemplate = this.templateHandler.createEntity(template);
 			this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.ADDED, eTemplate.toApi()));
 		} else {
@@ -92,7 +103,7 @@ public class TemplateImpl implements ITemplate {
 			this.hostHandler.updateHostDetails(eTemplate);
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public void delete(String templateName) {
@@ -102,7 +113,7 @@ public class TemplateImpl implements ITemplate {
 		this.templateDAO.delete(eTemplate);
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, eTemplate.toApi()));
 	}
-	
+
 	@Override
 	@Transactional
 	public Template get(String templateName) {
@@ -111,7 +122,7 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
 		return template.toApi();
 	}
-	
+
 	@Override
 	@Transactional
 	public Template updatePackage(String templateName, String packageName) {
@@ -127,7 +138,7 @@ public class TemplateImpl implements ITemplate {
 		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
-	
+
 	@Override
 	@Transactional
 	public Template deletePackage(String templateName, String packageName) {
@@ -143,39 +154,39 @@ public class TemplateImpl implements ITemplate {
 		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
-	
+
 	@Override
 	@Transactional
 	public AgentOption getAgentOption(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(templateName);
-		if (options == null) {
+		if(options == null) {
 			options = this.templateHandler.createAgentOptions(templateName);
 		}
 		return options.toApi();
 	}
-	
+
 	@Override
 	@Transactional
 	public AgentOption saveAgentOption(String templateName, AgentOption option) {
 		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotNull(option);
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(templateName);
-		if (options == null) {
+		if(options == null) {
 			options = this.templateHandler.createAgentOptions(templateName);
 		}
 		options = this.templateHandler.updateEntity(options, option);
 		return options.toApi();
 	}
-	
+
 	@Override
 	@Transactional
 	public SSHKey[] getSSHKeysForTemplate(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		Set<SSHKey> keys = this.sshKeyHandler.getSSHKeyForTemplate(templateName);
-		return keys.toArray(new SSHKey[keys.size()]);
+		return keys.toArray(new SSHKey[0]);
 	}
-	
+
 	@Override
 	@Transactional
 	public Service[] getServicesForTemplate(String templateName) {
@@ -183,75 +194,80 @@ public class TemplateImpl implements ITemplate {
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
 		List<EPackageVersion> pvs = template.getPackageVersions();
-		
+
 		Set<Service> templateServices = new HashSet<>();
-		for (EService service : this.serviceDAO.findList()) {
-			for (EPackageVersion pv : pvs) {
-				if (service.getPackages().contains(pv.getPkg())) {
+		for(EService service : this.serviceDAO.findList()) {
+			for(EPackageVersion pv : pvs) {
+				if(service.getPackages().contains(pv.getPkg())) {
 					templateServices.add(service.toApi());
 				}
 			}
 		}
-		
-		return templateServices.toArray(new Service[templateServices.size()]);
+
+		return templateServices.toArray(new Service[0]);
 	}
-	
+
 	@Override
 	@Transactional
 	public Repo[] getReposForTemplate(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
-		
+
 		Set<Repo> repos = new HashSet<>();
-		for (ERepo r : template.getRepos()) {
+		for(ERepo r : template.getRepos()) {
 			repos.add(r.toApi());
 		}
-		
-		return repos.toArray(new Repo[repos.size()]);
+
+		return repos.toArray(new Repo[0]);
 	}
-	
+
 	@Override
 	@Transactional
 	public PackageVersion[] getPackageVersionsForTemplate(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
-		
+
 		Set<PackageVersion> packageVersions = new HashSet<>();
-		for (EPackageVersion packageVersion : template.getPackageVersions()) {
+		for(EPackageVersion packageVersion : template.getPackageVersions()) {
 			packageVersions.add(packageVersion.toApi());
 		}
-		
-		return packageVersions.toArray(new PackageVersion[packageVersions.size()]);
+
+		return packageVersions.toArray(new PackageVersion[0]);
 	}
-	
+
+	@Override
+	public PackageDiff[] packageDiff(String templateA, String templateB) {
+		return this.templatePackageComparator.compare(templateA, templateB);
+	}
+
 	@Override
 	@Transactional
 	public ServiceDefaultState[] getServiceDefaultStates(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
-		
+
 		List<ServiceDefaultState> serviceDefaultStates = new ArrayList<>();
-		for (EServiceDefaultState esds : this.serviceDefaultStateDAO.findByTemplate(templateName)) {
+		for(EServiceDefaultState esds : this.serviceDefaultStateDAO.findByTemplate(templateName)) {
 			serviceDefaultStates.add(esds.toApi());
 		}
-		
-		return serviceDefaultStates.toArray(new ServiceDefaultState[serviceDefaultStates.size()]);
+
+		return serviceDefaultStates.toArray(new ServiceDefaultState[0]);
 	}
-	
+
 	@Override
 	@Transactional
 	public ServiceDefaultState getServiceDefaultState(String templateName, String serviceName) {
 		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotEmpty(serviceName);
-		
+
 		EServiceDefaultState eServiceDefaultState = this.serviceDefaultStateDAO.findByName(serviceName, templateName);
-		
+
 		RESTAssert.assertNotNull(eServiceDefaultState, Status.NOT_FOUND);
-		
+
 		return eServiceDefaultState.toApi();
 	}
-	
+
 	@Override
 	@Transactional
 	public ServiceDefaultState saveServiceDefaultState(String templateName, String serviceName, ServiceDefaultState newServiceDefaultState) {
@@ -260,11 +276,11 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotNull(newServiceDefaultState);
 		ServiceState newDefaultState = newServiceDefaultState.getState();
 		RESTAssert.assertTrue(newDefaultState.equals(ServiceState.STOPPED) || newDefaultState.equals(ServiceState.STARTED));
-		
+
 		EServiceDefaultState esds = this.serviceDefaultStateHandler.updateServiceDefaultState(templateName, serviceName, newDefaultState);
-		
+
 		RESTAssert.assertNotNull(esds);
 		return esds.toApi();
 	}
-	
+
 }

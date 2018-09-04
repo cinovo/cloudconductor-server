@@ -1,0 +1,14 @@
+<div *ngIf="editMode" class="form-inline">
+  <input type="text" class="form-control" [(ngModel)]="value"  style="width: 80%" (keyup.enter)="save()"
+         (keyup.esc)="abort()" title="value"/>
+  <button type="button" class="btn btn-sm" title="Abort" (click)="abort()">
+    <i class="fa fa-times fa-fw text-danger"></i>
+  </button>
+  <button type="button" class="btn btn-sm" title="Save" (click)="save()"><i class="fa fa-check fa-fw text-success"></i></button>
+</div>
+<div *ngIf="!editMode">
+  {{value}}
+  <a title="Click to edit" (click)="edit()" class="pull-right">
+    <i class="fa fa-edit fa-fw"></i>
+  </a>
+</div>

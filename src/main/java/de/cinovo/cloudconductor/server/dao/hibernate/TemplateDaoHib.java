@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
+import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.ERepo;
@@ -7,10 +8,10 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
 
 /*
  * #%L
@@ -57,7 +58,7 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	public List<ETemplate> findByPackage(EPackage pkg) {
 		return this.findListByQuery("SELECT DISTINCT t FROM ETemplate t join fetch t.packageVersions pv WHERE ?1 = pv.pkg", pkg);
 	}
-	
+
 	@Override
 	public Long count() {
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
@@ -65,5 +66,4 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 		query.select(builder.count(query.from(ETemplate.class)));
 		return this.entityManager.createQuery(query).getSingleResult();
 	}
-
 }

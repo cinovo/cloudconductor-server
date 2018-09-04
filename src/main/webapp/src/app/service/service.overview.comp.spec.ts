@@ -1,4 +1,3 @@
-import { DebugElement, Type } from "@angular/core";
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { By } from "@angular/platform-browser";
@@ -11,17 +10,17 @@ import { ServiceOverview } from "./service.overview.comp";
 import { Service, ServiceHttpService } from "../util/http/service.http.service";
 import { CCTitle } from "../util/cctitle/cctitle.comp";
 import { CCFilter } from "../util/ccfilter/ccfilter.comp";
-import { RouterLinkStubDirective, QueryParamStubDirective, RouterStub } from "../../testing/router-stubs";
+import { QueryParamStubDirective, RouterLinkStubDirective, RouterStub } from "../../testing/router-stubs";
 import { CCPanel } from "../util/ccpanel/ccpanel.comp";
-import { ConfirmationPopoverModule } from "angular-confirmation-popover";
 import { AlertStubService } from "../util/alert/alert-stub";
 import { ConfirmationPopoverStubDirective } from "../../testing/confirmation-popover-stub";
 import { checkLoadingMessage } from "../../testing/test-helper";
+import "rxjs/add/observable/of";
 
-const expectedServices = [{ name: 'Testservice', packages: [] }];
+const expectedServices = [{name: 'Testservice', packages: []}];
 
 class ServicesStub {
-  getServices(): Observable<Service[]>{
+  getServices(): Observable<Service[]> {
     return Observable.of(expectedServices);
   }
 }
@@ -35,12 +34,12 @@ describe('service-overview', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
-      declarations: [ CCTitle, CCPanel, CCFilter, ServiceOverview,
+      declarations: [CCTitle, CCPanel, CCFilter, ServiceOverview,
         RouterLinkStubDirective, QueryParamStubDirective, ConfirmationPopoverStubDirective],
       providers: [
-        { provide: ServiceHttpService, useClass: ServicesStub },
-        { provide: Router, useClass: RouterStub },
-        { provide: AlertService, useClass: AlertStubService }
+        {provide: ServiceHttpService, useClass: ServicesStub},
+        {provide: Router, useClass: RouterStub},
+        {provide: AlertService, useClass: AlertStubService}
       ]
     }).compileComponents().then(() => {
       fixture = TestBed.createComponent(ServiceOverview);
@@ -116,7 +115,7 @@ describe('service-overview', () => {
 
     fixture.whenStable().then(() => {
       const editButtonEls = fixture.debugElement.queryAll(By.directive(RouterLinkStubDirective))
-                              .filter(ele => ele.nativeElement.classList.contains('edit'));
+        .filter(ele => ele.nativeElement.classList.contains('edit'));
 
       expect(editButtonEls.length).toBe(expectedServices.length);
       editButtonEls.forEach((editBtn, index) => {
@@ -131,7 +130,7 @@ describe('service-overview', () => {
     fixture.detectChanges();
     fixture.whenStable().then(() => {
       const deleteButtonEls = fixture.debugElement.queryAll(By.directive(ConfirmationPopoverStubDirective))
-                                                  .filter((buttonEl) => buttonEl.nativeElement.classList.contains('delete'));
+        .filter((buttonEl) => buttonEl.nativeElement.classList.contains('delete'));
       expect(deleteButtonEls.length).toBe(expectedServices.length);
       deleteButtonEls.forEach((deleteButtonEl, index) => {
         const dir = deleteButtonEl.injector.get(ConfirmationPopoverStubDirective);

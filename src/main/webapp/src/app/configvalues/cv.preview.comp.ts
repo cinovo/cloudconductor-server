@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Subscription } from 'rxjs/Subscription';
 
-import { ConfigValueHttpService, ConfigValue } from '../util/http/configValue.http.service';
+import { ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 import { ServiceHttpService } from '../util/http/service.http.service';
+import { ActivatedRoute } from "@angular/router";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -32,7 +33,9 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
 
   constructor(private configHttp: ConfigValueHttpService,
               private templateHttp: TemplateHttpService,
-              private serviceHttp: ServiceHttpService) { };
+              private serviceHttp: ServiceHttpService,
+              private route: ActivatedRoute) {
+  };
 
   ngOnInit(): void {
     this._templateNamesSub = this.configHttp.templates.subscribe((result) => this.templateNames = result);
@@ -42,7 +45,11 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
       (err) => console.error(err)
     );
 
-    this.loadPreview();
+    this.route.paramMap.subscribe((paramMap) => {
+      this._templateQuery = paramMap.get('template');
+      console.log(this._templateQuery);
+      this.loadPreview();
+    });
   }
 
   ngOnDestroy(): void {
@@ -76,7 +83,7 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
           this.preview = result;
         } else if (result._body) {
           this.preview = result._body;
-        }else {
+        } else {
           this.preview = result;
         }
 

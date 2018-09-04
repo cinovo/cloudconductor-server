@@ -1,0 +1,87 @@
+<cc-title [title]="'Configuration Variables'" titleIcon="fa-code-fork"></cc-title>
+
+<cv-vars></cv-vars>
+
+<!--<div class="row" *ngIf="!kvLoaded">-->
+<!--<div class="col-sm-12">-->
+<!--<div class="alert alert-info">-->
+<!--<i class="fa fa-spinner fa-pulse fa-fw"></i>-->
+<!--Loading key-value-pairs for the configuration variables...-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+
+
+<!--<div class="row">-->
+<!--<div class="col-md-12">-->
+<!--<cc-panel [icon]="'fa-code-fork'" [title]="'Global configuration variables'">-->
+
+<!--<div class="table-responsive" cc-panel-body>-->
+<!--<table class="table table-striped table-hover dataTable">-->
+<!--<thead>-->
+<!--<tr>-->
+<!--<th class="sorting_asc" width="30%">Variable</th>-->
+<!--<th class="sorting">Default value</th>-->
+<!--<th width="35px"></th>-->
+<!--</tr>-->
+<!--</thead>-->
+<!--<tbody>-->
+<!--<tr *ngIf="kvLoaded && kvs.length < 1" class="warning">-->
+<!--<td colspan="3" class="warning text-center"> No key-value pairs found for the configuration variables</td>-->
+<!--</tr>-->
+
+<!--<tr *ngFor="let kv of kvs" (dblclick)="goToDetail(kv)">-->
+<!--<td>-->
+<!--{{kv.key}}-->
+<!--</td>-->
+<!--<td class="word-break">-->
+<!--<cc-inlineedit [value]="kv.value" (onSave)="save(kv, $event)"></cc-inlineedit>-->
+<!--</td>-->
+<!--<td>-->
+<!--<a href="javascript:void(0)" mwlConfirmationPopover-->
+<!--title="Delete Pair"-->
+<!--[title]="'Please verify!'"-->
+<!--[message]="'Are you sure you want to delete the following key-value-pair: ' + kv.key + '?'"-->
+<!--placement="left"-->
+<!--confirmButtonType="danger"-->
+<!--(confirm)="doDelete(kv)">-->
+<!--<i class="fa fa-trash-o fa-fw"></i>-->
+<!--</a>-->
+<!--</td>-->
+<!--</tr>-->
+
+<!--<tr *ngIf="!newKV" (click)="newKV = {}">-->
+<!--<td colspan="6" role="button"><i class="fa fa-plus fa-fw"></i>-->
+<!--Add a new variable to template-->
+<!--</td>-->
+<!--</tr>-->
+
+<!--<tr *ngIf="newKV">-->
+<!--<td>-->
+<!--<div class="form-group">-->
+<!--<input type="text" class="form-control" [(ngModel)]="newKV.key" title="variable"-->
+<!--placeholder="${yourVariabe}">-->
+<!--</div>-->
+<!--</td>-->
+
+<!--<td colspan="2">-->
+<!--<div class="form-group">-->
+<!--<input type="text" class="form-control" [(ngModel)]="newKV.value" title="default value"-->
+<!--placeholder="a default value">-->
+<!--</div>-->
+<!--<div class="pull-right">-->
+<!--<button (click)="newKV = null" class="btn btn-default">Cancel</button>-->
+<!--<button (click)="addNew()" class="btn btn-success"-->
+<!--[disabled]="!newKV.key || !newKV.value">-->
+<!--Add-->
+<!--</button>-->
+<!--</div>-->
+<!--</td>-->
+<!--</tr>-->
+
+<!--</tbody>-->
+<!--</table>-->
+<!--</div>-->
+<!--</cc-panel>-->
+<!--</div>-->
+<!--</div>-->

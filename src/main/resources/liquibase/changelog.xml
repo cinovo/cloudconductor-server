@@ -1079,17 +1079,20 @@
         </createTable>
         <sql stripComments="true" dbms="postgresql">
             INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
-            to_timestamp(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            to_timestamp(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE
+            u.loginname='agent'
             AND a.revoked IS NULL;
         </sql>
         <sql stripComments="true" dbms="hsqldb">
             INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
-            TIMESTAMP_WITH_ZONE(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            TIMESTAMP_WITH_ZONE(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE
+            u.loginname='agent'
             AND a.revoked IS NULL;
         </sql>
         <sql stripComments="true" dbms="mysql">
             INSERT INTO cloudconductor.authtoken (userid, token, creationdate) SELECT u.id, a.token,
-            FROM_UNIXTIME(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE u.loginname='agent'
+            FROM_UNIXTIME(a.creationdate) FROM cloudconductor.user as u, cloudconductor.agentauthtoken as a WHERE
+            u.loginname='agent'
             AND a.revoked IS NULL;
         </sql>
         <createTable tableName="jwttoken" schemaName="cloudconductor">
@@ -1123,81 +1126,92 @@
         <dropTable tableName="agentauthtoken" schemaName="cloudconductor"/>
     </changeSet>
     <changeSet id="31" author="mweise">
-    	<addColumn schemaName="cloudconductor" tableName="serveroptions">
-    		<column name="hostalivetimer" defaultValueNumeric="15" type="bigint">
-				<constraints nullable="false"/>
-    		</column>
-    		<column name="hostalivetimerunit" defaultValueNumeric="3" type="bigint">
+        <addColumn schemaName="cloudconductor" tableName="serveroptions">
+            <column name="hostalivetimer" defaultValueNumeric="15" type="bigint">
                 <constraints nullable="false"/>
-			</column>
-    	</addColumn>
+            </column>
+            <column name="hostalivetimerunit" defaultValueNumeric="3" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
     <changeSet id="32" author="mweise">
         <preConditions onFail="MARK_RAN">
             <or>
-                <dbms type="postgresql" />
-                <dbms type="mysql" />
+                <dbms type="postgresql"/>
+                <dbms type="mysql"/>
             </or>
         </preConditions>
-    	<dropUniqueConstraint schemaName="cloudconductor" tableName="serveroptions" constraintName="serveroptions_name_key"/>
+        <dropUniqueConstraint schemaName="cloudconductor" tableName="serveroptions"
+                              constraintName="serveroptions_name_key"/>
     </changeSet>
     <changeSet id="33" author="mweise">
-   		<insert tableName="usergroup_permissions" schemaName="cloudconductor">
-    		<column name="group_id" valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name = 'Agent')"/>
-    		<column name="permission">2</column>
-    	</insert>
-   	</changeSet>
+        <insert tableName="usergroup_permissions" schemaName="cloudconductor">
+            <column name="group_id" valueComputed="(SELECT id FROM cloudconductor.usergroup WHERE name = 'Agent')"/>
+            <column name="permission">2</column>
+        </insert>
+    </changeSet>
     <changeSet id="34" author="psigloch">
-        <dropForeignKeyConstraint baseTableName="configvalues" baseTableSchemaName="cloudconductor" constraintName="fk_cv_versionized"/>
+        <dropForeignKeyConstraint baseTableName="configvalues" baseTableSchemaName="cloudconductor"
+                                  constraintName="fk_cv_versionized"/>
         <sql>
-            DELETE FROM cloudconductor.configvalues WHERE id IN(SELECT out.id FROM cloudconductor.configvalues as out LEFT JOIN cloudconductor.configvalues as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            DELETE FROM cloudconductor.configvalues WHERE id IN(SELECT out.id FROM cloudconductor.configvalues as out
+            LEFT JOIN cloudconductor.configvalues as a ON a.origId = out.origId AND a.version > out.version WHERE a.id
+            IS NOT NULL);
             DELETE FROM cloudconductor.configvalues WHERE deleted = true
         </sql>
-        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="version" />
-        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="deleted" />
-        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="origid" />
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="version"/>
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="deleted"/>
+        <dropColumn tableName="configvalues" schemaName="cloudconductor" columnName="origid"/>
 
-        <dropForeignKeyConstraint baseTableName="file" baseTableSchemaName="cloudconductor" constraintName="fk_file_versionized"/>
-        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor" constraintName="fk_cdata_cf"/>
+        <dropForeignKeyConstraint baseTableName="file" baseTableSchemaName="cloudconductor"
+                                  constraintName="fk_file_versionized"/>
+        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor"
+                                  constraintName="fk_cdata_cf"/>
         <sql>
-            UPDATE cloudconductor.filedata as fd SET fileId = (SELECT out.id FROM cloudconductor.file as out WHERE out.origId = fd.origId AND out.version = (SELECT MAX(int.version) FROM cloudconductor.file as int WHERE out.origId = int.origId));
-            DELETE FROM cloudconductor.file WHERE id IN(SELECT out.id FROM cloudconductor.file as out LEFT JOIN cloudconductor.file as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            UPDATE cloudconductor.filedata as fd SET fileId = (SELECT out.id FROM cloudconductor.file as out WHERE
+            out.origId = fd.origId AND out.version = (SELECT MAX(int.version) FROM cloudconductor.file as int WHERE
+            out.origId = int.origId));
+            DELETE FROM cloudconductor.file WHERE id IN(SELECT out.id FROM cloudconductor.file as out LEFT JOIN
+            cloudconductor.file as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
             DELETE FROM cloudconductor.file WHERE deleted = true;
         </sql>
-        <dropColumn tableName="file" schemaName="cloudconductor" columnName="version" />
-        <dropColumn tableName="file" schemaName="cloudconductor" columnName="deleted" />
-        <dropColumn tableName="file" schemaName="cloudconductor" columnName="origid" />
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="version"/>
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="deleted"/>
+        <dropColumn tableName="file" schemaName="cloudconductor" columnName="origid"/>
 
-        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor" constraintName="fk_filedata_versionized"/>
+        <dropForeignKeyConstraint baseTableName="filedata" baseTableSchemaName="cloudconductor"
+                                  constraintName="fk_filedata_versionized"/>
         <sql>
             DELETE FROM cloudconductor.filedata WHERE deleted = true;
-            DELETE FROM cloudconductor.filedata WHERE id IN(SELECT out.id FROM cloudconductor.filedata as out LEFT JOIN cloudconductor.filedata as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
+            DELETE FROM cloudconductor.filedata WHERE id IN(SELECT out.id FROM cloudconductor.filedata as out LEFT JOIN
+            cloudconductor.filedata as a ON a.origId = out.origId AND a.version > out.version WHERE a.id IS NOT NULL);
         </sql>
-        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="version" />
-        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="deleted" />
-        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="origid" />
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="version"/>
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="deleted"/>
+        <dropColumn tableName="filedata" schemaName="cloudconductor" columnName="origid"/>
 
     </changeSet>
     <changeSet id="35" author="mweise">
-    	<update tableName="serveroptions" schemaName="cloudconductor">
-    		<column name="hostcleanuptimer" value="30" />
-    		<column name="hostcleanuptimerunit" value="4" />
-    		<column name="indexscantimer" value="4" />
-    		<column name="indexscantimerunit" value="4" />
-    		<column name="hostalivetimer" value="2" />
-    		<column name="hostalivetimerunit" value="4" />
-    		<where>name='Default'</where>
-    	</update>
+        <update tableName="serveroptions" schemaName="cloudconductor">
+            <column name="hostcleanuptimer" value="30"/>
+            <column name="hostcleanuptimerunit" value="4"/>
+            <column name="indexscantimer" value="4"/>
+            <column name="indexscantimerunit" value="4"/>
+            <column name="hostalivetimer" value="2"/>
+            <column name="hostalivetimerunit" value="4"/>
+            <where>name='Default'</where>
+        </update>
     </changeSet>
 
     <changeSet id="36" author="psigloch">
         <addColumn tableName="repo" schemaName="cloudconductor">
-            <column name="lastindexhash" type="varchar(255)" />
+            <column name="lastindexhash" type="varchar(255)"/>
         </addColumn>
     </changeSet>
     <changeSet id="37" author="psigloch">
-        <addColumn tableName="host" schemaName="cloudconductor" >
-            <column name="uuid" type="varchar(255)"  />
+        <addColumn tableName="host" schemaName="cloudconductor">
+            <column name="uuid" type="varchar(255)"/>
         </addColumn>
     </changeSet>
     <changeSet id="38" author="psigloch">
@@ -1205,5 +1219,10 @@
             UPDATE cloudconductor.repomirror SET basepath = path WHERE basepath IS NULL AND providertype = 1;
         </sql>
     </changeSet>
-    
+    <changeSet id="39" author="psigloch">
+        <addColumn tableName="template" schemaName="cloudconductor">
+            <column name="groupname" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

@@ -19,6 +19,13 @@ export interface ConfigValue {
   service?: string;
 }
 
+export interface ConfigDiff {
+  service?: string;
+  key: string;
+  valueA: string;
+  valueB: string;
+}
+
 @Injectable()
 export class ConfigValueHttpService {
 
@@ -33,7 +40,14 @@ export class ConfigValueHttpService {
   }
 
   public getValues(template: string): Observable<ConfigValue[]> {
-    return this.http.get<ConfigValue[]>(`${this._basePathURL}/${template}/unstacked`);
+    return this.http.get<ConfigValue[]>(`${this._basePathURL}/clean/unstacked/${template}`);
+  }
+
+  public getVariableValues(template?: string): Observable<ConfigValue[]> {
+    if (template) {
+      return this.http.get<ConfigValue[]>(`${this._basePathURL}/clean/vars/${template}`);
+    }
+    return this.http.get<ConfigValue[]>(`${this._basePathURL}/clean/vars/null/`);
   }
 
   public deleteValue(val: ConfigValue): Observable<boolean> {
@@ -58,7 +72,8 @@ export class ConfigValueHttpService {
   public save(val: ConfigValue): Observable<ConfigValue> {
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigValue';
     let ret = this.http.put<ConfigValue>(this._basePathURL, val).share();
-    ret.subscribe(() => this.reloadTemplates(), () => { });
+    ret.subscribe(() => this.reloadTemplates(), () => {
+    });
     return ret;
   }
 
@@ -85,15 +100,15 @@ export class ConfigValueHttpService {
 
   public existsConfigValue(template: string, service: string, key: string): Observable<boolean> {
     return this.getConfigValueExact(template, service, key)
-                .map(s => (s && s.length > 0))
-                .catch(err => Observable.of(false));
+      .map(s => (s && s.length > 0))
+      .catch(err => Observable.of(false));
   }
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {
     if (!Validator.notEmpty(service)) {
-      return this.http.get<string>(`${this._basePathURL}/${template}/null/${key}`);
+      return this.http.get<string>(`${this._basePathURL}/clean/${template}/null/${key}`);
     }
-    return this.http.get<string>(`${this._basePathURL}/${template}/${service}/${key}`);
+    return this.http.get<string>(`${this._basePathURL}/clean/${template}/${service}/${key}`);
   }
 
   public getConfigValueExact(template: string, service: string, key: string): Observable<string> {
@@ -106,9 +121,9 @@ export class ConfigValueHttpService {
   public getPreview(template: string, service: string, mode: string): Observable<any> {
     let options = {};
     if (mode.indexOf('json') > 0) {
-       options = {headers: new HttpHeaders({'Accept': mode})};
+      options = {headers: new HttpHeaders({'Accept': mode})};
     } else {
-       options = {headers: new HttpHeaders({'Accept': mode}), responseType: 'text' as 'text'};
+      options = {headers: new HttpHeaders({'Accept': mode}), responseType: 'text' as 'text'};
     }
 
     let preview$: Observable<any>;
@@ -119,5 +134,9 @@ export class ConfigValueHttpService {
     }
 
     return preview$;
+  }
+
+  public getDiff(templateA: string, templateB: string): Observable<ConfigDiff[]> {
+    return this.http.get<ConfigDiff[]>(`${this._basePathURL}/diff/${templateA}/${templateB}`);
   }
 }

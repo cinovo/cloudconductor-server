@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -10,7 +10,7 @@ import { AlertService } from '../util/alert/alert.service';
 import { GroupHttpService } from '../util/http/group.http.service';
 import { User, UserHttpService } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
-import { Validator, forbiddenNameValidator, forbiddenNamesValidator } from '../util/validator.util';
+import { forbiddenNamesValidator, Validator } from '../util/validator.util';
 
 interface UserForm {
   loginName: string,
@@ -39,11 +39,11 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
   @Input() mode: Mode;
 
   public user: User;
-  public modes = Mode;
   public userForm: FormGroup;
   public showNewGroup = false;
   public newGroup = '';
   public allGroups: string[] = [];
+  public modes = Mode;
 
   private _userSub: Subscription;
   private _groupSub: Subscription;
@@ -54,8 +54,11 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
               private userHttp: UserHttpService,
               private groupHttp: GroupHttpService,
               private alertService: AlertService) {
+  }
+
+  ngOnInit(): void {
     this.userForm = this.fb.group({
-      'loginName': ['', [Validators.required, forbiddenNamesValidator(['new', 'admin', 'agent'])]],
+      'loginName': ['', [Validators.required, forbiddenNamesValidator(['new', 'admin', 'agent'], this.mode === Mode.NEW)]],
       'displayName': [''],
       'email': [''],
       'newPassword': [''],
@@ -64,9 +67,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
       'active': [false],
       'newGroup': ['']
     });
-  }
 
-  ngOnInit(): void {
     this._userSub = this.userObs.subscribe(
       (user) => {
         if (user) {
@@ -119,7 +120,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
       }
     }
 
-    const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.userHttp.existsUser(u.loginName) : Observable.of(false);
+    const check: Observable<boolean> = (this.mode === Mode.NEW) ? this.userHttp.existsUser(u.loginName) : Observable.of(false);
 
     check.flatMap((exists) => {
       if (exists) {
@@ -130,7 +131,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
     }).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
-        if (this.mode === this.modes.NEW) {
+        if (this.mode === Mode.NEW) {
           this.userForm.reset();
           this.router.navigate(['/user', u.loginName]);
         } else {
@@ -151,7 +152,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
     this.groupHttp.getGroupNames().subscribe(
       (groupNames) => {
         this.allGroups = groupNames.filter(g => !this.user.userGroups.includes(g))
-                                  .sort();
+          .sort();
         if (this.allGroups.length > 0) {
           this.newGroup = this.allGroups[0];
         }

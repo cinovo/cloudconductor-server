@@ -73,21 +73,17 @@
             <th class="sorting_asc" width="30%">Key</th>
             <th class="sorting">Value</th>
             <th width="35px"></th>
-            <th width="35px"></th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let kv of service.kvs" (dblclick)="goToDetail(kv)">
+          <tr *ngFor="let kv of service.kvs" (dblclick)="triggerEdit(kv)">
             <td>
               {{kv.key}}
             </td>
             <td class="word-break">
-              {{kv.value}}
-            </td>
-            <td>
-              <a title="Edit Pair" [routerLink]="['/config', kv.template, kv.service, kv.key]">
-                <i class="fa fa-edit fa-fw"></i>
-              </a>
+              <cc-inlineedit [value]="kv.value" (onSave)="save(kv, $event)"
+                             [editMode]="edit[kv.service + kv.key]"
+                             (onEditDone)="triggerEditDone(kv)"></cc-inlineedit>
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
@@ -106,5 +102,7 @@
       </div>
     </cc-panel>
   </div>
+
+  <cv-vars [template]="template" *ngIf="template != 'GLOBAL'"></cv-vars>
 </div>
 

@@ -1,13 +1,24 @@
-<cc-title [title]="'New template for configuration'" titleIcon="fa-code-fork"></cc-title>
+<cc-title [title]="'New configuration template'" titleIcon="fa-code-fork"></cc-title>
 
-<div class="row">
+<div *ngIf="working">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Importing the configuration, please wait you will be redirected ...
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="!working">
   <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'New ConfigValue Template'" icon="fa-list-alt">
       <form [formGroup]="kvForm" novalidate cc-panel-body (ngSubmit)="save()">
-        <div class="form-group" [ngClass]="{ 'has-error': !kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid }">
+        <div class="form-group"
+             [ngClass]="{ 'has-error': !kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid }">
           <label class="control-label" for="newTemplate">New template name</label>
           <input type="text" class="form-control" formControlName="newTemplate" id="newTemplate">
-          <span *ngIf="(!kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid )" class="help-block">
+          <span *ngIf="(!kvForm.controls.newTemplate.pristine && !kvForm.controls.newTemplate.valid )"
+                class="help-block">
             This field is required
           </span>
         </div>
@@ -17,11 +28,13 @@
           <select id="prefil" class="form-control" formControlName="prefil">
             <option value="none">Empty template</option>
             <option value="copy">Copy from exsiting template</option>
+            <option value="importjson">Import from json</option>
             <option value="import">Import from file</option>
           </select>
         </div>
 
-        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'copy'" [ngClass]="{ 'has-error': !kvForm.controls.template.pristine && kvForm.invalid }">
+        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'copy'"
+             [ngClass]="{ 'has-error': !kvForm.controls.template.pristine && kvForm.invalid }">
           <label class="control-label" for="template">Copy from exsiting template:</label>
           <input type="text" class="form-control" formControlName="template" id="template" list="tempalteList">
           <datalist id="tempalteList">
@@ -32,9 +45,19 @@
           </span>
         </div>
 
-        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'import'" [ngClass]="{ 'has-error': !kvForm.controls.importValues.pristine && kvForm.invalid }">
+        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'importjson'"
+             [ngClass]="{ 'has-error': !kvForm.controls.importValues && kvForm.invalid }">
+          <label class="control-label" for="importJSONValues">Import JSON:</label>
+          <textarea rows="5" class="form-control" formControlName="importValues" id="importJSONValues"></textarea>
+          <span *ngIf="!kvForm.controls.importValues && kvForm.invalid" class="help-block">
+            This field is required {{kvForm.controls.importValues.pristine}}
+          </span>
+        </div>
+
+        <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'import'"
+             [ngClass]="{ 'has-error': !kvForm.controls.importValues.pristine && kvForm.invalid }">
           <label class="control-label" for="importValues">Import values:</label>
-          <input type="file" class="form-control" id="importValues" (change)="updateFile($event)" />
+          <input type="file" class="form-control" id="importValues" (change)="updateFile($event)"/>
           <span *ngIf="!kvForm.controls.importValues.pristine && kvForm.invalid" class="help-block">
             This field is required
           </span>

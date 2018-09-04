@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-md-12">
+    <cc-panel [title]="title" icon="fa-list-alt">
+      <div cc-panel-body>
+        <div class="form-group">
+          <label class="control-label pull-right" for="exportElement">
+            <button *ngIf="export" class="btn btn-default btn-info" (click)="copyToClipboard(exportElement)"><i
+              class="fa fa-clipboard" aria-hidden="true"></i> Copy to clipboard
+            </button>
+
+            <button *ngIf="export" class="btn btn-default" (click)="download(exportElement)"><i
+              class="fa fa-download" aria-hidden="true"></i> Download
+            </button>
+          </label>
+          <textarea id="exportElement" class="form-control" #exportElement id="exportElement" cols="30"
+                    rows="30">{{export | json}}</textarea>
+        </div>
+        <div class="pull-right">
+          <button *ngIf="export" class="btn btn-default btn-info" (click)="copyToClipboard(exportElement)"><i
+            class="fa fa-clipboard" aria-hidden="true"></i> Copy to clipboard
+          </button>
+          <button *ngIf="export" class="btn btn-default" (click)="download(exportElement)"><i
+            class="fa fa-download" aria-hidden="true"></i> Download
+          </button>
+        </div>
+        <div class="alert alert-warning" *ngIf="!export">
+          Nothing found
+        </div>
+      </div>
+    </cc-panel>
+  </div>
+</div>

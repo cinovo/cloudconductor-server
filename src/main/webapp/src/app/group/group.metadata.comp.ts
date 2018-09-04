@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
@@ -41,13 +41,14 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
               private groupHttp: GroupHttpService,
               private permissionHttp: PermissionHttpService,
               private alertService: AlertService) {
-    this.userGroupForm = fb.group({
-      name: ['', [Validators.required, forbiddenNamesValidator(['new', 'Administrator', 'Agent', 'Anonymous'])]],
-      description: ['']
-    });
   }
 
   ngOnInit(): void {
+    this.userGroupForm = this.fb.group({
+      name: ['', [Validators.required, forbiddenNamesValidator(['new', 'Administrator', 'Agent', 'Anonymous'], this.mode === Mode.NEW)]],
+      description: ['']
+    });
+
     this._groupSub = this.groupObs.subscribe(
       (group) => {
         group.permissions = group.permissions.slice().sort();

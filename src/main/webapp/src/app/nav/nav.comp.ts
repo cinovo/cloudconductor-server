@@ -1,9 +1,8 @@
-import { Component, ViewEncapsulation, AfterViewInit, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 
-import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
-import { ConfigValueHttpService } from '../util/http/configValue.http.service';
+import { AdditionalLink, AdditionalLinkHttpService } from '../util/http/additionalLinks.http.service';
 
 declare let $: any;
 
@@ -26,8 +25,8 @@ export class NavComponent implements AfterViewInit, OnInit {
   public links$: Observable<AdditionalLink[]>;
   public templates$: Observable<string[]>;
 
-  constructor(private linksHttp: AdditionalLinkHttpService,
-              private confHttp: ConfigValueHttpService) { };
+  constructor(private linksHttp: AdditionalLinkHttpService) {
+  };
 
   ngAfterViewInit(): void {
     (<any>$('#sideMenu')).metisMenu();
@@ -35,6 +34,5 @@ export class NavComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.links$ = this.linksHttp.links;
-    this.templates$ = this.confHttp.templates;
   }
 }

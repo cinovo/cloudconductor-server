@@ -38,6 +38,22 @@ export class Sorter {
     return 0;
   }
 
+  public static groupField(a: any, b: any): number {
+    if (!a.group && b.group) return -1;
+    if (a.group && !b.group) return 1;
+    if (a.group < b.group) return -1;
+    if (a.group > b.group) return 1;
+    return 0;
+  }
+
+  public static groupFieldNoneLast(a: any, b: any): number {
+    if (!a.group && b.group) return 1;
+    if (a.group && !b.group) return -1;
+    if (a.group < b.group) return -1;
+    if (a.group > b.group) return 1;
+    return 0;
+  }
+
   public static configValue(a: ConfigValue, b: ConfigValue): number {
     if (a.key < b.key) return -1;
     if (a.key > b.key) return 1;

@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (!AuthTokenProviderService.isAnonymous(user)) {
           this.router.navigate([this._redirect]);
         } else {
-          this.alertService.danger('Authentication failed!');
+          this.alertService.danger('Authentication failed! You logged in as anonymous...');
         }
         this.loginForm.reset();
       }, (err) => {

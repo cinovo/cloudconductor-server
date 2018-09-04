@@ -16,14 +16,26 @@ import { Role } from '../util/enums.util';
 import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { AuthorizationGuard } from '../util/auth/authorization.guard';
 import { TemplateServiceComponent } from './template.service.comp';
+import { TemplateDiff } from "./template.diff.comp";
 
 const templateRoute: Routes = [
-  {path: '', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: TemplateNew, data: {rolesAllowed: [Role.EDIT_TEMPLATE]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':templateName', component: TemplateDetail, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]
+  },
+  {
+    path: 'new', component: TemplateNew, data: {rolesAllowed: [Role.EDIT_TEMPLATE]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]
+  },
+  {
+    path: 'diff', component: TemplateDiff, data: {rolesAllowed: [Role.VIEW_TEMPLATE]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]
+  },
+  {
+    path: ':templateName', component: TemplateDetail, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
+    canActivate: [AuthenticationGuard, AuthorizationGuard]
+  },
+
 ];
 
 /**
@@ -50,7 +62,8 @@ const templateRoute: Routes = [
     TemplateNew,
     TemplateMetaData,
     TemplateAgentOptions,
-    TemplateServiceComponent
+    TemplateServiceComponent,
+    TemplateDiff,
   ]
 })
-export class TemplateModule { }
+export class TemplateModule {}

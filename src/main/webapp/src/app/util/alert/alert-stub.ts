@@ -1,14 +1,17 @@
 import { Alert } from "./alert.service";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
 
-export const expectedAlerts: Alert[] = [{ type: 'warning', msg: 'Alert One' }, { type: 'danger', msg: 'Alert Two' }];
+export const expectedAlerts: Alert[] = [{type: 'warning', msg: 'Alert One', autoFadeOut: true}, {type: 'danger', msg: 'Alert Two', autoFadeOut: true}];
 
 export class AlertStubService {
-  public getAlerts(): Alert[] {
-    return expectedAlerts;
-  }
+  public getAlerts(): Observable<Alert> {
+    let sub = new Subject<Alert>();
 
-  public closeAlert(index: number): void {
-    return;
+    for (let i = 0; i < expectedAlerts.length; i++) {
+      sub.next(expectedAlerts[i]);
+    }
+    return sub.asObservable();
   }
 
   public danger(message: string): void {

@@ -1,0 +1,68 @@
+<cc-title [title]="'Compare templates for package differences'" titleIcon="fa-institution"></cc-title>
+
+
+<div class="row" *ngIf="!templatesLoaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading templates...
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="templatesLoaded">
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template A" [data]="templates" [selected]="templateA" [dataField]="'name'" (onQueryChange)="templateA = $event"></cc-filter>
+  </div>
+  <div class="col-md-3">
+    <cc-filter mode="select" label="Template B" [data]="templates" [selected]="templateB" [dataField]="'name'" (onQueryChange)="templateB = $event"></cc-filter>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="templatesLoaded && !loaded">
+  <div class="col-sm-12">
+    <div class="alert alert-info">
+      <i class="fa fa-spinner fa-pulse fa-fw"></i>
+      Loading templates...
+    </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="loaded && diffResult.length < 1">
+  <div class="col-sm-12">
+    <div class="alert alert-warning" role="alert-1">
+      No difference found between the two templates
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="loaded && diffResult.length > 0">
+  <div class="col-md-6">
+    <cc-panel [icon]="'fa-institution'" [title]="'All package differences'">
+      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+        <thead>
+        <tr>
+          <th class="sorting_asc" width="30%">Package name</th>
+          <th class="sorting">Package version</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let diff of diffResult">
+          <td>
+            {{diff.name}}
+          </td>
+          <td>
+            {{diff.version}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </cc-panel>
+  </div>
+  <div class="col-md-6">
+    <cc-export [export]="diffResult" title="JSON representation"></cc-export>
+  </div>
+</div>

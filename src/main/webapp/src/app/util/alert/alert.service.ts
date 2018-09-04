@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { Subject } from "rxjs/Subject";
+import { Observable } from "rxjs/Observable";
 
 type AlertType = 'success' | 'info' | 'warning' | 'danger';
 
 export interface Alert {
   type: AlertType,
-  msg: string
+  msg: string;
+  autoFadeOut: boolean;
 }
 
 /**
@@ -18,37 +21,40 @@ export class AlertService {
 
   private alerts: Alert[] = [];
 
-  public getAlerts(): Alert[] {
-    return this.alerts;
+  private subject = new Subject<Alert>();
+
+  constructor() {
+  }
+
+  public getAlerts(): Observable<Alert> {
+    return this.subject.asObservable();
   }
 
   public closeAlert(index: number): void {
     this.alerts[index] = null;
   }
 
-  private addAlert(type: AlertType, msg: string): void {
-    let index = this.alerts.indexOf(null);
-    if (index > -1) {
-      this.alerts[index] = {type: type, msg: msg};
-    }else {
-      index = this.alerts.push({type, msg}) - 1;
-    }
-    setTimeout(() => {this.closeAlert(index)}, 5000);
+  private addAlert(type: AlertType, msg: string, autoFadeOut: boolean = false): void {
+    this.subject.next(<Alert>{ type: type, msg: msg, autoFadeOut: autoFadeOut});
   }
 
   public success(message: string): void {
-    this.addAlert('success', message);
+    this.addAlert('success', message, true);
   }
 
   public info(message: string): void {
-    this.addAlert('info', message);
+    this.addAlert('info', message, true);
   }
 
   public warning(message: string): void {
-    this.addAlert('warning', message);
+    this.addAlert('warning', message, true);
   }
 
   public danger(message: string): void {
     this.addAlert('danger', message);
+  }
+
+  public clear() {
+    this.subject.next();
   }
 }
