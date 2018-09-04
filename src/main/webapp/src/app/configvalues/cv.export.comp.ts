@@ -18,7 +18,7 @@ import { AlertService } from "../util/alert/alert.service";
 export class ConfigValueExport implements OnInit, OnDestroy {
 
   private routeSub: Subscription;
-  private template: string;
+  public template: string;
   public export: ConfigValue[];
 
   constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute, private alerts: AlertService, @Inject(DOCUMENT) private dom: Document) {

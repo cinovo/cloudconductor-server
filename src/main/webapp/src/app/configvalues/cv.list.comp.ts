@@ -11,7 +11,7 @@ import { AlertService } from "../util/alert/alert.service";
 })
 export class ConfigValueList implements OnInit, OnDestroy {
 
-  protected reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
+  public reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
 
   private _templates: string[];
   private mayEdit: boolean = false;

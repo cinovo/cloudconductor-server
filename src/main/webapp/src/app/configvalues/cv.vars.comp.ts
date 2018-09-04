@@ -13,10 +13,10 @@ export class CvVarsComp implements OnInit {
 
   public kvs: Array<ConfigValue> = [];
   public newKV: ConfigValue = null;
-  private kvLoaded: boolean = false;
+  public kvLoaded: boolean = false;
 
   public availableVars: string[] = [];
-  private title: string;
+  public title: string;
 
   constructor(private configHttp: ConfigValueHttpService,
               private alerts: AlertService) {
