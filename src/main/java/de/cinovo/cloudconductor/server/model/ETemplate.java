@@ -245,7 +245,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	/**
 	 * @return the group
 	 */
-	@Column(name = "\"group\"")
+	@Column(name = "groupname")
 	public String getGroup() {
 		return this.group;
 	}

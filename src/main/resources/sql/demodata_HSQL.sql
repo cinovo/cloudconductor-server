@@ -50,8 +50,8 @@ INSERT INTO cloudconductor.service VALUES (3, 'service1', 'service1', 'service1'
 
 INSERT INTO cloudconductor.sshkey VALUES (1, 'SSH key content', 'foobar', null, 'root');
 
-INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true);
-INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', false, true);
+INSERT INTO cloudconductor.template VALUES (1, 'dev', 'dev', false, true, null);
+INSERT INTO cloudconductor.template VALUES(2, 'otherTemplate', 'otherTemplate', false, true, null);
 
 
 INSERT INTO cloudconductor.repo VALUES (1, 'TESTREPO', '1', '', null, null);

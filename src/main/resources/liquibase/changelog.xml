@@ -1221,7 +1221,7 @@
     </changeSet>
     <changeSet id="39" author="psigloch">
         <addColumn tableName="template" schemaName="cloudconductor">
-            <column name="group" type="varchar(255)"/>
+            <column name="groupname" type="varchar(255)"/>
         </addColumn>
     </changeSet>
 
