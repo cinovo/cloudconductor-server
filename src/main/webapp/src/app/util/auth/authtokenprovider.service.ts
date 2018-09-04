@@ -70,8 +70,7 @@ export class AuthTokenProviderService {
       return user;
     }
 
-    const expirationDate = Math.max(this.jwtHelper.getTokenExpirationDate(value).getTime() - 10000, new Date().getTime());
-    this.nextRefresh = expirationDate;
+    this.nextRefresh = Math.max(this.jwtHelper.getTokenExpirationDate(value).getTime() - 10000, new Date().getTime());
 
     this._token = value;
     localStorage.setItem('token', value);
