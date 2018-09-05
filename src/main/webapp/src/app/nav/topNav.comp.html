@@ -16,6 +16,9 @@
   <span class="navbar-brand nav-clock">
     <small>{{currentTime | date:'dd.MM.yyyy HH:mm:ss'}}</small>
   </span>
+  <span class="navbar-brand nav-clock">
+    <small *ngIf="version">v{{version}}</small>
+  </span>
   <ng-container *ngIf="(userObs | async) as user">
     <li *ngIf="user.preferred_username !== 'ANONYMOUS'" class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#">
