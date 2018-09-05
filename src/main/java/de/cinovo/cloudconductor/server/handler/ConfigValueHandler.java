@@ -36,13 +36,13 @@ public class ConfigValueHandler {
 
 	public ConfigValue[] getClean(String template) {
 		Set<ConfigValue> result = new HashSet<>();
-		for(EConfigValue ecv : this.configValueDAO.findBy(ConfigValueDAOHib.RESERVED_GLOBAL)) {
-			result.add(ecv.toApi());
-		}
 		if(!template.equalsIgnoreCase(ConfigValueDAOHib.RESERVED_GLOBAL)) {
 			for(EConfigValue ecv : this.configValueDAO.findBy(template)) {
 				result.add(ecv.toApi());
 			}
+		}
+		for(EConfigValue ecv : this.configValueDAO.findBy(ConfigValueDAOHib.RESERVED_GLOBAL)) {
+			result.add(ecv.toApi());
 		}
 		result.addAll(ReservedConfigKeyStore.instance.getReservedAsConfigValue());
 		return result.toArray(new ConfigValue[0]);
@@ -63,13 +63,13 @@ public class ConfigValueHandler {
 
 	public ConfigValue[] getClean(String template, String service) {
 		Collection<ConfigValue> result = new HashSet<>(Arrays.asList(this.get(template)));
-		for(EConfigValue ecv : this.configValueDAO.findBy(ConfigValueDAOHib.RESERVED_GLOBAL, service)) {
-			result.add(ecv.toApi());
-		}
 		if(!template.equalsIgnoreCase(ConfigValueDAOHib.RESERVED_GLOBAL)) {
 			for(EConfigValue ecv : this.configValueDAO.findBy(template, service)) {
 				result.add(ecv.toApi());
 			}
+		}
+		for(EConfigValue ecv : this.configValueDAO.findBy(ConfigValueDAOHib.RESERVED_GLOBAL, service)) {
+			result.add(ecv.toApi());
 		}
 		result.addAll(ReservedConfigKeyStore.instance.getReservedAsConfigValue());
 		return result.toArray(new ConfigValue[0]);

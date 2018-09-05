@@ -7,6 +7,7 @@ import { AlertService } from '../util/alert/alert.service';
 import { AuthHttpService, AuthenticatedUser } from '../util/http/auth.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
+import { VERSION } from "../../environments/version";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -25,6 +26,8 @@ export class TopNavComponent implements AfterContentInit, OnInit {
   public userObs: Observable<AuthenticatedUser>;
   public settingsObs: Observable<Settings>;
   public currentTime: number = Date.now();
+
+  public version: string = VERSION;
 
   constructor(private settingHttp: SettingHttpService,
               private alertService: AlertService,
