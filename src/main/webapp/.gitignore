@@ -32,3 +32,4 @@ testem.log
 Thumbs.db
 /.idea/workspace.xml
 proxy.conf.json
+/src/environments/version.ts

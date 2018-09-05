@@ -2,7 +2,7 @@ const fs = require('fs');
 const xml = fs.readFileSync('../../../pom.xml', 'utf8');
 const parse = require('xml-parser');
 const obj = parse(xml);
-const writeFileSync = require('fs-extra');
+const fse = require('fs-extra')
 const resolve = require('path');
 
 const version = function find(obj) {
@@ -14,13 +14,16 @@ const version = function find(obj) {
 };
 
 
-// console.log(resolve);
 const file = resolve.resolve(__dirname, 'src', 'environments', 'version.ts');
 
-
-writeFileSync.writeFileSync(file,
-  `// IMPORTANT: THIS FILE IS AUTO GENERATED! DO NOT MANUALLY EDIT OR CHECKIN!
+fse.ensureFile(file).then(() => {
+  fse.writeFileSync(file,
+    `// IMPORTANT: THIS FILE IS AUTO GENERATED! DO NOT MANUALLY EDIT OR CHECKIN!
 /* tslint:disable */
 export const VERSION=${JSON.stringify(version(obj))};
 /* tslint:enable */
 `, {encoding: 'utf-8'});
+  console.log("Successfully created version file");
+}).catch(err => {
+  console.log("Failed to create version file " + err);
+});

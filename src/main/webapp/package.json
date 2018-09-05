@@ -51,6 +51,7 @@
     "@types/node": "~6.0.60",
     "codelyzer": "^4.4.2",
     "copy-webpack-plugin": "4.3.0",
+    "fs-extra": "^7.0.0",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
