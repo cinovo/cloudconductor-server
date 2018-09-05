@@ -5,7 +5,8 @@
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
   <div class="col-md-9">
-    <button [routerLink]="['new']" class="btn btn-default pull-right">Add a new Service</button>
+    <button [routerLink]="['new']" class="btn btn-success pull-right"><i class="fa fa-plus fa-fw"></i> Add a new Service
+    </button>
   </div>
 </div>
 
@@ -47,8 +48,8 @@
         </thead>
         <tbody>
         <tr *ngFor="let service of services" (dblclick)="gotoDetails(service)"
-          [class.warning]="!service.templates || service.templates.length < 1"
-          [class.danger]="!service.packages || service.packages.length < 1">
+            [class.warning]="!service.templates || service.templates.length < 1"
+            [class.danger]="!service.packages || service.packages.length < 1">
           <td>
             {{service.name}}
           </td>
@@ -68,12 +69,12 @@
           </td>
           <td>
             <a class="delete" href="javascript:void(0)" mwlConfirmationPopover
-              title="Delete Service"
-              [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the following service: ' + service.name + '?'"
-              placement="left"
-              confirmButtonType="danger"
-              (confirm)="deleteService(service)">
+               title="Delete Service"
+               [title]="'Please verify!'"
+               [message]="'Are you sure you want to delete the following service: ' + service.name + '?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteService(service)">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>
           </td>

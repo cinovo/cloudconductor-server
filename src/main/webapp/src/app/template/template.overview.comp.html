@@ -12,12 +12,12 @@
     <div class="row pull-right">
       <div class="col-sm-6">
         <button [routerLink]="['diff']" class="btn btn-default pull-right">
-          Compare Templates
+          <i class="fa fa-columns fa-fw"></i> Compare Templates
         </button>
       </div>
       <div class="col-sm-6">
-        <button [routerLink]="['new']" class="btn btn-default pull-right">
-          Add a new Template
+        <button [routerLink]="['new']" class="btn btn-success pull-right">
+          <i class="fa fa-plus fa-fw"></i> Add a new Template
         </button>
       </div>
     </div>
@@ -97,7 +97,8 @@
             </td>
             <td>
               <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
-                {{repo}}<ng-template [ngIf]="!last">, </ng-template>
+                {{repo}}
+                <ng-template [ngIf]="!last">,</ng-template>
               </ng-template>
             </td>
             <td>

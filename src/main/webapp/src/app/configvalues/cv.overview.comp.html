@@ -17,14 +17,19 @@
   </div>
   <div class="col-md-9">
     <div class="row pull-right">
-      <div class="col-sm-9">
-        <button [routerLink]="['/config', template, '', 'new']" class="btn btn-default pull-right">
-          Add a new Key-Value-Pair
+      <div class="col-sm-3">
+        <button [routerLink]="['/config','preview', template]" class="btn btn-default pull-right">
+          <i class="fa fa-eye fa-fw"></i> Preview rest call
         </button>
       </div>
       <div class="col-sm-3">
         <button [routerLink]="['/config', template, 'export']" class="btn btn-default pull-right">
-          Export
+          <i class="fa fa-external-link fa-fw"></i> Export
+        </button>
+      </div>
+      <div class="col-sm-6">
+        <button [routerLink]="['/config', template, '', 'new']" class="btn btn-success pull-right">
+          <i class="fa fa-plus fa-fw"></i> Add a new Key-Value-Pair
         </button>
       </div>
     </div>
