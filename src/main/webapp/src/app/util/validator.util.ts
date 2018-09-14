@@ -1,5 +1,4 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { Mode } from "./enums.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -33,9 +32,12 @@ export function gtValidator(n: number): ValidatorFn {
   };
 }
 
-export function forbiddenNamesValidator(forbiddenNames: string[], use:boolean = true): ValidatorFn {
+export function forbiddenNamesValidator(forbiddenNames: string[], use = true): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } => {
-    const forbidden = (forbiddenNames.some((forbiddenName) => forbiddenName.toUpperCase() === control.value.toUpperCase()));
+    const forbidden = control && control.value && forbiddenNames.some(
+      (forbiddenName) => forbiddenName.toUpperCase() === control.value.toUpperCase()
+    );
+
     return forbidden && use ? {'forbiddenName': {value: control.value}} : null;
   }
 }
