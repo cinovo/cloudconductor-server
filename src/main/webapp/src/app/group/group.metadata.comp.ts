@@ -61,7 +61,7 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
       (permissions) => {
         this.permissions = permissions.sort();
       }, (err) => {
-        console.log(err);
+        console.error(err);
       }
     );
   }
@@ -104,13 +104,16 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
       () => {
         this.alertService.success(`Successfully saved user group '${groupName}'.`);
         this.userGroupForm.reset();
+
         if (this.mode === this.modes.NEW) {
           this.router.navigate(['/group', groupName]);
+        } else {
+          this.onReload.emit(groupName);
         }
-        this.onReload.emit(groupName);
       },
       (err) => {
-        this.alertService.danger(`Error saving user group '${groupName}': ${err}`);
+        this.alertService.danger(`Error saving user group '${groupName}'!`);
+        console.error(err);
       }
     );
   }

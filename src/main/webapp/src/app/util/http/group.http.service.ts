@@ -53,6 +53,7 @@ export class GroupHttpService {
   }
 
   public saveGroup(groupToSave: Group): Observable<boolean> {
+    groupToSave['@class'] = 'de.cinovo.cloudconductor.api.model.UserGroup';
     return this.http.put<boolean>(this._basePath, groupToSave);
   }
 
