@@ -53,15 +53,16 @@ public class HTTPProvider implements IRepoProvider {
 	@Override
 	public RepoEntry getEntry(String key) {
 		if ((this.mirror != null) && (this.mirror.getBasePath() != null)) {
-			HTTPResponse response = WS.url(this.getUrl(key)).get();
-			RepoEntry e = new RepoEntry();
-			e.setDirectory(false);
-			e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
-			e.setSize(this.getSize(response));
-			e.setModified(new Date());
-			e.setChecksum(this.getChecksum(response));
-			e.setContentType(this.getType(response));
-			return e;
+			try (HTTPResponse response = WS.url(this.getUrl(key)).get()) {
+				RepoEntry e = new RepoEntry();
+				e.setDirectory(false);
+				e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
+				e.setSize(this.getSize(response));
+				e.setModified(new Date());
+				e.setChecksum(this.getChecksum(response));
+				e.setContentType(this.getType(response));
+				return e;
+			}
 		}
 		return null;
 	}

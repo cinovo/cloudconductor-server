@@ -38,7 +38,8 @@ public class RPMIndexer implements IRepoIndexer {
 	public Set<PackageVersion> getRepoIndex(IRepoProvider provider) {
 		RepoEntry entry = provider.getEntry(RPMIndexer.REPO_INDEX);
 		if(entry != null) {
-			Document repoXML = this.xmlDOM(provider.getEntryStream(RPMIndexer.REPO_INDEX));
+			InputStream inputStream = provider.getEntryStream(RPMIndexer.REPO_INDEX);
+			Document repoXML = this.xmlDOM(inputStream);
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			try {
 				String primaryHREF = xpath.evaluate("/repomd/data[@type='primary']/location/@href", repoXML);
@@ -50,6 +51,14 @@ public class RPMIndexer implements IRepoIndexer {
 				throw new RuntimeException("Failed to parse repomd.xml", e);
 			} catch(IOException e) {
 				throw new RuntimeException("Failed to read repodata", e);
+			} finally {
+				try {
+					if (inputStream != null) {
+						inputStream.close();
+					}
+				} catch (IOException e) {
+					// don't care
+				}
 			}
 		}
 		return null;
