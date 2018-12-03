@@ -62,7 +62,9 @@ export class SettingHttpService {
   }
 
   public getSettings(): Observable<Settings> {
-    return this.http.get<Settings>(this._basePathURL).share();
+    return this.http.get<Settings>(this._basePathURL)
+    .do(settings => this._settings.next(settings))
+    .share();
   }
 
   public save(settings: Settings): Observable<boolean> {
