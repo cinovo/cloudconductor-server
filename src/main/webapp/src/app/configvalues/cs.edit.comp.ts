@@ -64,19 +64,20 @@ export class ConfigValueEdit implements OnInit {
   }
 
   public save(newConfigPair: ConfigValue): void {
-    let check: Observable<boolean> = this.configHttp.existsConfigValue(newConfigPair.template, newConfigPair.service, newConfigPair.key);
+    const trimmedCV: ConfigValue = { key: newConfigPair.key.trim(), ...newConfigPair};
+    let check: Observable<boolean> = this.configHttp.existsConfigValue(trimmedCV.template, trimmedCV.service, trimmedCV.key);
     check.flatMap(exists => {
       if (exists) {
-        return Observable.throw(`Configuration for '${newConfigPair.key}' does already exist!`);
+        return Observable.throw(`Configuration for '${trimmedCV.key}' does already exist!`);
       } else {
-        return this.configHttp.save(newConfigPair);
+        return this.configHttp.save(trimmedCV);
       }
     }).subscribe(
       () => {
-        this.alerts.success(`Successfully created key-value pair: '${newConfigPair.key} - ${newConfigPair.value}'.`);
-        this.router.navigate(['/config', newConfigPair.template])
+        this.alerts.success(`Successfully created key-value pair: '${trimmedCV.key} - ${trimmedCV.value}'.`);
+        this.router.navigate(['/config', trimmedCV.template])
       }, (err) => {
-        this.alerts.danger(`Error creating new key-value pair '${newConfigPair.key} - ${newConfigPair.value}': ${err}`);
+        this.alerts.danger(`Error creating new key-value pair '${trimmedCV.key} - ${trimmedCV.value}': ${err}`);
         console.error(err);
       }
     );

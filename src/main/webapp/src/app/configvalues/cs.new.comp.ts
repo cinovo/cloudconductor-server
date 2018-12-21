@@ -48,15 +48,13 @@ export class ConfigValueNew implements OnInit {
 
   public save() {
     this.working = true;
+
+    const cvToSave = {key: "firstKey", value: "empty", template: this.kvForm.value.newTemplate.trim()};
     if (this.kvForm.value.prefil == 'none') {
-      this.configHttp.save({
-        key: "firstKey",
-        value: "empty",
-        template: this.kvForm.value.newTemplate
-      }).subscribe((result) => {
+      this.configHttp.save(cvToSave).subscribe((result) => {
           this.working = false;
-          this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}' .`);
-          this.router.navigate(['/config', this.kvForm.value.newTemplate]);
+          this.alerts.success(`Successfully created new template '${cvToSave.template}' .`);
+          this.router.navigate(['/config', cvToSave.template]);
         }
       );
       return;
@@ -135,8 +133,6 @@ export class ConfigValueNew implements OnInit {
       this.working = false;
       this.alerts.danger("Failed to read the given json. No proper json!");
     }
-
-
   }
 
   updateFile(event: any): void {

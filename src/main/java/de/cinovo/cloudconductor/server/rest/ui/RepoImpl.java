@@ -1,14 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.transaction.Transactional;
-import javax.ws.rs.core.Response.Status;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.api.interfaces.IRepo;
 import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
@@ -17,6 +8,13 @@ import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.tasks.IServerRepoTaskHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.core.Response.Status;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -44,7 +42,7 @@ public class RepoImpl implements IRepo {
 		for (ERepo repo : findList) {
 			result.add(repo.toApi());
 		}
-		return result.toArray(new Repo[result.size()]);
+		return result.toArray(new Repo[0]);
 	}
 	
 	@Override
@@ -78,7 +76,7 @@ public class RepoImpl implements IRepo {
 	public void delete(String name) {
 		RESTAssert.assertNotNull(name);
 		ERepo g = this.repoDAO.findByName(name);
-		RESTAssert.assertNotNull(g);
+		RESTAssert.assertNotNull(g, Status.NOT_FOUND);
 		this.repoHandler.deleteEntity(g);
 	}
 	

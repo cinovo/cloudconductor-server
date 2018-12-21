@@ -59,12 +59,13 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
   }
 
   public saveKey(newSSHKey: SSHKey) {
-    this.sshHttp.updateKey(newSSHKey).subscribe(() => {
-      this.alertService.success(`SSH Key of '${newSSHKey.owner}' was successfully updated!`);
+    const sshKeyToSave: SSHKey = { owner: newSSHKey.owner.trim(), ...newSSHKey};
+    this.sshHttp.updateKey(sshKeyToSave).subscribe(() => {
+      this.alertService.success(`SSH Key of '${sshKeyToSave.owner}' was successfully updated!`);
       this.router.navigate(['/ssh']);
     },
     (err) => {
-      this.alertService.danger(`Error updating SSH key of '${newSSHKey.owner}'!`);
+      this.alertService.danger(`Error updating SSH key of '${sshKeyToSave.owner}'!`);
       console.error(err);
     });
   }

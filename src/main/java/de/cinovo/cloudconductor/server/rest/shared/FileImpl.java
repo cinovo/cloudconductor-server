@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -121,7 +122,7 @@ public class FileImpl implements IFile {
 	public void delete(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EFile model = this.fileDAO.findByName(name);
-		RESTAssert.assertNotNull(model);
+		RESTAssert.assertNotNull(model, Status.NOT_FOUND);
 		this.fileDAO.delete(model);
 	}
 	
