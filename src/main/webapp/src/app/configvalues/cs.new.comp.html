@@ -27,7 +27,7 @@
           <label class="control-label" for="prefil">Select prefill type:</label>
           <select id="prefil" class="form-control" formControlName="prefil">
             <option value="none">Empty template</option>
-            <option value="copy">Copy from exsiting template</option>
+            <option value="copy">Copy from existing template</option>
             <option value="importjson">Import from json</option>
             <option value="import">Import from file</option>
           </select>
@@ -35,7 +35,7 @@
 
         <div class="form-group" *ngIf="kvForm.controls.prefil.value == 'copy'"
              [ngClass]="{ 'has-error': !kvForm.controls.template.pristine && kvForm.invalid }">
-          <label class="control-label" for="template">Copy from exsiting template:</label>
+          <label class="control-label" for="template">Copy from existing template:</label>
           <input type="text" class="form-control" formControlName="template" id="template" list="tempalteList">
           <datalist id="tempalteList">
             <option *ngFor="let template of templates" value="{{template}}"></option>

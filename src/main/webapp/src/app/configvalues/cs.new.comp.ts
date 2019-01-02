@@ -32,7 +32,7 @@ export class ConfigValueNew implements OnInit {
               private fb: FormBuilder) {
     this.kvForm = this.fb.group({
       template: [''],
-      newTemplate: ['', [Validators.required]],
+      newTemplate: ['', [Validators.required, Validators.pattern('[\\w.-]+')]],
       prefil: ['none', [Validators.required]],
       importValues: ['']
     }, {validator: ConfigValueNew.fullValidator});

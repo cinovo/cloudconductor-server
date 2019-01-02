@@ -35,7 +35,7 @@ export class ConfigValueEdit implements OnInit {
               private serviceHttp: ServiceHttpService,
               private fb: FormBuilder) {
     this.kvForm = this.fb.group({
-      key: ['', [Validators.required, forbiddenNameValidator('new')]],
+      key: ['', [Validators.required, Validators.pattern('^[\\w.-]+$'), forbiddenNameValidator('new')]],
       value: ['', Validators.required],
       template: '',
       service: ''
