@@ -238,6 +238,7 @@ public class TemplateImpl implements ITemplate {
 	}
 
 	@Override
+	@Transactional
 	public PackageDiff[] packageDiff(String templateA, String templateB) {
 		return this.templatePackageComparator.compare(templateA, templateB);
 	}
