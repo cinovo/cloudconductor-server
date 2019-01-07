@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -96,15 +95,13 @@ public class AgentHandler {
 	 */
 	@Transactional
 	public PackageStateChanges handlePackageState(String hostName, String templateName, PackageState rpmState, String uuid) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-
 		RESTAssert.assertNotEmpty(hostName);
 		EHost host = this.hostDAO.findByUuid(uuid);
 		RESTAssert.assertNotNull(host);
+		//		RESTAssert.assertEquals(host.getTemplate().getName(), templateName);
 
 		host.setLastSeen((new DateTime()).getMillis());
+		host = this.hostDAO.save(host);
 
 		List<EPackage> packages = this.packageDAO.findList();
 		HashSet<EPackageState> leftPackages = new HashSet<>(host.getPackages());
@@ -120,34 +117,31 @@ public class AgentHandler {
 			}
 		}
 		this.packageStateHandler.removePackageState(host, leftPackages);
-		host = this.hostDAO.save(host);
+
 		this.hostDetailWsHandler.broadcastChange(host.getUuid(), new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(host.getId());
 		if(simpleHost != null) {
 			this.hostsWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, simpleHost));
 		}
+
 		// check whether the host may updateEntity or has to wait for another host to finish updating
-		if(this.sendPackageChanges(template, host)) {
-			PackageStateChanges diff = this.psChangeHandler.computePackageDiff(host, template);
-			if(!diff.getToInstall().isEmpty() || !diff.getToUpdate().isEmpty() || !diff.getToErase().isEmpty()) {
-				host.setStartedUpdate(DateTime.now().getMillis());
-			}
-			return diff;
-		}
-		return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		//		if(this.sendPackageChanges(host)) {
+		return this.psChangeHandler.computePackageDiff(host);
+		//		}
+//		return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 
-	private boolean sendPackageChanges(ETemplate template, EHost host) {
+	private boolean sendPackageChanges(EHost host) {
 		DateTime now = DateTime.now();
-		int maxHostsOnUpdate = template.getHosts().size() / 2;
+		int maxHostsOnUpdate = host.getTemplate().getHosts().size() / 2;
 		int hostsOnUpdate = 0;
-		if((template.getSmoothUpdate() == null) || !template.getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
+		if((host.getTemplate().getSmoothUpdate() == null) || !host.getTemplate().getSmoothUpdate() || (maxHostsOnUpdate < 1)) {
 			return true;
 		}
 		if(host.getStartedUpdate() != null) {
 			return true;
 		}
-		for(EHost h : template.getHosts()) {
+		for(EHost h : host.getTemplate().getHosts()) {
 			if(h.getStartedUpdate() != null) {
 				int timeElapsed = Minutes.minutesBetween(new DateTime(h.getStartedUpdate()), now).getMinutes();
 				if(timeElapsed > AgentHandler.MAX_UPDATE_THRESHOLD) {

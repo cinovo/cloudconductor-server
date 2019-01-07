@@ -23,6 +23,7 @@ import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.HostIdentifier;
 import de.taimos.dvalin.jpa.IEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,6 +53,7 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	private Long id;
 	private String name;
 	private String description;
+	private Long templateid;
 	private ETemplate template;
 	private Long lastSeen;
 	private List<EServiceState> services = new ArrayList<>();
@@ -134,6 +136,21 @@ public class EHost extends AModelApiConvertable<Host> implements IEntity<Long>, 
 	 */
 	public void setPackages(List<EPackageState> packages) {
 		this.packages = packages;
+	}
+
+	/**
+	 * @return the templateid
+	 */
+	@Column(updatable = false, insertable = false)
+	public Long getTemplateid() {
+		return this.templateid;
+	}
+
+	/**
+	 * @param templateid the templateid to set
+	 */
+	public void setTemplateid(Long templateid) {
+		this.templateid = templateid;
 	}
 
 	/**
