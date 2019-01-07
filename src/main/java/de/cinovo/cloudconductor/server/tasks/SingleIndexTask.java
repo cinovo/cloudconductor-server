@@ -11,13 +11,6 @@ package de.cinovo.cloudconductor.server.tasks;
  * and limitations under the License. #L%
  */
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
@@ -29,6 +22,12 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.importer.IPackageImport;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -36,7 +35,7 @@ import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
  *
  * @author Thorsten Hoeger
  */
-public class IndexTask implements IServerTasks {
+public class SingleIndexTask implements IServerTasks {
 	
 	/**
 	 * prefix for id of repository index tasks
@@ -64,7 +63,7 @@ public class IndexTask implements IServerTasks {
 	 * @param timerUnit the timer unit
 	 * @param delay the delay in timerUnit
 	 */
-	public IndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId, Integer timer, TimeUnit timerUnit, Integer delay) {
+	public SingleIndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId, Integer timer, TimeUnit timerUnit, Integer delay) {
 		this.repoDAO = repoDAO;
 		this.repoHandler = repoHandler;
 		this.packageImport = packageImport;
@@ -81,7 +80,7 @@ public class IndexTask implements IServerTasks {
 	
 	@Override
 	public String getTaskIdentifier() {
-		return IndexTask.TASK_ID_PREFIX + this.repoId;
+		return SingleIndexTask.TASK_ID_PREFIX + this.repoId;
 	}
 	
 	@Override
@@ -108,6 +107,7 @@ public class IndexTask implements IServerTasks {
 	
 	@Override
 	public void run() {
+
 		this.execute(false);
 	}
 	
