@@ -2,11 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
-import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
@@ -72,7 +70,7 @@ export class PackageOverview implements OnInit, OnDestroy {
         (response: HttpResponse<Package[]>) => {
           this.totalPackageCount = +response.headers.get('x-total-count');
 
-          this.pageCount = Math.floor(this.totalPackageCount / this.limit) + 1;
+          this.pageCount = Math.ceil(this.totalPackageCount / this.limit);
           this.start = ((this._page - 1) * this._limit + 1);
           this.end = Math.min(this._page * this._limit, this.totalPackageCount);
 
@@ -82,6 +80,7 @@ export class PackageOverview implements OnInit, OnDestroy {
           this.packagesLoaded = true;
         }, (err) => {
           this.alertService.danger('Error loading packages!');
+          console.error(err);
           this.packagesLoaded = true;
         }
       );
