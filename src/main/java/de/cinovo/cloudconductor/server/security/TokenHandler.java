@@ -177,8 +177,8 @@ public class TokenHandler {
 	
 	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
 		StringBuilder tokenStringToShuffle = new StringBuilder();
-		tokenStringToShuffle.append(currentToken.substring(0, tokenLength / 2).toUpperCase());
-		tokenStringToShuffle.append(currentToken.substring(tokenLength / 2, tokenLength));
+		tokenStringToShuffle.append(currentToken.toUpperCase(), 0, tokenLength / 2);
+		tokenStringToShuffle.append(currentToken, tokenLength / 2, tokenLength);
 		return tokenStringToShuffle.toString();
 	}
 	

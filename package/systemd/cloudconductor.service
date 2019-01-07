@@ -1,0 +1,15 @@
+[Unit]
+Description=cloudconductor
+Requires=network.service
+
+[Service]
+User=root
+Group=root
+PIDFile=/var/run/cloudconductor
+Environment=jarfile=de.cinovo.cloudconductor.cloudconductor-server.jar LANG=en_US.UTF-8
+ExecStart=/usr/bin/java -Xmx1024m -XX:+ExitOnOutOfMemoryError -DdevelopmentMode=false -DstartupMode=run -jar $jarfile
+WorkingDirectory=/opt/cloudconductor/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

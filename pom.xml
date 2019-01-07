@@ -326,6 +326,18 @@
                                     </sources>
                                 </mapping>
                                 <mapping>
+                                    <directory>/usr/lib/systemd/system</directory>
+                                    <username>root</username>
+                                    <groupname>root</groupname>
+                                    <filemode>644</filemode>
+                                    <directoryIncluded>false</directoryIncluded>
+                                    <sources>
+                                        <source>
+                                            <location>package/systemd</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
                                     <directory>/opt/cloudconductor/helper</directory>
                                     <filemode>770</filemode>
                                     <username>root</username>
