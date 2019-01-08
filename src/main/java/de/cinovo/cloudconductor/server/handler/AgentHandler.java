@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +99,6 @@ public class AgentHandler {
 		RESTAssert.assertNotEmpty(hostName);
 		EHost host = this.hostDAO.findByUuid(uuid);
 		RESTAssert.assertNotNull(host);
-		//		RESTAssert.assertEquals(host.getTemplate().getName(), templateName);
 
 		host.setLastSeen((new DateTime()).getMillis());
 		host = this.hostDAO.save(host);
@@ -125,10 +125,14 @@ public class AgentHandler {
 		}
 
 		// check whether the host may updateEntity or has to wait for another host to finish updating
-		//		if(this.sendPackageChanges(host)) {
-		return this.psChangeHandler.computePackageDiff(host);
-		//		}
-//		return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		if(this.sendPackageChanges(host)) {
+			PackageStateChanges diff = this.psChangeHandler.computePackageDiff(host);
+			if (!diff.getToInstall().isEmpty() || !diff.getToUpdate().isEmpty() || !diff.getToErase().isEmpty()) {
+				host.setStartedUpdate(DateTime.now().getMillis());
+			}
+			return diff;
+		}
+		return new PackageStateChanges(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 
 	private boolean sendPackageChanges(EHost host) {
