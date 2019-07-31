@@ -93,7 +93,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.1.4</version>
+            <version>42.2.2</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -322,6 +322,18 @@
                                     <sources>
                                         <source>
                                             <location>package/init</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/lib/systemd/system</directory>
+                                    <username>root</username>
+                                    <groupname>root</groupname>
+                                    <filemode>644</filemode>
+                                    <directoryIncluded>false</directoryIncluded>
+                                    <sources>
+                                        <source>
+                                            <location>package/systemd</location>
                                         </source>
                                     </sources>
                                 </mapping>

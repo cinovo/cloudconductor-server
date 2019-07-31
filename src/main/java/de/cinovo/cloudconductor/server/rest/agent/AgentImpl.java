@@ -11,6 +11,7 @@ import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.api.model.ServiceStatesChanges;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -27,6 +28,7 @@ public class AgentImpl implements IAgent {
 	
 	
 	@Override
+	@Transactional
 	public PackageStateChanges notifyPackageState(String template, String host, PackageState rpmState, String uuid) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(host);
@@ -37,6 +39,7 @@ public class AgentImpl implements IAgent {
 	}
 	
 	@Override
+	@Transactional
 	public ServiceStatesChanges notifyServiceState(String template, String host, ServiceStates serviceState, String uuid) {
 		RESTAssert.assertNotEmpty(host);
 		RESTAssert.assertNotEmpty(template);
@@ -47,6 +50,7 @@ public class AgentImpl implements IAgent {
 	}
 	
 	@Override
+	@Transactional
 	public AgentOption heartBeat(String template, String host, String agent, String uuid) {
 		RESTAssert.assertNotEmpty(host);
 		RESTAssert.assertNotEmpty(template);

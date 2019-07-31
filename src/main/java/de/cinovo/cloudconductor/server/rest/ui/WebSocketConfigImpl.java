@@ -10,6 +10,8 @@ import de.taimos.dvalin.jaxrs.URLUtils;
 import de.taimos.dvalin.jaxrs.URLUtils.SplitURL;
 import de.taimos.dvalin.jaxrs.context.DvalinRSContext;
 
+import javax.transaction.Transactional;
+
 /**
  * 
  * Copyright 2017 Cinovo AG<br>
@@ -35,6 +37,7 @@ public class WebSocketConfigImpl implements IWebSocketConfig {
 	
 	
 	@Override
+	@Transactional
 	public WebSocketConfig getConfig() {
 		SplitURL split = URLUtils.splitURL(this.context.getServerURL());
 		String webSocketBasePath = "ws://" + this.host + ":" + split.getPort() + this.baseURI;

@@ -7,6 +7,7 @@ import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
 import javax.ws.rs.NotFoundException;
@@ -31,6 +32,7 @@ public class ReposProviderImpl implements IReposProvider {
 	
 	
 	@Override
+	@Transactional
 	public Response get(String repo, String file) {
 		if ((repo == null) || repo.isEmpty()) {
 			throw new NotFoundException();

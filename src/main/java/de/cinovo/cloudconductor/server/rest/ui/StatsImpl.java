@@ -10,6 +10,8 @@ import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
+import javax.transaction.Transactional;
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -29,6 +31,7 @@ public class StatsImpl implements IStats {
 	private IServiceDAO serviceDao;
 
 	@Override
+	@Transactional
 	public Statistics get() {
 		Statistics stats = new Statistics();
 		stats.setNumberOfHosts(this.hostDao.count());

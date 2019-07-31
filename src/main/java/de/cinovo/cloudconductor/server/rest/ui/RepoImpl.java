@@ -55,6 +55,7 @@ public class RepoImpl implements IRepo {
 	}
 	
 	@Override
+	@Transactional
 	public Long newRepo(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getName());
@@ -64,6 +65,7 @@ public class RepoImpl implements IRepo {
 	}
 	
 	@Override
+	@Transactional
 	public void edit(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getId());

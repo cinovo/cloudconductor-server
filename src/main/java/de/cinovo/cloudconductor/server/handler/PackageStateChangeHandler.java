@@ -2,13 +2,14 @@ package de.cinovo.cloudconductor.server.handler;
 
 import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.dao.IServerOptionsDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.model.enums.PackageCommand;
 import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,39 +34,43 @@ public class PackageStateChangeHandler {
 
 	@Autowired
 	private IServerOptionsDAO serverOptionsDAO;
+	@Autowired
+	private IPackageVersionDAO packageVersionDAO;
+	@Autowired
+	private IRepoDAO repoDAO;
 
 	/**
 	 * @param host the host
 	 * @return the package state changes
 	 */
 	public PackageStateChanges computePackageDiff(EHost host) {
-		return this.computePackageDiff(host, host.getTemplate());
+		return this.computePackageDiff(host, host.getTemplateid());
 	}
 
 	/**
-	 * @param host the host
-	 * @param template the template to compare with
+	 * @param host       the host
+	 * @param templateId the template to compare with
 	 * @return the package state changes
 	 */
-	public PackageStateChanges computePackageDiff(EHost host, ETemplate template) {
+	private PackageStateChanges computePackageDiff(EHost host, Long templateId) {
 		// Compute instruction lists (install/updateEntity/erase) from difference between packages actually installed packages that
 		// should be installed.
 		Set<EPackageVersion> actual = new HashSet<>();
 		for(EPackageState state : host.getPackages()) {
 			actual.add(state.getVersion());
 		}
-		return this.computePackageDiff(template, actual);
+		return this.computePackageDiff(templateId, actual);
 	}
 
 	/**
-	 * @param template the referenced template
-	 * @param actual   list of package versions which are actually installed
+	 * @param templateId the referenced template
+	 * @param actual     list of package versions which are actually installed
 	 * @return multimap including package versions and the command which should be applied to them (e.g install, update, delete)
 	 */
-	public PackageStateChanges computePackageDiff(ETemplate template, Set<EPackageVersion> actual) {
-		List<EPackageVersion> nominal = template.getPackageVersions();
+	public PackageStateChanges computePackageDiff(Long templateId, Set<EPackageVersion> actual) {
+		List<EPackageVersion> nominal = this.packageVersionDAO.findByTemplate(templateId);
 		TreeSet<EPackageVersion> toInstall = this.findInstalls(actual, nominal);
-		TreeSet<EPackageVersion> toErase = this.findDeletes(actual, nominal, template.getRepos());
+		TreeSet<EPackageVersion> toErase = this.findDeletes(actual, nominal, this.repoDAO.findByTemplate(templateId));
 		TreeSet<EPackageVersion> toUpdate = this.findUpdates(toInstall, toErase);
 
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).

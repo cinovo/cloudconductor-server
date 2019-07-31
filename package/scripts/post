@@ -5,5 +5,12 @@ if [ $1 -eq 1 ]; then
 fi
 
 if [ $1 -eq 2 ]; then
-	service cloudconductor start
+    which systemctl 2> /dev/null
+    if [ $? -eq 0 ]
+    then
+        systemctl daemon-reload
+        systemctl start cloudconductor.service
+    else
+        service cloudconductor start
+    fi
 fi

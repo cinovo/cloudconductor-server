@@ -1,10 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import javax.transaction.Transactional;
-import javax.ws.rs.NotFoundException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.api.interfaces.IRepoMirror;
 import de.cinovo.cloudconductor.api.model.RepoMirror;
 import de.cinovo.cloudconductor.server.dao.IRepoMirrorDAO;
@@ -12,6 +7,10 @@ import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -45,6 +44,7 @@ public class RepoMirrorImpl implements IRepoMirror {
 	}
 	
 	@Override
+	@Transactional
 	public Long newMirror(RepoMirror mirror) {
 		RESTAssert.assertNotNull(mirror);
 		RESTAssert.assertNotEmpty(mirror.getRepo());

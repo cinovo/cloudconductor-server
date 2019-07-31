@@ -17,13 +17,12 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -49,5 +48,10 @@ public class PackageVersionDAOHib extends EntityDAOHibernate<EPackageVersion, Lo
 	public List<EPackageVersion> find(String baseName) {
 		return this.findListByQuery("FROM EPackageVersion r WHERE r.pkg.name = ?1", baseName);
 	}
-	
+
+	@Override
+	public List<EPackageVersion> findByTemplate(Long templateId) {
+		return this.findListByQuery("SELECT r FROM EPackageVersion r, ETemplate t WHERE r in elements(t.packageVersions) AND t.id = ?1", templateId);
+	}
+
 }

@@ -47,6 +47,7 @@ public class HostImpl implements IHost {
 	}
 
 	@Override
+	@Transactional
 	public SimpleHost[] getSimpleHosts() {
 		List<SimpleHost> simpleHosts = this.hostDAO.findSimpleHosts();
 		return simpleHosts.toArray(new SimpleHost[0]);

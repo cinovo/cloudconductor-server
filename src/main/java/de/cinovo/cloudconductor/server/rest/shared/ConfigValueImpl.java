@@ -69,12 +69,14 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public ConfigValue[] getClean(String template) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.getClean(template);
 	}
 	
 	@Override
+	@Transactional
 	public ConfigValue[] getCleanUnstacked(String template) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.getCleanUnstacked(template);
@@ -110,6 +112,7 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public ConfigValue[] getCleanVars(String template) {
 		if ((template == null) || template.isEmpty() || template.equals("null")) {
 			return this.getCleanUnstacked(ConfigValueDAOHib.RESERVED_VARIABLE);
@@ -122,6 +125,7 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public ConfigDiff[] diffTemplates(String templateA, String templateB) {
 		return this.differ.compare(templateA, templateB);
 	}
@@ -201,11 +205,13 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	@Transactional
 	public ConfigValue[] getUnstacked(String template) {
 		return this.getCleanUnstacked(template);
 	}
 	
 	@Override
+	@Transactional
 	public void deleteForService(String template, String service) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(service);
