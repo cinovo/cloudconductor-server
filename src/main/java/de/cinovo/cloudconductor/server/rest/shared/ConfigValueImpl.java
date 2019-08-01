@@ -154,7 +154,7 @@ public class ConfigValueImpl implements IConfigValue {
 	@Transactional
 	public void save(ConfigValue apiObject) {
 		RESTAssert.assertNotNull(apiObject);
-		RESTAssert.assertNotEmpty(apiObject.getKey());
+		RESTAssert.assertPattern(apiObject.getKey(), "^[\\w.-]+$");
 		
 		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
 			throw new NotAcceptableException();
