@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -10,33 +10,25 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
   selector: 'cc-inlineedit',
   templateUrl: './ccinlineedit.comp.html'
 })
-export class CCInlineEdit implements OnInit {
+export class CCInlineEdit {
 
   @Input() value: string;
-  @Output() onSave: EventEmitter<any> = new EventEmitter();
-  @Output() onEditDone: EventEmitter<any> = new EventEmitter();
+  @Input() options: string[] = [];
+  @Output() onSave: EventEmitter<string> = new EventEmitter();
+  @Output() onEditDone: EventEmitter<void> = new EventEmitter();
 
-  get editMode() {
+  private editing = false;
+  private oldVal: string;
+
+  get editMode(): boolean {
     return this.editing;
   }
 
   @Input()
-  set editMode(val: boolean) {
-    if (val == true && val != this.editing && !this.editing) {
+  set editMode(value: boolean) {
+    if (value && !this.editing) {
       this.edit();
     }
-  }
-
-  private editing: boolean = false;
-  private oldVal: string;
-
-  // Is Component in edit mode?
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-
   }
 
   edit() {
@@ -55,4 +47,5 @@ export class CCInlineEdit implements OnInit {
     this.value = this.oldVal;
     this.onEditDone.emit();
   }
+
 }

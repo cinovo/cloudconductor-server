@@ -22,12 +22,19 @@ export interface TemplatePackageVersion {
 }
 
 type PackageTree = {
-  [pkgName: string]: {
-    pkgName: string,
-    inUse: boolean,
-    versions: Array<PackageVersion>,
-    newestVersion?: PackageVersion
-  }
+  [pkgName: string]: PackageTreeNode
+}
+
+type PackageTreeNode = {
+  pkgName: string,
+  inUse: boolean,
+  versions: Array<PackageVersion>,
+  newestVersion?: PackageVersion
+}
+
+type NewPackageVersion = {
+  pkg: string;
+  version: string;
 }
 
 @Component({
@@ -42,7 +49,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public packageVersions: TemplatePackageVersion[] = [];
 
   public packageTree: PackageTree = {};
-  public newPackage: { pkg: string, version: string } = null;
+  public newPackage: NewPackageVersion = null;
 
   private _allSelected = false;
   private templateSub: Subscription;
@@ -106,7 +113,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
   }
 
   private preparePVS(pvs: PackageVersion[]) {
-    const newPVTree = {}
+    const newPVTree = {};
     for (let pv of pvs) {
       if (!newPVTree[pv.name]) {
         newPVTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
@@ -127,11 +134,9 @@ export class TemplatePackages implements OnInit, OnDestroy {
   protected updatePackage(pv: TemplatePackageVersion): void {
     if (pv) {
       this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
-        () => {
-          this.alerts.success('The package ' + pv.pkg + ' has been successfully updated.');
-        },
+        () => this.alerts.success('The package ' + pv.pkg + ' has been updated successfully.'),
         (error) => this.alerts.danger('The package update of ' + pv.pkg + ' failed.')
-      )
+      );
     }
   }
 
@@ -141,7 +146,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
       this.templateHttp.updatePackage(this.template, currentPackage.pkg).subscribe(
         () => {
           this.updatePackages(packageNames);
-          this.alerts.success('The package ' + currentPackage.pkg + ' has been successfully updated.');
+          this.alerts.success('The package ' + currentPackage.pkg + ' has been updated successfully.');
         },
         (error) => {
           this.updatePackages(packageNames);
@@ -237,38 +242,54 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.newPackage = {pkg: '', version: ''};
   }
 
-  protected addNewPackage(): void {
-    if (this.newPackage && this.newPackage.pkg && this.newPackage.version
-    ) {
-      const addedPkg = Object.assign({}, this.newPackage);
-      this.templateHttp.getTemplate(this.template.name).subscribe(
-        (result) => {
-          result.versions[addedPkg.pkg] = addedPkg.version;
-          this.templateHttp.save(result).subscribe(
-            () => {
-              this.alerts.success(`Successfully added package '${addedPkg.pkg}:${addedPkg.version}' to the template.`);
-              this.newPackage = null;
-            },
-            () => {
-              this.alerts.danger(`Failed to add package '${addedPkg.pkg}:${addedPkg.version}' to the template!`);
-              this.cancelAddPackage();
-            }
-          )
-        },
-        () => {
-          this.alerts.danger('Failed to add the new package to the template.');
-          this.cancelAddPackage();
-        }
-      )
+  public updatePackageVersion(pkg: string, version: string) {
+    if (!pkg || !version) {
+      return;
     }
+    this.updatePackageForTemplate(this.template.name, { pkg, version });
   }
 
-  private getVersions(pkgName: string): Array<PackageVersion> {
-    if (Validator.notEmpty(pkgName)
-    ) {
-      return [...this.packageTree[pkgName].versions].sort(Sorter.packageVersion);
+  protected addNewPackage(): void {
+    if (!this.newPackage || !this.newPackage.pkg || !this.newPackage.version) {
+      return;
+    }
+
+    this.updatePackageForTemplate(this.template.name, {...this.newPackage});
+  }
+
+  private updatePackageForTemplate(templateName: string, updatedPackage: NewPackageVersion) {
+    this.templateHttp.getTemplate(templateName).subscribe(
+      (result) => {
+        result.versions[updatedPackage.pkg] = updatedPackage.version;
+        this.templateHttp.save(result).subscribe(
+          () => {
+            this.alerts.success(`Successfully updated package '${updatedPackage.pkg} to version '${updatedPackage.version}'`);
+            this.newPackage = null;
+          },
+          () => {
+            this.alerts.danger(`Failed to update package '${updatedPackage.pkg}' to version '${updatedPackage.version}'!`);
+            this.cancelAddPackage();
+          }
+        )
+      },
+      () => {
+        this.alerts.danger(`Failed to update package '${updatedPackage.pkg}' to version '${updatedPackage.version}'!`);
+        this.cancelAddPackage();
+      }
+    );
+  }
+
+  public getVersions(pkgName: string): Array<PackageVersion> {
+    if (Validator.notEmpty(pkgName)) {
+      if (this.packageTree[pkgName]) {
+        return [...this.packageTree[pkgName].versions].sort(Sorter.packageVersion);
+      }
     }
     return [];
+  }
+
+  public getVersionStrings(pkgName: string): string[] {
+    return this.getVersions(pkgName).map(pv => pv.version);
   }
 
   protected onPackageChange(): void {
@@ -284,7 +305,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.newPackage = null;
   }
 
-  protected packageTreeArray(): Array<any> {
+  protected packageTreeArray(): PackageTreeNode[] {
     let result = [];
     for (let element of Object.values(this.packageTree)) {
       if (this.template.versions[element.pkgName] == null) {
