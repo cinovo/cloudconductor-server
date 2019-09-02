@@ -139,4 +139,9 @@ export class ConfigValueHttpService {
   public getDiff(templateA: string, templateB: string): Observable<ConfigDiff[]> {
     return this.http.get<ConfigDiff[]>(`${this._basePathURL}/diff/${templateA}/${templateB}`);
   }
+
+  public migrateGlobalConfig(): Observable<boolean> {
+    return this.http.put<boolean>(`${this._basePathURL}/migrate`, {});
+  }
+
 }

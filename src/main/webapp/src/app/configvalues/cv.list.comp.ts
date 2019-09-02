@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { Router } from "@angular/router";
+
+import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { AuthorizationGuard } from "../util/auth/authorization.guard";
 import { Role } from "../util/enums.util";
 import { AlertService } from "../util/alert/alert.service";
@@ -15,7 +16,6 @@ export class ConfigValueList implements OnInit, OnDestroy {
 
   private _templates: string[];
   private mayEdit: boolean = false;
-
 
   constructor(private confHttp: ConfigValueHttpService,
               private router: Router,
@@ -35,10 +35,10 @@ export class ConfigValueList implements OnInit, OnDestroy {
 
   protected gotoDetails(template: string): void {
     if (template) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['config', template]);
     }
   }
-
 
   get templates(): string[] {
     return this._templates;
@@ -53,11 +53,24 @@ export class ConfigValueList implements OnInit, OnDestroy {
       .subscribe(
         () => {
           this.alerts.success(`All config values for template '${template}' were deleted successfully!`);
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['config']);
         },
         (err) => {
           this.alerts.danger(`Error deleting config values for template '${template}'!`);
+          console.error(err);
         }
       );
   }
+
+  public migrateGlobalConfig(): void {
+    this.confHttp.migrateGlobalConfig().subscribe(
+      () => this.alerts.success("Successfully migrated global configuration."),
+      (err) => {
+        this.alerts.danger('Error migrating global config!');
+        console.error(err);
+      }
+    );
+  }
+
 }

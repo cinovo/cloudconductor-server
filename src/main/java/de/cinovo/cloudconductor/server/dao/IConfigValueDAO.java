@@ -17,10 +17,11 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import java.util.List;
-
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -37,6 +38,16 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	List<EConfigValue> findBy(String template);
 	
 	/**
+	 * @return configuration values for global template
+	 */
+	List<EConfigValue> findForGlobalTemplate();
+	/**
+	 * @param templateName the name of the template
+	 * @return list of configuration values for GLOBAL service of template
+	 */
+	List<EConfigValue> findForGlobalService(String templateName);
+	
+	/**
 	 * @param template the template name
 	 * @param service the service name
 	 * @return the configuration for the service within the given template
@@ -50,6 +61,17 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	 * @return the value of the key within the configuration for the service within the given template
 	 */
 	EConfigValue findBy(String template, String service, String key);
+	
+	/**
+	 * @param template the template name
+	 * @return set of service names for given template
+	 */
+	Set<String> findServicesForTemplate(String template);
+	
+	/**
+	 * @return set of available templates
+	 */
+	Set<String> findRealTemplates();
 	
 	/**
 	 * @return list of templates available in config
