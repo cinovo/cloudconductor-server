@@ -2,18 +2,20 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { saveAs } from "file-saver";
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
-import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
+import { PackageHttpService, PackageVersion, SimplePackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
+import { DatePipe } from "@angular/common";
 
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
- * @author psigloch
+ * @author psigloch, mweise
  */
 export interface TemplatePackageVersion {
   pkg: string,
@@ -49,7 +51,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
 
   constructor(private packageHttp: PackageHttpService,
               private templateHttp: TemplateHttpService,
-              private alerts: AlertService) {
+              private alerts: AlertService,
+              private datePipe: DatePipe) {
   };
 
   ngOnInit(): void {
@@ -106,7 +109,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
   }
 
   private preparePVS(pvs: PackageVersion[]) {
-    const newPVTree = {}
+    const newPVTree = {};
     for (let pv of pvs) {
       if (!newPVTree[pv.name]) {
         newPVTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
@@ -302,5 +305,22 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  public exportFile(): void {
+    const templateName = this.template.name;
+
+    this.templateHttp.getSimplePackageVersions(templateName).subscribe(
+      (simpePVs) => {
+        const jsonBlob = new Blob([JSON.stringify(simpePVs, null, 2)], {type : 'application/json'});
+        const filename =  [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
+        saveAs(jsonBlob, filename);
+      },
+      (err) => {
+        this.alerts.danger(`Error exporting package versions for template '${templateName}'!`);
+        console.error(err);
+      }
+    );
+  }
+
 }
 

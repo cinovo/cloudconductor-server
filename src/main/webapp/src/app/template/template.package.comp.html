@@ -1,6 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     <cc-panel [title]="'Installed packages'" icon="fa-book">
+      <li cc-panel-dropdown>
+        <a role="button" href="javascript:void(0)" (click)="exportFile()">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          Export JSON
+        </a>
+      </li>
+
       <table class="table-condensed table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
@@ -92,6 +99,7 @@
 
         </tbody>
       </table>
+
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
         <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
           <i class="fa fa-refresh fa-fw"></i>

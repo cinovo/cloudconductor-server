@@ -9,6 +9,7 @@ import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
 import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -236,7 +238,19 @@ public class TemplateImpl implements ITemplate {
 
 		return packageVersions.toArray(new PackageVersion[0]);
 	}
-
+	
+	@Override
+	@Transactional
+	public SimplePackageVersion[] getSimplePackageVersionsForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+		return template.getPackageVersions().stream() //
+				.map(EPackageVersion::toSimpleApi) //
+				.sorted(Comparator.comparing(SimplePackageVersion::getName)) //
+				.toArray(SimplePackageVersion[]::new);
+	}
+	
 	@Override
 	@Transactional
 	public PackageDiff[] packageDiff(String templateA, String templateB) {
