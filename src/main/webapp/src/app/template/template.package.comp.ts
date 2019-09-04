@@ -46,6 +46,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public packageTree: PackageTree = {};
   public newPackage: { pkg: string, version: string } = null;
 
+  public importing = false;
+
   private _allSelected = false;
   private templateSub: Subscription;
 
@@ -320,6 +322,44 @@ export class TemplatePackages implements OnInit, OnDestroy {
         console.error(err);
       }
     );
+  }
+
+  public importJSONFile(event: Event): void {
+    if (!event || !event.target) {
+      return;
+    }
+    const selectedFiles = event.target['files'];
+    if (!selectedFiles || selectedFiles.length < 1) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsText(selectedFiles[0]);
+    reader.onloadend = () => {
+      let packageVersions: SimplePackageVersion[];
+      try {
+        packageVersions = JSON.parse(reader.result);
+      } catch (err) {
+        this.alerts.danger(`Error reading package versions from JSON file!`);
+        console.error(err);
+        return;
+      }
+
+      this.importing = true;
+      this.templateHttp.replacePackageVersionsForTemplate(this.template.name, packageVersions)
+        .finally(() => this.importing = false)
+        .subscribe(
+        (updatedTemplate) => this.alerts.success(`Successfully replaced packages in template '${updatedTemplate.name}'`),
+        (err) => {
+          if (!err.error) {
+            this.alerts.danger(`Error updating package versions from JSON file!`);
+            console.error(err);
+            return;
+          }
+          this.alerts.danger(err.error);
+        }
+      );
+    };
   }
 
 }

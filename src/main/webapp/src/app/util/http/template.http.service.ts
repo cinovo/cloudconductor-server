@@ -153,5 +153,9 @@ export class TemplateHttpService {
     return this.http.get<SimplePackageVersion[]>(`${this._basePathURL}/${templateName}/package/versions/simple`);
   }
 
+  public replacePackageVersionsForTemplate(templateName: string, packageVersions: SimplePackageVersion[]): Observable<Template> {
+    return this.http.put<Template>(`${this._basePathURL}/${templateName}/package/versions`, packageVersions);
+  }
+
 }
 

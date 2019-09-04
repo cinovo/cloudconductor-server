@@ -100,6 +100,18 @@
         </tbody>
       </table>
 
+      <div class="pull-left form-inline" cc-panel-body>
+        <div *ngIf="!importing; else spinner" class="form-group">
+          <label class="control-label" for="importFile">Import file</label>
+          <input type="file" class="form-control" id="importFile" (change)="importJSONFile($event)"/>
+        </div>
+
+        <ng-template #spinner>
+          <i class="fa fa-spinner fa-pulse fa-fw"></i>
+          Importing
+        </ng-template>
+      </div>
+
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
         <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
           <i class="fa fa-refresh fa-fw"></i>

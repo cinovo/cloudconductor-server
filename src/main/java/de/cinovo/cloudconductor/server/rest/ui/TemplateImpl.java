@@ -53,29 +53,30 @@ import java.util.Set;
 public class TemplateImpl implements ITemplate {
 
 	@Autowired
+	private IAgentOptionsDAO agentOptionsDAO;
+	@Autowired
+	private IServiceDAO serviceDAO;
+	@Autowired
+	private IServiceDefaultStateDAO serviceDefaultStateDAO;
+	@Autowired
 	private ITemplateDAO templateDAO;
+	
+	@Autowired
+	private HostHandler hostHandler;
+	@Autowired
+	private ServiceDefaultStateHandler serviceDefaultStateHandler;
+	@Autowired
+	private SSHHandler sshKeyHandler;
 	@Autowired
 	private TemplateHandler templateHandler;
 	@Autowired
-	private IAgentOptionsDAO agentOptionsDAO;
+	private TemplatePackageDiffer templatePackageComparator;
+	
 	@Autowired
 	private TemplatesWSHandler templatesWSHandler;
 	@Autowired
 	private TemplateDetailWSHandler templateDetailWSHandler;
-	@Autowired
-	private SSHHandler sshKeyHandler;
-	@Autowired
-	private IServiceDAO serviceDAO;
-	@Autowired
-	private HostHandler hostHandler;
-	@Autowired
-	private IServiceDefaultStateDAO serviceDefaultStateDAO;
-	@Autowired
-	private ServiceDefaultStateHandler serviceDefaultStateHandler;
-	@Autowired
-	private TemplatePackageDiffer templatePackageComparator;
-
-
+	
 	@Override
 	@Transactional
 	public Template[] get() {
@@ -109,29 +110,29 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public void delete(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate eTemplate = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(eTemplate);
+		ETemplate eTemplate = this.getTemplateByName(templateName);
 		this.templateDAO.delete(eTemplate);
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, eTemplate.toApi()));
+	}
+	
+	private ETemplate getTemplateByName(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
+		return template;
 	}
 
 	@Override
 	@Transactional
 	public Template get(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
-		return template.toApi();
+		return this.getTemplateByName(templateName).toApi();
 	}
 
 	@Override
 	@Transactional
 	public Template updatePackage(String templateName, String packageName) {
-		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotEmpty(packageName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
+		ETemplate template = this.getTemplateByName(templateName);
 		template = this.templateHandler.updatePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
@@ -144,10 +145,8 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public Template deletePackage(String templateName, String packageName) {
-		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotEmpty(packageName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
+		ETemplate template = this.getTemplateByName(templateName);
 		template = this.templateHandler.removePackage(template, packageName);
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi();
@@ -192,9 +191,7 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public Service[] getServicesForTemplate(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
+		ETemplate template = this.getTemplateByName(templateName);
 		List<EPackageVersion> pvs = template.getPackageVersions();
 
 		Set<Service> templateServices = new HashSet<>();
@@ -212,10 +209,8 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public Repo[] getReposForTemplate(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-
+		ETemplate template = this.getTemplateByName(templateName);
+		
 		Set<Repo> repos = new HashSet<>();
 		for(ERepo r : template.getRepos()) {
 			repos.add(r.toApi());
@@ -227,10 +222,8 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public PackageVersion[] getPackageVersionsForTemplate(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-
+		ETemplate template = this.getTemplateByName(templateName);
+		
 		Set<PackageVersion> packageVersions = new HashSet<>();
 		for(EPackageVersion packageVersion : template.getPackageVersions()) {
 			packageVersions.add(packageVersion.toApi());
@@ -241,11 +234,19 @@ public class TemplateImpl implements ITemplate {
 	
 	@Override
 	@Transactional
+	public Template replacePackageVersionsForTemplate(String templateName, List<SimplePackageVersion> packageVersions) {
+		ETemplate template = this.templateHandler.replacePackageVersionsForTemplate(packageVersions, templateName);
+		Template aTemplate = template.toApi();
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.hostHandler.updateHostDetails(template);
+		return aTemplate;
+	}
+	
+	@Override
+	@Transactional
 	public SimplePackageVersion[] getSimplePackageVersionsForTemplate(String templateName) {
-		RESTAssert.assertNotEmpty(templateName);
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-		return template.getPackageVersions().stream() //
+		return this.getTemplateByName(templateName).getPackageVersions().stream() //
 				.map(EPackageVersion::toSimpleApi) //
 				.sorted(Comparator.comparing(SimplePackageVersion::getName)) //
 				.toArray(SimplePackageVersion[]::new);
