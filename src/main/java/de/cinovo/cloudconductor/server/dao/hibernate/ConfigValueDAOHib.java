@@ -22,7 +22,7 @@ import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,8 +41,7 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
     private static final String WHERE_SERVICE = " AND c.service = ?2";
     private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
     private static final String WHERE_KEY = " AND c.configkey = ?";
-
-    @SuppressWarnings("JpaQlInspection")
+    
     private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
 
     @Override
@@ -83,11 +82,9 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
         return this.findListByQuery(this.createQuery(template, service, null),  (Object[]) this.getParams(template, service, null));
     }
 
-
     private EConfigValue find(String template, String service, String key) {
         return this.findByQuery(this.createQuery(template, service, key),  (Object[]) this.getParams(template, service, key));
     }
-
 
     private String createQuery(String template, String service, String key) {
         StringBuilder b = new StringBuilder();
@@ -108,12 +105,7 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
     }
 
     private String[] getParams(String... params) {
-        List<String> req = new ArrayList<>();
-        for(String s : params) {
-            if(s != null && !(s.isEmpty())) {
-                req.add(s);
-            }
-        }
-        return req.toArray(new String[req.size()]);
+        return Arrays.stream(params).filter(p -> p != null && !p.isEmpty()).toArray(String[]::new);
     }
+    
 }

@@ -9,30 +9,25 @@ import { DOCUMENT } from "@angular/common";
  */
 @Component({
   selector: 'cc-export',
-  templateUrl: './ccexport.comp.html'
+  templateUrl: './ccexport.comp.html',
+  styleUrls: ['./ccexport.comp.scss']
 })
-export class CCExport implements OnInit {
+export class CCExport {
 
-
-  @Input() fileName = CCExport.genFileName();
+  @Input() fileName: string = CCExport.genFileName();
   @Input() title: string = 'Just copy the string below';
 
   @Input() export: string;
 
-  constructor(@Inject(DOCUMENT) private dom: Document) {
-  }
+  constructor(@Inject(DOCUMENT) private dom: Document) { }
 
-  ngOnInit(): void {
-
-  }
-
-  copyToClipboard(exportCV: HTMLInputElement) {
+  public copyToClipboard(exportCV: HTMLTextAreaElement) {
     exportCV.select();
     this.dom.execCommand("copy");
     exportCV.setSelectionRange(0, 0);
   }
 
-  download(exportElement: HTMLInputElement) {
+  public download(exportElement: HTMLTextAreaElement) {
     let json = exportElement.value;
     let blob = new Blob([json], {type: 'application/json;charset=utf-8;'});
     let link = document.createElement('a');
@@ -42,12 +37,13 @@ export class CCExport implements OnInit {
     link.remove();
   }
 
-  static genFileName() {
+  private static genFileName(): string {
     let text = "";
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
     return text;
   }
 

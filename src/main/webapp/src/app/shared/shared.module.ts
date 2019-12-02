@@ -27,7 +27,6 @@ import { CCInlineEdit } from "../util/ccinlineedit/ccinlineedit.comp";
     CommonModule,
     FormsModule,
     RouterModule,
-
     ConfirmationPopoverModule
   ],
   declarations: [
@@ -39,12 +38,11 @@ import { CCInlineEdit } from "../util/ccinlineedit/ccinlineedit.comp";
     CCPanelListComponent,
     CCTitle,
     CCExport,
-    CCInlineEdit
+    CCInlineEdit,
   ],
   exports: [
     CommonModule,
     FormsModule,
-
     CCDashboardPanel,
     CCFilter,
     CCPagination,
@@ -53,7 +51,7 @@ import { CCInlineEdit } from "../util/ccinlineedit/ccinlineedit.comp";
     CCPanelListComponent,
     CCTitle,
     CCExport,
-    CCInlineEdit
+    CCInlineEdit,
   ]
 })
 export class SharedModule {}
