@@ -9,6 +9,7 @@ import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
 import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
@@ -236,7 +237,17 @@ public class TemplateImpl implements ITemplate {
 
 		return packageVersions.toArray(new PackageVersion[0]);
 	}
-
+	
+	@Override
+	public Template replacePackageVersionsForTemplate(String s, List<SimplePackageVersion> list) {
+		return null;
+	}
+	
+	@Override
+	public SimplePackageVersion[] getSimplePackageVersionsForTemplate(String s) {
+		return new SimplePackageVersion[0];
+	}
+	
 	@Override
 	@Transactional
 	public PackageDiff[] packageDiff(String templateA, String templateB) {
