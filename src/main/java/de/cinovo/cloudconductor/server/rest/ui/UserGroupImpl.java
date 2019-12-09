@@ -1,13 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.Response.Status;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IUserGroup;
 import de.cinovo.cloudconductor.api.model.User;
 import de.cinovo.cloudconductor.api.model.UserGroup;
@@ -18,6 +10,12 @@ import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -43,7 +41,7 @@ public class UserGroupImpl implements IUserGroup {
 		for (EUserGroup group : this.userGroupDAO.findList()) {
 			result.add(group.toApi());
 		}
-		return result.toArray(new UserGroup[result.size()]);
+		return result.toArray(new UserGroup[0]);
 	}
 	
 	@Override
@@ -75,9 +73,8 @@ public class UserGroupImpl implements IUserGroup {
 		RESTAssert.assertNotEmpty(userGroupName);
 		RESTAssert.assertFalse(userGroupName.equalsIgnoreCase("anonymous"));
 		EUserGroup userGroup = this.userGroupDAO.findByName(userGroupName);
-		if (userGroup != null) {
-			this.userGroupDAO.delete(userGroup);
-		}
+		RESTAssert.assertNotNull(userGroup, Status.NOT_FOUND);
+		this.userGroupDAO.delete(userGroup);
 	}
 	
 	@Override
@@ -91,7 +88,7 @@ public class UserGroupImpl implements IUserGroup {
 		for (EUser user : this.userDAO.findByGroup(eUserGroup)) {
 			groupMembers.add(user.toApi());
 		}
-		return groupMembers.toArray(new User[groupMembers.size()]);
+		return groupMembers.toArray(new User[0]);
 	}
 	
 }

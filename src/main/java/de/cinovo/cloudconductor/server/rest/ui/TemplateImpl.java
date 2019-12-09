@@ -109,7 +109,7 @@ public class TemplateImpl implements ITemplate {
 	public void delete(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate eTemplate = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(eTemplate);
+		RESTAssert.assertNotNull(eTemplate, Status.NOT_FOUND);
 		this.templateDAO.delete(eTemplate);
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, eTemplate.toApi()));
 	}

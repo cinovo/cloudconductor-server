@@ -44,7 +44,7 @@
             </div>
 
             <div [ngClass]="{ 'has-error': !fileForm.controls.fileMode.pristine && !fileForm.controls.fileMode.valid }">
-              <label for="group" class="col-md-2 control-label">File Mode</label>
+              <label for="fileMode" class="col-md-2 control-label">File Mode</label>
               <div class="col-md-2">
                 <input id="fileMode" type="text" class="form-control" formControlName="fileMode" maxlength=3>
               </div>
@@ -101,8 +101,6 @@
             </div>
           </div>
         </div>
-
-
       </cc-panel>
 
       <div class="form-group">
@@ -122,8 +120,8 @@
 
     <div class="col-lg-6" *ngIf="fileForm.value.type !== 'Directory'">
       <cc-panel [title]="'File Content'" [icon]="'fa-plus'">
-              <textarea id="fileContent" class="form-control" cols="30" rows="25" style="font-family: monospace;"
-                        formControlName="fileContent" cc-panel-body></textarea>
+        <textarea id="fileContent" class="form-control" cols="30" rows="25" style="font-family: monospace;"
+                  formControlName="fileContent" cc-panel-body></textarea>
       </cc-panel>
     </div>
 
