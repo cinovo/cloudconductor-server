@@ -128,7 +128,12 @@ public class ConfigValueImpl implements IConfigValue {
 	public ConfigDiff[] diffTemplates(String templateA, String templateB) {
 		return this.differ.compare(templateA, templateB);
 	}
-
+	
+	@Override
+	public void migrateGlobalConfig() {
+	
+	}
+	
 	@Override
 	@Transactional
 	public String getExact(String template, String service, String key) {
