@@ -15,7 +15,7 @@ export class ConfigValueList implements OnInit, OnDestroy {
   public reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
 
   private _templates: string[];
-  private mayEdit: boolean = false;
+  public mayEdit = false;
 
   constructor(private confHttp: ConfigValueHttpService,
               private router: Router,
