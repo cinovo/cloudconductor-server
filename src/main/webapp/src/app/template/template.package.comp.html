@@ -27,7 +27,8 @@
             <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
-            {{pv.version}}
+            <cc-inlineedit [value]="pv.version" [options]="getVersionStrings(pv.pkg)" (onSave)="updatePackageVersion(pv.pkg, $event)">
+            </cc-inlineedit>
           </td>
           <td>
             <span *ngIf="packageTree[pv.pkg]">
@@ -35,13 +36,13 @@
             </span>
           </td>
           <td>
-            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" title="Update package to newest">
+            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" [title]="'Update package \'' + pv.pkg + '\' to latest'">
               <i class="fa fa-refresh fa-fw"></i>
             </a>
           </td>
           <td>
             <a role="button" mwlConfirmationPopover
-              title="Remove package from template"
+              [attr.title]="'Remove package \'' + pv.pkg + '\' from template'"
               [title]="'Please verify!'"
               [message]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
               placement="left"
@@ -85,7 +86,8 @@
         </tr>
 
         <tr *ngIf="!newPackage" (click)="goToAddPackage()">
-          <td colspan="6" role="button"><i class="fa fa-plus fa-fw"></i>
+          <td colspan="6" role="button">
+            <i class="fa fa-plus fa-fw"></i>
             Add package to template
           </td>
         </tr>
@@ -98,7 +100,7 @@
           Update selected
         </button>
         <button class="btn btn-danger" [disabled]="!isPkgSelected()" mwlConfirmationPopover
-          title="Remove packages from template"
+          [attr.title]="'Remove packages from template'"
           [title]="'Please verify!'"
           [message]="'Are you sure you want to remove all selected packages from the template?'"
           confirmButtonType="danger"
