@@ -17,23 +17,21 @@ package de.cinovo.cloudconductor.server.rest.ui;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IService;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.ServiceHandler;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -46,8 +44,6 @@ public class ServiceImpl implements IService {
 	
 	@Autowired
 	private IServiceDAO serviceDAO;
-	@Autowired
-	private ITemplateDAO dtemplate;
 	
 	@Autowired
 	private ServiceHandler serviceHandler;
@@ -60,7 +56,7 @@ public class ServiceImpl implements IService {
 		for (EService m : this.serviceDAO.findList()) {
 			result.add(m.toApi());
 		}
-		return result.toArray(new Service[result.size()]);
+		return result.toArray(new Service[0]);
 	}
 	
 	@Override
@@ -97,7 +93,7 @@ public class ServiceImpl implements IService {
 	public void delete(String name) {
 		RESTAssert.assertNotEmpty(name);
 		EService model = this.serviceDAO.findByName(name);
-		RESTAssert.assertNotNull(model);
+		RESTAssert.assertNotNull(model, Status.NOT_FOUND);
 		this.serviceDAO.delete(model);
 	}
 	

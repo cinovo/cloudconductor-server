@@ -110,7 +110,9 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public void delete(String templateName) {
-		ETemplate eTemplate = this.getTemplateByName(templateName);
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate eTemplate = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(eTemplate, Status.NOT_FOUND);
 		this.templateDAO.delete(eTemplate);
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.DELETED, eTemplate.toApi()));
 	}

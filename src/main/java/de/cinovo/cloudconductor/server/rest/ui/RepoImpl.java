@@ -42,7 +42,7 @@ public class RepoImpl implements IRepo {
 		for (ERepo repo : findList) {
 			result.add(repo.toApi());
 		}
-		return result.toArray(new Repo[result.size()]);
+		return result.toArray(new Repo[0]);
 	}
 	
 	@Override
@@ -78,7 +78,7 @@ public class RepoImpl implements IRepo {
 	public void delete(String name) {
 		RESTAssert.assertNotNull(name);
 		ERepo g = this.repoDAO.findByName(name);
-		RESTAssert.assertNotNull(g);
+		RESTAssert.assertNotNull(g, Status.NOT_FOUND);
 		this.repoHandler.deleteEntity(g);
 	}
 	

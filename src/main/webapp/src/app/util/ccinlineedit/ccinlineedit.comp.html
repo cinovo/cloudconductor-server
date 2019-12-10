@@ -1,14 +1,26 @@
-<div *ngIf="editMode" class="form-inline">
-  <input type="text" class="form-control" [(ngModel)]="value"  style="width: 80%" (keyup.enter)="save()"
-         (keyup.esc)="abort()" title="value"/>
-  <button type="button" class="btn btn-sm" title="Abort" (click)="abort()">
-    <i class="fa fa-times fa-fw text-danger"></i>
-  </button>
-  <button type="button" class="btn btn-sm" title="Save" (click)="save()"><i class="fa fa-check fa-fw text-success"></i></button>
-</div>
-<div *ngIf="!editMode">
+<div *ngIf="!editMode; else editView">
   {{value}}
-  <a title="Click to edit" (click)="edit()" class="pull-right">
+  <a role="button" title="Click to edit" (click)="edit()" class="pull-right">
     <i class="fa fa-edit fa-fw"></i>
   </a>
 </div>
+
+<ng-template #editView>
+  <div *ngIf="editMode" class="form-inline">
+    <input *ngIf="options.length === 0; else select" type="text" class="form-control"
+           [(ngModel)]="value" style="width: 80%" (keyup.enter)="save()" (keyup.esc)="abort()" title="value"/>
+
+    <ng-template #select>
+      <select [(ngModel)]="value" class="form-control" title="value">
+        <option *ngFor="let option of options" [ngValue]="option">{{option}}</option>
+      </select>
+    </ng-template>
+
+    <button type="button" class="btn btn-sm" title="Abort" (click)="abort()">
+      <i class="fa fa-times fa-fw text-danger"></i>
+    </button>
+    <button type="button" class="btn btn-sm" title="Save" (click)="save()">
+      <i class="fa fa-check fa-fw text-success"></i>
+    </button>
+  </div>
+</ng-template>

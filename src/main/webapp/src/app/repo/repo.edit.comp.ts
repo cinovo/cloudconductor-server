@@ -79,7 +79,7 @@ export class RepoEdit implements OnInit {
 
   public save(formValue): void {
     const repo = this.repo;
-    repo.name = formValue.name;
+    repo.name = formValue.name.trim();
 
     this.doSave(repo)
     .subscribe(

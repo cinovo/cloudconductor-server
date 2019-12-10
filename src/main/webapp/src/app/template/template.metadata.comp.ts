@@ -111,7 +111,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
 
   public saveTemplateMetadata(formValue: TemplateForm): void {
     let templateToSave: Template = {
-      name: formValue.name,
+      name: formValue.name.trim(),
       description: formValue.description || '',
       repos: this.template.repos,
       versions: this.template.versions,

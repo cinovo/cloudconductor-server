@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.NotAcceptableException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,42 +45,43 @@ import java.util.List;
  */
 @JaxRsComponent
 public class ConfigValueImpl implements IConfigValue {
-
+	
 	@Autowired
 	private IConfigValueDAO configValueDAO;
-
+	
 	@Autowired
 	private ConfigValueHandler handler;
-
+	
 	@Autowired
 	private ConfigValueDiffer differ;
-
+	
+	
 	@Override
 	public String[] getAvailableTemplates() {
 		return this.configValueDAO.findTemplates().toArray(new String[0]);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] get(String template) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.get(template);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] getClean(String template) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.getClean(template);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] getCleanUnstacked(String template) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.getCleanUnstacked(template);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] get(String template, String service) {
@@ -87,7 +89,7 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(service);
 		return this.handler.get(template, service);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] getClean(String template, String service) {
@@ -95,34 +97,33 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(service);
 		return this.handler.getClean(template, service);
 	}
-
+	
 	@Override
 	@Transactional
 	public String get(String template, String service, String key) {
 		return this.handler.get(template, service, key);
 	}
-
-
+	
 	@Override
 	@Transactional
 	public String getClean(String template, String service, String key) {
 		RESTAssert.assertNotEmpty(template);
 		return this.handler.getClean(template, service, key);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] getCleanVars(String template) {
-		if(template == null || template.isEmpty() || template.equals("null")) {
+		if ((template == null) || template.isEmpty() || template.equals("null")) {
 			return this.getCleanUnstacked(ConfigValueDAOHib.RESERVED_VARIABLE);
 		}
 		List<ConfigValue> result = new ArrayList<>();
-		for(EConfigValue ecv : this.configValueDAO.findBy(template, ConfigValueDAOHib.RESERVED_VARIABLE)) {
+		for (EConfigValue ecv : this.configValueDAO.findBy(template, ConfigValueDAOHib.RESERVED_VARIABLE)) {
 			result.add(ecv.toApi());
 		}
 		return result.toArray(new ConfigValue[0]);
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigDiff[] diffTemplates(String templateA, String templateB) {
@@ -133,44 +134,44 @@ public class ConfigValueImpl implements IConfigValue {
 	public void migrateGlobalConfig() {
 	
 	}
-	
+  
 	@Override
 	@Transactional
 	public String getExact(String template, String service, String key) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(key);
-
+		
 		EConfigValue result;
-		if(ReservedConfigKeyStore.instance.isReserved(key)) {
+		if (ReservedConfigKeyStore.instance.isReserved(key)) {
 			return ReservedConfigKeyStore.instance.getValue(key);
 		}
-		if((service == null) || service.isEmpty() || service.equals("null")) {
+		if ((service == null) || service.isEmpty() || service.equals("null")) {
 			service = null;
 		}
 		result = this.configValueDAO.findBy(template, service, key);
-		if(result == null) {
+		if (result == null) {
 			throw new NotFoundException();
 		}
 		return result.getValue();
 	}
-
+	
 	@Override
 	@Transactional
 	public void save(ConfigValue apiObject) {
 		RESTAssert.assertNotNull(apiObject);
-		RESTAssert.assertNotEmpty(apiObject.getKey());
-
-		if(ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
+		RESTAssert.assertPattern(apiObject.getKey(), "^[\\w.-]+$");
+		
+		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
 			throw new NotAcceptableException();
 		}
-		if((apiObject.getTemplate() == null) || apiObject.getTemplate().isEmpty()) {
+		if ((apiObject.getTemplate() == null) || apiObject.getTemplate().isEmpty()) {
 			apiObject.setTemplate(ConfigValueDAOHib.RESERVED_GLOBAL);
 		}
-		if((apiObject.getService() == null) || apiObject.getService().isEmpty()) {
+		if ((apiObject.getService() == null) || apiObject.getService().isEmpty()) {
 			apiObject.setService(null);
 		}
 		EConfigValue ecv = this.configValueDAO.findBy(apiObject.getTemplate(), apiObject.getService(), apiObject.getKey());
-		if(ecv == null) {
+		if (ecv == null) {
 			ecv = new EConfigValue();
 			ecv.setTemplate(apiObject.getTemplate());
 			ecv.setService(apiObject.getService());
@@ -179,49 +180,48 @@ public class ConfigValueImpl implements IConfigValue {
 		ecv.setValue(apiObject.getValue().toString());
 		this.configValueDAO.save(ecv);
 	}
-
+	
 	@Override
 	@Transactional
 	public void delete(String template, String service, String key) {
 		RESTAssert.assertNotNull(template);
 		RESTAssert.assertNotEmpty(key);
-
-		if((template == null) || template.isEmpty()) {
+		
+		if ((template == null) || template.isEmpty()) {
 			template = ConfigValueDAOHib.RESERVED_GLOBAL;
 		}
-		if((service == null) || service.isEmpty() || service.equals("null")) {
+		if ((service == null) || service.isEmpty() || service.equals("null")) {
 			service = null;
 		}
 		EConfigValue ecv = this.configValueDAO.findBy(template, service, key);
-		if(ecv != null) {
-			this.configValueDAO.deleteById(ecv.getId());
-		}
+		
+		RESTAssert.assertNotNull(ecv, Status.NOT_FOUND);
+		this.configValueDAO.deleteById(ecv.getId());
 	}
-
+	
 	@Override
 	@Transactional
 	public void deleteForTemplate(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
-
+		
 		List<EConfigValue> configs = this.configValueDAO.findAll(templateName);
-
+		
 		configs.forEach(cv -> this.configValueDAO.delete(cv));
 	}
-
+	
 	@Override
 	@Transactional
 	public ConfigValue[] getUnstacked(String template) {
 		return this.getCleanUnstacked(template);
 	}
-
+	
 	@Override
 	@Transactional
 	public void deleteForService(String template, String service) {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(service);
-
+		
 		this.configValueDAO.findBy(template, service).forEach(cv -> this.configValueDAO.delete(cv));
 	}
-
-
+	
 }
