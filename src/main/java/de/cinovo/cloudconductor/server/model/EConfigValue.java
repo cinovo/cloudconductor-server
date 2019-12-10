@@ -44,6 +44,35 @@ public class EConfigValue extends AModelApiConvertable<ConfigValue> implements I
 	private String service;
 	private String configkey;
 	private String value;
+	
+	/** default constructor */
+	public EConfigValue() {
+		// nothing to do
+	}
+	
+	/**
+	 * @param template	the template name
+	 * @param service	the service name
+	 * @param key		the configuration key
+	 * @param value		the configuration value
+	 */
+	public EConfigValue(String template, String service, String key, String value) {
+		this.template = template;
+		this.service = service;
+		this.configkey = key;
+		this.value = value;
+	}
+	
+	/**
+	 * Create config value from api object
+	 * @param apiCV the api object to copy
+	 */
+	public EConfigValue(ConfigValue apiCV) {
+		this.template = apiCV.getTemplate();
+		this.service = apiCV.getService();
+		this.configkey = apiCV.getKey();
+		this.configkey = String.valueOf(apiCV.getValue());
+	}
 
 
 	@Override

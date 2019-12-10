@@ -25,6 +25,11 @@ import org.springframework.stereotype.Repository;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import javax.persistence.Query;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -32,21 +37,23 @@ import de.taimos.dvalin.jpa.EntityDAOHibernate;
  *
  * @author psigloch
  */
+@SuppressWarnings("JpaQlInspection")
 @Repository("ConfigValueDAOHib")
 public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> implements IConfigValueDAO {
 	
 	public static final String RESERVED_GLOBAL = "GLOBAL";
 	public static final String RESERVED_VARIABLE = "VARIABLES";
+	private static final Set<String> RESERVED = new HashSet(Arrays.asList(ConfigValueDAOHib.RESERVED_GLOBAL, ConfigValueDAOHib.RESERVED_VARIABLE));
 	
 	private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
 	private static final String WHERE_SERVICE = " AND c.service = ?2";
 	private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
 	private static final String WHERE_KEY = " AND c.configkey = ?";
 	
-	@SuppressWarnings("JpaQlInspection")
 	private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
-	
-	
+	private static final String SERVICES_OF_TEMPLATE = "SELECT DISTINCT conf.service " +
+			"FROM EConfigValue conf " +
+			"WHERE conf.template = :template";
 	@Override
 	public Class<EConfigValue> getEntityClass() {
 		return EConfigValue.class;
@@ -77,8 +84,30 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 	}
 	
 	@Override
+	public Set<String> findRealTemplates() {
+		return this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES, String.class).getResultList().stream().filter(t -> !ConfigValueDAOHib.RESERVED.contains(t)).collect(Collectors.toSet());
+	}
+	
+	@Override
+	public Set<String> findServicesForTemplate(String template) {
+		Query query = this.entityManager.createQuery(ConfigValueDAOHib.SERVICES_OF_TEMPLATE).setParameter("template", template);
+		List<String> result = query.getResultList();
+		return result.stream().filter(s -> !ConfigValueDAOHib.RESERVED.contains(s)).collect(Collectors.toSet());
+	}
+	
+	@Override
 	public List<EConfigValue> findAll(String template) {
 		return this.findListByQuery(ConfigValueDAOHib.BASE_QUERY, template);
+	}
+	
+	@Override
+	public List<EConfigValue> findForGlobalTemplate() {
+		return this.findBy(ConfigValueDAOHib.RESERVED_GLOBAL);
+	}
+	
+	@Override
+	public List<EConfigValue> findForGlobalService(String templateName) {
+		return this.findList(templateName, null);
 	}
 	
 	private List<EConfigValue> findList(String template, String service) {
@@ -114,6 +143,6 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 				req.add(s);
 			}
 		}
-		return req.toArray(new String[req.size()]);
+		return req.toArray(new String[0]);
 	}
 }

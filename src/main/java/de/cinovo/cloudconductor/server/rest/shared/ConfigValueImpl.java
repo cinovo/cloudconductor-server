@@ -23,6 +23,7 @@ import de.cinovo.cloudconductor.api.model.ConfigValue;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.dao.hibernate.ConfigValueDAOHib;
 import de.cinovo.cloudconductor.server.handler.ConfigValueHandler;
+import de.cinovo.cloudconductor.server.handler.GlobalConfigMigrator;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.cinovo.cloudconductor.server.util.ReservedConfigKeyStore;
 import de.cinovo.cloudconductor.server.util.comparators.ConfigValueDiffer;
@@ -48,12 +49,12 @@ public class ConfigValueImpl implements IConfigValue {
 	
 	@Autowired
 	private IConfigValueDAO configValueDAO;
-	
 	@Autowired
 	private ConfigValueHandler handler;
-	
 	@Autowired
 	private ConfigValueDiffer differ;
+	@Autowired
+	private GlobalConfigMigrator globalConfigMigrator;
 	
 	
 	@Override
@@ -128,11 +129,6 @@ public class ConfigValueImpl implements IConfigValue {
 	@Transactional
 	public ConfigDiff[] diffTemplates(String templateA, String templateB) {
 		return this.differ.compare(templateA, templateB);
-	}
-	
-	@Override
-	public void migrateGlobalConfig() {
-	
 	}
   
 	@Override
@@ -224,4 +220,9 @@ public class ConfigValueImpl implements IConfigValue {
 		this.configValueDAO.findBy(template, service).forEach(cv -> this.configValueDAO.delete(cv));
 	}
 	
+	@Override
+	@Transactional
+	public void migrateGlobalConfig() {
+		this.globalConfigMigrator.migrateGlobalConfig();
+	}
 }
