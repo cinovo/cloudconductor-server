@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';

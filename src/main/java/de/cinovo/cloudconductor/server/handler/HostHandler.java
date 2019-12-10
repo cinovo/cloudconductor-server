@@ -1,15 +1,6 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.UUID;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
@@ -20,6 +11,13 @@ import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -49,7 +47,7 @@ public class HostHandler {
 	 */
 	public void updateHostDetails(ETemplate template) {
 		for (EHost host : template.getHosts()) {
-			this.hostDetailWSHandler.broadcastChange(host.getUuid(), new WSChangeEvent<Host>(ChangeType.UPDATED, host.toApi()));
+			this.hostDetailWSHandler.broadcastChange(host.getUuid(), new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
 		}
 	}
 	

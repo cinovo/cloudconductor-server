@@ -17,16 +17,17 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
 import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,50 +40,50 @@ import java.util.stream.Collectors;
 @SuppressWarnings("JpaQlInspection")
 @Repository("ConfigValueDAOHib")
 public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> implements IConfigValueDAO {
-
-    public static final String RESERVED_GLOBAL = "GLOBAL";
-    public static final String RESERVED_VARIABLE = "VARIABLES";
+	
+	public static final String RESERVED_GLOBAL = "GLOBAL";
+	public static final String RESERVED_VARIABLE = "VARIABLES";
 	private static final Set<String> RESERVED = new HashSet(Arrays.asList(ConfigValueDAOHib.RESERVED_GLOBAL, ConfigValueDAOHib.RESERVED_VARIABLE));
-
-    private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
-    private static final String WHERE_SERVICE = " AND c.service = ?2";
-    private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
-    private static final String WHERE_KEY = " AND c.configkey = ?";
-
-    private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
+	
+	private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
+	private static final String WHERE_SERVICE = " AND c.service = ?2";
+	private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
+	private static final String WHERE_KEY = " AND c.configkey = ?";
+	
+	private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
 	private static final String SERVICES_OF_TEMPLATE = "SELECT DISTINCT conf.service " +
 			"FROM EConfigValue conf " +
 			"WHERE conf.template = :template";
-    @Override
-    public Class<EConfigValue> getEntityClass() {
-        return EConfigValue.class;
-    }
-
-    @Override
-    public List<EConfigValue> findBy(String template) {
-        return this.findList(template, null);
-    }
-
-    @Override
-    public List<EConfigValue> findBy(String template, String service) {
-        return this.findList(template, service);
-    }
-
-    @Override
-    public EConfigValue findBy(String template, String service, String key) {
-        return this.find(template, service, key);
-    }
-
-    @Override
-    public List<String> findTemplates() {
-        List<String> result = this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES).getResultList();
-        if(!result.contains(ConfigValueDAOHib.RESERVED_GLOBAL)) {
-            result.add(ConfigValueDAOHib.RESERVED_GLOBAL);
-        }
-        return result;
-    }
-
-    @Override
+	@Override
+	public Class<EConfigValue> getEntityClass() {
+		return EConfigValue.class;
+	}
+	
+	@Override
+	public List<EConfigValue> findBy(String template) {
+		return this.findList(template, null);
+	}
+	
+	@Override
+	public List<EConfigValue> findBy(String template, String service) {
+		return this.findList(template, service);
+	}
+	
+	@Override
+	public EConfigValue findBy(String template, String service, String key) {
+		return this.find(template, service, key);
+	}
+	
+	@Override
+	public List<String> findTemplates() {
+		List<String> result = this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES).getResultList();
+		if (!result.contains(ConfigValueDAOHib.RESERVED_GLOBAL)) {
+			result.add(ConfigValueDAOHib.RESERVED_GLOBAL);
+		}
+		return result;
+	}
+	
+	@Override
 	public Set<String> findRealTemplates() {
 		return this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES, String.class).getResultList().stream().filter(t -> !ConfigValueDAOHib.RESERVED.contains(t)).collect(Collectors.toSet());
 	}
@@ -95,10 +96,10 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 	}
 	
 	@Override
-    public List<EConfigValue> findAll(String template) {
-        return this.findListByQuery(ConfigValueDAOHib.BASE_QUERY, template);
-    }
-
+	public List<EConfigValue> findAll(String template) {
+		return this.findListByQuery(ConfigValueDAOHib.BASE_QUERY, template);
+	}
+	
 	@Override
 	public List<EConfigValue> findForGlobalTemplate() {
 		return this.findBy(ConfigValueDAOHib.RESERVED_GLOBAL);
@@ -109,41 +110,39 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 		return this.findList(templateName, null);
 	}
 	
-    private List<EConfigValue> findList(String template, String service) {
-        return this.findListByQuery(this.createQuery(template, service, null),  (Object[]) this.getParams(template, service, null));
-    }
-
-
-    private EConfigValue find(String template, String service, String key) {
-        return this.findByQuery(this.createQuery(template, service, key),  (Object[]) this.getParams(template, service, key));
-    }
-
-
-    private String createQuery(String template, String service, String key) {
-        StringBuilder b = new StringBuilder();
-        b.append(ConfigValueDAOHib.BASE_QUERY);
-        int app = 2;
-        if(service == null || service.isEmpty()) {
-            b.append(ConfigValueDAOHib.WHERE_SERVICE_NULL);
-        } else {
-            b.append(ConfigValueDAOHib.WHERE_SERVICE);
-            app = 3;
-        }
-        if(key != null && !(key.isEmpty())) {
-            b.append(ConfigValueDAOHib.WHERE_KEY);
-            b.append(app);
-        }
-
-        return b.toString();
-    }
-
-    private String[] getParams(String... params) {
-        List<String> req = new ArrayList<>();
-        for(String s : params) {
-            if(s != null && !(s.isEmpty())) {
-                req.add(s);
-            }
-        }
+	private List<EConfigValue> findList(String template, String service) {
+		return this.findListByQuery(this.createQuery(template, service, null), (Object[]) this.getParams(template, service, null));
+	}
+	
+	private EConfigValue find(String template, String service, String key) {
+		return this.findByQuery(this.createQuery(template, service, key), (Object[]) this.getParams(template, service, key));
+	}
+	
+	private String createQuery(String template, String service, String key) {
+		StringBuilder b = new StringBuilder();
+		b.append(ConfigValueDAOHib.BASE_QUERY);
+		int app = 2;
+		if ((service == null) || service.isEmpty()) {
+			b.append(ConfigValueDAOHib.WHERE_SERVICE_NULL);
+		} else {
+			b.append(ConfigValueDAOHib.WHERE_SERVICE);
+			app = 3;
+		}
+		if ((key != null) && !(key.isEmpty())) {
+			b.append(ConfigValueDAOHib.WHERE_KEY);
+			b.append(app);
+		}
+		
+		return b.toString();
+	}
+	
+	private String[] getParams(String... params) {
+		List<String> req = new ArrayList<>();
+		for (String s : params) {
+			if ((s != null) && !(s.isEmpty())) {
+				req.add(s);
+			}
+		}
 		return req.toArray(new String[0]);
-    }
+	}
 }

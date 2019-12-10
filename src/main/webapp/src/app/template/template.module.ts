@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -64,6 +64,9 @@ const templateRoute: Routes = [
     TemplateAgentOptions,
     TemplateServiceComponent,
     TemplateDiff,
+  ],
+  providers: [
+    DatePipe,
   ]
 })
 export class TemplateModule {}

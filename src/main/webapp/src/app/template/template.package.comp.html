@@ -1,6 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     <cc-panel [title]="'Installed packages'" icon="fa-book">
+      <li cc-panel-dropdown>
+        <a role="button" href="javascript:void(0)" (click)="exportFile()">
+          <i class="fa fa-download" aria-hidden="true"></i>
+          Export JSON
+        </a>
+      </li>
+
       <table class="table-condensed table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
@@ -27,7 +34,8 @@
             <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
-            {{pv.version}}
+            <cc-inlineedit [value]="pv.version" [options]="getVersionStrings(pv.pkg)" (onSave)="updatePackageVersion(pv.pkg, $event)">
+            </cc-inlineedit>
           </td>
           <td>
             <span *ngIf="packageTree[pv.pkg]">
@@ -35,13 +43,13 @@
             </span>
           </td>
           <td>
-            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" title="Update package to newest">
+            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" [title]="'Update package \'' + pv.pkg + '\' to latest'">
               <i class="fa fa-refresh fa-fw"></i>
             </a>
           </td>
           <td>
             <a role="button" mwlConfirmationPopover
-              title="Remove package from template"
+              [attr.title]="'Remove package \'' + pv.pkg + '\' from template'"
               [title]="'Please verify!'"
               [message]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
               placement="left"
@@ -85,20 +93,34 @@
         </tr>
 
         <tr *ngIf="!newPackage" (click)="goToAddPackage()">
-          <td colspan="6" role="button"><i class="fa fa-plus fa-fw"></i>
+          <td colspan="6" role="button">
+            <i class="fa fa-plus fa-fw"></i>
             Add package to template
           </td>
         </tr>
 
         </tbody>
       </table>
+
+      <div class="pull-left form-inline" cc-panel-body>
+        <div *ngIf="!importing; else spinner" class="form-group">
+          <label class="control-label" for="importFile">Import file</label>
+          <input type="file" class="form-control" id="importFile" (change)="importJSONFile($event)"/>
+        </div>
+
+        <ng-template #spinner>
+          <i class="fa fa-spinner fa-pulse fa-fw"></i>
+          Importing
+        </ng-template>
+      </div>
+
       <div class="pull-right" *ngIf="packageVersions && packageVersions.length > 0" cc-panel-body>
         <button (click)="updateSelected()" class="btn btn-success" [disabled]="!isPkgSelected()">
           <i class="fa fa-refresh fa-fw"></i>
           Update selected
         </button>
         <button class="btn btn-danger" [disabled]="!isPkgSelected()" mwlConfirmationPopover
-          title="Remove packages from template"
+          [attr.title]="'Remove packages from template'"
           [title]="'Please verify!'"
           [message]="'Are you sure you want to remove all selected packages from the template?'"
           confirmButtonType="danger"

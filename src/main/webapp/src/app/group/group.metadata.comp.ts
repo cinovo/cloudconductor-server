@@ -90,6 +90,7 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
 
   public saveGroup(groupForm: Group): void {
     const groupToSave = Object.assign({}, this.group, groupForm);
+    groupToSave.name = groupToSave.name.trim();
     const groupName = groupToSave.name;
 
     const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.groupHttp.existsGroup(groupName) : Observable.of(false);

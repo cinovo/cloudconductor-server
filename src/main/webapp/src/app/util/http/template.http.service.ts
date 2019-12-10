@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Service } from './service.http.service';
 import { Sorter } from '../sorters.util';
+import { SimplePackageVersion } from "./package.http.service";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -137,9 +138,7 @@ export class TemplateHttpService {
   public saveServiceDefaultState(templateName: string, serviceName: string, serviceDefaultState: ServiceState) {
     const newServiceDefaultState = {template: templateName, service: serviceName, defaultState: serviceDefaultState};
     newServiceDefaultState['@class'] = 'de.cinovo.cloudconductor.api.model.ServiceDefaultState';
-
-    return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`,
-      newServiceDefaultState);
+    return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`, newServiceDefaultState);
   }
 
   public getSimpleTemplates(): Observable<SimpleTemplate[]> {
@@ -149,5 +148,14 @@ export class TemplateHttpService {
   public getDiff(templateAName: string, templateBName: string): Observable<PackageDiff[]> {
     return this.http.get<PackageDiff[]>(`${this._basePathURL}/packagediff/${templateAName}/${templateBName}`).share();
   }
+
+  public getSimplePackageVersions(templateName: string): Observable<SimplePackageVersion[]> {
+    return this.http.get<SimplePackageVersion[]>(`${this._basePathURL}/${templateName}/package/versions/simple`);
+  }
+
+  public replacePackageVersionsForTemplate(templateName: string, packageVersions: SimplePackageVersion[]): Observable<Template> {
+    return this.http.put<Template>(`${this._basePathURL}/${templateName}/package/versions`, packageVersions);
+  }
+
 }
 
