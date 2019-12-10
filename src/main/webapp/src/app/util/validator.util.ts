@@ -34,9 +34,13 @@ export function gtValidator(n: number): ValidatorFn {
 
 export function forbiddenNamesValidator(forbiddenNames: string[], use = true): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } => {
-    const forbidden = control && control.value && forbiddenNames.some(
-      (forbiddenName) => forbiddenName.toUpperCase() === control.value.toUpperCase()
-    );
+    const forbidden = control && forbiddenNames.some(
+      (forbiddenName) => {
+        if (forbiddenName && control.value) {
+          return forbiddenName.toUpperCase() === control.value.toUpperCase()
+        }
+        return false;
+      });
 
     return forbidden && use ? {'forbiddenName': {value: control.value}} : null;
   }

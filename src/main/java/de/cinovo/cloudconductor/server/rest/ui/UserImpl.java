@@ -1,13 +1,5 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import de.cinovo.cloudconductor.api.interfaces.IUser;
 import de.cinovo.cloudconductor.api.model.PasswordChange;
 import de.cinovo.cloudconductor.api.model.User;
@@ -20,6 +12,13 @@ import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.dvalin.jaxrs.providers.AuthorizationProvider;
 import de.taimos.dvalin.jaxrs.security.annotation.LoggedIn;
 import de.taimos.restutils.RESTAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -48,7 +47,7 @@ public class UserImpl implements IUser {
 		for (EUser eUser : this.userDAO.findList()) {
 			result.add(eUser.toApi());
 		}
-		return result.toArray(new User[result.size()]);
+		return result.toArray(new User[0]);
 	}
 	
 	@Override
@@ -78,7 +77,7 @@ public class UserImpl implements IUser {
 	public void delete(String userName) {
 		RESTAssert.assertNotEmpty(userName);
 		EUser eUser = this.userDAO.findByLoginName(userName);
-		RESTAssert.assertNotNull(eUser);
+		RESTAssert.assertNotNull(eUser, Status.NOT_FOUND);
 		this.userDAO.delete(eUser);
 	}
 	

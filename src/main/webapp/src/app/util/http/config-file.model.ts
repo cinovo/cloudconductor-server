@@ -34,7 +34,7 @@ export class FileForm {
   public toConfigFile(): ConfigFile {
     const file = new ConfigFile();
 
-    file.name = this.name;
+    file.name = this.name.trim();
     file.pkg = '';
     file.targetPath = this.targetPath;
     file.owner = this.owner;

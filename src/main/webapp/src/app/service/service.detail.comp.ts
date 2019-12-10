@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -109,7 +109,7 @@ export class ServiceDetail implements OnInit {
   }
 
   public save(formValue): void {
-    this.service.name = formValue.name;
+    this.service.name = formValue.name.trim();
     this.service.initScript = formValue.initScript;
     this.service.description = formValue.description;
 

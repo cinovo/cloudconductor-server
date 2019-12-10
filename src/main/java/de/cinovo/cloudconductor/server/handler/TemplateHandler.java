@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.handler;
 
 import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -281,6 +284,53 @@ public class TemplateHandler {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * @param packageVersions	complete list of all package versions which should be installed
+	 * @param templateName		name of the template to be modified
+	 * @return the modified template
+	 */
+	public ETemplate replacePackageVersionsForTemplate(List<SimplePackageVersion> packageVersions, String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
+		
+		List<EPackageVersion> newPVs = new ArrayList<>();
+		for (SimplePackageVersion requestedPV : packageVersions) {
+			if (!this.isRepoAvailableForTemplate(requestedPV.getRepos(), template)) {
+				String errorMessage = "Package '" + requestedPV + "' can not be used in template '" + templateName + "' because none of the providing repos " + requestedPV.getRepos() + " is available";
+				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errorMessage).build());
+			}
+			
+			EPackageVersion packageVersion = this.packageVersionDAO.find(requestedPV.getName(), requestedPV.getVersion());
+			if (packageVersion == null) {
+				String errorMessage = "Unknown Package '" + requestedPV + "'";
+				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errorMessage).build());
+			}
+			newPVs.add(packageVersion);
+		}
+		
+		// replace pvs and save
+		template.getPackageVersions().clear();
+		template.getPackageVersions().addAll(newPVs);
+		return this.templateDAO.save(template);
+	}
+	
+	private boolean isRepoAvailableForTemplate(Collection<String> providingRepos, ETemplate template) {
+		List<ERepo> availableRepos = template.getRepos();
+		if (availableRepos == null || availableRepos.isEmpty()) {
+			return false;
+		}
+
+		for (String repoName : providingRepos) {
+			for (ERepo availableRepo : availableRepos) {
+				if (availableRepo.getName().equals(repoName)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

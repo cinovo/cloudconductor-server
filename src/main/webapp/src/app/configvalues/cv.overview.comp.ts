@@ -138,7 +138,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        this.alerts.danger(`Error deleting config pair '${kv.key}-${kv.value}'`);
+        this.alerts.danger(`Error deleting config pair '${kv.key}'-'${kv.value}'!`);
         console.error(err);
       }
     );
@@ -195,10 +195,11 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
     const oldVal = kv.value;
     kv.value = event;
     this.configHttp.save(kv).subscribe((success) => {
-        this.alerts.success("Modified value for key : " + kv.key);
-      }, (error) => {
+        this.alerts.success('Modified value for key : ' + kv.key);
+      }, (err) => {
         kv.value = oldVal;
-        this.alerts.success("Failed to modify value for key : " + kv.key);
+        this.alerts.success('Failed to modify value for key : ' + kv.key);
+        console.error(err);
       }
     );
   }
