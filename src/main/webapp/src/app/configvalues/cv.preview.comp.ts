@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from "@angular/router";
 
 import { Subscription } from 'rxjs/Subscription';
 
 import { ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
 import { ServiceHttpService } from '../util/http/service.http.service';
-import { ActivatedRoute } from "@angular/router";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -21,7 +21,7 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
 
   public templateNames: string[];
   public serviceNames: string[] = [];
-  public modes: string[] = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
+  public modes = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
   public preview: any;
 
   private _templateQuery: string;
@@ -47,7 +47,6 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
 
     this.route.paramMap.subscribe((paramMap) => {
       this._templateQuery = paramMap.get('template');
-      console.log(this._templateQuery);
       this.loadPreview();
     });
   }
@@ -64,21 +63,9 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
 
   private loadPreview(): void {
     this.preview = null;
-    this.configHttp.getPreview(this.templateQuery, this.serviceQuery, this.modeQuery).map((obj) => {
-      if (obj['@class']) {
-        delete obj['@class'];
-      }
-
-      if (obj instanceof Array) {
-        obj = obj.map((ele => {
-          delete ele['@class'];
-          return ele;
-        }));
-      }
-
-      return obj;
-    }).subscribe(
-      (result) => {
+    this.configHttp.getPreview(this.templateQuery, this.serviceQuery, this.modeQuery)
+      .map(ConfigValuePreview.cleanObjects)
+      .subscribe((result) => {
         if (result instanceof Array) {
           this.preview = result;
         } else if (result._body) {
@@ -86,9 +73,23 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
         } else {
           this.preview = result;
         }
-
       }
-    )
+    );
+  }
+
+  private static cleanObjects(obj: any): any {
+    if (obj instanceof Array) {
+      return obj.map(ConfigValuePreview.cleanObject);
+    }
+    return ConfigValuePreview.cleanObject(obj);
+  }
+
+  private static cleanObject(obj: any): any {
+    if (obj && obj instanceof Object && obj.hasOwnProperty("@class")) {
+      const {["@class"]: _, ...cleanObj} = obj;
+      return cleanObj
+    }
+    return obj;
   }
 
   get templateQuery(): string {

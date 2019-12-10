@@ -1,14 +1,14 @@
 package de.cinovo.cloudconductor.server.util;
 
+import de.cinovo.cloudconductor.api.model.ConfigValue;
+import de.cinovo.cloudconductor.server.dao.hibernate.ConfigValueDAOHib;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import de.cinovo.cloudconductor.api.model.ConfigValue;
-import de.cinovo.cloudconductor.server.dao.hibernate.ConfigValueDAOHib;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -41,9 +41,7 @@ public class ReservedConfigKeyStore {
 	 * @param value the value of the key
 	 */
 	public void registerReserverdKey(String key, String value) {
-		if (this.reserved.get(key) == null) {
-			this.reserved.put(key, value);
-		}
+		this.reserved.putIfAbsent(key, value);
 	}
 	
 	/**

@@ -1,8 +1,10 @@
 import { DOCUMENT } from "@angular/common";
 import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
-import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { ActivatedRoute } from "@angular/router";
+
 import { Subscription } from "rxjs/Subscription";
+
+import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { AlertService } from "../util/alert/alert.service";
 
 /**
@@ -18,10 +20,14 @@ import { AlertService } from "../util/alert/alert.service";
 export class ConfigValueExport implements OnInit, OnDestroy {
 
   private routeSub: Subscription;
+
   public template: string;
   public export: ConfigValue[];
 
-  constructor(private configHttp: ConfigValueHttpService, private route: ActivatedRoute, private alerts: AlertService, @Inject(DOCUMENT) private dom: Document) {
+  constructor(private configHttp: ConfigValueHttpService,
+              private route: ActivatedRoute,
+              private alerts: AlertService,
+              @Inject(DOCUMENT) private dom: Document) {
   }
 
   ngOnInit(): void {
@@ -42,8 +48,8 @@ export class ConfigValueExport implements OnInit, OnDestroy {
       this.export = result;
     }, (err) => {
       this.alerts.danger(`Error loading config values for template '${this.template}'!`);
+      console.error(err);
     });
   }
-
 
 }

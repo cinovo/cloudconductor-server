@@ -12,8 +12,7 @@
               class="fa fa-download" aria-hidden="true"></i> Download
             </button>
           </label>
-          <textarea id="exportElement" class="form-control" #exportElement id="exportElement" cols="30"
-                    rows="30">{{export | json}}</textarea>
+          <textarea id="exportElement" class="form-control" #exportElement  cols="30" rows="30">{{export | json}}</textarea>
         </div>
         <div class="pull-right">
           <button *ngIf="export" class="btn btn-default btn-info" (click)="copyToClipboard(exportElement)"><i

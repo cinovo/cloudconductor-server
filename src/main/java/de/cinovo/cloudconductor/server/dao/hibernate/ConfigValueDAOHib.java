@@ -17,17 +17,15 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.model.EConfigValue;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,19 +35,18 @@ import java.util.stream.Collectors;
  *
  * @author psigloch
  */
-@SuppressWarnings("JpaQlInspection")
 @Repository("ConfigValueDAOHib")
 public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> implements IConfigValueDAO {
 	
 	public static final String RESERVED_GLOBAL = "GLOBAL";
 	public static final String RESERVED_VARIABLE = "VARIABLES";
-	private static final Set<String> RESERVED = new HashSet(Arrays.asList(ConfigValueDAOHib.RESERVED_GLOBAL, ConfigValueDAOHib.RESERVED_VARIABLE));
+	private static final Set<String> RESERVED = new HashSet<>(Arrays.asList(ConfigValueDAOHib.RESERVED_GLOBAL, ConfigValueDAOHib.RESERVED_VARIABLE));
 	
 	private static final String BASE_QUERY = "FROM EConfigValue c WHERE c.template = ?1";
 	private static final String WHERE_SERVICE = " AND c.service = ?2";
 	private static final String WHERE_SERVICE_NULL = " AND (c.service IS NULL OR c.service ='')";
 	private static final String WHERE_KEY = " AND c.configkey = ?";
-	
+
 	private static final String TEMPLATES = "SELECT DISTINCT conf.template FROM EConfigValue conf";
 	private static final String SERVICES_OF_TEMPLATE = "SELECT DISTINCT conf.service " +
 			"FROM EConfigValue conf " +
@@ -137,12 +134,7 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 	}
 	
 	private String[] getParams(String... params) {
-		List<String> req = new ArrayList<>();
-		for (String s : params) {
-			if ((s != null) && !(s.isEmpty())) {
-				req.add(s);
-			}
-		}
-		return req.toArray(new String[0]);
+        return Arrays.stream(params).filter(p -> p != null && !p.isEmpty()).toArray(String[]::new);
 	}
+    
 }
