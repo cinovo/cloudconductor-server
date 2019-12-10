@@ -2,18 +2,20 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { saveAs } from "file-saver";
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
-import { PackageHttpService, PackageVersion } from '../util/http/package.http.service';
+import { PackageHttpService, PackageVersion, SimplePackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
+import { DatePipe } from "@angular/common";
 
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
- * @author psigloch
+ * @author psigloch, mweise
  */
 export interface TemplatePackageVersion {
   pkg: string,
@@ -51,12 +53,15 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public packageTree: PackageTree = {};
   public newPackage: NewPackageVersion = null;
 
+  public importing = false;
+
   private _allSelected = false;
   private templateSub: Subscription;
 
   constructor(private packageHttp: PackageHttpService,
               private templateHttp: TemplateHttpService,
-              private alerts: AlertService) {
+              private alerts: AlertService,
+              private datePipe: DatePipe) {
   };
 
   ngOnInit(): void {
@@ -323,5 +328,60 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
     return false;
   }
+
+  public exportFile(): void {
+    const templateName = this.template.name;
+
+    this.templateHttp.getSimplePackageVersions(templateName).subscribe(
+      (simpePVs) => {
+        const jsonBlob = new Blob([JSON.stringify(simpePVs, null, 2)], {type : 'application/json'});
+        const filename =  [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
+        saveAs(jsonBlob, filename);
+      },
+      (err) => {
+        this.alerts.danger(`Error exporting package versions for template '${templateName}'!`);
+        console.error(err);
+      }
+    );
+  }
+
+  public importJSONFile(event: Event): void {
+    if (!event || !event.target) {
+      return;
+    }
+    const selectedFiles = event.target['files'];
+    if (!selectedFiles || selectedFiles.length < 1) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsText(selectedFiles[0]);
+    reader.onloadend = () => {
+      let packageVersions: SimplePackageVersion[];
+      try {
+        packageVersions = JSON.parse(reader.result);
+      } catch (err) {
+        this.alerts.danger(`Error reading package versions from JSON file!`);
+        console.error(err);
+        return;
+      }
+
+      this.importing = true;
+      this.templateHttp.replacePackageVersionsForTemplate(this.template.name, packageVersions)
+        .finally(() => this.importing = false)
+        .subscribe(
+        (updatedTemplate) => this.alerts.success(`Successfully replaced packages in template '${updatedTemplate.name}'`),
+        (err) => {
+          if (!err.error) {
+            this.alerts.danger(`Error updating package versions from JSON file!`);
+            console.error(err);
+            return;
+          }
+          this.alerts.danger(err.error);
+        }
+      );
+    };
+  }
+
 }
 

@@ -131,6 +131,11 @@ public class ConfigValueImpl implements IConfigValue {
 	}
 	
 	@Override
+	public void migrateGlobalConfig() {
+	
+	}
+  
+	@Override
 	@Transactional
 	public String getExact(String template, String service, String key) {
 		RESTAssert.assertNotEmpty(template);

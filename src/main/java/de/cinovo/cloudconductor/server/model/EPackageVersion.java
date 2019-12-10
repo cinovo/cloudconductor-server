@@ -19,6 +19,7 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
@@ -35,7 +36,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -206,5 +209,11 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 			packageVersion.getDependencies().add(dep.toApi());
 		}
 		return packageVersion;
+	}
+	
+	@Transient
+	public SimplePackageVersion toSimpleApi() {
+		List<String> repoNames = this.repos.stream().map(ERepo::getName).sorted().collect(Collectors.toList());
+		return new SimplePackageVersion(this.pkg.getName(), this.getVersion(), repoNames);
 	}
 }

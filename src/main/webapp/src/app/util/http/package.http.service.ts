@@ -15,11 +15,14 @@ export interface Package {
   versions: Array<string>;
 }
 
-export interface PackageVersion {
+export interface SimplePackageVersion {
   name: string;
   version: string;
+  repos: string[];
+}
+
+export interface PackageVersion extends SimplePackageVersion{
   dependencies: Array<Dependency>;
-  repos: Array<string>;
 }
 
 export interface Dependency {
