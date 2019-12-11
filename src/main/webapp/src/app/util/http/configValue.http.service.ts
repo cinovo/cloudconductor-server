@@ -72,8 +72,7 @@ export class ConfigValueHttpService {
   public save(val: ConfigValue): Observable<ConfigValue> {
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigValue';
     let ret = this.http.put<ConfigValue>(this._basePathURL, val).share();
-    ret.subscribe(() => this.reloadTemplates(), () => {
-    });
+    ret.subscribe(() => this.reloadTemplates(), () => {});
     return ret;
   }
 

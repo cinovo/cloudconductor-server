@@ -155,7 +155,13 @@ public class ConfigValueImpl implements IConfigValue {
 	@Transactional
 	public void save(ConfigValue apiObject) {
 		RESTAssert.assertNotNull(apiObject);
-		RESTAssert.assertPattern(apiObject.getKey(), "^[\\w.-]+$");
+		String keyPattern;
+		if (ConfigValueDAOHib.RESERVED_VARIABLE.equals(apiObject.getService()) || ConfigValueDAOHib.RESERVED_VARIABLE.equals(apiObject.getTemplate())) {
+			keyPattern = "^\\$\\{[\\w\\.-]+\\}$";
+		} else {
+			keyPattern = "^[\\w\\.-]+$";
+		}
+		RESTAssert.assertPattern(apiObject.getKey(), keyPattern);
 		
 		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
 			throw new NotAcceptableException();

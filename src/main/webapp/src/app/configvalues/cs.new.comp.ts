@@ -1,11 +1,10 @@
 import { Component, OnInit } from "@angular/core";
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { ServiceHttpService } from "../util/http/service.http.service";
 import { AlertService } from "../util/alert/alert.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AbstractControl } from "@angular/forms/src/model";
-import { ValidationErrors } from "@angular/forms/src/directives/validators";
 import { Validator } from "../util/validator.util";
 
 /**
@@ -21,7 +20,7 @@ import { Validator } from "../util/validator.util";
 export class ConfigValueNew implements OnInit {
 
   public kvForm: FormGroup;
-  public templates: Array<String> = [];
+  public templates: string[] = [];
   public working = false;
 
   constructor(private configHttp: ConfigValueHttpService,
@@ -42,10 +41,6 @@ export class ConfigValueNew implements OnInit {
     this.configHttp.templates.subscribe((result) => this.templates = result);
   }
 
-  public test() {
-    console.log(this.kvForm.value.importValues)
-  }
-
   public save() {
     this.working = true;
 
@@ -54,6 +49,7 @@ export class ConfigValueNew implements OnInit {
       this.configHttp.save(cvToSave).subscribe((result) => {
           this.working = false;
           this.alerts.success(`Successfully created new template '${cvToSave.template}' .`);
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['/config', cvToSave.template]);
         }
       );
@@ -83,7 +79,8 @@ export class ConfigValueNew implements OnInit {
           this.configHttp.save(result[i]).subscribe((result) => {
               this.working = false;
               this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}' and copied values from '${this.kvForm.value.template}'.`);
-              this.router.navigate(['/config', this.kvForm.value.newTemplate]);
+              // noinspection JSIgnoredPromiseFromCall
+            this.router.navigate(['/config', this.kvForm.value.newTemplate]);
             }
           );
         } else {
@@ -93,6 +90,7 @@ export class ConfigValueNew implements OnInit {
     }, (err) => {
       this.working = false;
       this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
+      console.error(err);
     });
   }
 
@@ -106,7 +104,7 @@ export class ConfigValueNew implements OnInit {
       let values: ConfigValue[] = [];
       for (let val of json) {
         if ('key' in val && 'value' in val) {
-          let newElement: ConfigValue = {key: val.key, value: val.value, template: this.kvForm.value.newTemplate, service: val.service};
+          const newElement: ConfigValue = {key: val.key, value: val.value, template: this.kvForm.value.newTemplate, service: val.service};
           values.push(newElement);
         }
       }
@@ -116,15 +114,17 @@ export class ConfigValueNew implements OnInit {
         this.working = false;
         return;
       }
+
       for (let i = 0; i < values.length; i++) {
         values[i].template = this.kvForm.value.newTemplate;
+
         if (i == values.length - 1) {
-          this.configHttp.save(values[i]).subscribe((result) => {
+          this.configHttp.save(values[i]).subscribe((result: ConfigValue) => {
               this.working = false;
               this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}'.`);
+              // noinspection JSIgnoredPromiseFromCall
               this.router.navigate(['/config', this.kvForm.value.newTemplate]);
-            }
-          );
+            });
         } else {
           this.configHttp.save(values[i]);
         }
