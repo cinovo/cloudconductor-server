@@ -262,7 +262,7 @@
                                     <executable>npm</executable>
                                     <workingDirectory>src/main/webapp</workingDirectory>
                                     <arguments>
-                                        <argument>install</argument>
+                                        <argument>ci</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
