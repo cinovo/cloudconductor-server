@@ -129,7 +129,7 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 			b.append(ConfigValueDAOHib.WHERE_KEY);
 			b.append(app);
 		}
-		
+		b.append(" ORDER BY c.configkey");
 		return b.toString();
 	}
 	

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -25,9 +25,18 @@ import java.util.TreeMap;
  */
 @Service
 public class ConfigValueHandler {
+	
+	private static final int MAX_VAR_REPLACEMENTS = 10;
 
-	@Autowired
 	private IConfigValueDAO configValueDAO;
+	
+	/**
+	 * @param configValueDAO	DAO to use
+	 */
+	@Autowired
+	public ConfigValueHandler(IConfigValueDAO configValueDAO) {
+		this.configValueDAO = configValueDAO;
+	}
 	
 	/**
 	 * @param template	name of the template
@@ -124,8 +133,8 @@ public class ConfigValueHandler {
 	 * @return configuration value for given key under specific template and service with variables replaced
 	 */
 	public String get(String template, String service, String key) {
-		String clean = this.getClean(template, service, key);
-		return this.swapVariables(template, clean);
+		String cleanValue = this.getClean(template, service, key);
+		return this.swapVariables(template, cleanValue);
 	}
 	
 	/**
@@ -155,25 +164,36 @@ public class ConfigValueHandler {
 		return result.getValue();
 	}
 	
-	private ConfigValue[] swapVariables(String template, ConfigValue[] result) {
+	private ConfigValue[] swapVariables(String template, ConfigValue[] configs) {
 		Set<EConfigValue> variables = this.getVariables(template);
-		for(ConfigValue configValue : result) {
-			for(EConfigValue variable : variables) {
-				configValue.setValue(((String) configValue.getValue()).replace(variable.getConfigkey(), variable.getValue()));
-			}
+		for(ConfigValue configValue : configs) {
+			configValue.setValue(this.swapVariables(variables, String.valueOf(configValue.getValue()), 0));
 		}
-		return result;
+		return configs;
 	}
 
-	private String swapVariables(String template, String result) {
-		for(EConfigValue variable : this.getVariables(template)) {
-			result = result.replace(variable.getConfigkey(), variable.getValue());
+	private String swapVariables(String template, String originalValue) {
+		return this.swapVariables(this.getVariables(template), originalValue, 0);
+	}
+	
+	private String swapVariables(Set<EConfigValue> availableVariables, String currentValue, int replacements) {
+		for (EConfigValue variable : availableVariables) {
+			String replacedValue = currentValue.replace(variable.getConfigkey(), variable.getValue());
+			if (replacedValue.equals(currentValue)) {
+				continue; // no match, try next variable
+			}
+			
+			replacements++;
+			if (replacements < ConfigValueHandler.MAX_VAR_REPLACEMENTS) {
+				return this.swapVariables(availableVariables, replacedValue, replacements); // go deeper
+			}
+			return replacedValue; // stop replacing
 		}
-		return result;
+		return currentValue; // no more replacements found
 	}
 
 	private Set<EConfigValue> getVariables(String template) {
-		Set<EConfigValue> variables = new HashSet<>(this.configValueDAO.findBy(template, ConfigValueDAOHib.RESERVED_VARIABLE));
+		Set<EConfigValue> variables = new LinkedHashSet<>(this.configValueDAO.findBy(template, ConfigValueDAOHib.RESERVED_VARIABLE));
 		for(EConfigValue var : this.configValueDAO.findBy(ConfigValueDAOHib.RESERVED_VARIABLE)) {
 			if(variables.stream().noneMatch((v) -> v.getConfigkey().equals(var.getConfigkey()))) {
 				variables.add(var);
