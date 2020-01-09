@@ -47,7 +47,7 @@
 
 <div class="row" *ngIf="kvLoaded && tree.length < 1">
   <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert-1">
+    <div class="alert alert-warning" role="alert">
       No key-value pairs found for this template
     </div>
   </div>
@@ -63,7 +63,7 @@
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
-           [message]="'Are you sure you want to delete all key-value-pairs for the following service: <strong>' + service.name + '</strong>?'"
+           [message]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
            confirmButtonType="danger"
            (confirm)="deleteService(service.name)"
            [appendToBody]="true">
@@ -86,15 +86,17 @@
               {{kv.key}}
             </td>
             <td class="word-break">
-              <cc-inlineedit [value]="kv.value" (onSave)="save(kv, $event)"
+              <cc-inlineedit [value]="kv.value"
                              [editMode]="edit[kv.service + kv.key]"
-                             (onEditDone)="triggerEditDone(kv)"></cc-inlineedit>
+                             (onSave)="save(kv, $event)"
+                             (onEditDone)="triggerEditDone(kv)">
+              </cc-inlineedit>
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
                  title="Delete Pair"
                  [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following key-value-pair: \'' + kv.key + '\'?'"
+                 [message]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
                  placement="left"
                  confirmButtonType="danger"
                  (confirm)="doDelete(kv)">

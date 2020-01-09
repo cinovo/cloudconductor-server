@@ -70,8 +70,7 @@ export class ConfigValueHttpService {
   }
 
   public save(val: ConfigValue): Observable<ConfigValue> {
-    val['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigValue';
-    let ret = this.http.put<ConfigValue>(this._basePathURL, val).share();
+    const ret = this.http.put<ConfigValue>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.ConfigValue', ...val}).share();
     ret.subscribe(() => this.reloadTemplates(), () => {});
     return ret;
   }
@@ -118,7 +117,7 @@ export class ConfigValueHttpService {
   }
 
   public getPreview(template: string, service: string, mode: string): Observable<any> {
-    let options = {};
+    let options;
     if (mode.indexOf('json') > 0) {
       options = {headers: new HttpHeaders({'Accept': mode})};
     } else {
