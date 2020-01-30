@@ -40,7 +40,7 @@ INSERT INTO cloudconductor.file VALUES (1, 'file1', '/root/foo', 'root', 'root',
 
 INSERT INTO cloudconductor.filedata VALUES (1, 1, 'Testfile for root');
 
-INSERT INTO cloudconductor.mappingfiletemplate VALUES (1, 1, 1);
+INSERT INTO cloudconductor.file_template VALUES (1, 'dev');
 
 INSERT INTO cloudconductor.mappingtemplatesshkey VALUES (1, 1, 1);
 

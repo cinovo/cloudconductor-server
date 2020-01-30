@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -20,29 +20,30 @@ package de.cinovo.cloudconductor.server.model;
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.taimos.dvalin.jpa.IEntity;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "file", schema = "cloudconductor")
@@ -60,9 +61,9 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 	private boolean isReloadable;
 	private boolean isDirectory;
 	private String checksum;
-	private List<EService> dependentServices = new ArrayList<>();
-	private List<ETemplate> templates = new ArrayList<>();
-
+	private Set<String> dependentServices = new HashSet<>();
+	private Set<String> templates = new HashSet<>();
+	
 	
 	@Override
 	@Id
@@ -210,34 +211,36 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 	/**
 	 * @return the dependentServices
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingfileservice", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "serviceid"))
-	public List<EService> getDependentServices() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
+	@CollectionTable(schema = "cloudconductor", name = "file_services", joinColumns = {@JoinColumn(name = "file_id")})
+	@Cascade(CascadeType.ALL)
+	@Column(name = "service")
+	public Set<String> getDependentServices() {
 		return this.dependentServices;
 	}
 	
 	/**
 	 * @param dependentServices the dependentServices to set
 	 */
-	public void setDependentServices(List<EService> dependentServices) {
+	public void setDependentServices(Set<String> dependentServices) {
 		this.dependentServices = dependentServices;
 	}
 	
 	/**
 	 * @return list of templates this file is used in
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "fileid", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "templateid"))
-	public List<ETemplate> getTemplates() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
+	@CollectionTable(schema = "cloudconductor", name = "file_template", joinColumns = {@JoinColumn(name = "file_id")})
+	@Cascade(CascadeType.ALL)
+	@Column(name = "template")
+	public Set<String> getTemplates() {
 		return this.templates;
 	}
 	
 	/**
 	 * @param templates the list of templates to set
 	 */
-	public void setTemplates(List<ETemplate> templates) {
+	public void setTemplates(Set<String> templates) {
 		this.templates = templates;
 	}
 	
@@ -257,7 +260,11 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 		this.name = name;
 	}
 	
-
+	@Override
+	public int hashCode() {
+		return (this.getName() == null) ? 0 : this.getName().hashCode();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof EFile)) {
@@ -265,11 +272,6 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 		}
 		EFile other = (EFile) obj;
 		return (this.getName() != null) && this.getName().equals(other.getName());
-	}
-	
-	@Override
-	public int hashCode() {
-		return (this.getName() == null) ? 0 : this.getName().hashCode();
 	}
 	
 	@Override
@@ -282,14 +284,8 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 	@Transient
 	public ConfigFile toApi() {
 		ConfigFile configFile = super.toApi();
-		configFile.setDependentServices(this.namedModelToStringSet(this.dependentServices));
-		
-		ArrayList<String> templateNames = new ArrayList<String>();
-		for (ETemplate template : this.templates) {
-			templateNames.add(template.getName());
-		}
-		
-		configFile.setTemplates(templateNames);
+		configFile.setDependentServices(this.dependentServices);
+		configFile.setTemplates(new ArrayList<>(this.templates));
 		return configFile;
 	}
 }

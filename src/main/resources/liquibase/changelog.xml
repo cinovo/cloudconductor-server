@@ -1224,5 +1224,20 @@
             <column name="groupname" type="varchar(255)"/>
         </addColumn>
     </changeSet>
-
+    <changeSet id="40" author="psigloch">
+        <createTable tableName="file_template" schemaName="cloudconductor">
+            <column name="file_id" type="bigint"/>
+            <column name="template" type="varchar(1024)"/>
+        </createTable>
+        <createTable tableName="file_services" schemaName="cloudconductor">
+            <column name="file_id" type="bigint"/>
+            <column name="service" type="varchar(1024)"/>
+        </createTable>
+        <sql>
+            INSERT INTO cloudconductor.file_template(file_id, template) SELECT mft.fileid, t.name FROM cloudconductor.mappingfiletemplate as mft, cloudconductor.template as t WHERE mft.templateid = t.id;
+            INSERT INTO cloudconductor.file_services(file_id, service) SELECT mfs.fileid, s.name FROM cloudconductor.mappingfileservice as mfs, cloudconductor.service as s WHERE mfs.serviceid = s.id;
+        </sql>
+        <dropTable tableName="mappingfileservice" schemaName="cloudconductor" />
+        <dropTable tableName="mappingfiletemplate" schemaName="cloudconductor" />
+    </changeSet>
 </databaseChangeLog>

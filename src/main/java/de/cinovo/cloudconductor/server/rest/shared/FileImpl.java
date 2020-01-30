@@ -31,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -54,11 +52,7 @@ public class FileImpl implements IFile {
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
-		Set<ConfigFile> result = new HashSet<>();
-		for (EFile m : this.fileDAO.findList()) {
-			result.add(m.toApi());
-		}
-		return result.toArray(new ConfigFile[result.size()]);
+		return this.fileDAO.findList().stream().map(EFile::toApi).toArray(ConfigFile[]::new);
 	}
 	
 	@Override
@@ -82,6 +76,15 @@ public class FileImpl implements IFile {
 		EFile model = this.fileDAO.findByName(name);
 		RESTAssert.assertNotNull(model, Response.Status.NOT_FOUND);
 		return model.toApi();
+	}
+	
+	@Override
+	@Transactional
+	public void delete(String name) {
+		RESTAssert.assertNotEmpty(name);
+		EFile model = this.fileDAO.findByName(name);
+		RESTAssert.assertNotNull(model, Status.NOT_FOUND);
+		this.fileDAO.delete(model);
 	}
 	
 	@Override
@@ -115,15 +118,6 @@ public class FileImpl implements IFile {
 		} else {
 			this.fileHandler.updateEntity(edata, data);
 		}
-	}
-	
-	@Override
-	@Transactional
-	public void delete(String name) {
-		RESTAssert.assertNotEmpty(name);
-		EFile model = this.fileDAO.findByName(name);
-		RESTAssert.assertNotNull(model, Status.NOT_FOUND);
-		this.fileDAO.delete(model);
 	}
 	
 	@Override
