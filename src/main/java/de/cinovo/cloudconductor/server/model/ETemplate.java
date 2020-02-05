@@ -62,9 +62,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	private List<EHost> hosts = new ArrayList<>();
 
 	private List<ESSHKey> sshkeys = new ArrayList<>();
-
-	private List<EFile> configFiles = new ArrayList<>();
-
+	
 	private List<ERepo> repos = new ArrayList<>();
 
 	private Boolean autoUpdate;
@@ -115,23 +113,6 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the configFiles
-	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingfiletemplate", schema = "cloudconductor", //
-			joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "fileid"))
-	public List<EFile> getConfigFiles() {
-		return this.configFiles;
-	}
-
-	/**
-	 * @param configFiles the configFiles to set
-	 */
-	public void setConfigFiles(List<EFile> configFiles) {
-		this.configFiles = configFiles;
 	}
 
 	/**

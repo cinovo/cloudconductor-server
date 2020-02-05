@@ -26,6 +26,7 @@ public class TestConfig extends RunnerConfig {
 		this.addProperty("jetty.sessions", "true");
 		this.addProperty("jwtauth.issuer", "cloudconductor");
 		this.addProperty("jwtauth.secret", "4ED267FE5BBA826F6D2EE71A3A5EE491275051234F997B19068FECF9729FC2AC");
+		this.addProperty("indexTaskType", "none");
 	}
 	
 	@Override

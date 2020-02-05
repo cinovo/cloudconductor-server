@@ -134,6 +134,9 @@ public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHa
 			settings = this.optionsDAO.get();
 		}
 
+		if (this.indexTaskType.equals("none")) {
+			return;
+		}
 		if(this.indexTaskType.equals("single")) {
 			// create repo index tasks
 			List<ERepo> list = this.repoDAO.findList();
