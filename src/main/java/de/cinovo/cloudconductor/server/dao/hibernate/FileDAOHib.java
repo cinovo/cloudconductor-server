@@ -61,4 +61,8 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 		return this.findListByQuery(query,  Arrays.asList(tagnames));
 	}
 	
+	@Override
+	public List<EFile> findByTemplate(String templateName) {
+		return this.findListByQuery("FROM EFile f WHERE ?1 MEMBER OF f.templates", templateName);
+	}
 }

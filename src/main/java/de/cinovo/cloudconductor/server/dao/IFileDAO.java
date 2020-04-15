@@ -41,5 +41,11 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	 * @return list of files with these tags
 	 */
 	List<EFile> findByTag(String... tagnames);
+	
+	/**
+	 * @param templateName	name of the template
+	 * @return list of files for given template
+	 */
+	List<EFile> findByTemplate(String templateName);
 
 }

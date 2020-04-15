@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -154,17 +153,7 @@ public class FileHandler {
 	 * @return array of configuration files which are used in the given template
 	 */
 	public ConfigFile[] getFilesForTemplate(String templateName) {
-		ETemplate template = this.templateDAO.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-		
-		Set<ConfigFile> templateFiles = new HashSet<>();
-		for (EFile file : this.fileDAO.findList()) {
-			if (file.getTemplates().contains(template)) {
-				templateFiles.add(file.toApi());
-			}
-		}
-		
-		return templateFiles.toArray(new ConfigFile[templateFiles.size()]);
+		return this.fileDAO.findByTemplate(templateName).stream().map(EFile::toApi).toArray(ConfigFile[]::new);
 	}
 	
 }
