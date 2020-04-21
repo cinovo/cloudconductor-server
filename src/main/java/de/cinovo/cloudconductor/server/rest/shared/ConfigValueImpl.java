@@ -20,6 +20,7 @@ package de.cinovo.cloudconductor.server.rest.shared;
 import de.cinovo.cloudconductor.api.interfaces.IConfigValue;
 import de.cinovo.cloudconductor.api.model.ConfigDiff;
 import de.cinovo.cloudconductor.api.model.ConfigValue;
+import de.cinovo.cloudconductor.api.model.ConfigValues;
 import de.cinovo.cloudconductor.server.dao.IConfigValueDAO;
 import de.cinovo.cloudconductor.server.dao.hibernate.ConfigValueDAOHib;
 import de.cinovo.cloudconductor.server.handler.ConfigValueHandler;
@@ -154,24 +155,8 @@ public class ConfigValueImpl implements IConfigValue {
 	@Override
 	@Transactional
 	public void save(ConfigValue apiObject) {
-		RESTAssert.assertNotNull(apiObject);
-		String keyPattern;
-		if (ConfigValueDAOHib.RESERVED_VARIABLE.equals(apiObject.getService()) || ConfigValueDAOHib.RESERVED_VARIABLE.equals(apiObject.getTemplate())) {
-			keyPattern = "^\\$\\{[\\w\\.-]+\\}$";
-		} else {
-			keyPattern = "^[\\w\\.-]+$";
-		}
-		RESTAssert.assertPattern(apiObject.getKey(), keyPattern);
-		
-		if (ReservedConfigKeyStore.instance.isReserved(apiObject.getKey())) {
-			throw new NotAcceptableException();
-		}
-		if ((apiObject.getTemplate() == null) || apiObject.getTemplate().isEmpty()) {
-			apiObject.setTemplate(ConfigValueDAOHib.RESERVED_GLOBAL);
-		}
-		if ((apiObject.getService() == null) || apiObject.getService().isEmpty()) {
-			apiObject.setService(null);
-		}
+		this.prepareConfigValue(apiObject);
+
 		EConfigValue ecv = this.configValueDAO.findBy(apiObject.getTemplate(), apiObject.getService(), apiObject.getKey());
 		if (ecv == null) {
 			ecv = new EConfigValue();
@@ -181,6 +166,44 @@ public class ConfigValueImpl implements IConfigValue {
 		}
 		ecv.setValue(apiObject.getValue().toString());
 		this.configValueDAO.save(ecv);
+	}
+	
+	@Override
+	@Transactional
+	public void save(ConfigValues cvs) {
+		RESTAssert.assertNotNull(cvs);
+		
+		for (ConfigValue cv : cvs.getElements()) {
+			this.prepareConfigValue(cv);
+			
+			EConfigValue existingCV = this.configValueDAO.findBy(cv.getTemplate(), cv.getService(), cv.getKey());
+			if (existingCV == null) {
+				EConfigValue newConfigValue = new EConfigValue(cv.getTemplate(), cv.getService(), cv.getKey(), cv.getValue().toString());
+				this.configValueDAO.save(newConfigValue);
+			} else {
+				existingCV.setValue(cv.getValue().toString());
+				this.configValueDAO.save(existingCV);
+			}
+		}
+	}
+	
+	private void prepareConfigValue(ConfigValue configValue) {
+		String keyPattern;
+		if (ConfigValueDAOHib.RESERVED_VARIABLE.equals(configValue.getService()) || ConfigValueDAOHib.RESERVED_VARIABLE.equals(configValue.getTemplate())) {
+			keyPattern = "^\\$\\{[\\w\\.-]+\\}$";
+		} else {
+			keyPattern = "^[\\w\\.-]+$";
+		}
+		RESTAssert.assertPattern(configValue.getKey(), keyPattern);
+		if (ReservedConfigKeyStore.instance.isReserved(configValue.getKey())) {
+			throw new NotAcceptableException();
+		}
+		if ((configValue.getTemplate() == null) || configValue.getTemplate().isEmpty()) {
+			configValue.setTemplate(ConfigValueDAOHib.RESERVED_GLOBAL);
+		}
+		if ((configValue.getService() == null) || configValue.getService().isEmpty()) {
+			configValue.setService(null);
+		}
 	}
 	
 	@Override

@@ -2,6 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
+import { _throw } from "rxjs/observable/throw";
+
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { ServiceHttpService } from "../util/http/service.http.service";
 import { AlertService } from "../util/alert/alert.service";
@@ -66,73 +68,68 @@ export class ConfigValueNew implements OnInit {
     }
   }
 
-  private copyFromTemplate() {
-    this.configHttp.getValues(this.kvForm.value.template).subscribe((result) => {
-      if (result.length < 1) {
-        this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
-        this.working = false;
-        return;
-      }
-      for (let i = 0; i < result.length; i++) {
-        result[i].template = this.kvForm.value.newTemplate;
-        if (i == result.length - 1) {
-          this.configHttp.save(result[i]).subscribe((result) => {
-              this.working = false;
-              this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}' and copied values from '${this.kvForm.value.template}'.`);
-              // noinspection JSIgnoredPromiseFromCall
-            this.router.navigate(['/config', this.kvForm.value.newTemplate]);
-            }
-          );
-        } else {
-          this.configHttp.save(result[i]);
+  private copyFromTemplate(): void {
+    const existingTemplate = this.kvForm.value.template;
+    const newTemplate = this.kvForm.value.newTemplate;
+
+    this.configHttp.getValues(existingTemplate)
+      .switchMap((originConfigs: ConfigValue[]) => {
+        if (!originConfigs) {
+          return _throw(new Error("No configs to copy"));
         }
-      }
-    }, (err) => {
-      this.working = false;
-      this.alerts.danger(`Error creating new template '${this.kvForm.value.newTemplate}'!`);
-      console.error(err);
-    });
+
+        const newConfigs = originConfigs.map((cv: ConfigValue) => ({...cv, template: newTemplate}));
+        return this.configHttp.saveBulk(newConfigs)
+      })
+      .finally(() => this.working = false)
+      .subscribe(() => {
+        this.alerts.success(`Successfully created new template '${newTemplate}' and copied values from '${existingTemplate}'.`);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate(['/config', newTemplate]);
+      }, (err) => {
+        this.alerts.danger(`Error creating new template '${newTemplate}'!`);
+        console.error(err);
+      });
   }
 
-  private importFromJSON() {
+  private importFromJSON(): void {
     if (!Validator.notEmpty(this.kvForm.value.importValues)) {
       this.working = false;
       return;
     }
+
+    const newTemplate = this.kvForm.value.newTemplate;
+    const importedValues: ConfigValue[] = [];
     try {
       const json: any[] = JSON.parse(this.kvForm.value.importValues);
-      let values: ConfigValue[] = [];
       for (let val of json) {
         if ('key' in val && 'value' in val) {
-          const newElement: ConfigValue = {key: val.key, value: val.value, template: this.kvForm.value.newTemplate, service: val.service};
-          values.push(newElement);
-        }
-      }
-
-      if (values.length < 1) {
-        this.alerts.danger("Failed to import the given json, there where no config values!");
-        this.working = false;
-        return;
-      }
-
-      for (let i = 0; i < values.length; i++) {
-        values[i].template = this.kvForm.value.newTemplate;
-
-        if (i == values.length - 1) {
-          this.configHttp.save(values[i]).subscribe((result: ConfigValue) => {
-              this.working = false;
-              this.alerts.success(`Successfully created new template '${this.kvForm.value.newTemplate}'.`);
-              // noinspection JSIgnoredPromiseFromCall
-              this.router.navigate(['/config', this.kvForm.value.newTemplate]);
-            });
-        } else {
-          this.configHttp.save(values[i]);
+          const newElement: ConfigValue = {key: val.key, value: val.value, template: newTemplate, service: val.service};
+          importedValues.push(newElement);
         }
       }
     } catch (e) {
       this.working = false;
       this.alerts.danger("Failed to read the given json. No proper json!");
+      return;
     }
+
+    if (importedValues.length < 1) {
+      this.alerts.danger("Failed to import the given json, no config values found!");
+      this.working = false;
+      return;
+    }
+
+    this.configHttp.saveBulk(importedValues)
+      .finally(() => this.working = false)
+      .subscribe(() => {
+        this.alerts.success(`Successfully created new template '${newTemplate}' and imported ${importedValues.length} values.`);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate(['/config', newTemplate]);
+      }, (err) => {
+        this.alerts.danger(`Error creating new template '${newTemplate}'!`);
+        console.error(err);
+      });
   }
 
   updateFile(event: any): void {
