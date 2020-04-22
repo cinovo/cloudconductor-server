@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
-import { Validator } from '../../util/validator.util';
+import { Validator } from '../validator.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -74,6 +74,15 @@ export class ConfigValueHttpService {
     let ret = this.http.put<ConfigValue>(this._basePathURL, val).share();
     ret.subscribe(() => this.reloadTemplates(), () => {});
     return ret;
+  }
+
+  public saveBulk(cvs: ConfigValue[]): Observable<boolean> {
+    let elements = [];
+    if (cvs) {
+      elements = cvs.map(cv => ({"@class": "de.cinovo.cloudconductor.api.model.ConfigValue", ...cv}))
+    }
+    const cvBody = {'@class': 'de.cinovo.cloudconductor.api.model.ConfigValues', elements};
+    return this.http.put<boolean>(`${this._basePathURL}/bulk`, cvBody);
   }
 
   /* tslint:disable:curly */
