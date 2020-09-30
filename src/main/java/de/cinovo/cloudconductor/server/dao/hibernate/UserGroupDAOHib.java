@@ -14,12 +14,20 @@ import org.springframework.stereotype.Repository;
 
 @Repository("UserGroupDAOHib")
 public class UserGroupDAOHib extends EntityDAOHibernate<EUserGroup, Long> implements IUserGroupDAO {
+
 	@Override
 	public EUserGroup findByName(String groupName) {
 		if ((groupName == null) || groupName.isEmpty()) {
 			return null;
 		}
-		return this.findByQuery("FROM EUserGroup u WHERE u.name = ?1", groupName);
+		// language=HQL
+		return this.findByQuery("FROM EUserGroup AS g WHERE g.name = ?1", groupName);
+	}
+
+	@Override
+	public boolean exists(String groupName) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(g) FROM EUserGroup AS g WHERE g.name = ?1", Long.class).setParameter(1, groupName).getSingleResult() > 0;
 	}
 
 	@Override

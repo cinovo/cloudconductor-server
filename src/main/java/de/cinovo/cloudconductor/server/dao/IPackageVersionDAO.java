@@ -34,19 +34,32 @@ public interface IPackageVersionDAO extends IEntityDAO<EPackageVersion, Long> {
 	/**
 	 * @param baseName the package base name
 	 * @param version the version
-	 * @return the model object
+	 * @return single package version
 	 */
 	EPackageVersion find(String baseName, String version);
 	
 	/**
 	 * @param baseName the base name
-	 * @return list of packages
+	 * @return list of package versions
 	 */
 	List<EPackageVersion> find(String baseName);
 
 	/**
-	 * @param templateId
-	 * @return
+	 * @param templateId	id of the template
+	 * @return list of package versions in template
 	 */
 	List<EPackageVersion> findByTemplate(Long templateId);
+
+	/**
+	 * @param templateName	the name of the template
+	 * @return list of package versions for template
+	 */
+	List<EPackageVersion> findByTemplate(String templateName);
+
+	/**
+	 * @param repoName	the name of the repo
+	 * @return list of package versions provided by repo
+	 */
+	List<EPackageVersion> findByRepo(String repoName);
+
 }

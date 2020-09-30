@@ -22,6 +22,7 @@ import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -31,11 +32,41 @@ import java.util.List;
  * 
  */
 public interface IRepoMirrorDAO extends IEntityDAO<ERepoMirror, Long> {
-	
+
+	List<ERepoMirror> findByIds(Set<Long> ids);
+
 	/**
 	 * @param repo the {@link ERepo}
 	 * @return all mirrors of the repo
 	 */
 	List<ERepoMirror> findForRepo(ERepo repo);
+
+	/**
+	 * @param repoName	repository name
+	 * @return list of mirrors for given repo
+	 */
+	List<ERepoMirror> findForRepo(String repoName);
+
+	/**
+	 * @param repoName	repository name
+	 * @return primary mirror for given repo
+	 */
+	ERepoMirror findPrimaryForRepo(String repoName);
+
+	/**
+	 * Delete mirrors for repo
+	 *
+	 * @param repo	repository
+	 * @return number of deleted mirrors
+	 */
+	int deleteForRepo(ERepo repo);
+
+	/**
+	 * Delete mirrors for repo
+	 *
+	 * @param repoName	repository name
+	 * @return number of deleted mirrors
+	 */
+	int deleteForRepo(String repoName);
 
 }

@@ -6,6 +6,7 @@ import de.cinovo.cloudconductor.api.model.UserGroup;
 import de.cinovo.cloudconductor.server.dao.IUserDAO;
 import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.handler.UserGroupHandler;
+import de.cinovo.cloudconductor.server.model.AModelApiConvertable;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
@@ -14,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -37,11 +36,7 @@ public class UserGroupImpl implements IUserGroup {
 	@Override
 	@Transactional
 	public UserGroup[] getUserGroups() {
-		List<UserGroup> result = new ArrayList<>();
-		for (EUserGroup group : this.userGroupDAO.findList()) {
-			result.add(group.toApi());
-		}
-		return result.toArray(new UserGroup[0]);
+		return this.userGroupDAO.findList().stream().map(AModelApiConvertable::toApi).toArray(UserGroup[]::new);
 	}
 	
 	@Override
@@ -55,7 +50,6 @@ public class UserGroupImpl implements IUserGroup {
 		} else {
 			this.userGroupHandler.updateEntity(eUserGroup, userGroup);
 		}
-		
 	}
 	
 	@Override
@@ -74,6 +68,7 @@ public class UserGroupImpl implements IUserGroup {
 		RESTAssert.assertFalse(userGroupName.equalsIgnoreCase("anonymous"));
 		EUserGroup userGroup = this.userGroupDAO.findByName(userGroupName);
 		RESTAssert.assertNotNull(userGroup, Status.NOT_FOUND);
+		// TODO check if group is still used
 		this.userGroupDAO.delete(userGroup);
 	}
 	
@@ -81,14 +76,8 @@ public class UserGroupImpl implements IUserGroup {
 	@Transactional
 	public User[] getGroupMembers(String userGroupName) {
 		RESTAssert.assertNotEmpty(userGroupName);
-		EUserGroup eUserGroup = this.userGroupDAO.findByName(userGroupName);
-		RESTAssert.assertNotNull(eUserGroup);
-		
-		List<User> groupMembers = new ArrayList<>();
-		for (EUser user : this.userDAO.findByGroup(eUserGroup)) {
-			groupMembers.add(user.toApi());
-		}
-		return groupMembers.toArray(new User[0]);
+		RESTAssert.assertNotNull(this.userGroupDAO.exists(userGroupName), Status.NOT_FOUND);
+		return this.userDAO.findByGroup(userGroupName).stream().map(EUser::toApi).toArray(User[]::new);
 	}
 	
 }

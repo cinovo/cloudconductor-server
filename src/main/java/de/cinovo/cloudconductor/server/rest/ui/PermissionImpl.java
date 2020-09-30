@@ -4,7 +4,6 @@ import de.cinovo.cloudconductor.api.enums.UserPermissions;
 import de.cinovo.cloudconductor.api.interfaces.IPermission;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,9 +18,8 @@ import java.util.Set;
 public class PermissionImpl implements IPermission {
 
 	@Override
-	@Transactional
 	public Set<UserPermissions> getPermissions() {
-		return new HashSet<UserPermissions>(Arrays.asList(UserPermissions.values()));
+		return new HashSet<>(Arrays.asList(UserPermissions.values()));
 	}
 
 }

@@ -23,6 +23,8 @@ import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 
+import java.util.List;
+
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
@@ -40,16 +42,36 @@ public class SSHKeyDAOHib extends EntityDAOHibernate<ESSHKey, Long> implements I
 	
 	@Override
 	public ESSHKey findByOwner(String owner) {
-		return this.findByQuery("FROM ESSHKey k WHERE k.owner = ?1", owner);
+		// language=HQL
+		return this.findByQuery("FROM ESSHKey AS k WHERE k.owner = ?1", owner);
 	}
-	
+
+	@Override
+	public int deleteByOwner(String owner) {
+		// language=HQL
+		return this.entityManager.createQuery("DELETE FROM ESSHKey AS k WHERE k.owner = ?1").setParameter(1, owner).executeUpdate();
+	}
+
+	@Override
+	public List<ESSHKey> findByTemplate(String templateName) {
+		// language=HQL
+		return this.findListByQuery("FROM ESSHKey AS k JOIN FETCH k.templates AS t WHERE t.name = ?1", templateName);
+	}
+
 	@Override
 	public ESSHKey findByName(String name) {
 		return this.findByOwner(name);
 	}
-	
+
+	@Override
+	public boolean exists(String name) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(k) FROM ESSHKey AS k WHERE k.owner = ?1", Long.class).setParameter(1, name).getSingleResult() > 0;
+	}
+
 	@Override
 	public Long count() {
-		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM ESSHKey").getSingleResult();
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(k) FROM ESSHKey AS k", Long.class).getSingleResult();
 	}
 }

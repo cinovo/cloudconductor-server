@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 public class EPackageVersion extends AModelApiConvertable<PackageVersion> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	private EPackage pkg;
 	private String version;

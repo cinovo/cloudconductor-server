@@ -19,6 +19,7 @@ package de.cinovo.cloudconductor.server.rest.ui;
 
 import de.cinovo.cloudconductor.api.interfaces.IService;
 import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.handler.ServiceHandler;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -29,9 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -44,19 +45,21 @@ public class ServiceImpl implements IService {
 	
 	@Autowired
 	private IServiceDAO serviceDAO;
-	
 	@Autowired
 	private ServiceHandler serviceHandler;
-	
+	@Autowired
+	private IPackageDAO packageDAO;
+
 	
 	@Override
 	@Transactional
 	public Service[] get() {
-		Set<Service> result = new HashSet<>();
-		for (EService m : this.serviceDAO.findList()) {
-			result.add(m.toApi());
+		List<Service> list = new ArrayList<>();
+		for (Service service : this.serviceDAO.findFlatList()) {
+			service.getPackages().addAll(this.packageDAO.findNamesByService(service.getName()));
+			list.add(service);
 		}
-		return result.toArray(new Service[0]);
+		return list.toArray(new Service[0]);
 	}
 	
 	@Override
@@ -81,10 +84,8 @@ public class ServiceImpl implements IService {
 	}
 	
 	@Override
-	@Transactional
 	public Map<String, String> getUsage(String service) {
 		RESTAssert.assertNotEmpty(service);
-		
 		return this.serviceHandler.getServiceUsage(service);
 	}
 	
@@ -92,9 +93,8 @@ public class ServiceImpl implements IService {
 	@Transactional
 	public void delete(String name) {
 		RESTAssert.assertNotEmpty(name);
-		EService model = this.serviceDAO.findByName(name);
-		RESTAssert.assertNotNull(model, Status.NOT_FOUND);
-		this.serviceDAO.delete(model);
+		RESTAssert.assertTrue(this.serviceDAO.exists(name), Status.NOT_FOUND);
+		this.serviceDAO.deleteByName(name);
 	}
 	
 }

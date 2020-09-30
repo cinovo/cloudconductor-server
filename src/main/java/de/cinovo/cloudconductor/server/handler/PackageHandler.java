@@ -2,16 +2,11 @@ package de.cinovo.cloudconductor.server.handler;
 
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
-import de.cinovo.cloudconductor.server.dao.IRepoDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.dao.*;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.WebApplicationException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -36,6 +26,7 @@ import java.util.Set;
 public class PackageHandler {
 
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	@Autowired
 	private IPackageDAO packageDAO;
 	@Autowired
@@ -129,21 +120,9 @@ public class PackageHandler {
 	}
 
 	/**
-	 * @param repos collection of repos names
-	 * @return a set of the repo entities
-	 */
-	public Set<ERepo> getRepos(Collection<String> repos) {
-		HashSet<ERepo> result = new HashSet<>();
-		for(String repo : repos) {
-			result.add(this.repoDAO.findByName(repo));
-		}
-		return result;
-	}
-
-	/**
 	 * @param epackage the package
 	 * @param repos    the repos to look in
-	 * @return the newest verison of the package in the provided repos
+	 * @return the latest package version in the provided repos
 	 */
 	public EPackageVersion getNewestPackageInRepos(EPackage epackage, Collection<ERepo> repos) {
 		if((repos == null) || repos.isEmpty() || (epackage == null) || epackage.getVersions().isEmpty()) {
@@ -177,19 +156,12 @@ public class PackageHandler {
 	 * @return true, if any template uses the version
 	 */
 	public boolean checkIfInUse(EPackageVersion version, ERepo currentRepo) {
-		for(ETemplate t : this.templateDAO.findList()) {
-			if(t.getRepos().contains(currentRepo)) {
-				if(t.getPackageVersions().contains(version)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return this.templateDAO.countUsingPackageVersion(currentRepo, version) > 0;
 	}
 
 	private EPackageVersion fillFields(EPackageVersion epv, PackageVersion pv) {
 		epv.setVersion(pv.getVersion());
-		epv.getRepos().addAll(this.getRepos(pv.getRepos()));
+		epv.getRepos().addAll(this.repoDAO.findByNames(pv.getRepos()));
 		epv.setDeprecated(false);
 		epv.setDependencies(new HashSet<>());
 		for(Dependency dep : pv.getDependencies()) {

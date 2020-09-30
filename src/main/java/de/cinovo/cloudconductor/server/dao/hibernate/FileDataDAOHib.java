@@ -39,7 +39,7 @@ public class FileDataDAOHib extends EntityDAOHibernate<EFileData, Long> implemen
 
 	@Override
 	public EFileData findDataByFile(EFile file) {
-		String query = "FROM EFileData f WHERE f.parent.id = ?1";
-		return this.findByQuery(query, file.getId());
+		// language=HQL
+		return this.findByQuery("FROM EFileData d WHERE d.parent.id = ?1", file.getId());
 	}
 }

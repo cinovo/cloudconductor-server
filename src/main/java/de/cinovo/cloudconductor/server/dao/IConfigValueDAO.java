@@ -41,6 +41,7 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	 * @return configuration values for global template
 	 */
 	List<EConfigValue> findForGlobalTemplate();
+
 	/**
 	 * @param templateName the name of the template
 	 * @return list of configuration values for GLOBAL service of template
@@ -79,9 +80,13 @@ public interface IConfigValueDAO extends IEntityDAO<EConfigValue, Long> {
 	List<String> findTemplates();
 	
 	/**
-	 * 
 	 * @param template the name of the template
 	 * @return list of configuration
 	 */
 	List<EConfigValue> findAll(String template);
+
+	// TODO int deleteByTemplate(String templateName)
+	// TODO int deleteByTemplateService(String template, String service)
+	// TODO int deleteKV(String template, String service, String key)
+
 }

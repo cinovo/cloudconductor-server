@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -26,13 +27,12 @@ import java.util.List;
 public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, INamed {
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
 
+	private Long id;
 	private String name;
 	private String description;
 	private List<ERepoMirror> repoMirrors;
 	private Long primaryMirrorId;
-
 	private Long lastIndex;
 	private String lastIndexHash;
 
@@ -151,19 +151,13 @@ public class ERepo extends AModelApiConvertable<Repo> implements IEntity<Long>, 
 		}
 
 		ERepo other = (ERepo) obj;
-		if((this.getId() != null) && this.getId().equals(other.getId()) && (this.getName() != null) && this.getName().equals(other.getName())) {
-			return true;
-		}
-
-		return false;
+		return Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name);
 	}
 
 	@Override
 	@Transient
 	public int hashCode() {
-		int val = (this.getName() == null) ? 0 : this.getName().hashCode();
-		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
-		return val * idVal;
+		return Objects.hash(this.id, this.name);
 	}
 
 	@Override

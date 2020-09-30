@@ -41,17 +41,32 @@ public class PackageVersionDAOHib extends EntityDAOHibernate<EPackageVersion, Lo
 	
 	@Override
 	public EPackageVersion find(String baseName, String version) {
-		return this.findByQuery("FROM EPackageVersion r WHERE r.pkg.name = ?1 AND r.version = ?2", baseName, version);
+		// language=HQL
+		return this.findByQuery("FROM EPackageVersion pv WHERE pv.pkg.name = ?1 AND pv.version = ?2", baseName, version);
 	}
 	
 	@Override
 	public List<EPackageVersion> find(String baseName) {
-		return this.findListByQuery("FROM EPackageVersion r WHERE r.pkg.name = ?1", baseName);
+		// language=HQL
+		return this.findListByQuery("FROM EPackageVersion pv WHERE pv.pkg.name = ?1", baseName);
 	}
 
 	@Override
 	public List<EPackageVersion> findByTemplate(Long templateId) {
-		return this.findListByQuery("SELECT r FROM EPackageVersion r, ETemplate t WHERE r in elements(t.packageVersions) AND t.id = ?1", templateId);
+		// language=HQL
+		return this.findListByQuery("SELECT pv FROM ETemplate t JOIN t.packageVersions AS pv WHERE t.id = ?1", templateId);
+	}
+
+	@Override
+	public List<EPackageVersion> findByTemplate(String templateName) {
+		// language=HQL
+		return this.findListByQuery("SELECT pv FROM ETemplate t JOIN t.packageVersions AS pv WHERE t.name = ?1", templateName);
+	}
+
+	@Override
+	public List<EPackageVersion> findByRepo(String repoName) {
+		// language=HQL
+		return findListByQuery("FROM EPackageVersion AS pv JOIN FETCH pv.repos AS r WHERE r.name = ?1", repoName);
 	}
 
 }

@@ -1,8 +1,10 @@
 package de.cinovo.cloudconductor.server.handler;
 
+import com.google.common.base.Strings;
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EServiceState;
@@ -34,10 +36,11 @@ public class HostHandler {
 	private IHostDAO hostDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
+	@Autowired
+	private IServiceStateDAO serviceStateDAO;
 	
 	@Autowired
 	private HostsWSHandler hostWSHandler;
-	
 	@Autowired
 	private HostDetailWSHandler hostDetailWSHandler;
 	
@@ -61,19 +64,15 @@ public class HostHandler {
 		if (host == null) {
 			return null;
 		}
-		if ((service == null) || service.isEmpty() || (state == null)) {
+		if (Strings.isNullOrEmpty(service) || (state == null)) {
 			return host;
 		}
-		
-		for (EServiceState currentServiceState : host.getServices()) {
-			if (currentServiceState.getService().getName().equals(service)) {
-				if (currentServiceState.getState().isStateChangePossible(state)) {
-					currentServiceState.setState(state);
-				} else {
-					this.logger.warn("Desired target state of service " + service + " in host " + host.getName() + " not reachable.");
-				}
-				break;
-			}
+
+		EServiceState currentServiceState = this.serviceStateDAO.findByNameAndHost(service, host.getUuid());
+		if (currentServiceState.getState().isStateChangePossible(state)) {
+			currentServiceState.setState(state);
+		} else {
+			this.logger.warn(String.format("Desired target state of service '%s' in host '%s' not reachable.", service, host.getName()));
 		}
 		return host;
 	}

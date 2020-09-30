@@ -17,9 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -33,10 +33,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.SSHKey;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -50,12 +49,12 @@ import de.taimos.dvalin.jpa.IEntity;
 public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	private String keycontent;
 	private String owner;
 	private String username;
 	private Long lastChangedDate;
-	
 	private List<ETemplate> templates;
 	
 	
@@ -199,7 +198,7 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 		
 		apiKey.setUsername(this.username);
 		
-		ArrayList<String> templateNames = new ArrayList<>();
+		List<String> templateNames = new ArrayList<>();
 		for (ETemplate t : this.getTemplates()) {
 			templateNames.add(t.getName());
 		}

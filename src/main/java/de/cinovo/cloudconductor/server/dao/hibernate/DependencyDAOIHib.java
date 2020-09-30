@@ -41,7 +41,8 @@ public class DependencyDAOIHib extends EntityDAOHibernate<EDependency, Long> imp
 	
 	@Override
 	public EDependency find(Dependency dep) {
-		return this.findByQuery("FROM EDependency d WHERE d.name = ?1 AND d.type = ?2 AND d.operator= ?3 AND d.version = ?4", dep.getName(), dep.getType(), dep.getOperator(), dep.getVersion());
+		// language=HQL
+		return this.findByQuery("FROM EDependency d WHERE d.name = ?1 AND d.type = ?2 AND d.operator = ?3 AND d.version = ?4", dep.getName(), dep.getType(), dep.getOperator(), dep.getVersion());
 	}
 	
 }

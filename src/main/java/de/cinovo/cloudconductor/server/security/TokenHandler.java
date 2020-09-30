@@ -42,7 +42,7 @@ public class TokenHandler {
 	
 	
 	/**
-	 * @param user the user to generate the jwttoken for
+	 * @param user the user to generate the JWT for
 	 * @param type the authentication type
 	 * @param refToken the referenced login token
 	 * @return the token
@@ -89,12 +89,7 @@ public class TokenHandler {
 		if (user == null) {
 			return;
 		}
-		for (EJWTToken jwtToken : user.getJwtTokens()) {
-			if (jwtToken == null) {
-				return;
-			}
-			this.jwtTokenDao.delete(jwtToken);
-		}
+		this.jwtTokenDao.deleteByUser(user);
 	}
 	
 	/**
@@ -104,17 +99,7 @@ public class TokenHandler {
 		if (token == null) {
 			return;
 		}
-		EJWTToken jwtToken = this.jwtTokenDao.findByToken(token);
-		if (jwtToken == null) {
-			return;
-		}
-		this.jwtTokenDao.delete(jwtToken);
-	}
-	
-	private void revokeJWTToken(EUser user, EAuthToken token) {
-		for (EJWTToken jwtToken : this.jwtTokenDao.findByRefToken(user, token)) {
-			this.jwtTokenDao.delete(jwtToken);
-		}
+		this.jwtTokenDao.deleteByToken(token);
 	}
 	
 	/**
@@ -144,29 +129,20 @@ public class TokenHandler {
 	}
 	
 	/**
-	 * @param user the user to revoke the token for
+	 * @param userName the user to revoke the token for
 	 * @param token the token to revoke
 	 * @return true if revoking was successful, false otherwise
 	 */
-	public boolean revokeAuthToken(EUser user, String token) {
-		EAuthToken authToken = this.authTokenDao.findByToken(token);
+	public boolean revokeAuthToken(String userName, String token) {
+		EAuthToken authToken = this.authTokenDao.findByUserAndToken(userName, token);
 		if (authToken == null) {
 			return false;
 		}
-		boolean found = false;
-		for (EAuthToken eAuthToken : user.getAuthTokens()) {
-			if (eAuthToken.getToken().equals(token)) {
-				found = true;
-				break;
-			}
-		}
-		if (found) {
-			authToken.setRevokeDate(DateTime.now());
-			EAuthToken save = this.authTokenDao.save(authToken);
-			this.revokeJWTToken(user, save);
-			return true;
-		}
-		return false;
+
+		authToken.setRevokeDate(DateTime.now());
+		EAuthToken savedAuthToken = this.authTokenDao.save(authToken);
+		this.jwtTokenDao.deleteByRefToken(savedAuthToken);
+		return true;
 	}
 	
 	private String generateToken() {
@@ -178,7 +154,7 @@ public class TokenHandler {
 	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
 		StringBuilder tokenStringToShuffle = new StringBuilder();
 		tokenStringToShuffle.append(currentToken.toUpperCase(), 0, tokenLength / 2);
-		tokenStringToShuffle.append(currentToken, tokenLength / 2, tokenLength);
+		tokenStringToShuffle.append(currentToken, tokenLength / 2, tokenLength - 1);
 		return tokenStringToShuffle.toString();
 	}
 	

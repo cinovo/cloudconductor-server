@@ -1,18 +1,17 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.HashSet;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import de.cinovo.cloudconductor.api.model.User;
+import de.cinovo.cloudconductor.server.dao.IJWTTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IUserDAO;
 import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
-import de.cinovo.cloudconductor.server.security.TokenHandler;
 import de.taimos.dvalin.jaxrs.security.HashedPassword;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -26,7 +25,7 @@ public class UserHandler {
 	@Autowired
 	private IUserDAO userDAO;
 	@Autowired
-	private TokenHandler tokenHandler;
+	private IJWTTokenDAO jwtDAO;
 	@Autowired
 	private IUserGroupDAO userGroupDAO;
 	
@@ -81,7 +80,7 @@ public class UserHandler {
 	 * @param eUser the user
 	 * @param oldPassword the old password
 	 * @param newPassword the new password
-	 * @return whether pwchange was successfull or not
+	 * @return true if pw change was successful false if not
 	 */
 	public boolean changePassword(EUser eUser, String oldPassword, String newPassword) {
 		if (!eUser.getPassword().validate(oldPassword)) {
@@ -89,7 +88,7 @@ public class UserHandler {
 		}
 		eUser.setPassword(new HashedPassword(newPassword));
 		eUser = this.userDAO.save(eUser);
-		this.tokenHandler.revokeJWTTokens(eUser);
+		this.jwtDAO.deleteByUser(eUser);
 		return true;
 	}
 }

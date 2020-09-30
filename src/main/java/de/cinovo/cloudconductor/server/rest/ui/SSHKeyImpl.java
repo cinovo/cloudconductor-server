@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -27,7 +25,6 @@ public class SSHKeyImpl implements ISSHKey {
 	
 	@Autowired
 	private ISSHKeyDAO sshDAO;
-	
 	@Autowired
 	private SSHHandler sshHandler;
 	
@@ -35,12 +32,7 @@ public class SSHKeyImpl implements ISSHKey {
 	@Override
 	@Transactional
 	public SSHKey[] getKeys() {
-		Set<SSHKey> result = new HashSet<>();
-		for (ESSHKey sshKey : this.sshDAO.findList()) {
-			result.add(sshKey.toApi());
-		}
-		
-		return result.toArray(new SSHKey[0]);
+		return this.sshDAO.findList().stream().map(ESSHKey::toApi).distinct().toArray(SSHKey[]::new);
 	}
 	
 	@Override

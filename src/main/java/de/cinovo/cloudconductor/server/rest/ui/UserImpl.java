@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -43,11 +41,7 @@ public class UserImpl implements IUser {
 	@Override
 	@Transactional
 	public User[] getUsers() {
-		List<User> result = new ArrayList<>();
-		for (EUser eUser : this.userDAO.findList()) {
-			result.add(eUser.toApi());
-		}
-		return result.toArray(new User[0]);
+		return this.userDAO.findList().stream().map(EUser::toApi).toArray(User[]::new);
 	}
 	
 	@Override
@@ -76,9 +70,9 @@ public class UserImpl implements IUser {
 	@Transactional
 	public void delete(String userName) {
 		RESTAssert.assertNotEmpty(userName);
-		EUser eUser = this.userDAO.findByLoginName(userName);
-		RESTAssert.assertNotNull(eUser, Status.NOT_FOUND);
-		this.userDAO.delete(eUser);
+		RESTAssert.assertTrue(this.userDAO.existsByLogin(userName), Status.NOT_FOUND);
+		// TODO first revoke all auth tokens and JWTs for user
+		this.userDAO.deleteByLoginName(userName);
 	}
 	
 	@Override
@@ -97,9 +91,8 @@ public class UserImpl implements IUser {
 	public void revokeAuthToken(String userName, String token) {
 		RESTAssert.assertNotEmpty(userName);
 		RESTAssert.assertNotEmpty(token);
-		EUser eUser = this.userDAO.findByLoginName(userName);
-		RESTAssert.assertNotNull(eUser);
-		boolean success = this.tokenHandler.revokeAuthToken(eUser, token);
+		RESTAssert.assertTrue(this.userDAO.existsByLogin(userName), Status.NOT_FOUND);
+		boolean success = this.tokenHandler.revokeAuthToken(userName, token);
 		RESTAssert.assertTrue(success);
 	}
 	

@@ -17,6 +17,10 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.taimos.dvalin.jpa.IEntity;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,10 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -134,7 +134,7 @@ public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultSta
 		int parent2 = (this.template == null) ? 0 : this.template.hashCode();
 		return val * (parent + parent2);
 	}
-	
+
 	@Override
 	@Transient
 	public Class<ServiceDefaultState> getApiClass() {

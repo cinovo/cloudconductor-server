@@ -29,9 +29,9 @@ import de.taimos.dvalin.jpa.IEntityDAO;
 public interface IServiceStateDAO extends IEntityDAO<EServiceState, Long> {
 
 	/**
-	 * @param name the service name
-	 * @param host the host name
+	 * @param serviceName the service name
+	 * @param hostUUID the host UUID
 	 * @return the service state
 	 */
-	EServiceState findByName(String name, String host);
+	EServiceState findByNameAndHost(String serviceName, String hostUUID);
 }

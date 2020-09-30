@@ -9,10 +9,7 @@ import de.taimos.dvalin.jpa.IEntityDAO;
  *
  * @author psigloch
  */
-public interface IUserGroupDAO extends IEntityDAO<EUserGroup, Long> {
-	/**
-	 * @param groupName the group name
-	 * @return the group
-	 */
-	EUserGroup findByName(String groupName);
+public interface IUserGroupDAO extends IEntityDAO<EUserGroup, Long>, IFindNamed<EUserGroup> {
+
+    // TODO add List<EUserGroup> findByName(Iterable<String> groupNames)
 }

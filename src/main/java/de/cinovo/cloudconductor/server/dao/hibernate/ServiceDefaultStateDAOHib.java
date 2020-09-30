@@ -17,13 +17,13 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
 import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
 import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -41,12 +41,32 @@ public class ServiceDefaultStateDAOHib extends EntityDAOHibernate<EServiceDefaul
 	}
 	
 	@Override
-	public EServiceDefaultState findByName(String name, String template) {
-		return this.findByQuery("FROM EServiceDefaultState as ss WHERE ss.service.name = ?1 AND ss.template.name = ?2", name, template);
+	public EServiceDefaultState findByName(String serviceName, String templateName) {
+		// language=HQL
+		return this.findByQuery("FROM EServiceDefaultState as ss WHERE ss.service.name = ?1 AND ss.template.name = ?2", serviceName, templateName);
 	}
-	
+
 	@Override
-	public List<EServiceDefaultState> findByTemplate(String template) {
-		return this.findListByQuery("FROM EServiceDefaultState as ss WHERE ss.template.name = ?1", template);
+	public ServiceDefaultState findFlatByName(String templateName, String serviceName) {
+		// language=HQL
+		String query = "SELECT NEW de.cinovo.cloudconductor.api.model.ServiceDefaultState(s.template.name, s.service.name, s.state)" +
+				" FROM EServiceDefaultState AS s WHERE s.template.name = ?1 AND s.service.name = ?2";
+		return this.entityManager.createQuery(query, ServiceDefaultState.class) //
+				.setParameter(1, templateName).setParameter(2, serviceName) //
+				.getSingleResult();
+	}
+
+	@Override
+	public List<EServiceDefaultState> findByTemplate(String templateName) {
+		// language=HQL
+		return this.findListByQuery("FROM EServiceDefaultState AS ss WHERE ss.template.name = ?1", templateName);
+	}
+
+	@Override
+	public List<ServiceDefaultState> findFlatByTemplate(String templateName) {
+		// language=HQL
+		String query = "SELECT NEW de.cinovo.cloudconductor.api.model.ServiceDefaultState(s.template.name, s.service.name, s.state)" +
+				" FROM EServiceDefaultState AS s WHERE s.template.name = ?1";
+		return this.entityManager.createQuery(query, ServiceDefaultState.class).setParameter(1, templateName).getResultList();
 	}
 }

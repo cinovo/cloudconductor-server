@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.IEntityDAO;
@@ -28,6 +29,12 @@ import de.taimos.dvalin.jpa.IEntityDAO;
  * @author psigloch
  */
 public interface IAgentOptionsDAO extends IEntityDAO<EAgentOption, Long> {
+
+	/**
+	 * @param templateName	the name of the template
+	 * @return the flat agent options
+	 */
+	AgentOption findFlatByTemplate(String templateName);
 
 	/**
 	 * @param template the template name

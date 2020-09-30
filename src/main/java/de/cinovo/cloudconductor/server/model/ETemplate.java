@@ -18,7 +18,6 @@ package de.cinovo.cloudconductor.server.model;
  */
 
 import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.taimos.dvalin.jpa.IEntity;
 
@@ -36,10 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -133,7 +129,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	/**
 	 * @return the rpms
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "mappingrpmtemplate", schema = "cloudconductor", //
 			joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "rpmid"))
 	public List<EPackageVersion> getPackageVersions() {
@@ -209,7 +205,7 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 	/**
 	 * @return the repos
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
 	@JoinTable(name = "map_template_repo", schema = "cloudconductor", //
 			joinColumns = @JoinColumn(name = "templateid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
 	public List<ERepo> getRepos() {
@@ -246,38 +242,15 @@ public class ETemplate extends AModelApiConvertable<Template> implements IEntity
 
 	@Override
 	public Template toApi() {
-		Template template = super.toApi();
-		if(!this.hosts.isEmpty()) {
-			template.setHosts(this.hosts.stream().map(EHost::toHostIdentifier).collect(Collectors.toSet()));
-		} else {
-			template.setHosts(new HashSet<>());
-		}
-		template.setRepos(this.namedModelToStringSet(this.repos));
-
-		Map<String, String> versions = new HashMap<>();
-		for(EPackageVersion pv : this.packageVersions) {
-			versions.put(pv.getPkg().getName(), pv.getVersion());
-		}
-		template.setVersions(versions);
-		return template;
-	}
-
-	/**
-	 * @return simple api element
-	 */
-	public SimpleTemplate toSimple() {
-		SimpleTemplate res = new SimpleTemplate();
-		res.setGroup(this.group);
-		res.setHostCount(0);
-		if(!this.hosts.isEmpty()) {
-			res.setHostCount(this.hosts.size());
-		}
-		res.setName(this.name);
-		res.setPackageCount(0);
-		if(this.packageVersions != null && !this.packageVersions.isEmpty()) {
-			res.setPackageCount(this.packageVersions.size());
-		}
-		res.setRepos(this.repos.stream().map(ERepo::getName).collect(Collectors.toSet()));
-		return res;
+	    Template template = new Template();
+	    template.setName(this.name);
+	    template.setDescription(this.description);
+		template.setVersions(this.packageVersions.stream().collect(Collectors.toMap(pv -> pv.getPkg().getName(), EPackageVersion::getVersion, (a, b) -> b)));
+	    template.setHosts(this.hosts.stream().map(EHost::toHostIdentifier).collect(Collectors.toSet()));
+	    template.setRepos(this.repos.stream().map(INamed::getName).collect(Collectors.toSet()));
+	    template.setAutoUpdate(this.autoUpdate);
+	    template.setSmoothUpdate(this.smoothUpdate);
+	    template.setGroup(this.group);
+	    return template;
 	}
 }

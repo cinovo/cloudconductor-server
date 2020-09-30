@@ -22,6 +22,7 @@ public class AgentDAOHib extends EntityDAOHibernate<EAgent, Long> implements IAg
 	
 	@Override
 	public EAgent findAgentByName(String agentName) {
-		return this.findByQuery("FROM EAgent a WHERE a.name = ?1", agentName);
+		// language=HQL
+		return this.findByQuery("FROM EAgent AS a WHERE a.name = ?1", agentName);
 	}
 }

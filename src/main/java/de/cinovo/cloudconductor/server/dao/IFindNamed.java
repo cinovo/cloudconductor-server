@@ -32,4 +32,7 @@ public interface IFindNamed<T> {
 	 * @return the config file
 	 */
 	T findByName(String name);
+
+	boolean exists(String name);
+
 }

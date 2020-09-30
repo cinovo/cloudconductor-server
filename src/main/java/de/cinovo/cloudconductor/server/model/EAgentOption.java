@@ -230,10 +230,13 @@ public class EAgentOption extends AModelApiConvertable<AgentOption> implements I
 	}
 
 	@Override
+	@Transient
 	public AgentOption toApi() {
-		AgentOption agentOption = super.toApi();
-		agentOption.setTemplateName(this.template.getName());
-		return agentOption;
+		return new AgentOption(aliveTimer, aliveTimerUnit, //
+				doSshKeys, sshKeysTimer, sshKeysTimerUnit, //
+				doPackageManagement, packageManagementTimer, packageManagementTimerUnit, //
+				doFileManagement, fileManagementTimer, fileManagementTimerUnit, //
+				this.template.getName());
 
 	}
 }

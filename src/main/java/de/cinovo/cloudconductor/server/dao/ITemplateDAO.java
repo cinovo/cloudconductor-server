@@ -17,7 +17,9 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.IEntityDAO;
@@ -32,12 +34,13 @@ import java.util.List;
  */
 public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ETemplate> {
 
+	List<SimpleTemplate> findSimpleList();
+
 	/**
 	 * @param repo the repo
 	 * @return the templates using the repo
 	 */
 	List<ETemplate> findByRepo(ERepo repo);
-
 
 	/**
 	 * @param pkg the package
@@ -46,7 +49,33 @@ public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ET
 	List<ETemplate> findByPackage(EPackage pkg);
 
 	/**
+	 * Disable auto update for all templates
+	 *
+	 * @return number of updated templates
+	 */
+	int disableAutoUpdate();
+
+	/**
+	 * @param templateNames	template names
+	 * @return list of templates
+	 */
+	List<ETemplate> findByName(Iterable<String> templateNames);
+
+	/**
 	 * @return the number of templates
 	 */
 	Long count();
+
+	/**
+	 * @param repo	the repository
+	 * @return number of templates using given repository
+	 */
+	Long countUsingRepo(ERepo repo);
+
+	/**
+	 * @param repo				the repository
+	 * @param packageVersion	the package version
+	 * @return number of templates using repo and package version
+	 */
+	Long countUsingPackageVersion(ERepo repo, EPackageVersion packageVersion);
 }

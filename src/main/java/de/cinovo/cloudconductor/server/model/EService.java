@@ -24,6 +24,7 @@ import de.taimos.dvalin.jpa.IEntity;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -37,6 +38,7 @@ import java.util.List;
 public class EService extends AModelApiConvertable<Service> implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	private String name;
 	private String description;
@@ -147,8 +149,12 @@ public class EService extends AModelApiConvertable<Service> implements IEntity<L
 
 	@Override
 	public Service toApi() {
-		Service service = super.toApi();
-		service.setPackages(this.namedModelToStringSet(this.packages));
-		return service;
+	    Service service = new Service();
+	    service.setId(this.id);
+	    service.setName(this.name);
+	    service.setDescription(this.description);
+	    service.setInitScript(this.initScript);
+	    service.setPackages(this.packages.stream().map(EPackage::getName).collect(Collectors.toSet()));
+	    return service;
 	}
 }

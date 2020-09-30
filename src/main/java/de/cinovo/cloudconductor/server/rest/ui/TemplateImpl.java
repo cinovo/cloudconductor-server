@@ -2,30 +2,13 @@ package de.cinovo.cloudconductor.server.rest.ui;
 
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
-import de.cinovo.cloudconductor.api.model.AgentOption;
-import de.cinovo.cloudconductor.api.model.PackageDiff;
-import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.api.model.Repo;
-import de.cinovo.cloudconductor.api.model.SSHKey;
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
-import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
-import de.cinovo.cloudconductor.api.model.SimpleTemplate;
-import de.cinovo.cloudconductor.api.model.Template;
-import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.api.model.*;
+import de.cinovo.cloudconductor.server.dao.*;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.handler.ServiceDefaultStateHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
-import de.cinovo.cloudconductor.server.model.EAgentOption;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ERepo;
-import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
-import de.cinovo.cloudconductor.server.model.ETemplate;
+import de.cinovo.cloudconductor.server.model.*;
 import de.cinovo.cloudconductor.server.util.comparators.TemplatePackageDiffer;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
@@ -37,11 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -60,7 +39,11 @@ public class TemplateImpl implements ITemplate {
 	private IServiceDefaultStateDAO serviceDefaultStateDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-	
+	@Autowired
+	private IRepoDAO repoDAO;
+	@Autowired
+	private IPackageVersionDAO pkgVersionDAO;
+
 	@Autowired
 	private HostHandler hostHandler;
 	@Autowired
@@ -86,7 +69,12 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public SimpleTemplate[] getSimpleTemplates() {
-		return this.templateDAO.findList().stream().map(ETemplate::toSimple).toArray(SimpleTemplate[]::new);
+		List<SimpleTemplate> list = new ArrayList<>();
+		for (SimpleTemplate simpleTemplate : this.templateDAO.findSimpleList()) {
+			simpleTemplate.getRepos().addAll(this.repoDAO.findNamesByTemplate(simpleTemplate.getName()));
+			list.add(simpleTemplate);
+		}
+		return list.toArray(new SimpleTemplate[0]);
 	}
 
 	@Override
@@ -162,11 +150,11 @@ public class TemplateImpl implements ITemplate {
 	@Transactional
 	public AgentOption getAgentOption(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
-		EAgentOption options = this.agentOptionsDAO.findByTemplate(templateName);
-		if(options == null) {
-			options = this.templateHandler.createAgentOptions(templateName);
+		AgentOption options = this.agentOptionsDAO.findFlatByTemplate(templateName);
+		if (options != null) {
+			return options;
 		}
-		return options.toApi();
+		return this.templateHandler.createAgentOptions(templateName).toApi();
 	}
 
 	@Override
@@ -186,6 +174,7 @@ public class TemplateImpl implements ITemplate {
 	@Transactional
 	public SSHKey[] getSSHKeysForTemplate(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertTrue(this.templateDAO.exists(templateName), Status.NOT_FOUND);
 		Set<SSHKey> keys = this.sshKeyHandler.getSSHKeyForTemplate(templateName);
 		return keys.toArray(new SSHKey[0]);
 	}
@@ -193,45 +182,25 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public Service[] getServicesForTemplate(String templateName) {
-		ETemplate template = this.getTemplateByName(templateName);
-		List<EPackageVersion> pvs = template.getPackageVersions();
-
-		Set<Service> templateServices = new HashSet<>();
-		for(EService service : this.serviceDAO.findList()) {
-			for(EPackageVersion pv : pvs) {
-				if(service.getPackages().contains(pv.getPkg())) {
-					templateServices.add(service.toApi());
-				}
-			}
-		}
-
-		return templateServices.toArray(new Service[0]);
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertTrue(this.templateDAO.exists(templateName), Status.NOT_FOUND);
+		return this.serviceDAO.findByTemplate(templateName).stream().map(EService::toApi).toArray(Service[]::new);
 	}
 
 	@Override
 	@Transactional
 	public Repo[] getReposForTemplate(String templateName) {
-		ETemplate template = this.getTemplateByName(templateName);
-		
-		Set<Repo> repos = new HashSet<>();
-		for(ERepo r : template.getRepos()) {
-			repos.add(r.toApi());
-		}
-
-		return repos.toArray(new Repo[0]);
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertTrue(this.templateDAO.exists(templateName), Status.NOT_FOUND);
+		return repoDAO.findByTemplate(templateName).stream().map(ERepo::toApi).toArray(Repo[]::new);
 	}
 
 	@Override
 	@Transactional
 	public PackageVersion[] getPackageVersionsForTemplate(String templateName) {
-		ETemplate template = this.getTemplateByName(templateName);
-		
-		Set<PackageVersion> packageVersions = new HashSet<>();
-		for(EPackageVersion packageVersion : template.getPackageVersions()) {
-			packageVersions.add(packageVersion.toApi());
-		}
-
-		return packageVersions.toArray(new PackageVersion[0]);
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertTrue(this.templateDAO.exists(templateName), Status.NOT_FOUND);
+		return pkgVersionDAO.findByTemplate(templateName).stream().map(EPackageVersion::toApi).distinct().toArray(PackageVersion[]::new);
 	}
 	
 	@Override
@@ -264,13 +233,8 @@ public class TemplateImpl implements ITemplate {
 	@Transactional
 	public ServiceDefaultState[] getServiceDefaultStates(String templateName) {
 		RESTAssert.assertNotEmpty(templateName);
-
-		List<ServiceDefaultState> serviceDefaultStates = new ArrayList<>();
-		for(EServiceDefaultState esds : this.serviceDefaultStateDAO.findByTemplate(templateName)) {
-			serviceDefaultStates.add(esds.toApi());
-		}
-
-		return serviceDefaultStates.toArray(new ServiceDefaultState[0]);
+		RESTAssert.assertTrue(this.templateDAO.exists(templateName), Status.NOT_FOUND);
+		return this.serviceDefaultStateDAO.findFlatByTemplate(templateName).toArray(new ServiceDefaultState[0]);
 	}
 
 	@Override
@@ -278,12 +242,7 @@ public class TemplateImpl implements ITemplate {
 	public ServiceDefaultState getServiceDefaultState(String templateName, String serviceName) {
 		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotEmpty(serviceName);
-
-		EServiceDefaultState eServiceDefaultState = this.serviceDefaultStateDAO.findByName(serviceName, templateName);
-
-		RESTAssert.assertNotNull(eServiceDefaultState, Status.NOT_FOUND);
-
-		return eServiceDefaultState.toApi();
+		return this.serviceDefaultStateDAO.findFlatByName(serviceName, templateName);
 	}
 
 	@Override

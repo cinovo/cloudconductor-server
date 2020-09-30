@@ -3,14 +3,12 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 /*
@@ -45,25 +43,68 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	}
 
 	@Override
-	public ETemplate findByName(String name) {
-		return this.findByQuery("FROM ETemplate t WHERE t.name = ?1", name);
+	public List<SimpleTemplate> findSimpleList() {
+		// lamguage=HQL
+		String q = "SELECT new de.cinovo.cloudconductor.api.model.SimpleTemplate(t.name, SIZE(h), SIZE(t.packageVersions), t.group)" +
+				" FROM ETemplate AS t LEFT JOIN t.hosts AS h " +
+				" GROUP BY t.name, t.group";
+		return this.entityManager.createQuery(q, SimpleTemplate.class).getResultList();
+	}
+
+	@Override
+	public ETemplate findByName(String templateName) {
+		// language=HQL
+		return this.findByQuery("FROM ETemplate AS t WHERE t.name = ?1", templateName);
+	}
+
+	@Override
+	public List<ETemplate> findByName(Iterable<String> templateNames) {
+		// language=HQL
+		return this.findListByQuery("FROM ETemplate AS t WHERE t.name IN ?1", templateNames);
+	}
+
+	@Override
+	public boolean exists(String templateName) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(t) FROM ETemplate AS t WHERE t.name = ?1", Long.class).setParameter(1, templateName).getSingleResult() > 0;
 	}
 
 	@Override
 	public List<ETemplate> findByRepo(ERepo repo) {
-		return this.findListByQuery("FROM ETemplate t WHERE ?1 IN elements(t.repos)", repo);
+		// language=HQL
+		return this.findListByQuery("FROM ETemplate AS t WHERE ?1 IN elements(t.repos)", repo);
 	}
 
 	@Override
 	public List<ETemplate> findByPackage(EPackage pkg) {
-		return this.findListByQuery("SELECT DISTINCT t FROM ETemplate t join fetch t.packageVersions pv WHERE ?1 = pv.pkg", pkg);
+		// language=HQL
+		return this.findListByQuery("FROM ETemplate AS t JOIN FETCH t.packageVersions AS pv WHERE pv.pkg = ?1", pkg);
+	}
+
+	@Override
+	public int disableAutoUpdate() {
+		// language=HQL
+		String q = "UPDATE ETemplate AS t SET t.autoUpdate = FALSE WHERE t.autoUpdate = TRUE";
+		return this.entityManager.createQuery(q).executeUpdate();
 	}
 
 	@Override
 	public Long count() {
-		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-		query.select(builder.count(query.from(ETemplate.class)));
-		return this.entityManager.createQuery(query).getSingleResult();
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(t) FROM ETemplate AS t", Long.class).getSingleResult();
+	}
+
+	@Override
+	public Long countUsingRepo(ERepo repo) {
+		// language=HQL
+		String q = "SELECT COUNT(t) FROM ETemplate As t WHERE ?1 MEMBER OF t.repos";
+		return this.entityManager.createQuery(q, Long.class).setParameter(1, repo).getSingleResult();
+	}
+
+	@Override
+	public Long countUsingPackageVersion(ERepo repo, EPackageVersion packageVersion) {
+		// language=HQL
+		String q = "SELECT COUNT(t) FROM ETemplate AS t WHERE ?1 MEMBER OF t.repos AND ?2 MEMBER OF t.packageVersions";
+		return this.entityManager.createQuery(q, Long.class).setParameter(1, repo).setParameter(2, packageVersion).getSingleResult();
 	}
 }

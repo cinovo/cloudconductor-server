@@ -27,14 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -82,10 +78,9 @@ public class PackageImport implements IPackageImport {
 		}
 	}
 
-
-	private void importVersions(Set<PackageVersion> packageVersions, String repoName) {
+	public void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
-		HashMap<String, Set<EPackageVersion>> provided = new HashMap<>();
+		Map<String, Set<EPackageVersion>> provided = new HashMap<>();
 		ERepo repo = this.repoDAO.findByName(repoName);
 		for(PackageVersion version : packageVersions) {
 			// Retrieve the package for the given version. Create it if it doesn't exist.
@@ -125,29 +120,21 @@ public class PackageImport implements IPackageImport {
 		this.templateHandler.updateAllPackages();
 	}
 
-
-	private void performDBClean(ERepo repo, HashMap<String, Set<EPackageVersion>> provided) {
-		List<EPackage> inDB = new ArrayList<>(this.packageDAO.findList());
-		List<EFile> cfgs = this.fileDAO.findList();
-
-		for(EPackage pkg : inDB) {
+	@Transactional
+	public void performDBClean(ERepo repo, Map<String, Set<EPackageVersion>> provided) {
+		for(EPackage pkg : this.packageDAO.findList()) {
 			this.cleanUpVersions(provided.get(pkg.getName()), pkg.getVersions(), repo);
 		}
 
-		for(EPackage ePackage : this.packageDAO.findList()) {
-			if(ePackage.getVersions() == null || ePackage.getVersions().isEmpty()) {
-				// check if it's used somewhere within configuration files
-				for(EFile cfg : cfgs) {
-					if((cfg.getPkg() != null) && cfg.getPkg().equals(ePackage)) {
-						cfg.setPkg(null);
-						this.fileDAO.save(cfg);
-					}
-				}
-				this.packageDAO.deleteById(ePackage.getId());
+		for(EPackage emptyPackage : this.packageDAO.findEmpty()) {
+			// check if it's used somewhere within configuration files
+			for (EFile file : this.fileDAO.findByPackage(emptyPackage)) {
+				file.setPkg(null); // remove pkg ref
+				this.fileDAO.save(file);
 			}
+			this.packageDAO.deleteById(emptyPackage.getId());
 		}
 	}
-
 
 	private void cleanUpVersions(Set<EPackageVersion> newPackageVersions, Set<EPackageVersion> existing, ERepo currentRepo) {
 		if(existing == null) {
@@ -163,12 +150,12 @@ public class PackageImport implements IPackageImport {
 					}
 				}
 			}
+
 			if(!provided) {
 				this.handleNotProvidedVersion(currentRepo, dbVersion);
 			}
 		}
 	}
-
 
 	private void handleNotProvidedVersion(ERepo currentRepo, EPackageVersion dbVersion) {
 		if(this.packageHandler.checkIfInUse(dbVersion, currentRepo)) {
@@ -179,7 +166,7 @@ public class PackageImport implements IPackageImport {
 			return;
 		}
 		if(dbVersion.getRepos().size() > 0) {
-			if(dbVersion.getRepos().stream().anyMatch((e) -> e.equals(currentRepo))) {
+			if(dbVersion.getRepos().stream().anyMatch((e) -> e.equals(currentRepo))) { // TODO NOT?
 				//more repos than the current one provide this package -> we keep it but remove the reference for the current repo
 				dbVersion.getRepos().remove(currentRepo);
 				dbVersion = this.versionDAO.save(dbVersion);

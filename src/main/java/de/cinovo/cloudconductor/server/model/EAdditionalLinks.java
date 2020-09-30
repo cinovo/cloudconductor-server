@@ -36,9 +36,7 @@ public class EAdditionalLinks extends AModelApiConvertable<AdditionalLink> imple
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	
 	private String label;
-	
 	private String url;
 	
 	
@@ -88,5 +86,10 @@ public class EAdditionalLinks extends AModelApiConvertable<AdditionalLink> imple
 	@Transient
 	public Class<AdditionalLink> getApiClass() {
 		return AdditionalLink.class;
+	}
+
+	@Override
+	public AdditionalLink toApi() {
+	    return new AdditionalLink(this.id, this.label, this.url);
 	}
 }

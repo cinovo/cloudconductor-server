@@ -20,6 +20,8 @@ package de.cinovo.cloudconductor.server.dao;
 import de.cinovo.cloudconductor.server.model.EServerOptions;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
@@ -32,5 +34,6 @@ public interface IServerOptionsDAO extends IEntityDAO<EServerOptions, Long> {
 	/**
 	 * @return the server options
 	 */
+	@NotNull
 	EServerOptions get();
 }

@@ -1,17 +1,15 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
 
 /*
  * #%L
@@ -46,9 +44,16 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	
 	@Override
 	public EHost findByName(String name) {
-		return this.findByQuery("FROM EHost h WHERE h.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM EHost AS h WHERE h.name = ?1", name);
 	}
-	
+
+	@Override
+	public boolean exists(String name) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(h) FROM EHost AS h WHERE h.name = ?1", Long.class).getSingleResult() > 0;
+	}
+
 	@Override
 	public Long count() {
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
@@ -59,19 +64,19 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	
 	@Override
 	public EHost findByUuid(String uuid) {
-		return this.findByQuery("FROM EHost h where h.uuid = ?1", uuid);
+		// language=HQL
+		return this.findByQuery("FROM EHost AS h WHERE h.uuid = ?1", uuid);
 	}
 	
 	@Override
 	public List<EHost> findHostsForTemplate(String templateName) {
-		return this.findListByQuery("FROM EHost h WHERE h.template.name = ?1", templateName);
+		// language=HQL
+		return this.findListByQuery("SELECT h FROM EHost AS h JOIN FETCH h.template AS t WHERE t.name = ?1", templateName);
 	}
 	
 	@Override
 	public List<SimpleHost> findSimpleHosts() {
-		StringBuilder query = this.getSimpleHostQuery();
-		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
-		return tq.getResultList();
+		return this.entityManager.createQuery(this.getSimpleHostQuery().toString(), SimpleHost.class).getResultList();
 	}
 	
 	@Override
@@ -83,14 +88,13 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 		List<SimpleHost> resultList = tq.getResultList();
 		return resultList.isEmpty() ? null : resultList.get(0);
 	}
-	
+
 	private StringBuilder getSimpleHostQuery() {
-		StringBuilder query = new StringBuilder();
-		query.append("SELECT new de.cinovo.cloudconductor.api.model.SimpleHost(h.name, agent.name, h.uuid, h.template.name, h.lastSeen, ");
-		query.append("(SELECT count(ss) FROM EServiceState ss WHERE ss.host.id = h.id), ");
-		query.append("(SELECT count(ps) FROM EPackageState ps WHERE ps.host.id = h.id) ");
-		query.append(") FROM EHost h");
-		return query;
+		return new StringBuilder("SELECT new de.cinovo.cloudconductor.api.model.SimpleHost(" +
+				"h.name, agent.name, h.uuid, h.template.name, h.lastSeen," +
+				" (SELECT count(ss) FROM EServiceState ss WHERE ss.host.id = h.id)," +
+				" (SELECT count(ps) FROM EPackageState ps WHERE ps.host.id = h.id)" +
+				") FROM EHost h");
 	}
 	
 }

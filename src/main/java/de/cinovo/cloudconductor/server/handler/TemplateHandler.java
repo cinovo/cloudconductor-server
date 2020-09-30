@@ -128,7 +128,8 @@ public class TemplateHandler {
 	 *
 	 * @param template the template to update the packages for
 	 */
-	private ETemplate updateAllPackages(ETemplate template) {
+	@Transactional
+	public ETemplate updateAllPackages(ETemplate template) {
 		if((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
 			return template;
 		}
@@ -163,25 +164,10 @@ public class TemplateHandler {
 	}
 
 	/**
-	 * disables autoupdate for all templates
+	 * disables auto update for all templates
 	 */
 	public void disableAutoUpdate() {
-		this.disableAutoUpdate(this.templateDAO.findList());
-	}
-
-	/**
-	 * @param t collection of templates to disable autoupdate.
-	 */
-	private void disableAutoUpdate(Collection<ETemplate> t) {
-		if(t == null) {
-			t = this.templateDAO.findList();
-		}
-		for(ETemplate template : t) {
-			if(template.getAutoUpdate()) {
-				template.setAutoUpdate(false);
-				this.templateDAO.save(template);
-			}
-		}
+		this.templateDAO.disableAutoUpdate();
 	}
 
 	/**
@@ -231,15 +217,11 @@ public class TemplateHandler {
 		et.setName(t.getName());
 		et.setDescription(t.getDescription());
 		et.setRepos(new ArrayList<>());
-		et.setAutoUpdate(t.getAutoUpdate() == null ? false : t.getAutoUpdate());
-		et.setSmoothUpdate(t.getSmoothUpdate() == null ? false : t.getSmoothUpdate());
+		et.setAutoUpdate(t.getAutoUpdate() != null && t.getAutoUpdate());
+		et.setSmoothUpdate(t.getSmoothUpdate() != null && t.getSmoothUpdate());
 		et.setGroup(t.getGroup());
-		if(t.getRepos() != null) {
-			for(ERepo repo : this.repoDAO.findList()) {
-				if(t.getRepos().contains(repo.getName())) {
-					et.getRepos().add(repo);
-				}
-			}
+		if(t.getRepos() != null && !t.getRepos().isEmpty()) {
+			et.getRepos().addAll(this.repoDAO.findByNames(t.getRepos()));
 		}
 		et.setPackageVersions(this.findPackageVersions(et.getPackageVersions(), t.getVersions(), et.getRepos()));
 		return et;

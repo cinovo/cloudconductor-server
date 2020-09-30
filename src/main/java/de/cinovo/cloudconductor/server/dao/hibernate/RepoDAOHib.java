@@ -18,7 +18,6 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  */
 
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
@@ -41,11 +40,39 @@ public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepo
 
 	@Override
 	public ERepo findByName(String name) {
-		return this.findByQuery("FROM ERepo psg WHERE psg.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM ERepo AS r WHERE r.name = ?1", name);
+	}
+
+	@Override
+	public boolean exists(String repoName) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(r) FROM ERepo AS r WHERE r.name = ?1", Long.class).setParameter(1, repoName).getSingleResult() > 0;
+	}
+
+	@Override
+	public List<ERepo> findByNames(Iterable<String> repoNames) {
+		//language=HQL
+		return this.findListByQuery("FROM ERepo AS r WHERE r.name IN ?1", repoNames);
 	}
 
 	@Override
 	public List<ERepo> findByTemplate(Long templateId) {
-		return this.findListByQuery("SELECT r FROM ERepo r, ETemplate t WHERE r in elements(t.repos) AND t.id = ?1", templateId);
+		// language=HQL
+		return this.findListByQuery("SELECT r FROM ETemplate AS t JOIN t.repos AS r WHERE t.id = ?1", templateId);
 	}
+
+	@Override
+	public List<String> findNamesByTemplate(String templateName) {
+		// language=HQL
+		String q = "SELECT r.name FROM ETemplate AS t JOIN t.repos AS r WHERE t.name = ?1";
+		return this.entityManager.createQuery(q, String.class).setParameter(1, templateName).getResultList();
+	}
+
+	@Override
+	public List<ERepo> findByTemplate(String templateName) {
+		// language=HQL
+		return this.findListByQuery("SELECT r FROM ETemplate AS t JOIN t.repos AS r WHERE t.name = ?1", templateName);
+	}
+
 }

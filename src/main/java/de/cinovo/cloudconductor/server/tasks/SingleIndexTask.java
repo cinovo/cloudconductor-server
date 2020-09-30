@@ -107,7 +107,6 @@ public class SingleIndexTask implements IServerTasks {
 	
 	@Override
 	public void run() {
-
 		this.execute(false);
 	}
 	

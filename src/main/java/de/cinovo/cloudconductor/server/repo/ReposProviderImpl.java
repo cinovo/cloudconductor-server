@@ -1,16 +1,12 @@
 package de.cinovo.cloudconductor.server.repo;
 
-import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
-import de.cinovo.cloudconductor.server.model.ERepo;
-import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
+import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.InputStream;
@@ -24,41 +20,23 @@ import java.io.InputStream;
  */
 @JaxRsComponent
 public class ReposProviderImpl implements IReposProvider {
-	
-	@Autowired
-	private IRepoDAO repoDAO;
+
 	@Autowired
 	private RepoHandler repoHandler;
-	
-	
+
 	@Override
-	@Transactional
 	public Response get(String repo, String file) {
-		if ((repo == null) || repo.isEmpty()) {
-			throw new NotFoundException();
-		}
-		IRepoProvider provider = this.findProvider(repo);
-		if (provider == null) {
-			throw new NotFoundException();
-		}
-		if (file.isEmpty() || file.endsWith("/")) {
-			throw new NotFoundException();
-		}
+		RESTAssert.assertNotEmpty(repo, Response.Status.NOT_FOUND);
+		RESTAssert.assertNotEmpty(file, Response.Status.NOT_FOUND);
+		RESTAssert.assertTrue(file.endsWith("/"));
+
+		IRepoProvider provider = this.repoHandler.findRepoProvider(repo);
+		RESTAssert.assertNotNull(provider, Response.Status.NOT_FOUND);
 		
 		RepoEntry entry = provider.getEntry(file);
-		if (entry != null) {
-			return this.resultStream(provider.getEntryStream(file), entry);
-		}
-		throw new NotFoundException();
-	}
-	
-	private IRepoProvider findProvider(String repo) {
-		ERepo erepo = this.repoDAO.findByName(repo);
-		if (erepo != null) {
-			ERepoMirror primaryMirror = this.repoHandler.findPrimaryMirror(erepo);
-			return this.repoHandler.findRepoProvider(primaryMirror);
-		}
-		return null;
+		RESTAssert.assertNotNull(entry, Response.Status.NOT_FOUND);
+
+		return this.resultStream(provider.getEntryStream(file), entry);
 	}
 	
 	private Response resultStream(final InputStream stream, RepoEntry entry) {

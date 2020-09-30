@@ -22,6 +22,7 @@ import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -33,13 +34,38 @@ import java.util.List;
 public interface IPackageDAO extends IEntityDAO<EPackage, Long>, IFindNamed<EPackage> {
 	
 	/**
-	 * @return the row count
+	 * @return total number of packages
 	 */
 	Long count();
-	
+
+	/**
+	 * @param packageNames	the package names
+	 * @return list of packages
+	 */
+	List<EPackage> findByName(Iterable<String> packageNames);
+
+	/**
+	 * @param serviceName	the name of the service
+	 * @return list of packages providing given service
+	 */
+	List<EPackage> findByService(String serviceName);
+
+	List<String> findNamesByService(String serviceName);
+
+	/**
+	 * @return list of packages without any versions
+	 */
+	List<EPackage> findEmpty();
+
 	/**
 	 * @param service the service
 	 * @return list of unused packages
 	 */
 	List<EPackage> findNotUsedPackage(EService service);
+
+	// TODO only get names e.g. by template
+
+	Map<String, String> findServiceUsage(String serviceName);
+
+	Map<String, String> findPackageUsage(String pkgName);
 }

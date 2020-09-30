@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -41,29 +42,51 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	}
 
 	@Override
+	public List<Service> findFlatList() {
+		String q = "SELECT NEW de.cinovo.cloudconductor.api.model.Service(s.id, s.name, s.description, s.initScript) FROM EService AS s";
+		return this.entityManager.createQuery(q, Service.class).getResultList();
+	}
+
+	@Override
 	public EService findByName(String name) {
-		return this.findByQuery("FROM EService s WHERE s.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM EService AS s WHERE s.name = ?1", name);
+	}
+
+	@Override
+	public int deleteByName(String serviceName) {
+		// language=HQL
+		return this.entityManager.createQuery("DELETE FROM EService AS s WHERE s.name = ?1").setParameter(1, serviceName).executeUpdate();
+	}
+
+	@Override
+	public boolean exists(String serviceName) {
+		// language=HQL
+		return entityManager.createQuery("SELECT COUNT(s) FROM EService AS s WHERE s.name = ?1", Long.class).setParameter(1, serviceName).getSingleResult() > 0;
 	}
 
 	@Override
 	public List<EService> findByName(Set<String> names) {
-		StringBuilder find = new StringBuilder();
-		find.append("(");
-		for(String n : names) {
-			find.append("'" + n + "'");
-		}
-		find.append(")");
-		return this.findListByQuery("FROM EService s WHERE s.name IN ?1", find);
+		// language=HQL
+		return this.findListByQuery("FROM EService AS s WHERE s.name IN ?1", names);
 	}
 
 	@Override
 	public List<EService> findByPackage(EPackage pkg) {
-		return this.findListByQuery("FROM EService s WHERE ?1 in elements(s.packages)", pkg);
+		// language=HQL
+		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkg);
+	}
+
+	@Override
+	public List<EService> findByTemplate(String templateName) {
+		// language=HQL
+		return this.findListByQuery("SELECT DISTINCT s FROM EService AS s, ETemplate AS t JOIN t.packageVersions AS pv WHERE t.name = ?1 AND pv.pkg in elements(s.packages)", templateName);
 	}
 
 	@Override
 	public Long count() {
-		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EService").getSingleResult();
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(s) FROM EService AS s", Long.class).getSingleResult();
 	}
 
 }

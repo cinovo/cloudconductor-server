@@ -1,11 +1,11 @@
 package de.cinovo.cloudconductor.server.ws;
 
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 
 /**
  * 
@@ -19,7 +19,7 @@ import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
  */
 public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	
-	private Map<String, List<A>> connectedWS = new ConcurrentHashMap<String, List<A>>();
+	private Map<String, List<A>> connectedWS = new ConcurrentHashMap<>();
 	
 	
 	/**

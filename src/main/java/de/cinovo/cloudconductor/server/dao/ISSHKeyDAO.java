@@ -20,6 +20,8 @@ package de.cinovo.cloudconductor.server.dao;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
+import java.util.List;
+
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
@@ -34,9 +36,17 @@ public interface ISSHKeyDAO extends IEntityDAO<ESSHKey, Long>, IFindNamed<ESSHKe
 	 * @return the sshkey
 	 */
 	ESSHKey findByOwner(String owner);
+
+	int deleteByOwner(String owner);
 	
 	/**
 	 * @return the row count
 	 */
 	Long count();
+
+	/**
+	 * @param templateName	the name of the template
+	 * @return list of ssh keys for given template
+	 */
+	List<ESSHKey> findByTemplate(String templateName);
 }

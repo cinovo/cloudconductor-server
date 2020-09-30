@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server.dao;
  */
 
 import de.cinovo.cloudconductor.server.model.EFile;
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
 import java.util.List;
@@ -37,15 +38,17 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	Long count();
 	
 	/**
-	 * @param tagnames the tag names
-	 * @return list of files with these tags
-	 */
-	List<EFile> findByTag(String... tagnames);
-	
-	/**
 	 * @param templateName	name of the template
 	 * @return list of files for given template
 	 */
 	List<EFile> findByTemplate(String templateName);
+
+	/**
+	 * @param pkg	the package
+	 * @return list of files linked to given package
+	 */
+	List<EFile> findByPackage(EPackage pkg);
+
+	// TODO int deleteByName(String fileName)
 
 }

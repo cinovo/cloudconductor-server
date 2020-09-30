@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response.Status;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -37,12 +34,7 @@ public class RepoImpl implements IRepo {
 	@Override
 	@Transactional
 	public Repo[] get() {
-		List<ERepo> findList = this.repoDAO.findList();
-		Set<Repo> result = new HashSet<>();
-		for (ERepo repo : findList) {
-			result.add(repo.toApi());
-		}
-		return result.toArray(new Repo[0]);
+		return this.repoDAO.findList().stream().map(ERepo::toApi).toArray(Repo[]::new);
 	}
 	
 	@Override
@@ -55,7 +47,6 @@ public class RepoImpl implements IRepo {
 	}
 	
 	@Override
-	@Transactional
 	public Long newRepo(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getName());
@@ -65,11 +56,9 @@ public class RepoImpl implements IRepo {
 	}
 	
 	@Override
-	@Transactional
 	public void edit(Repo repo) {
 		RESTAssert.assertNotNull(repo);
 		RESTAssert.assertNotNull(repo.getId());
-		
 		this.repoHandler.updateRepo(repo);
 	}
 	
@@ -86,9 +75,9 @@ public class RepoImpl implements IRepo {
 	@Transactional
 	public void forceReindex(String repoName) {
 		RESTAssert.assertNotNull(repoName);
-		ERepo g = this.repoDAO.findByName(repoName);
-		RESTAssert.assertNotNull(g);
-		RESTAssert.assertNotNull(g.getId());
-		this.repoTaskHandler.forceRepoUpdate(g.getId());
+		ERepo repo = this.repoDAO.findByName(repoName);
+		RESTAssert.assertNotNull(repo);
+		RESTAssert.assertNotNull(repo.getId());
+		this.repoTaskHandler.forceRepoUpdate(repo.getId());
 	}
 }

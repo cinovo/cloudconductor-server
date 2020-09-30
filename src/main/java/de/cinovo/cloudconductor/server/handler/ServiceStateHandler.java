@@ -29,7 +29,7 @@ public class ServiceStateHandler {
 	/**
 	 * @param serviceState the service state
 	 * @param stateChanges the stateChanges
-	 * @return the changed serice state
+	 * @return the changed service state
 	 */
 	public EServiceState handleStartedService(EServiceState serviceState, ServiceStatesChanges stateChanges) {
 		switch (serviceState.getState()) {
@@ -60,7 +60,7 @@ public class ServiceStateHandler {
 	/**
 	 * @param serviceState the service state
 	 * @param stateChanges the stateChanges
-	 * @return the changed serice state
+	 * @return the changed service state
 	 */
 	public EServiceState handleStopedService(EServiceState serviceState, ServiceStatesChanges stateChanges) {
 		switch (serviceState.getState()) {

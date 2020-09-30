@@ -4,16 +4,11 @@ import de.cinovo.cloudconductor.api.interfaces.IPackage;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
-import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.dao.*;
 import de.cinovo.cloudconductor.server.handler.PackageStateChangeHandler;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.ERepo;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.rest.utils.PaginationUtils;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
@@ -23,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,9 +36,10 @@ public class PackageImpl implements IPackage {
 	@Autowired
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
-	private ITemplateDAO templateDAO;
-	@Autowired
 	private IHostDAO hostDAO;
+	@Autowired
+	private IRepoDAO repoDAO;
+
 	@Autowired
 	private PackageStateChangeHandler packageStateChangeHandler;
 
@@ -58,7 +52,7 @@ public class PackageImpl implements IPackage {
 			for(EPackage pkg : this.packageDAO.findList()) {
 				result.add(pkg.toApi());
 			}
-			return Response.ok(result.toArray(new Package[result.size()])).header("x-total-count", result.size()).build();
+			return Response.ok(result.toArray(new Package[0])).header("x-total-count", result.size()).build();
 		}
 
 		int first = (page - 1) * pageSize;
@@ -70,7 +64,7 @@ public class PackageImpl implements IPackage {
 		Long totalCount = this.packageDAO.count();
 		String linkHeader = PaginationUtils.buildLinkHeader(uriInfo.getAbsolutePath().toString(), page, pageSize, totalCount);
 
-		return Response.ok(result.toArray(new Package[result.size()])).header("x-total-count", totalCount) //
+		return Response.ok(result.toArray(new Package[0])).header("x-total-count", totalCount) //
 				.header("Link", linkHeader) //
 				.build();
 	}
@@ -88,50 +82,24 @@ public class PackageImpl implements IPackage {
 	@Transactional
 	public PackageVersion[] getVersions(String pkgName) {
 		RESTAssert.assertNotEmpty(pkgName);
-		Set<PackageVersion> result = new HashSet<>();
-		List<EPackageVersion> versions = this.packageVersionDAO.find(pkgName);
-		for(EPackageVersion version : versions) {
-			result.add(version.toApi());
-		}
-		return result.toArray(new PackageVersion[result.size()]);
+		RESTAssert.assertTrue(this.packageDAO.exists(pkgName), Response.Status.NOT_FOUND);
+		return this.packageVersionDAO.find(pkgName).stream().map(EPackageVersion::toApi).toArray(PackageVersion[]::new);
 	}
 
 	@Override
 	@Transactional
 	public Map<String, String> getUsage(String pkgName) {
 		RESTAssert.assertNotEmpty(pkgName);
-		EPackage pkg = this.packageDAO.findByName(pkgName);
-		RESTAssert.assertNotNull(pkg);
-
-		Map<String, String> result = new HashMap<>();
-		List<ETemplate> templates = this.templateDAO.findByPackage(pkg);
-		for(ETemplate template : templates) {
-			for(EPackageVersion version : template.getPackageVersions()) {
-				if(version.getPkg().getId().equals(pkg.getId())) {
-					result.put(template.getName(), version.getVersion());
-					break;
-				}
-			}
-		}
-		return result;
+		RESTAssert.assertTrue(this.packageDAO.exists(pkgName), Response.Status.NOT_FOUND);
+		return this.packageDAO.findPackageUsage(pkgName);
 	}
 
 	@Override
 	@Transactional
 	public PackageVersion[] getVersionsForRepo(String repoName) {
 		RESTAssert.assertNotEmpty(repoName);
-
-		List<EPackageVersion> versions = this.packageVersionDAO.findList();
-		Set<PackageVersion> result = new HashSet<>();
-		for(EPackageVersion version : versions) {
-			for(ERepo repo : version.getRepos()) {
-				if(repo.getName().equals(repoName)) {
-					result.add(version.toApi());
-					break;
-				}
-			}
-		}
-		return result.toArray(new PackageVersion[result.size()]);
+		RESTAssert.assertTrue(this.repoDAO.exists(repoName), Response.Status.NOT_FOUND);
+		return this.packageVersionDAO.findByRepo(repoName).stream().map(EPackageVersion::toApi).toArray(PackageVersion[]::new);
 	}
 
 	@Override

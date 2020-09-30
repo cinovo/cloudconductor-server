@@ -22,9 +22,22 @@ public interface IJWTTokenDAO extends IEntityDAO<EJWTToken, Long> {
 	EJWTToken findByToken(String token);
 
 	/**
-	 * @param user the user
+	 * @param token	the JWT string to be deleted
+	 * @return number of tokens deleted
+	 */
+	int deleteByToken(String token);
+
+	/**
 	 * @param refToken the reference token
 	 * @return the jwt token
 	 */
-	List<EJWTToken> findByRefToken(EUser user, EAuthToken refToken);
+	List<EJWTToken> findByRefToken(EAuthToken refToken);
+
+	/**
+	 * @param refToken	the auth token reference for which JWTs should be deleted
+	 * @return number of JWTs deleted
+	 */
+	int deleteByRefToken(EAuthToken refToken);
+
+	int deleteByUser(EUser user);
 }

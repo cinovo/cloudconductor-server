@@ -1,6 +1,5 @@
 package de.cinovo.cloudconductor.server.model;
 
-import de.cinovo.cloudconductor.api.model.AuthToken;
 import de.cinovo.cloudconductor.api.model.User;
 import de.cinovo.cloudconductor.server.security.HashedPasswordUserType;
 import de.taimos.dvalin.jaxrs.security.HashedPassword;
@@ -10,21 +9,10 @@ import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -248,24 +236,9 @@ public class EUser extends AModelApiConvertable<User> implements IEntity<Long>, 
 		user.setEmail(this.getEmail());
 		user.setLoginName(this.getLoginName());
 		user.setRegistrationDate(this.getRegistrationDate().toDate());
-
-		Set<String> userGroups = new HashSet<>();
-		for(EUserGroup eUserGroup : this.getUserGroup()) {
-			userGroups.add(eUserGroup.getName());
-		}
-		user.setUserGroups(userGroups);
-
-		Set<AuthToken> tokens = new HashSet<>();
-		for(EAuthToken token : this.getAuthTokens()) {
-			tokens.add(token.toApi());
-		}
-		user.setAuthTokens(tokens);
-
-		Set<String> agents = new HashSet<>();
-		for(EAgent agent : this.getAgents()) {
-			agents.add(agent.getName());
-		}
-		user.setAgents(agents);
+		user.setUserGroups(this.getUserGroup().stream().map(EUserGroup::getName).collect(Collectors.toSet()));
+		user.setAuthTokens(this.getAuthTokens().stream().map(EAuthToken::toApi).collect(Collectors.toSet()));
+		user.setAgents(this.getAgents().stream().map(EAgent::getName).collect(Collectors.toSet()));
 		return user;
 	}
 }

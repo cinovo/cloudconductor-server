@@ -1,35 +1,18 @@
 package de.cinovo.cloudconductor.server.handler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
-
+import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.server.dao.*;
+import de.cinovo.cloudconductor.server.model.*;
+import de.taimos.restutils.RESTAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.cinovo.cloudconductor.api.model.Service;
-import de.cinovo.cloudconductor.server.dao.IPackageDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
-import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EPackage;
-import de.cinovo.cloudconductor.server.model.EPackageVersion;
-import de.cinovo.cloudconductor.server.model.EService;
-import de.cinovo.cloudconductor.server.model.EServiceDefaultState;
-import de.cinovo.cloudconductor.server.model.EServiceState;
-import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.taimos.restutils.RESTAssert;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -50,10 +33,7 @@ public class ServiceHandler {
 	private IServiceStateDAO serviceStateDAO;
 	@Autowired
 	private IServiceDefaultStateDAO serviceDefaultStateDAO;
-	@Autowired
-	private ITemplateDAO templateDAO;
-	
-	
+
 	/**
 	 * @param s the data
 	 * @return the saved entity
@@ -83,23 +63,11 @@ public class ServiceHandler {
 		es.setDescription(s.getDescription());
 		es.setInitScript(s.getInitScript());
 		if ((s.getPackages() != null) && !s.getPackages().isEmpty()) {
-			es.setPackages(this.findByName(s.getPackages()));
+			es.setPackages(this.packageDAO.findByName(s.getPackages()));
 		} else {
 			es.setPackages(null);
 		}
 		return es;
-	}
-	
-	private List<EPackage> findByName(Set<String> names) {
-		List<EPackage> found = new ArrayList<>();
-		for (String s : names) {
-			EPackage p = this.packageDAO.findByName(s);
-			if (p == null) {
-				throw new NotFoundException();
-			}
-			found.add(p);
-		}
-		return found;
 	}
 	
 	/**
@@ -109,15 +77,7 @@ public class ServiceHandler {
 	 */
 	public boolean assertHostServices(ETemplate template, EHost host) {
 		// first find out which services are needed
-		List<EService> services = this.serviceDAO.findList();
-		Set<EService> templateServices = new HashSet<>();
-		for (EService s : services) {
-			for (EPackageVersion p : template.getPackageVersions()) {
-				if (s.getPackages().contains(p.getPkg())) {
-					templateServices.add(s);
-				}
-			}
-		}
+		Set<EService> templateServices = new HashSet<>(this.serviceDAO.findByTemplate(template.getName()));
 		ServiceHandler.LOGGER.debug("Found " + templateServices.size() + " services for template '" + template.getName() + "' on  host '" + host.getName() + "'");
 		
 		Set<EService> missingServices = new HashSet<>(templateServices);
@@ -166,19 +126,11 @@ public class ServiceHandler {
 	 * @param serviceName the name of the service
 	 * @return service usage map
 	 */
+	@Transactional
 	public Map<String, String> getServiceUsage(String serviceName) {
-		EService model = this.serviceDAO.findByName(serviceName);
-		RESTAssert.assertNotNull(model);
-		
-		Map<String, String> result = new HashMap<>();
-		for (EPackage pkg : model.getPackages()) {
-			List<ETemplate> templates = this.templateDAO.findByPackage(pkg);
-			for (ETemplate template : templates) {
-				result.put(template.getName(), pkg.getName());
-			}
-		}
-		
-		return result;
+		RESTAssert.assertNotEmpty(serviceName);
+		RESTAssert.assertTrue(this.serviceDAO.exists(serviceName), Response.Status.NOT_FOUND);
+		return packageDAO.findServiceUsage(serviceName);
 	}
 	
 	/**

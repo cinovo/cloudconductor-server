@@ -39,7 +39,10 @@ public class ServiceStateDAOHib extends EntityDAOHibernate<EServiceState, Long> 
 	}
 	
 	@Override
-	public EServiceState findByName(String name, String host) {
-		return this.findByQuery("FROM EServiceState as ss WHERE ss.service.name = ?1 AND ss.host.name = ?2", name, host);
+	public EServiceState findByNameAndHost(String serviceName, String hostUUID) {
+		// language=HQL
+		String q = "FROM EServiceState as ss JOIN FETCH ss.service AS s JOIN FETCH ss.host AS h" +
+				" WHERE s.name = ?1 AND h.uuid = ?2";
+		return this.findByQuery(q, serviceName, hostUUID);
 	}
 }

@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.taimos.dvalin.jpa.IEntityDAO;
@@ -32,12 +33,20 @@ import java.util.Set;
  * 
  */
 public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<EService> {
-	
+
+	List<Service> findFlatList();
+
 	/**
 	 * @param names list of names
 	 * @return list of services
 	 */
 	List<EService> findByName(Set<String> names);
+
+	/**
+	 * @param serviceName	name of the service to be deleted
+	 * @return number of service entities deleted
+	 */
+	int deleteByName(String serviceName);
 	
 	/**
 	 * @return the row count
@@ -49,4 +58,10 @@ public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<ESer
 	 * @return list of services used by package
 	 */
 	List<EService> findByPackage(EPackage pkg);
+
+	/**
+	 * @param templateName	the name of the template
+	 * @return list of services relevant for template
+	 */
+	List<EService> findByTemplate(String templateName);
 }

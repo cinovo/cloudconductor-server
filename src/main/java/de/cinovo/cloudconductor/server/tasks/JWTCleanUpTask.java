@@ -67,7 +67,7 @@ public class JWTCleanUpTask implements IServerTasks {
 					this.jwtTokenDAO.delete(jwtToken);
 				}
 			} catch(ParseException e) {
-				//this token is realy broken, we get rid of it;
+				//this token is really broken, we get rid of it;
 				this.jwtTokenDAO.delete(jwtToken);
 			}
 		}

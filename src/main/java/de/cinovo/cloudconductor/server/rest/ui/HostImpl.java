@@ -13,13 +13,10 @@ import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -29,7 +26,7 @@ import java.util.List;
  */
 @JaxRsComponent
 public class HostImpl implements IHost {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	private IHostDAO hostDAO;
 	@Autowired
@@ -38,7 +35,6 @@ public class HostImpl implements IHost {
 	private HostsWSHandler hostsWsHandler;
 	@Autowired
 	private HostDetailWSHandler hostDetailWsHandler;
-
 
 	@Override
 	@Transactional
@@ -49,8 +45,7 @@ public class HostImpl implements IHost {
 	@Override
 	@Transactional
 	public SimpleHost[] getSimpleHosts() {
-		List<SimpleHost> simpleHosts = this.hostDAO.findSimpleHosts();
-		return simpleHosts.toArray(new SimpleHost[0]);
+		return this.hostDAO.findSimpleHosts().toArray(new SimpleHost[0]);
 	}
 
 	@Override
@@ -67,6 +62,7 @@ public class HostImpl implements IHost {
 	public void deleteHost(String hostUuid) {
 		RESTAssert.assertNotEmpty(hostUuid);
 		EHost eHost = this.hostDAO.findByUuid(hostUuid);
+		RESTAssert.assertNotNull(eHost);
 		SimpleHost simpleHost = this.hostDAO.findSimpleHost(eHost.getId());
 		this.hostDAO.delete(eHost);
 		if(simpleHost != null) {
