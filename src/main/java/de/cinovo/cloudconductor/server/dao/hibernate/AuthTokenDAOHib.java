@@ -2,15 +2,17 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.model.EAuthToken;
+import de.cinovo.cloudconductor.server.model.EUser;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Copyright 2016 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author ablehm
- * 
  */
 @Repository("AuthTokenDAOHib")
 public class AuthTokenDAOHib extends EntityDAOHibernate<EAuthToken, Long> implements IAuthTokenDAO {
@@ -34,10 +36,16 @@ public class AuthTokenDAOHib extends EntityDAOHibernate<EAuthToken, Long> implem
 		// language=HQL
 		return this.findByQuery("FROM EAuthToken AS t WHERE t.token = ?1", authToken);
 	}
-
+	
 	@Override
-	public EAuthToken findByUserAndToken(String userName, String token) {
+	public EAuthToken findByUserAndToken(EUser user, String token) {
 		// language=HQL
-		return findByQuery("FROM EAuthToken AS t JOIN FETCH t.user AS u WHERE u.loginName = ?1 AND t.token =?2", userName, token);
+		return this.findByQuery("FROM EAuthToken AS t WHERE t.userid = ?1 AND t.token =?2", user.getId(), token);
+	}
+	
+	@Override
+	public List<EAuthToken> findByUser(Long id) {
+		// language=HQL
+		return this.findListByQuery("FROM EAuthToken AS t WHERE t.userid = ?1", id);
 	}
 }

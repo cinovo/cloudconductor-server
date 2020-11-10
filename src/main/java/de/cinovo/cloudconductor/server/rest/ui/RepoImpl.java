@@ -3,6 +3,7 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.interfaces.IRepo;
 import de.cinovo.cloudconductor.api.model.Repo;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoMirrorDAO;
 import de.cinovo.cloudconductor.server.handler.RepoHandler;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.tasks.IServerRepoTaskHandler;
@@ -29,12 +30,13 @@ public class RepoImpl implements IRepo {
 	private RepoHandler repoHandler;
 	@Autowired
 	private IServerRepoTaskHandler repoTaskHandler;
-	
+	@Autowired
+	private IRepoMirrorDAO mirrorDAO;
 	
 	@Override
 	@Transactional
 	public Repo[] get() {
-		return this.repoDAO.findList().stream().map(ERepo::toApi).toArray(Repo[]::new);
+		return this.repoDAO.findList().stream().map(r -> r.toApi(this.mirrorDAO)).toArray(Repo[]::new);
 	}
 	
 	@Override
@@ -43,7 +45,7 @@ public class RepoImpl implements IRepo {
 		RESTAssert.assertNotNull(name);
 		ERepo repo = this.repoDAO.findByName(name);
 		RESTAssert.assertNotNull(repo, Status.NOT_FOUND);
-		return repo.toApi();
+		return repo.toApi(this.mirrorDAO);
 	}
 	
 	@Override

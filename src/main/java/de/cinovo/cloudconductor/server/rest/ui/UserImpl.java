@@ -3,7 +3,10 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.interfaces.IUser;
 import de.cinovo.cloudconductor.api.model.PasswordChange;
 import de.cinovo.cloudconductor.api.model.User;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
+import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IUserDAO;
+import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.handler.UserHandler;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.security.AuthHandler;
@@ -37,11 +40,17 @@ public class UserImpl implements IUser {
 	@Autowired
 	private AuthHandler authHandler;
 	
+	@Autowired
+	private IUserGroupDAO userGroupDAO;
+	@Autowired
+	private IAuthTokenDAO authTokenDAO;
+	@Autowired
+	private IAgentDAO agentDAO;
 	
 	@Override
 	@Transactional
 	public User[] getUsers() {
-		return this.userDAO.findList().stream().map(EUser::toApi).toArray(User[]::new);
+		return this.userDAO.findList().stream().map(u -> u.toApi(this.userGroupDAO, this.authTokenDAO, this.agentDAO)).toArray(User[]::new);
 	}
 	
 	@Override
@@ -63,7 +72,7 @@ public class UserImpl implements IUser {
 		RESTAssert.assertNotEmpty(userName);
 		EUser eUser = this.userDAO.findByLoginName(userName);
 		RESTAssert.assertNotNull(eUser, Response.Status.NOT_FOUND);
-		return eUser.toApi();
+		return eUser.toApi(this.userGroupDAO, this.authTokenDAO, this.agentDAO);
 	}
 	
 	@Override
@@ -83,7 +92,7 @@ public class UserImpl implements IUser {
 		RESTAssert.assertNotNull(eUser);
 		this.tokenHandler.generateAuthToken(eUser);
 		eUser = this.userDAO.findByLoginName(userName);
-		return eUser.toApi();
+		return eUser.toApi(this.userGroupDAO, this.authTokenDAO, this.agentDAO);
 	}
 	
 	@Override
@@ -91,8 +100,9 @@ public class UserImpl implements IUser {
 	public void revokeAuthToken(String userName, String token) {
 		RESTAssert.assertNotEmpty(userName);
 		RESTAssert.assertNotEmpty(token);
-		RESTAssert.assertTrue(this.userDAO.existsByLogin(userName), Status.NOT_FOUND);
-		boolean success = this.tokenHandler.revokeAuthToken(userName, token);
+		EUser user = this.userDAO.findByLoginName(userName);
+		RESTAssert.assertNotNull(user);
+		boolean success = this.tokenHandler.revokeAuthToken(user, token);
 		RESTAssert.assertTrue(success);
 	}
 	
@@ -108,7 +118,7 @@ public class UserImpl implements IUser {
 		RESTAssert.assertFalse(pwChange.getNewPassword().equals(pwChange.getOldPassword()));
 		EUser currentUser = this.authHandler.getCurrentUser();
 		RESTAssert.assertNotNull(currentUser);
-		RESTAssert.assertTrue(pwChange.getUserName().equals(currentUser.getUsername()));
+		RESTAssert.assertTrue(pwChange.getUserName().equals(currentUser.getLoginName()));
 		EUser eUser = this.userDAO.findByLoginName(pwChange.getUserName());
 		RESTAssert.assertNotNull(eUser);
 		boolean success = this.userHandler.changePassword(eUser, pwChange.getOldPassword(), pwChange.getNewPassword());

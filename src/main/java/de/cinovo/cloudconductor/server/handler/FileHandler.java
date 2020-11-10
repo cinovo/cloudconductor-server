@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.WebApplicationException;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +49,7 @@ public class FileHandler {
 	 */
 	public EFile createEntity(ConfigFile cf) throws WebApplicationException {
 		EFile ef = new EFile();
-		ef = this.fillFields(ef, cf);
+		this.fillFields(ef, cf);
 		RESTAssert.assertNotNull(ef);
 		return this.fileDAO.save(ef);
 	}
@@ -60,7 +61,7 @@ public class FileHandler {
 	 * @throws WebApplicationException on error
 	 */
 	public EFile updateEntity(EFile ef, ConfigFile cf) throws WebApplicationException {
-		ef = this.fillFields(ef, cf);
+		this.fillFields(ef, cf);
 		RESTAssert.assertNotNull(ef);
 		return this.fileDAO.save(ef);
 	}
@@ -72,8 +73,8 @@ public class FileHandler {
 	 */
 	public EFileData createEntity(EFile efile, String data) {
 		EFileData edata = new EFileData();
-		edata.setParent(efile);
-		edata = this.fillFields(edata, data);
+		edata.setParent(efile.getId());
+		this.fillFields(edata, data);
 		RESTAssert.assertNotNull(edata);
 		return this.fileDataDAO.save(edata);
 	}
@@ -84,12 +85,12 @@ public class FileHandler {
 	 * @return the updated file data
 	 */
 	public EFileData updateEntity(EFileData edata, String data) {
-		edata = this.fillFields(edata, data);
+		this.fillFields(edata, data);
 		RESTAssert.assertNotNull(edata);
 		return this.fileDataDAO.save(edata);
 	}
 	
-	private EFile fillFields(EFile ef, ConfigFile cf) {
+	private void fillFields(EFile ef, ConfigFile cf) {
 		ef.setName(cf.getName());
 		ef.setFileMode(cf.getFileMode());
 		ef.setChecksum(cf.getChecksum());
@@ -99,7 +100,7 @@ public class FileHandler {
 		ef.setTemplate(cf.isTemplate());
 		ef.setDirectory(cf.isDirectory());
 		ef.setTargetPath(cf.getTargetPath());
-		ef.setPkg(this.packageDAO.findByName(cf.getPkg()));
+		ef.setPkgId(this.packageDAO.findByName(cf.getPkg()).getId());
 		
 		ef.setDependentServices(new HashSet<>());
 		if (cf.getDependentServices() != null) {
@@ -118,12 +119,10 @@ public class FileHandler {
 				ef.getTemplates().add(template.getName());
 			}
 		}
-		return ef;
 	}
 	
-	private EFileData fillFields(EFileData edata, String data) {
+	private void fillFields(EFileData edata, String data) {
 		edata.setData(data);
-		return edata;
 	}
 	
 	/**
@@ -134,8 +133,8 @@ public class FileHandler {
 		try {
 			byte[] array = MessageDigest.getInstance("MD5").digest(data.getBytes(StandardCharsets.UTF_8));
 			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+			for (byte b : array) {
+				sb.append(Integer.toHexString((b & 0xFF) | 0x100), 1, 3);
 			}
 			return sb.toString();
 		} catch (NoSuchAlgorithmException e) {
@@ -148,8 +147,9 @@ public class FileHandler {
 	 * @param templateName the name of the template
 	 * @return array of configuration files which are used in the given template
 	 */
+	@Transactional
 	public ConfigFile[] getFilesForTemplate(String templateName) {
-		return this.fileDAO.findByTemplate(templateName).stream().map(EFile::toApi).toArray(ConfigFile[]::new);
+		return this.fileDAO.findByTemplate(templateName).stream().map(f -> f.toApi(this.packageDAO)).toArray(ConfigFile[]::new);
 	}
 	
 }

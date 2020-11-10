@@ -24,7 +24,7 @@ public class JWTCleanUpTask implements IServerTasks {
 	@Value("${jwt-cleanup-hours:2}")
 	private int cleanUpTimer;
 
-	private TimeUnit cleanupTimerUnit = TimeUnit.HOURS;
+	private final TimeUnit cleanupTimerUnit = TimeUnit.HOURS;
 
 	@Autowired
 	private IJWTTokenDAO jwtTokenDAO;

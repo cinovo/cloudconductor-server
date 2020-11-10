@@ -71,9 +71,9 @@ public class AuthHandler {
 	 */
 	public EUser getUser(String token) {
 		EAuthToken authToken = this.authTokenDAO.findByToken(token);
-		if ((authToken == null) || (authToken.getUser() == null)) {
+		if ((authToken == null) || (authToken.getUserid() == null)) {
 			return null;
 		}
-		return authToken.getUser();
+		return this.userDAO.findById(authToken.getUserid());
 	}
 }

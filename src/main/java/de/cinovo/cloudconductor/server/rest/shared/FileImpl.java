@@ -21,6 +21,7 @@ import de.cinovo.cloudconductor.api.interfaces.IFile;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.dao.IFileDataDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.cinovo.cloudconductor.server.handler.FileHandler;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
@@ -47,12 +48,13 @@ public class FileImpl implements IFile {
 	private IFileDataDAO fileDataDAO;
 	@Autowired
 	private FileHandler fileHandler;
-	
+	@Autowired
+	private IPackageDAO packageDAO;
 	
 	@Override
 	@Transactional
 	public ConfigFile[] get() {
-		return this.fileDAO.findList().stream().map(EFile::toApi).toArray(ConfigFile[]::new);
+		return this.fileDAO.findList().stream().map(f -> f.toApi(this.packageDAO)).toArray(ConfigFile[]::new);
 	}
 	
 	@Override
@@ -75,7 +77,7 @@ public class FileImpl implements IFile {
 		RESTAssert.assertNotEmpty(name);
 		EFile model = this.fileDAO.findByName(name);
 		RESTAssert.assertNotNull(model, Response.Status.NOT_FOUND);
-		return model.toApi();
+		return model.toApi(this.packageDAO);
 	}
 	
 	@Override

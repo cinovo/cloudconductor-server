@@ -15,7 +15,7 @@ import de.cinovo.cloudconductor.server.model.ERepoMirror;
  */
 public class PackageCredentialProvider implements AWSCredentialsProvider {
 	
-	private BasicAWSCredentials cred;
+	private final BasicAWSCredentials cred;
 	
 	
 	/**

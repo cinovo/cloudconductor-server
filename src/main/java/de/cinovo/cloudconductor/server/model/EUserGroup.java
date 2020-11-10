@@ -2,6 +2,7 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.enums.UserPermissions;
 import de.cinovo.cloudconductor.api.model.UserGroup;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CollectionTable;
@@ -27,13 +28,15 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "usergroup", schema = "cloudconductor")
-public class EUserGroup extends AModelApiConvertable<UserGroup> implements IEntity<Long>, Comparable<EUserGroup> {
-
+public class EUserGroup implements IEntity<Long>, Comparable<EUserGroup> {
+	
+	private static final long serialVersionUID = -596951679981616343L;
+	
 	private Long id;
 	private String name;
 	private String description;
 	private Set<UserPermissions> permissions = new HashSet<>();
-
+	
 	/**
 	 * @return the id
 	 */
@@ -43,42 +46,42 @@ public class EUserGroup extends AModelApiConvertable<UserGroup> implements IEnti
 	public Long getId() {
 		return this.id;
 	}
-
+	
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return this.name;
 	}
-
+	
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-
+	
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
 	/**
 	 * @return the permissions
 	 */
@@ -88,14 +91,14 @@ public class EUserGroup extends AModelApiConvertable<UserGroup> implements IEnti
 	public Set<UserPermissions> getPermissions() {
 		return this.permissions;
 	}
-
+	
 	/**
 	 * @param permissions the permissions to set
 	 */
 	public void setPermissions(Set<UserPermissions> permissions) {
 		this.permissions = permissions;
 	}
-
+	
 	/**
 	 * @return the permissions as an string set
 	 */
@@ -103,21 +106,23 @@ public class EUserGroup extends AModelApiConvertable<UserGroup> implements IEnti
 	@Transactional
 	public Set<String> getPermissionsAsString() {
 		Set<String> res = new HashSet<>();
-		for(UserPermissions p : this.getPermissions()) {
+		for (UserPermissions p : this.getPermissions()) {
 			res.add(p.toString().toUpperCase());
 		}
 		return res;
 	}
-
+	
 	@Override
 	@Transient
 	public int compareTo(EUserGroup o) {
 		return this.id.compareTo(o.getId());
 	}
-
-	@Override
+	
+	/**
+	 * @return the api object
+	 */
 	@Transient
-	public Class<UserGroup> getApiClass() {
-		return UserGroup.class;
+	public UserGroup toApi() {
+		return GenericModelApiConverter.convert(this, UserGroup.class);
 	}
 }

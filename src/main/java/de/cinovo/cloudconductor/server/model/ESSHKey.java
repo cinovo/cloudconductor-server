@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -19,18 +19,18 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.taimos.dvalin.jpa.IEntity;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -40,22 +40,21 @@ import java.util.List;
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "sshkey", schema = "cloudconductor")
-public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Long>, INamed {
+public class ESSHKey implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
-
+	
 	private Long id;
 	private String keycontent;
 	private String owner;
 	private String username;
 	private Long lastChangedDate;
-	private List<ETemplate> templates;
+	private List<Long> templates;
 	
 	
 	@Override
@@ -146,17 +145,17 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 	/**
 	 * @return list of templates this ssh key belongs to
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingtemplatesshkey", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "sshkeyid"), inverseJoinColumns = @JoinColumn(name = "templateid"))
-	public List<ETemplate> getTemplates() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = Long.class)
+	@CollectionTable(schema = "cloudconductor", name = "mappingtemplatesshkey", joinColumns = {@JoinColumn(name = "sshkeyid")})
+	@Column(name = "templateid")
+	public List<Long> getTemplates() {
 		return this.templates;
 	}
 	
 	/**
 	 * @param templates list of templates to set
 	 */
-	public void setTemplates(List<ETemplate> templates) {
+	public void setTemplates(List<Long> templates) {
 		this.templates = templates;
 	}
 	
@@ -169,10 +168,7 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 		if ((this.getOwner() == null) || (this.getId() == null)) {
 			return false;
 		}
-		if (this.owner.equals(other.getOwner()) && this.id.equals(other.getId())) {
-			return true;
-		}
-		return false;
+		return this.owner.equals(other.getOwner()) && this.id.equals(other.getId());
 	}
 	
 	@Override
@@ -182,14 +178,13 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 		return val * idVal;
 	}
 	
-	@Override
-	@Transient
-	public Class<SSHKey> getApiClass() {
-		return SSHKey.class;
-	}
 	
-	@Override
-	public SSHKey toApi() {
+	/**
+	 * @param templateDAO the templateDAO
+	 * @return the api object
+	 */
+	@Transient
+	public SSHKey toApi(ITemplateDAO templateDAO) {
 		SSHKey apiKey = new SSHKey(this.owner, this.keycontent);
 		
 		if (this.lastChangedDate != null) {
@@ -199,11 +194,12 @@ public class ESSHKey extends AModelApiConvertable<SSHKey> implements IEntity<Lon
 		apiKey.setUsername(this.username);
 		
 		List<String> templateNames = new ArrayList<>();
-		for (ETemplate t : this.getTemplates()) {
+		for (ETemplate t : templateDAO.findByIds(this.getTemplates())) {
 			templateNames.add(t.getName());
 		}
 		apiKey.setTemplates(templateNames);
 		
 		return apiKey;
 	}
+	
 }

@@ -4,6 +4,7 @@ import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,8 @@ import java.util.stream.Collectors;
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
- * 
- * @author mweise
  *
+ * @author mweise
  */
 @Service
 public class SSHHandler {
@@ -33,15 +33,15 @@ public class SSHHandler {
 	
 	
 	/**
-	 * @param templateName the name of the template
+	 * @param template the template
 	 * @return set of SSH keys for the given template
 	 */
-	public Set<SSHKey> getSSHKeyForTemplate(String templateName) {
-		return this.sshKeyDao.findByTemplate(templateName).stream().map(ESSHKey::toApi).collect(Collectors.toSet());
+	public Set<SSHKey> getSSHKeyForTemplate(ETemplate template) {
+		return this.sshKeyDao.findByTemplate(template).stream().map(k -> k.toApi(this.templateDao)).collect(Collectors.toSet());
 	}
 	
 	/**
-	 * @param entityKey the existing ssh key entity
+	 * @param entityKey     the existing ssh key entity
 	 * @param updatedSSHKey the updated ssh key
 	 * @return the updated ssh key entity
 	 */
@@ -70,7 +70,7 @@ public class SSHHandler {
 		
 		entityKey.setTemplates(new ArrayList<>());
 		if (newSSHKey.getTemplates() != null) {
-			entityKey.getTemplates().addAll(this.templateDao.findByName(newSSHKey.getTemplates()));
+			entityKey.getTemplates().addAll(this.templateDao.findByName(newSSHKey.getTemplates()).stream().map(ETemplate::getId).collect(Collectors.toList()));
 		}
 	}
 }

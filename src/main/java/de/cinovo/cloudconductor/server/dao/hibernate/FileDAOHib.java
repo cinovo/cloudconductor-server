@@ -30,7 +30,6 @@ import java.util.List;
  * <br>
  *
  * @author psigloch
- *
  */
 @Repository("FileDAOHib")
 public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFileDAO {
@@ -45,13 +44,13 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 		// language=HQL
 		return this.findByQuery("FROM EFile AS f WHERE f.name = ?1", name);
 	}
-
+	
 	@Override
 	public boolean exists(String fileName) {
 		// language=HQL
 		return this.entityManager.createQuery("SELECT COUNT(f) FROM EFile AS f WHERE f.name = ?1", Long.class).setParameter(1, fileName).getSingleResult() > 0;
 	}
-
+	
 	@Override
 	public Long count() {
 		// language=HQL
@@ -63,10 +62,10 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 		// language=HQL
 		return this.findListByQuery("FROM EFile AS f WHERE ?1 in elements(f.templates)", templateName);
 	}
-
+	
 	@Override
 	public List<EFile> findByPackage(EPackage pkg) {
 		// language=HQL
-		return this.findListByQuery("FROM EFile AS f WHERE f.pkg = ?1", pkg);
+		return this.findListByQuery("FROM EFile AS f WHERE f.pkgId = ?1", pkg.getId());
 	}
 }

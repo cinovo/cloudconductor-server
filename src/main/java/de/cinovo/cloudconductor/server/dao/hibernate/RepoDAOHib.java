@@ -22,6 +22,7 @@ import de.cinovo.cloudconductor.server.model.ERepo;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,47 +33,46 @@ import java.util.List;
  */
 @Repository("RepoDAOHib")
 public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepoDAO {
-
+	
 	@Override
 	public Class<ERepo> getEntityClass() {
 		return ERepo.class;
 	}
-
+	
 	@Override
 	public ERepo findByName(String name) {
 		// language=HQL
 		return this.findByQuery("FROM ERepo AS r WHERE r.name = ?1", name);
 	}
-
+	
 	@Override
 	public boolean exists(String repoName) {
 		// language=HQL
 		return this.entityManager.createQuery("SELECT COUNT(r) FROM ERepo AS r WHERE r.name = ?1", Long.class).setParameter(1, repoName).getSingleResult() > 0;
 	}
-
+	
 	@Override
 	public List<ERepo> findByNames(Iterable<String> repoNames) {
 		//language=HQL
 		return this.findListByQuery("FROM ERepo AS r WHERE r.name IN ?1", repoNames);
 	}
-
+	
 	@Override
-	public List<ERepo> findByTemplate(Long templateId) {
-		// language=HQL
-		return this.findListByQuery("SELECT r FROM ETemplate AS t JOIN t.repos AS r WHERE t.id = ?1", templateId);
+	public List<String> findNamesByIds(Iterable<Long> ids) {
+		//language=HQL
+		String q = "SELECT r.name FROM ERepo AS r WHERE r.id IN ?1";
+		return this.entityManager.createQuery(q, String.class).setParameter(1, ids).getResultList();
 	}
-
+	
 	@Override
-	public List<String> findNamesByTemplate(String templateName) {
-		// language=HQL
-		String q = "SELECT r.name FROM ETemplate AS t JOIN t.repos AS r WHERE t.name = ?1";
-		return this.entityManager.createQuery(q, String.class).setParameter(1, templateName).getResultList();
+	public List<ERepo> findByIds(Iterable<Long> repos) {
+		if (repos == null || !repos.iterator().hasNext()) {
+			return new ArrayList<>();
+		}
+		//language=HQL
+		String q = "FROM ERepo AS r WHERE r.id IN ?1";
+		return this.findListByQuery(q, repos);
 	}
-
-	@Override
-	public List<ERepo> findByTemplate(String templateName) {
-		// language=HQL
-		return this.findListByQuery("SELECT r FROM ETemplate AS t JOIN t.repos AS r WHERE t.name = ?1", templateName);
-	}
-
+	
+	
 }

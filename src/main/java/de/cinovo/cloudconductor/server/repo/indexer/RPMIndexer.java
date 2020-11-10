@@ -5,8 +5,6 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -32,12 +30,11 @@ import java.util.zip.GZIPInputStream;
  */
 public class RPMIndexer implements IRepoIndexer {
 	private static final String REPO_INDEX = "repodata/repomd.xml";
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+	
 	@Override
 	public Set<PackageVersion> getRepoIndex(IRepoProvider provider) {
 		RepoEntry entry = provider.getEntry(RPMIndexer.REPO_INDEX);
-		if(entry != null) {
+		if (entry != null) {
 			InputStream inputStream = provider.getEntryStream(RPMIndexer.REPO_INDEX);
 			Document repoXML = this.xmlDOM(inputStream);
 			XPath xpath = XPathFactory.newInstance().newXPath();
@@ -47,9 +44,9 @@ public class RPMIndexer implements IRepoIndexer {
 				RPMPrimaryParser handler = new RPMPrimaryParser(provider.getRepoName());
 				this.xmlSAX(gzipInputStream, handler);
 				return handler.versions;
-			} catch(XPathExpressionException e) {
+			} catch (XPathExpressionException e) {
 				throw new RuntimeException("Failed to parse repomd.xml", e);
-			} catch(IOException e) {
+			} catch (IOException e) {
 				throw new RuntimeException("Failed to read repodata", e);
 			} finally {
 				try {
@@ -63,73 +60,73 @@ public class RPMIndexer implements IRepoIndexer {
 		}
 		return null;
 	}
-
+	
 	@Override
 	public RepoEntry getRepoEntry(IRepoProvider provider) {
 		return provider.getEntry(RPMIndexer.REPO_INDEX);
 	}
-
+	
 	private Document xmlDOM(InputStream xmlStream) {
 		try {
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlStream);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private void xmlSAX(InputStream xmlStream, DefaultHandler handler) {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.newSAXParser().parse(xmlStream, handler);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private enum RPMPrimaryState {
 		Repo, Package, Requires, Provides, Conflicts;
-
+		
 		public static EnumSet<RPMPrimaryState> depStates = EnumSet.of(RPMPrimaryState.Requires, RPMPrimaryState.Provides, RPMPrimaryState.Conflicts);
 	}
-
+	
 	private static class RPMPrimaryParser extends DefaultHandler {
-
-		private Set<PackageVersion> versions = new HashSet<>();
-
+		
+		private final Set<PackageVersion> versions = new HashSet<>();
+		
 		private String name;
 		private String version;
 		private Set<Dependency> dependencies;
-
+		
 		private String tmpValue;
-
+		
 		private RPMPrimaryState state = RPMPrimaryState.Repo;
-
-		private String repoName;
-
-
+		
+		private final String repoName;
+		
+		
 		RPMPrimaryParser(String repoName) {
 			this.repoName = repoName;
 		}
-
+		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) {
-			if((this.state == RPMPrimaryState.Repo) && qName.equals("package") && attributes.getValue("type").equals("rpm")) {
+			if ((this.state == RPMPrimaryState.Repo) && qName.equals("package") && attributes.getValue("type").equals("rpm")) {
 				this.state = RPMPrimaryState.Package;
 				this.name = null;
 				this.version = null;
 				this.dependencies = new HashSet<>();
-			} else if((this.state == RPMPrimaryState.Package) && qName.equals("version")) {
+			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("version")) {
 				this.version = String.format("%s-%s", attributes.getValue("ver"), attributes.getValue("rel"));
-			} else if((this.state == RPMPrimaryState.Package) && qName.equals("rpm:requires")) {
+			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("rpm:requires")) {
 				this.state = RPMPrimaryState.Requires;
-			} else if((this.state == RPMPrimaryState.Package) && qName.equals("rpm:provides")) {
+			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("rpm:provides")) {
 				this.state = RPMPrimaryState.Provides;
-			} else if((this.state == RPMPrimaryState.Package) && qName.equals("rpm:conflicts")) {
+			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("rpm:conflicts")) {
 				this.state = RPMPrimaryState.Conflicts;
-			} else if(RPMPrimaryState.depStates.contains(this.state) && qName.equals("rpm:entry")) {
+			} else if (RPMPrimaryState.depStates.contains(this.state) && qName.equals("rpm:entry")) {
 				// example: <rpm:entry name="jdk" flags="GE" epoch="0" ver="1.7"/>
 				String depVersion = attributes.getValue("ver");
-				if(depVersion == null) {
+				if (depVersion == null) {
 					depVersion = "";
 				}
 				Dependency dep = new Dependency();
@@ -140,12 +137,12 @@ public class RPMIndexer implements IRepoIndexer {
 				this.dependencies.add(dep);
 			}
 		}
-
+		
 		private String parseOperator(String flag) {
-			if(flag == null) {
+			if (flag == null) {
 				return "";
 			}
-			switch(flag) {
+			switch (flag) {
 				case "GE":
 					return ">=";
 				case "EQ":
@@ -156,9 +153,9 @@ public class RPMIndexer implements IRepoIndexer {
 					return "";
 			}
 		}
-
+		
 		private DependencyType convertDepType(RPMPrimaryState depState) {
-			switch(depState) {
+			switch (depState) {
 				case Conflicts:
 					return DependencyType.CONFLICTS;
 				case Provides:
@@ -169,13 +166,13 @@ public class RPMIndexer implements IRepoIndexer {
 					return null;
 			}
 		}
-
+		
 		@Override
 		public void endElement(String uri, String localName, String qName) {
-			if((this.state == RPMPrimaryState.Package) && qName.equals("name")) {
+			if ((this.state == RPMPrimaryState.Package) && qName.equals("name")) {
 				this.name = this.tmpValue;
-			} else if((this.state == RPMPrimaryState.Package) && qName.equals("package")) {
-
+			} else if ((this.state == RPMPrimaryState.Package) && qName.equals("package")) {
+				
 				PackageVersion pv = new PackageVersion();
 				pv.setName(this.name);
 				pv.setVersion(this.version);
@@ -184,26 +181,26 @@ public class RPMIndexer implements IRepoIndexer {
 				pv.getRepos().add(this.repoName);
 				this.versions.add(pv);
 				this.state = RPMPrimaryState.Repo;
-			} else if((this.state == RPMPrimaryState.Requires) && qName.equals("rpm:requires")) {
+			} else if ((this.state == RPMPrimaryState.Requires) && qName.equals("rpm:requires")) {
 				this.state = RPMPrimaryState.Package;
-			} else if((this.state == RPMPrimaryState.Provides) && qName.equals("rpm:provides")) {
+			} else if ((this.state == RPMPrimaryState.Provides) && qName.equals("rpm:provides")) {
 				this.state = RPMPrimaryState.Package;
-			} else if((this.state == RPMPrimaryState.Conflicts) && qName.equals("rpm:conflicts")) {
+			} else if ((this.state == RPMPrimaryState.Conflicts) && qName.equals("rpm:conflicts")) {
 				this.state = RPMPrimaryState.Package;
 			}
 		}
-
+		
 		@Override
 		public void endDocument() throws SAXException {
-			if(this.state != RPMPrimaryState.Repo) {
+			if (this.state != RPMPrimaryState.Repo) {
 				throw new SAXException("Invalid end state: " + this.state);
 			}
 		}
-
+		
 		@Override
 		public void characters(char[] ch, int start, int length) {
 			this.tmpValue = new String(ch, start, length);
 		}
-
+		
 	}
 }

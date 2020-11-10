@@ -47,14 +47,14 @@ public class UserHandler {
 		for (String groupName : user.getUserGroups()) {
 			EUserGroup group = this.userGroupDAO.findByName(groupName);
 			if (group != null) {
-				eUser.getUserGroup().add(group);
+				eUser.getUserGroup().add(group.getId());
 			}
 		}
 		return this.userDAO.save(eUser);
 	}
 	
 	/**
-	 * @param user the user
+	 * @param user  the user
 	 * @param eUser the entity
 	 * @return the updated entity
 	 */
@@ -70,14 +70,14 @@ public class UserHandler {
 		for (String groupName : user.getUserGroups()) {
 			EUserGroup group = this.userGroupDAO.findByName(groupName);
 			if (group != null) {
-				eUser.getUserGroup().add(group);
+				eUser.getUserGroup().add(group.getId());
 			}
 		}
 		return this.userDAO.save(eUser);
 	}
 	
 	/**
-	 * @param eUser the user
+	 * @param eUser       the user
 	 * @param oldPassword the old password
 	 * @param newPassword the new password
 	 * @return true if pw change was successful false if not

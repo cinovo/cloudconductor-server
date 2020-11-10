@@ -144,9 +144,9 @@ public class VersionStringComparator implements Comparator<String> {
 			pos = matcher.end();
 		}
 		if(pos < str.length()) {
-			parts.add(str.substring(pos, str.length()));
+			parts.add(str.substring(pos));
 		}
-		return parts.toArray(new String[parts.size()]);
+		return parts.toArray(new String[0]);
 	}
 
 	private boolean beginsWithDigit(String str) {
@@ -158,6 +158,6 @@ public class VersionStringComparator implements Comparator<String> {
 		while((i < str.length()) && (str.charAt(i) == '0')) {
 			i++;
 		}
-		return str.substring(i, str.length());
+		return str.substring(i);
 	}
 }

@@ -3,11 +3,11 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.interfaces.IUserGroup;
 import de.cinovo.cloudconductor.api.model.User;
 import de.cinovo.cloudconductor.api.model.UserGroup;
+import de.cinovo.cloudconductor.server.dao.IAgentDAO;
+import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IUserDAO;
 import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.handler.UserGroupHandler;
-import de.cinovo.cloudconductor.server.model.AModelApiConvertable;
-import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.restutils.RESTAssert;
@@ -31,12 +31,15 @@ public class UserGroupImpl implements IUserGroup {
 	private IUserDAO userDAO;
 	@Autowired
 	private UserGroupHandler userGroupHandler;
-	
+	@Autowired
+	private IAuthTokenDAO authTokenDAO;
+	@Autowired
+	private IAgentDAO agentDAO;
 	
 	@Override
 	@Transactional
 	public UserGroup[] getUserGroups() {
-		return this.userGroupDAO.findList().stream().map(AModelApiConvertable::toApi).toArray(UserGroup[]::new);
+		return this.userGroupDAO.findList().stream().map(EUserGroup::toApi).toArray(UserGroup[]::new);
 	}
 	
 	@Override
@@ -76,8 +79,9 @@ public class UserGroupImpl implements IUserGroup {
 	@Transactional
 	public User[] getGroupMembers(String userGroupName) {
 		RESTAssert.assertNotEmpty(userGroupName);
-		RESTAssert.assertNotNull(this.userGroupDAO.exists(userGroupName), Status.NOT_FOUND);
-		return this.userDAO.findByGroup(userGroupName).stream().map(EUser::toApi).toArray(User[]::new);
+		EUserGroup group = this.userGroupDAO.findByName(userGroupName);
+		RESTAssert.assertNotNull(group);
+		return this.userDAO.findByGroup(group).stream().map(u -> u.toApi(this.userGroupDAO, this.authTokenDAO, this.agentDAO)).toArray(User[]::new);
 	}
 	
 }

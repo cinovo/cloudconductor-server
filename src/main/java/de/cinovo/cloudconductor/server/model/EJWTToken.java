@@ -3,13 +3,11 @@ package de.cinovo.cloudconductor.server.model;
 import de.cinovo.cloudconductor.server.model.enums.AuthType;
 import de.taimos.dvalin.jpa.IEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -21,14 +19,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "jwttoken", schema = "cloudconductor")
 public class EJWTToken implements IEntity<Long> {
-
+	private static final long serialVersionUID = -1307049822842372502L;
+	
 	private Long id;
 
 	private String token;
 	private boolean active;
-	private EUser user;
+	private Long userId;
 	private AuthType authType;
-	private EAuthToken refToken;
+	private Long refToken;
 
 	@Override
 	@Id
@@ -75,17 +74,16 @@ public class EJWTToken implements IEntity<Long> {
 	/**
 	 * @return the user
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	@JoinColumn(name = "userid")
-	public EUser getUser() {
-		return this.user;
+	@Column(name = "userid")
+	public Long getUserId() {
+		return this.userId;
 	}
 
 	/**
 	 * @param user the user to set
 	 */
-	public void setUser(EUser user) {
-		this.user = user;
+	public void setUserId(Long user) {
+		this.userId = user;
 	}
 
 	/**
@@ -105,16 +103,15 @@ public class EJWTToken implements IEntity<Long> {
 	/**
 	 * @return the refToken
 	 */
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "reftoken")
-	public EAuthToken getRefToken() {
+	@Column(name = "reftoken")
+	public Long getRefToken() {
 		return this.refToken;
 	}
 
 	/**
 	 * @param refToken the refToken to set
 	 */
-	public void setRefToken(EAuthToken refToken) {
+	public void setRefToken(Long refToken) {
 		this.refToken = refToken;
 	}
 }

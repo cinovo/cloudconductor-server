@@ -28,6 +28,7 @@ public interface IUserDAO extends IEntityDAO<EUser, Long> {
 
 	/**
 	 * @param loginName	the login name
+	 * @return delete result
 	 */
 	int deleteByLoginName(String loginName);
 
@@ -36,13 +37,5 @@ public interface IUserDAO extends IEntityDAO<EUser, Long> {
 	 * @return list of group members
 	 */
 	List<EUser> findByGroup(EUserGroup group);
-
-	/**
-	 * @param groupName	the name of the user group
-	 * @return list of group members
-	 */
-	List<EUser> findByGroup(String groupName);
-
-	// TODO add long countByGroup(String groupName);
 
 }

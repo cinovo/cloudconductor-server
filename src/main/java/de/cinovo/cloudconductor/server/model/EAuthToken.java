@@ -6,12 +6,9 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -23,11 +20,11 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "authtoken", schema = "cloudconductor")
-public class EAuthToken extends AModelApiConvertable<AuthToken> implements IEntity<Long>, Comparable<EAuthToken> {
+public class EAuthToken implements IEntity<Long>, Comparable<EAuthToken> {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private EUser user;
+	private Long userid;
 	private String token;
 	private DateTime creationDate;
 	private DateTime revokeDate;
@@ -49,17 +46,15 @@ public class EAuthToken extends AModelApiConvertable<AuthToken> implements IEnti
 	/**
 	 * @return the user
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "userid")
-	public EUser getUser() {
-		return this.user;
+	public Long getUserid() {
+		return this.userid;
 	}
 
 	/**
 	 * @param user the user to set
 	 */
-	public void setUser(EUser user) {
-		this.user = user;
+	public void setUserid(Long user) {
+		this.userid = user;
 	}
 
 	/**
@@ -120,14 +115,18 @@ public class EAuthToken extends AModelApiConvertable<AuthToken> implements IEnti
 		}
 		return this.id.compareTo(o.id);
 	}
-
-	@Override
+	
+	/**
+	 * @return the api class
+	 */
 	@Transient
 	public Class<AuthToken> getApiClass() {
 		return AuthToken.class;
 	}
-
-	@Override
+	
+	/**
+	 * @return the api object
+	 */
 	@Transient
 	public AuthToken toApi() {
 		AuthToken token = new AuthToken();

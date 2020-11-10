@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -20,24 +20,30 @@ package de.cinovo.cloudconductor.server.model;
 import de.cinovo.cloudconductor.api.enums.RepoIndexerType;
 import de.cinovo.cloudconductor.api.enums.RepoProviderType;
 import de.cinovo.cloudconductor.api.model.RepoMirror;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.taimos.dvalin.jpa.IEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "repomirror", schema = "cloudconductor")
-public class ERepoMirror extends AModelApiConvertable<RepoMirror> implements IEntity<Long> {
+public class ERepoMirror implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private ERepo repo;
+	private Long repoId;
 	private String path;
 	private String description;
 	
@@ -102,11 +108,7 @@ public class ERepoMirror extends AModelApiConvertable<RepoMirror> implements IEn
 			return false;
 		}
 		ERepoMirror other = (ERepoMirror) obj;
-		
-		if (this.getPath().equals(other.getPath()) && this.id.equals(other.getId())) {
-			return true;
-		}
-		return false;
+		return this.getPath().equals(other.getPath()) && this.id.equals(other.getId());
 	}
 	
 	@Override
@@ -119,17 +121,16 @@ public class ERepoMirror extends AModelApiConvertable<RepoMirror> implements IEn
 	/**
 	 * @return the repo
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "repoid")
-	public ERepo getRepo() {
-		return this.repo;
+	@Column(name = "repoid")
+	public Long getRepoId() {
+		return this.repoId;
 	}
 	
 	/**
 	 * @param repo the repo to set
 	 */
-	public void setRepo(ERepo repo) {
-		this.repo = repo;
+	public void setRepoId(Long repo) {
+		this.repoId = repo;
 	}
 	
 	/**
@@ -229,10 +230,12 @@ public class ERepoMirror extends AModelApiConvertable<RepoMirror> implements IEn
 	public void setIndexerType(RepoIndexerType indexerType) {
 		this.indexerType = indexerType;
 	}
-
-	@Override
+	
+	/**
+	 * @return the api object
+	 */
 	@Transient
-	public Class<RepoMirror> getApiClass() {
-		return RepoMirror.class;
+	public RepoMirror toApi() {
+		return GenericModelApiConverter.convert(this, RepoMirror.class);
 	}
 }

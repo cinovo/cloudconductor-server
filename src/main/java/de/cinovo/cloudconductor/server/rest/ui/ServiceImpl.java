@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.rest.ui;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -30,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,17 +47,12 @@ public class ServiceImpl implements IService {
 	private ServiceHandler serviceHandler;
 	@Autowired
 	private IPackageDAO packageDAO;
-
+	
 	
 	@Override
 	@Transactional
 	public Service[] get() {
-		List<Service> list = new ArrayList<>();
-		for (Service service : this.serviceDAO.findFlatList()) {
-			service.getPackages().addAll(this.packageDAO.findNamesByService(service.getName()));
-			list.add(service);
-		}
-		return list.toArray(new Service[0]);
+		return this.serviceDAO.findList().stream().map(s -> s.toApi(this.packageDAO)).toArray(Service[]::new);
 	}
 	
 	@Override
@@ -80,7 +73,7 @@ public class ServiceImpl implements IService {
 		RESTAssert.assertNotEmpty(name);
 		EService model = this.serviceDAO.findByName(name);
 		RESTAssert.assertNotNull(model, Response.Status.NOT_FOUND);
-		return model.toApi();
+		return model.toApi(this.packageDAO);
 	}
 	
 	@Override

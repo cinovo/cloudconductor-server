@@ -17,12 +17,15 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -43,6 +46,15 @@ public class DependencyDAOIHib extends EntityDAOHibernate<EDependency, Long> imp
 	public EDependency find(Dependency dep) {
 		// language=HQL
 		return this.findByQuery("FROM EDependency d WHERE d.name = ?1 AND d.type = ?2 AND d.operator = ?3 AND d.version = ?4", dep.getName(), dep.getType(), dep.getOperator(), dep.getVersion());
+	}
+	
+	@Override
+	public List<EDependency> findByIds(Set<Long> dependencies) {
+		if (dependencies == null || dependencies.isEmpty()) {
+			return new ArrayList<>();
+		}
+		// language=HQL
+		return this.findListByQuery("FROM EDependency AS r WHERE r.id IN ?1", dependencies);
 	}
 	
 }

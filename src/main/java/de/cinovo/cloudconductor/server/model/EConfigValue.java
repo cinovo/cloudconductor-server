@@ -18,6 +18,7 @@ package de.cinovo.cloudconductor.server.model;
  */
 
 import de.cinovo.cloudconductor.api.model.ConfigValue;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "configvalues", schema = "cloudconductor")
-public class EConfigValue extends AModelApiConvertable<ConfigValue> implements IEntity<Long> {
+public class EConfigValue  implements IEntity<Long> {
 
 	/**     */
 	private static final long serialVersionUID = 1L;
@@ -145,18 +146,14 @@ public class EConfigValue extends AModelApiConvertable<ConfigValue> implements I
 	public void setValue(String value) {
 		this.value = value;
 	}
-
-
-	@Override
-	@Transient
-	public Class<ConfigValue> getApiClass() {
-		return ConfigValue.class;
-	}
-
-	@Override
+	
+	
+	/**
+	 * @return the api object
+	 */
 	@Transient
 	public ConfigValue toApi() {
-		ConfigValue configValue = super.toApi();
+		ConfigValue configValue = GenericModelApiConverter.convert(this, ConfigValue.class);
 		configValue.setKey(this.configkey);
 		return configValue;
 	}

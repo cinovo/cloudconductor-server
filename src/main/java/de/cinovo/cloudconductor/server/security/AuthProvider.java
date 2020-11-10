@@ -1,24 +1,24 @@
 package de.cinovo.cloudconductor.server.security;
 
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.HttpHeaders;
-
-import org.apache.cxf.message.Message;
-import org.apache.cxf.security.SecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import de.cinovo.cloudconductor.server.dao.IJWTTokenDAO;
+import de.cinovo.cloudconductor.server.dao.IUserDAO;
 import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.model.EJWTToken;
+import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
 import de.taimos.dvalin.jaxrs.providers.AuthorizationProvider;
 import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.security.SecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.HttpHeaders;
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -34,6 +34,8 @@ public class AuthProvider extends AuthorizationProvider {
 	@Autowired
 	private IJWTTokenDAO jwtTokenDAO;
 	@Autowired
+	private IUserDAO userDAO;
+	@Autowired
 	private IUserGroupDAO userGroupDAO;
 	
 	
@@ -48,9 +50,7 @@ public class AuthProvider extends AuthorizationProvider {
 			return null;
 		}
 		if (type.equalsIgnoreCase("bearer")) {
-			SecurityContext securityContext = this.handleJWTAuth(msg, auth);
-			
-			return securityContext;
+			return this.handleJWTAuth(msg, auth);
 		}
 		return null;
 	}
@@ -62,7 +62,7 @@ public class AuthProvider extends AuthorizationProvider {
 		if (anonymous != null) {
 			permissions = anonymous.getPermissionsAsString();
 		}
-		return AuthorizationProvider.createAnonymousSC(permissions.toArray(new String[permissions.size()]));
+		return AuthorizationProvider.createAnonymousSC(permissions.toArray(new String[0]));
 	}
 	
 	private SecurityContext handleJWTAuth(Message msg, String auth) {
@@ -75,7 +75,11 @@ public class AuthProvider extends AuthorizationProvider {
 			if ((jwtToken == null) || !jwtToken.isActive()) {
 				return null;
 			}
-			if ((jwtToken.getUser() == null) || !jwtToken.getUser().isActive()) {
+			if ((jwtToken.getUserId() == null)) {
+				return null;
+			}
+			EUser user = this.userDAO.findById(jwtToken.getUserId());
+			if (user == null || !user.isActive()) {
 				return null;
 			}
 			return this.loginUser(msg, new AuthenticatedUserWithToken(authenticatedUser, auth));

@@ -14,7 +14,6 @@ import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
@@ -32,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -41,7 +41,7 @@ import java.util.Map.Entry;
  */
 @Service
 public class TemplateHandler {
-
+	
 	@Autowired
 	private ITemplateDAO templateDAO;
 	@Autowired
@@ -52,16 +52,16 @@ public class TemplateHandler {
 	private IPackageVersionDAO packageVersionDAO;
 	@Autowired
 	private IHostDAO hostDAO;
-
+	
 	@Autowired
 	private PackageHandler packageHandler;
-
+	
 	@Autowired
 	private TemplateDetailWSHandler templateDetailWSHandler;
 	@Autowired
 	private HostDetailWSHandler hostDetailWSHandler;
-
-
+	
+	
 	/**
 	 * @param t the data
 	 * @return the saved entity
@@ -69,11 +69,11 @@ public class TemplateHandler {
 	 */
 	public ETemplate createEntity(Template t) throws WebApplicationException {
 		ETemplate et = new ETemplate();
-		et = this.fillFields(et, t);
+		this.fillFields(et, t);
 		RESTAssert.assertNotNull(et);
 		return this.templateDAO.save(et);
 	}
-
+	
 	/**
 	 * @param et the entity to update
 	 * @param t  the update data
@@ -81,21 +81,21 @@ public class TemplateHandler {
 	 * @throws WebApplicationException on error
 	 */
 	public ETemplate updateEntity(ETemplate et, Template t) throws WebApplicationException {
-		et = this.fillFields(et, t);
+		this.fillFields(et, t);
 		RESTAssert.assertNotNull(et);
 		return this.templateDAO.save(et);
 	}
-
+	
 	/**
-	 * @param templateName the template name
+	 * @param template the template name
 	 * @return the new agent options
 	 */
-	public EAgentOption createAgentOptions(String templateName) {
+	public EAgentOption createAgentOptions(ETemplate template) {
 		EAgentOption eAgentOption = new EAgentOption();
-		eAgentOption.setTemplate(this.templateDAO.findByName(templateName));
+		eAgentOption.setTemplateid(template.getId());
 		return this.agentOptionsDAO.save(eAgentOption);
 	}
-
+	
 	/**
 	 * @param eao the entity to update
 	 * @param ao  the update data
@@ -107,94 +107,97 @@ public class TemplateHandler {
 		RESTAssert.assertNotNull(eao);
 		return this.agentOptionsDAO.save(eao);
 	}
-
+	
 	/**
 	 * updates all packages of all templates to the newest version
 	 */
 	@Transactional
 	public void updateAllPackages() {
-		for(ETemplate t : this.templateDAO.findList()) {
+		for (ETemplate t : this.templateDAO.findList()) {
 			ETemplate updatedTemplate = this.updateAllPackages(t);
 			this.sendTemplateUpdate(updatedTemplate);
 		}
 	}
-
+	
 	private void sendTemplateUpdate(ETemplate template) {
-		this.templateDetailWSHandler.broadcastChange(template.getName(), new WSChangeEvent<>(ChangeType.UPDATED, template.toApi()));
+		this.templateDetailWSHandler.broadcastChange(template, ChangeType.UPDATED);
 	}
-
+	
 	/**
 	 * Updates all packages of a given template to the newest version
 	 *
 	 * @param template the template to update the packages for
+	 * @return the template
 	 */
 	@Transactional
 	public ETemplate updateAllPackages(ETemplate template) {
-		if((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
+		if ((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
 			return template;
 		}
-
+		
 		boolean updatedPackage = false;
-		List<EPackageVersion> list = new ArrayList<>(template.getPackageVersions());
-
-		for(EPackageVersion version : template.getPackageVersions()) {
-			EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkg(), template.getRepos());
-			if(newest == null) {
+		List<ERepo> repos = this.repoDAO.findByIds(template.getRepos());
+		List<Long> list = new ArrayList<>(template.getPackageVersions());
+		
+		for (EPackageVersion version : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
+			EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkgId(), repos);
+			if (newest == null) {
 				continue;
 			}
-			if(!newest.equals(version)) {
-				list.remove(version);
-				list.add(newest);
+			if (!newest.equals(version)) {
+				list.remove(version.getId());
+				list.add(newest.getId());
 				updatedPackage = true;
 			}
 		}
-
-		if(updatedPackage) {
+		
+		if (updatedPackage) {
 			template.setPackageVersions(list);
 			ETemplate updatedTemplate = this.templateDAO.save(template);
-			List<EHost> affectedHosts = this.hostDAO.findHostsForTemplate(updatedTemplate.getName());
-			affectedHosts.stream().forEach(host -> {
-				this.hostDetailWSHandler.broadcastChange(host.getUuid(), new WSChangeEvent<>(ChangeType.UPDATED, host.toApi()));
+			List<EHost> affectedHosts = this.hostDAO.findHostsForTemplate(updatedTemplate.getId());
+			affectedHosts.forEach(host -> {
+				this.hostDetailWSHandler.broadcastChange(host, ChangeType.UPDATED);
 			});
-
+			
 			return updatedTemplate;
 		}
-
+		
 		return template;
 	}
-
+	
 	/**
 	 * disables auto update for all templates
 	 */
 	public void disableAutoUpdate() {
 		this.templateDAO.disableAutoUpdate();
 	}
-
+	
 	/**
 	 * @param template    the template to update the package in
 	 * @param packageName the package to update
 	 * @return the updated template
 	 */
 	public ETemplate updatePackage(ETemplate template, String packageName) {
+		List<ERepo> repos = this.repoDAO.findByIds(template.getRepos());
 		Map<EPackageVersion, EPackageVersion> removeAddMap = new HashMap<>();
-		for(EPackageVersion version : template.getPackageVersions()) {
-			if(version.getPkg().getName().equals(packageName)) {
-				EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkg(), template.getRepos());
-				if(newest == null) {
+		for (EPackageVersion version : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
+			if (version.getPkgName().equals(packageName)) {
+				EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkgId(), repos);
+				if (newest == null) {
 					continue;
 				}
-				if(!newest.equals(version)) {
+				if (!newest.equals(version)) {
 					removeAddMap.put(version, newest);
 				}
 			}
 		}
-		for(Entry<EPackageVersion, EPackageVersion> entry : removeAddMap.entrySet()) {
-			template.getPackageVersions().remove(entry.getKey());
-			template.getPackageVersions().add(entry.getValue());
+		for (Entry<EPackageVersion, EPackageVersion> entry : removeAddMap.entrySet()) {
+			template.getPackageVersions().remove(entry.getKey().getId());
+			template.getPackageVersions().add(entry.getValue().getId());
 		}
 		return template;
 	}
-
+	
 	/**
 	 * @param template    the template to temove the package from
 	 * @param packageName the package to update
@@ -202,52 +205,53 @@ public class TemplateHandler {
 	 */
 	public ETemplate removePackage(ETemplate template, String packageName) {
 		EPackageVersion remove = null;
-		for(EPackageVersion version : template.getPackageVersions()) {
-			if(version.getPkg().getName().equals(packageName)) {
+		for (EPackageVersion version : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
+			if (version.getPkgName().equals(packageName)) {
 				remove = version;
 				break;
 			}
 		}
 		RESTAssert.assertNotNull(remove);
-		template.getPackageVersions().remove(remove);
+		if (remove != null) {
+			template.getPackageVersions().remove(remove.getId());
+		}
 		return template;
 	}
-
-	private ETemplate fillFields(ETemplate et, Template t) {
+	
+	private void fillFields(ETemplate et, Template t) {
 		et.setName(t.getName());
 		et.setDescription(t.getDescription());
 		et.setRepos(new ArrayList<>());
 		et.setAutoUpdate(t.getAutoUpdate() != null && t.getAutoUpdate());
 		et.setSmoothUpdate(t.getSmoothUpdate() != null && t.getSmoothUpdate());
 		et.setGroup(t.getGroup());
-		if(t.getRepos() != null && !t.getRepos().isEmpty()) {
-			et.getRepos().addAll(this.repoDAO.findByNames(t.getRepos()));
+		if (t.getRepos() != null && !t.getRepos().isEmpty()) {
+			et.getRepos().addAll(this.repoDAO.findByNames(t.getRepos()).stream().map(ERepo::getId).collect(Collectors.toList()));
 		}
 		et.setPackageVersions(this.findPackageVersions(et.getPackageVersions(), t.getVersions(), et.getRepos()));
-		return et;
 	}
-
+	
 	private EAgentOption fillFields(EAgentOption eao, AgentOption ao) {
 		EAgentOption result = GenericModelApiConverter.convert(ao, EAgentOption.class);
 		result.setId(eao.getId());
-		result.setTemplate(eao.getTemplate());
+		result.setTemplateid(eao.getTemplateid());
 		return result;
 	}
-
-	private List<EPackageVersion> findPackageVersions(List<EPackageVersion> currentVersions, Map<String, String> targetVersions, List<ERepo> repos) {
-		List<EPackageVersion> result = new ArrayList<>();
-		if(currentVersions != null) {
-			for(EPackageVersion version : currentVersions) {
-				if(targetVersions.containsKey(version.getName())) {
-					if(version.getVersion().equals(targetVersions.get(version.getName()))) {
-						if(this.packageHandler.versionAvailableInRepo(version, repos)) {
-							result.add(version);
+	
+	private List<Long> findPackageVersions(List<Long> currentVersions, Map<String, String> targetVersions, List<Long> repos) {
+		List<Long> result = new ArrayList<>();
+		if (currentVersions != null) {
+			for (EPackageVersion version : this.packageVersionDAO.findByIds(currentVersions)) {
+				if (targetVersions.containsKey(version.getName())) {
+					if (version.getVersion().equals(targetVersions.get(version.getName()))) {
+						if (this.packageHandler.versionAvailableInRepo(version, repos)) {
+							result.add(version.getId());
 						}
 					} else {
 						EPackageVersion ePackageVersion = this.packageVersionDAO.find(version.getName(), targetVersions.get(version.getName()));
-						if(ePackageVersion != null) {
-							if(this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
-								result.add(ePackageVersion);
+						if (ePackageVersion != null) {
+							if (this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
+								result.add(ePackageVersion.getId());
 							}
 						}
 					}
@@ -255,12 +259,12 @@ public class TemplateHandler {
 				}
 			}
 		}
-		if(targetVersions != null) {
-			for(Entry<String, String> target : targetVersions.entrySet()) {
+		if (targetVersions != null) {
+			for (Entry<String, String> target : targetVersions.entrySet()) {
 				EPackageVersion ePackageVersion = this.packageVersionDAO.find(target.getKey(), target.getValue());
-				if(ePackageVersion != null) {
-					if(this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
-						result.add(ePackageVersion);
+				if (ePackageVersion != null) {
+					if (this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
+						result.add(ePackageVersion.getId());
 					}
 				}
 			}
@@ -269,8 +273,8 @@ public class TemplateHandler {
 	}
 	
 	/**
-	 * @param packageVersions	complete list of all package versions which should be installed
-	 * @param templateName		name of the template to be modified
+	 * @param packageVersions complete list of all package versions which should be installed
+	 * @param templateName    name of the template to be modified
 	 * @return the modified template
 	 */
 	public ETemplate replacePackageVersionsForTemplate(List<SimplePackageVersion> packageVersions, String templateName) {
@@ -278,7 +282,7 @@ public class TemplateHandler {
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template, Status.NOT_FOUND);
 		
-		List<EPackageVersion> newPVs = new ArrayList<>();
+		List<Long> newPVs = new ArrayList<>();
 		for (SimplePackageVersion requestedPV : packageVersions) {
 			if (!this.isRepoAvailableForTemplate(requestedPV.getRepos(), template)) {
 				String errorMessage = "Package '" + requestedPV + "' can not be used in template '" + templateName + "' because none of the providing repos " + requestedPV.getRepos() + " is available";
@@ -290,7 +294,7 @@ public class TemplateHandler {
 				String errorMessage = "Unknown Package '" + requestedPV + "'";
 				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errorMessage).build());
 			}
-			newPVs.add(packageVersion);
+			newPVs.add(packageVersion.getId());
 		}
 		
 		// replace pvs and save
@@ -300,13 +304,16 @@ public class TemplateHandler {
 	}
 	
 	private boolean isRepoAvailableForTemplate(Collection<String> providingRepos, ETemplate template) {
-		List<ERepo> availableRepos = template.getRepos();
+		List<Long> availableRepos = template.getRepos();
 		if (availableRepos == null || availableRepos.isEmpty()) {
 			return false;
 		}
-
+		List<ERepo> repos = this.repoDAO.findByIds(availableRepos);
+		if (repos == null || repos.isEmpty()) {
+			return false;
+		}
 		for (String repoName : providingRepos) {
-			for (ERepo availableRepo : availableRepos) {
+			for (ERepo availableRepo : repos) {
 				if (availableRepo.getName().equals(repoName)) {
 					return true;
 				}
@@ -314,5 +321,5 @@ public class TemplateHandler {
 		}
 		return false;
 	}
-
+	
 }

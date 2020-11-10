@@ -17,7 +17,6 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
@@ -42,12 +41,6 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	}
 
 	@Override
-	public List<Service> findFlatList() {
-		String q = "SELECT NEW de.cinovo.cloudconductor.api.model.Service(s.id, s.name, s.description, s.initScript) FROM EService AS s";
-		return this.entityManager.createQuery(q, Service.class).getResultList();
-	}
-
-	@Override
 	public EService findByName(String name) {
 		// language=HQL
 		return this.findByQuery("FROM EService AS s WHERE s.name = ?1", name);
@@ -62,7 +55,7 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	@Override
 	public boolean exists(String serviceName) {
 		// language=HQL
-		return entityManager.createQuery("SELECT COUNT(s) FROM EService AS s WHERE s.name = ?1", Long.class).setParameter(1, serviceName).getSingleResult() > 0;
+		return this.entityManager.createQuery("SELECT COUNT(s) FROM EService AS s WHERE s.name = ?1", Long.class).setParameter(1, serviceName).getSingleResult() > 0;
 	}
 
 	@Override
@@ -74,15 +67,15 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	@Override
 	public List<EService> findByPackage(EPackage pkg) {
 		// language=HQL
-		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkg);
+		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkg.getId());
 	}
-
+	
 	@Override
-	public List<EService> findByTemplate(String templateName) {
+	public List<EService> findByPackage(Long pkgId) {
 		// language=HQL
-		return this.findListByQuery("SELECT DISTINCT s FROM EService AS s, ETemplate AS t JOIN t.packageVersions AS pv WHERE t.name = ?1 AND pv.pkg in elements(s.packages)", templateName);
+		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkgId);
 	}
-
+	
 	@Override
 	public Long count() {
 		// language=HQL

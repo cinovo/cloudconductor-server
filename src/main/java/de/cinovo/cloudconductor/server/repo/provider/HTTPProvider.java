@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
 import de.cinovo.cloudconductor.api.enums.RepoProviderType;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.taimos.httputils.HTTPResponse;
@@ -27,13 +28,16 @@ import java.util.List;
  */
 public class HTTPProvider implements IRepoProvider {
 	
+	private final ERepo repo;
 	private ERepoMirror mirror;
 	
 	
 	/**
 	 * @param mirror the mirror to contact
+	 * @param erepo the repo of the mirror
 	 */
-	public HTTPProvider(ERepoMirror mirror) {
+	public HTTPProvider(ERepoMirror mirror, ERepo erepo) {
+		this.repo = erepo;
 		if (mirror.getProviderType() == RepoProviderType.HTTP) {
 			this.mirror = mirror;
 		}
@@ -135,6 +139,6 @@ public class HTTPProvider implements IRepoProvider {
 	
 	@Override
 	public String getRepoName() {
-		return this.mirror.getRepo().getName();
+		return this.repo.getName();
 	}
 }

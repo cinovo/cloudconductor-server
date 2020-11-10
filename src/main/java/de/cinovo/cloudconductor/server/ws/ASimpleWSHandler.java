@@ -1,10 +1,9 @@
 package de.cinovo.cloudconductor.server.ws;
 
-import java.util.Set;
-
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+import java.util.Set;
 
 /**
  * 
@@ -43,5 +42,7 @@ public abstract class ASimpleWSHandler<A extends ASimpleWSAdapter<?, T>, T> {
 			adapter.sendChangeEvent(changeEvent);
 		}
 	}
+	
+	
 	
 }

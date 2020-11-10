@@ -19,9 +19,11 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.taimos.dvalin.jpa.IEntity;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -32,7 +34,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -47,12 +48,12 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "file", schema = "cloudconductor")
-public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<Long>, INamed {
+public class EFile implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
-	private EPackage pkg;
+	private Long pkgId;
 	private String targetPath;
 	private String owner;
 	private String group;
@@ -82,17 +83,16 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 	/**
 	 * @return the pkg
 	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "packageid")
-	public EPackage getPkg() {
-		return this.pkg;
+	@Column(name = "packageid")
+	public Long getPkgId() {
+		return this.pkgId;
 	}
 	
 	/**
 	 * @param pkg the pkg to set
 	 */
-	public void setPkg(EPackage pkg) {
-		this.pkg = pkg;
+	public void setPkgId(Long pkg) {
+		this.pkgId = pkg;
 	}
 	
 	/**
@@ -274,17 +274,33 @@ public class EFile extends AModelApiConvertable<ConfigFile> implements IEntity<L
 		return (this.getName() != null) && this.getName().equals(other.getName());
 	}
 	
-	@Override
+	/**
+	 * @return the api classe
+	 */
 	@Transient
 	public Class<ConfigFile> getApiClass() {
 		return ConfigFile.class;
 	}
 	
-	@Override
+	/**
+	 * @param packageDAO the package dao
+	 * @return the api object
+	 */
 	@Transient
-	public ConfigFile toApi() {
-		ConfigFile configFile = super.toApi();
-		configFile.setDependentServices(this.dependentServices);
+	@Transactional
+	public ConfigFile toApi(IPackageDAO packageDAO) {
+		ConfigFile configFile = new ConfigFile();
+		configFile.setChecksum(this.checksum);
+		configFile.setDirectory(this.isDirectory);
+		configFile.setFileMode(this.fileMode);
+		configFile.setGroup(this.group);
+		configFile.setName(this.name);
+		configFile.setOwner(this.owner);
+		configFile.setPkg(packageDAO.findName(this.pkgId));
+		configFile.setReloadable(this.isReloadable);
+		configFile.setTargetPath(this.targetPath);
+		configFile.setTemplate(this.isTemplate);
+		configFile.setDependentServices(new HashSet<>(this.dependentServices));
 		configFile.setTemplates(new ArrayList<>(this.templates));
 		return configFile;
 	}

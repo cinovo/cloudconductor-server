@@ -11,8 +11,8 @@ import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
  */
 public class AuthenticatedUserWithToken implements IUser {
 
-	private AuthenticatedUser authenticatedUser;
-	private String token;
+	private final AuthenticatedUser authenticatedUser;
+	private final String token;
 
 	/**
 	 * @param authenticatedUser the auth user

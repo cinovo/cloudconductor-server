@@ -40,9 +40,9 @@ import java.util.Map.Entry;
  */
 @Service
 public class PackageImport implements IPackageImport {
-
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PackageImport.class);
-
+	
 	@Autowired
 	private IPackageDAO packageDAO;
 	@Autowired
@@ -51,129 +51,146 @@ public class PackageImport implements IPackageImport {
 	private IPackageVersionDAO versionDAO;
 	@Autowired
 	private IRepoDAO repoDAO;
-
+	
 	@Autowired
 	private PackageHandler packageHandler;
 	@Autowired
 	private TemplateHandler templateHandler;
-
-
+	
+	
 	/**
 	 * @param packageVersions the package versions
 	 */
 	@Override
+	@Transactional
 	public void importVersions(Set<PackageVersion> packageVersions) {
 		Map<String, Set<PackageVersion>> repoMap = new HashMap<>();
-		for(PackageVersion packageVersion : packageVersions) {
-			for(String repo : packageVersion.getRepos()) {
-				if(!repoMap.containsKey(repo)) {
+		for (PackageVersion packageVersion : packageVersions) {
+			for (String repo : packageVersion.getRepos()) {
+				if (!repoMap.containsKey(repo)) {
 					repoMap.put(repo, new HashSet<>());
 				}
 				repoMap.get(repo).add(packageVersion);
 			}
 		}
-
-		for(Entry<String, Set<PackageVersion>> entry : repoMap.entrySet()) {
+		
+		for (Entry<String, Set<PackageVersion>> entry : repoMap.entrySet()) {
 			this.importVersions(entry.getValue(), entry.getKey());
 		}
 	}
-
-	public void importVersions(Set<PackageVersion> packageVersions, String repoName) {
+	
+	private void importVersions(Set<PackageVersion> packageVersions, String repoName) {
 		RESTAssert.assertNotEmpty(packageVersions);
 		Map<String, Set<EPackageVersion>> provided = new HashMap<>();
 		ERepo repo = this.repoDAO.findByName(repoName);
-		for(PackageVersion version : packageVersions) {
+		for (PackageVersion version : packageVersions) {
 			// Retrieve the package for the given version. Create it if it doesn't exist.
 			EPackage epackage = this.packageDAO.findByName(version.getName());
-			if(epackage == null) { // there is no package for this version yet
+			if (epackage == null) { // there is no package for this version yet
 				epackage = this.packageHandler.createPackageFromVersion(version);
 			}
-
+			
 			String name = version.getName();
 			String ver = version.getVersion();
-
+			
 			// Check if we have this particular package version on record.
 			EPackageVersion eversion = this.versionDAO.find(name, ver);
-			if(eversion == null) {
+			if (eversion == null) {
 				PackageImport.LOGGER.debug("Create new package version '" + name + "':'" + ver + "'");
 				eversion = this.packageHandler.createEntity(version, epackage);
 			} else {
 				PackageImport.LOGGER.debug("Update existing package version '" + name + "':'" + ver + "'");
 				boolean containsRepo = false;
-				for(ERepo eRepo : eversion.getRepos()) {
-					if(eRepo.getName().equalsIgnoreCase(repoName)) {
+				for (ERepo eRepo : this.repoDAO.findByIds(eversion.getRepos())) {
+					if (eRepo.getName().equalsIgnoreCase(repoName)) {
 						containsRepo = true;
 						break;
 					}
 				}
-				if(!containsRepo) {
+				if (!containsRepo) {
 					eversion = this.packageHandler.updateEntity(eversion, repo);
 				}
 			}
-			if(!provided.containsKey(epackage.getName())) {
-				provided.put(eversion.getPkg().getName(), new HashSet<>());
+			if (!provided.containsKey(epackage.getName())) {
+				provided.put(eversion.getPkgName(), new HashSet<>());
 			}
-			provided.get(eversion.getPkg().getName()).add(eversion);
+			provided.get(eversion.getPkgName()).add(eversion);
 		}
-
+		
 		this.performDBClean(repo, provided);
 		this.templateHandler.updateAllPackages();
 	}
-
+	
+	/**
+	 * @param repo     the repo
+	 * @param provided the provided pkg versions
+	 */
 	@Transactional
 	public void performDBClean(ERepo repo, Map<String, Set<EPackageVersion>> provided) {
-		for(EPackage pkg : this.packageDAO.findList()) {
-			this.cleanUpVersions(provided.get(pkg.getName()), pkg.getVersions(), repo);
+		List<EPackage> emptyPackages = new ArrayList<>();
+		for (EPackage pkg : this.packageDAO.findList()) {
+			List<EPackageVersion> versions = this.versionDAO.findByPackage(pkg.getId());
+			if (versions.isEmpty()) {
+				emptyPackages.add(pkg);
+				continue;
+			}
+			boolean removed = this.cleanUpVersions(provided.get(pkg.getName()), versions, repo);
+			if (removed) {
+				emptyPackages.add(pkg);
+			}
 		}
-
-		for(EPackage emptyPackage : this.packageDAO.findEmpty()) {
+		
+		for (EPackage emptyPackage : emptyPackages) {
 			// check if it's used somewhere within configuration files
 			for (EFile file : this.fileDAO.findByPackage(emptyPackage)) {
-				file.setPkg(null); // remove pkg ref
+				file.setPkgId(null); // remove pkg ref
 				this.fileDAO.save(file);
 			}
 			this.packageDAO.deleteById(emptyPackage.getId());
 		}
 	}
-
-	private void cleanUpVersions(Set<EPackageVersion> newPackageVersions, Set<EPackageVersion> existing, ERepo currentRepo) {
-		if(existing == null) {
-			return;
+	
+	private boolean cleanUpVersions(Set<EPackageVersion> newPackageVersions, Collection<EPackageVersion> existing, ERepo currentRepo) {
+		if (existing == null) {
+			return false;
 		}
-		for(EPackageVersion dbVersion : existing) {
+		for (EPackageVersion dbVersion : existing) {
 			boolean provided = false;
-			if(newPackageVersions != null) {
-				for(EPackageVersion newPackageVersion : newPackageVersions) {
-					if(newPackageVersion.getId().equals(dbVersion.getId())) {
+			if (newPackageVersions != null) {
+				for (EPackageVersion newPackageVersion : newPackageVersions) {
+					if (newPackageVersion.getId().equals(dbVersion.getId())) {
 						provided = true;
 						break;
 					}
 				}
 			}
-
-			if(!provided) {
-				this.handleNotProvidedVersion(currentRepo, dbVersion);
+			
+			if (!provided) {
+				return this.handleNotProvidedVersion(currentRepo, dbVersion);
 			}
 		}
+		return false;
 	}
-
-	private void handleNotProvidedVersion(ERepo currentRepo, EPackageVersion dbVersion) {
-		if(this.packageHandler.checkIfInUse(dbVersion, currentRepo)) {
-			if(dbVersion.getRepos().size() <= 1) {
+	
+	private boolean handleNotProvidedVersion(ERepo currentRepo, EPackageVersion dbVersion) {
+		if (this.packageHandler.checkIfInUse(dbVersion, currentRepo)) {
+			if (dbVersion.getRepos().size() <= 1) {
 				dbVersion.setDeprecated(true);
 			}
 			this.versionDAO.save(dbVersion);
-			return;
+			return false;
 		}
-		if(dbVersion.getRepos().size() > 0) {
-			if(dbVersion.getRepos().stream().anyMatch((e) -> e.equals(currentRepo))) { // TODO NOT?
+		if (dbVersion.getRepos().size() > 0) {
+			if (dbVersion.getRepos().contains(currentRepo.getId())) { // TODO NOT?
 				//more repos than the current one provide this package -> we keep it but remove the reference for the current repo
-				dbVersion.getRepos().remove(currentRepo);
+				dbVersion.getRepos().remove(currentRepo.getId());
 				dbVersion = this.versionDAO.save(dbVersion);
 			}
 		}
-		if(dbVersion.getRepos().size() < 1) {
+		if (dbVersion.getRepos().size() < 1) {
 			this.versionDAO.delete(dbVersion);
+			return true;
 		}
+		return false;
 	}
 }

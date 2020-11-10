@@ -34,12 +34,12 @@ public class AllIndexTask implements IServerTasks {
 	 */
 	private static final ReentrantLock WORKING = new ReentrantLock();
 
-	private IRepoDAO repoDAO;
-	private RepoHandler repoHandler;
-	private IPackageImport packageImport;
-	private Integer timer;
-	private TimeUnit timerUnit;
-	private Integer delay;
+	private final IRepoDAO repoDAO;
+	private final RepoHandler repoHandler;
+	private final IPackageImport packageImport;
+	private final Integer timer;
+	private final TimeUnit timerUnit;
+	private final Integer delay;
 
 
 	/**

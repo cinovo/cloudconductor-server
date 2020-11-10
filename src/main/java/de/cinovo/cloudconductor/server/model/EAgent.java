@@ -21,7 +21,7 @@ public class EAgent implements IEntity<Long> {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
-	private EUser user;
+	private Long userid;
 
 	@Override
 	@Id
@@ -54,16 +54,14 @@ public class EAgent implements IEntity<Long> {
 	/**
 	 * @return the user
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "userid")
-	public EUser getUser() {
-		return this.user;
+	public Long getUserid() {
+		return this.userid;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param userid the user to set
 	 */
-	public void setUser(EUser user) {
-		this.user = user;
+	public void setUserid(Long userid) {
+		this.userid = userid;
 	}
 }

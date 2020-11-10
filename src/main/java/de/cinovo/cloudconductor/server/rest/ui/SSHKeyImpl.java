@@ -3,6 +3,7 @@ package de.cinovo.cloudconductor.server.rest.ui;
 import de.cinovo.cloudconductor.api.interfaces.ISSHKey;
 import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.taimos.dvalin.jaxrs.JaxRsComponent;
@@ -27,12 +28,13 @@ public class SSHKeyImpl implements ISSHKey {
 	private ISSHKeyDAO sshDAO;
 	@Autowired
 	private SSHHandler sshHandler;
-	
+	@Autowired
+	private ITemplateDAO templateDAO;
 	
 	@Override
 	@Transactional
 	public SSHKey[] getKeys() {
-		return this.sshDAO.findList().stream().map(ESSHKey::toApi).distinct().toArray(SSHKey[]::new);
+		return this.sshDAO.findList().stream().map(k->k.toApi(this.templateDAO)).distinct().toArray(SSHKey[]::new);
 	}
 	
 	@Override
@@ -41,7 +43,7 @@ public class SSHKeyImpl implements ISSHKey {
 		RESTAssert.assertNotEmpty(owner);
 		ESSHKey modelKey = this.sshDAO.findByName(owner);
 		RESTAssert.assertNotNull(modelKey, Response.Status.NOT_FOUND);
-		return modelKey.toApi();
+		return modelKey.toApi(this.templateDAO);
 	}
 	
 	@Override
