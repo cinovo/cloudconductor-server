@@ -93,7 +93,7 @@ public class HostImpl implements IHost {
 		RESTAssert.assertNotEmpty(hostUuid);
 		EHost eHost = this.hostDAO.findByUuid(hostUuid);
 		RESTAssert.assertNotNull(eHost);
-		this.hostsWsHandler.broadcastEvent(eHost.getId(), ChangeType.DELETED);
+		this.hostsWsHandler.broadcastEvent(eHost, ChangeType.DELETED);
 		this.hostDAO.delete(eHost);
 	}
 	

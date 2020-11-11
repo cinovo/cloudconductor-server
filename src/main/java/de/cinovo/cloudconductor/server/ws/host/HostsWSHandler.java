@@ -38,21 +38,26 @@ public class HostsWSHandler extends ASimpleWSHandler<HostsWSAdapter, SimpleHost>
 	@Autowired
 	private IPackageStateDAO packageStateDAO;
 	
+	
 	/**
-	 * @param id   the host id
-	 * @param type the change type
+	 * @param eHost the host
+	 * @param type  the change type
 	 */
-	public void broadcastEvent(Long id, ChangeType type) {
-		EHost eHost = this.hostDAO.findById(id);
+	public void broadcastEvent(EHost eHost, ChangeType type) {
 		if (eHost == null) {
 			return;
 		}
 		ETemplate template = this.templateDAO.findById(eHost.getTemplateId());
-		EAgent agent = this.agentDAO.findById(eHost.getAgentId());
+		String agentName = "";
+		if(eHost.getAgentId() != null) {
+			EAgent agent = this.agentDAO.findById(eHost.getAgentId());
+			agentName = agent.getName();
+		}
 		//TODO: CREATE COUNTS ON DB
 		List<EServiceState> services = this.serviceStateDAO.findByHost(eHost.getId());
 		List<EPackageState> packages = this.packageStateDAO.findByHost(eHost.getId());
-		SimpleHost sh = new SimpleHost(eHost.getName(), agent.getName(), eHost.getUuid(), template.getName(), eHost.getLastSeen(), (long) services.size(), (long) packages.size());
+		SimpleHost sh = new SimpleHost(eHost.getName(), agentName, eHost.getUuid(), template.getName(), eHost.getLastSeen(), (long) services.size(), (long) packages.size());
 		this.broadcastEvent(new WSChangeEvent<>(type, sh));
 	}
+	
 }

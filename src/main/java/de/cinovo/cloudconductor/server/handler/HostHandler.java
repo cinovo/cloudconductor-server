@@ -8,6 +8,7 @@ import de.cinovo.cloudconductor.server.dao.IPackageStateDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceDAO;
 import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.cinovo.cloudconductor.server.model.EAgent;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.EServiceState;
@@ -93,18 +94,22 @@ public class HostHandler {
 	 *
 	 * @param hostName the name for the new host
 	 * @param template the template to be used by the new host
+	 * @param agent
 	 * @return the new host
 	 */
-	public EHost createNewHost(String hostName, ETemplate template) {
+	public EHost createNewHost(String hostName, ETemplate template, EAgent agent) {
 		EHost newHost = new EHost();
 		newHost.setName(hostName);
 		newHost.setTemplateId(template.getId());
 		newHost.setLastSeen((new DateTime()).getMillis());
 		newHost.setUuid(UUID.randomUUID().toString());
+		if (agent != null) {
+			newHost.setAgentId(agent.getId());
+		}
 		newHost = this.hostDAO.save(newHost);
 		this.hostDetailWSHandler.broadcastChange(newHost, ChangeType.UPDATED);
 		
-		this.hostWSHandler.broadcastEvent(newHost.getId(), ChangeType.ADDED);
+		this.hostWSHandler.broadcastEvent(newHost, ChangeType.ADDED);
 		return newHost;
 	}
 	

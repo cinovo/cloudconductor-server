@@ -107,7 +107,7 @@ public class EHost implements IEntity<Long>, INamed {
 	/**
 	 * @return the templateid
 	 */
-	@Column(updatable = false, insertable = false)
+	@Column(name="templateid")
 	public Long getTemplateId() {
 		return this.templateId;
 	}

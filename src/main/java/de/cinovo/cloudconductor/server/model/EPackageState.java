@@ -136,6 +136,7 @@ public class EPackageState implements IEntity<Long> {
 	/**
 	 * @return the pkgName
 	 */
+	@Column(name="pkgname")
 	public String getPkgName() {
 		return this.pkgName;
 	}

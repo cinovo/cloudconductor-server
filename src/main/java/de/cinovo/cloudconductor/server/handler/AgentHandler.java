@@ -30,6 +30,8 @@ import de.cinovo.cloudconductor.server.ws.host.HostsWSHandler;
 import de.taimos.restutils.RESTAssert;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +51,7 @@ import java.util.UUID;
  */
 @Service
 public class AgentHandler {
-	
+	private final Logger logger = LoggerFactory.getLogger(AgentHandler.class);
 	private static final int MAX_UPDATE_THRESHOLD = 15;
 	
 	@Autowired
@@ -99,13 +101,10 @@ public class AgentHandler {
 		RESTAssert.assertNotEmpty(hostName);
 		EHost host = this.hostDAO.findByUuid(uuid);
 		RESTAssert.assertNotNull(host);
-		
 		host.setLastSeen((new DateTime()).getMillis());
 		host = this.hostDAO.save(host);
-		
 		List<EPackage> packages = this.packageDAO.findList();
 		List<EPackageState> leftPackages = this.packageStateDAO.findByHost(host.getId());
-		
 		for (PackageVersion installedPV : rpmState.getInstalledRpms()) {
 			EPackage knownPackage = packages.stream().filter(p -> p.getName().equals(installedPV.getName())).findFirst().orElse(null);
 			if (knownPackage == null) {
@@ -117,10 +116,8 @@ public class AgentHandler {
 			}
 		}
 		this.packageStateHandler.removePackageState(host, leftPackages);
-		
 		this.hostDetailWsHandler.broadcastChange(host, ChangeType.UPDATED);
-		this.hostsWSHandler.broadcastEvent(host.getId(), ChangeType.UPDATED);
-		
+		this.hostsWSHandler.broadcastEvent(host, ChangeType.UPDATED);
 		// check whether the host may updateEntity or has to wait for another host to finish updating
 		if (this.sendPackageChanges(host)) {
 			PackageStateChanges diff = this.psChangeHandler.computePackageDiff(host);
@@ -224,14 +221,14 @@ public class AgentHandler {
 			agent = this.createNewAgent(agentName);
 		}
 		
-		EHost host = this.getHost(templateName, hostName, uuid);
+		EHost host = this.getHost(templateName, hostName, uuid, agent);
 		host.setLastSeen((new DateTime()).getMillis());
 		if (agent != null) {
 			host.setAgentId(agent.getId());
 		}
 		host = this.hostDAO.save(host);
 		this.hostDetailWsHandler.broadcastChange(host, ChangeType.UPDATED);
-		this.hostsWSHandler.broadcastEvent(host.getId(), ChangeType.UPDATED);
+		this.hostsWSHandler.broadcastEvent(host, ChangeType.UPDATED);
 		
 		EAgentOption options = this.agentOptionsDAO.findByTemplate(host.getTemplateId());
 		if (options == null) {
@@ -286,7 +283,7 @@ public class AgentHandler {
 		return this.agentDAO.save(agent);
 	}
 	
-	private EHost getHost(String templateName, String hostName, String uuid) {
+	private EHost getHost(String templateName, String hostName, String uuid, EAgent agent) {
 		EHost host = null;
 		if ((uuid != null) && !uuid.isEmpty()) {
 			host = this.hostDAO.findByUuid(uuid);
@@ -299,8 +296,10 @@ public class AgentHandler {
 				host = this.hostDAO.save(host);
 			}
 		}
+		
+		ETemplate template = this.templateDAO.findByName(templateName);
 		if (host == null) {
-			host = this.hostHandler.createNewHost(hostName, this.templateDAO.findByName(templateName));
+			host = this.hostHandler.createNewHost(hostName, template, agent);
 		}
 		return host;
 	}
