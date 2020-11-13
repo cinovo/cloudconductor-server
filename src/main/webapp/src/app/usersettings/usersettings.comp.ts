@@ -76,6 +76,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
         // changing password revokes all JWTs of the user, new login is required
         this.authTokenProvider.removeToken();
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/login']);
       }, (err) => {
         this.passwordForm.reset();

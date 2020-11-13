@@ -71,6 +71,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     this.userHttp.deleteUser(this.loginName).subscribe(
       () => {
         this.alertService.success(`Successfully deleted user '${this.loginName}'.`);
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/user']);
       }, (err) => {
         this.alertService.danger(`Error deleting user '${this.loginName}'!`);

@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  ViewEncapsulation,
-  Output,
-  EventEmitter,
-  ViewChildren,
-  AfterContentInit, ViewChild, AfterContentChecked, AfterViewInit
-} from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 
 /**
  * Copyright 2017 Cinovo AG<br>

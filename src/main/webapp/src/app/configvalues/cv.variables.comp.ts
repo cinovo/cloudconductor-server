@@ -28,7 +28,6 @@ export class ConfigValueVariables implements OnInit {
 
   }
 
-
   addNew() {
     if (this.newKV) {
       this.newKV.template = "VARIABLES";

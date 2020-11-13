@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from "@angular/core";
+import { Component, Inject, Input } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 
 /**
