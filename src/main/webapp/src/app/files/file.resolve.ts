@@ -1,7 +1,9 @@
+
+import {of as observableOf, throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {map, catchError, mergeMap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
 
 import { FileHttpService } from '../util/http/file.http.service';
 import { FileForm } from '../util/http/config-file.model';
@@ -18,18 +20,18 @@ export class FileResolver implements Resolve<FileForm> {
     const emptyFileForm = new FileForm();
 
     if (fileName && fileName.length > 0) {
-      return this.fileHttpService.getFile(fileName).flatMap((file) => {
-        return this.fileHttpService.getFileData(file.name).map((data) => {
+      return this.fileHttpService.getFile(fileName).pipe(mergeMap((file) => {
+        return this.fileHttpService.getFileData(file.name).pipe(map((data) => {
           const fileForm = file.toForm();
           fileForm.fileContent = data;
           return fileForm;
-        });
-      }).catch(err => {
+        }));
+      }),catchError(err => {
         this.router.navigate(['/not-found', 'file', fileName]);
-        return Observable.throw(err);
-      });
+        return observableThrowError(err);
+      }),);
     } else {
-      return Observable.of(emptyFileForm);
+      return observableOf(emptyFileForm);
     }
   }
 

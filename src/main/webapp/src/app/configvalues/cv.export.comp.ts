@@ -2,7 +2,7 @@ import { DOCUMENT } from "@angular/common";
 import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { AlertService } from "../util/alert/alert.service";

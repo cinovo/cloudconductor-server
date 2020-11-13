@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap} from 'rxjs/operators';
 import { Sorter } from '../sorters.util';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Host } from "../http/host.http.service";
 import { PackageHttpService, PackageStateChanges } from "../http/package.http.service";
 import { Validator } from "../validator.util";
@@ -27,9 +30,9 @@ export class PackageChangesService {
   public computePackageChanges(host: Host): Observable<PackageChange[]> {
     if(!Validator.notEmpty(host.uuid)) {
       const packageChanges: PackageChange[] = [];
-      return Observable.of(packageChanges);
+      return observableOf(packageChanges);
     }
-    return this.packageHttp.getPackageChanges(host.uuid).flatMap((psc: PackageStateChanges) => {
+    return this.packageHttp.getPackageChanges(host.uuid).pipe(mergeMap((psc: PackageStateChanges) => {
       const packageChanges: PackageChange[] = [];
       for (let pkg of psc.toInstall) {
         packageChanges.push({
@@ -58,7 +61,7 @@ export class PackageChangesService {
         });
       }
       packageChanges.sort(Sorter.nameField);
-      return Observable.of(packageChanges)
-    });
+      return observableOf(packageChanges)
+    }));
   }
 }

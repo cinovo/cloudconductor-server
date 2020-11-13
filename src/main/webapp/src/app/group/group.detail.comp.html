@@ -3,7 +3,7 @@
     title="Delete group"
     [title]="'Please verify!'"
     [placement]="'right'"
-    [message]="'Are you sure you want to delete the user group \'' + groupName + '\'?'"
+    [popoverMessage]="'Are you sure you want to delete the user group \'' + groupName + '\'?'"
     confirmButtonType="danger"
     (confirm)="deleteGroup()"
     [appendToBody]="true">

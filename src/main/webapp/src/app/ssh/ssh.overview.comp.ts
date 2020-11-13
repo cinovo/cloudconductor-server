@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import {forkJoin, Observable, of} from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
@@ -10,6 +10,7 @@ import { Template, TemplateHttpService } from '../util/http/template.http.servic
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { SSHKey } from '../util/http/sshkey.model';
+import {map} from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -31,7 +32,7 @@ export class SSHOverviewComponent implements OnInit {
   public showAddKey = false;
   public keysLoaded = false;
 
-  public newKey: Observable<SSHKey> = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
+  public newKey: Observable<SSHKey> = of({ owner: '', username: 'root', key: '', templates: [] });
 
   public templates$: Observable<Template[]>;
   public templateNames: Observable<String[]>;
@@ -71,7 +72,7 @@ export class SSHOverviewComponent implements OnInit {
     this.loadData();
 
     this.templates$ = this.templateHttp.getTemplates();
-    this.templateNames = this.templates$.map(ts => ts.map(t => t.name));
+    this.templateNames = this.templates$.pipe(map(ts => ts.map(t => t.name)));
   }
 
   get searchTemplateQuery() {
@@ -175,7 +176,7 @@ export class SSHOverviewComponent implements OnInit {
   private createKey(newKey: SSHKey) {
     this.sshKeyHttp.updateKey(newKey).subscribe(() => {
       this.alertService.success(`Successfully created new SSH key for '${newKey.owner}'!`);
-      this.newKey = Observable.of({ owner: '', username: 'root', key: '', templates: [] });
+      this.newKey = of({ owner: '', username: 'root', key: '', templates: [] });
       this.loadData();
     },
     (err) => {
@@ -200,7 +201,7 @@ export class SSHOverviewComponent implements OnInit {
         return this.sshKeyHttp.updateKey(updatedKey);
       });
 
-    Observable.forkJoin(updateOps).subscribe(
+    forkJoin(updateOps).subscribe(
       () => {
         this.alertService.success(`Successfully added template '${templateToAdd}' to ${updateOps.length} keys.`);
         this.addTemplateForm.reset();
@@ -216,7 +217,7 @@ export class SSHOverviewComponent implements OnInit {
 
   public deleteSelectedKeys(): void {
     const deleteOps: Observable<boolean>[] = this.selectedKeys.map(key => this.sshKeyHttp.deleteKey(key.owner));
-    Observable.forkJoin(deleteOps).subscribe(
+    forkJoin(deleteOps).subscribe(
       () => {
         this.alertService.success(`Successfully deleted ${deleteOps.length} keys.`);
         this.loadData();

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { of as observableOf,  Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
-export interface ServiceUsage { [templateName: string]: PackageName };
+export interface ServiceUsage { [templateName: string]: PackageName }
 type PackageName = string;
 
 /**
@@ -37,13 +38,13 @@ export class ServiceHttpService {
   }
 
   public existsService(serviceName: string): Observable<boolean> {
-    return this.getService(serviceName)
-      .map((service: Service) => (service !== undefined))
-      .catch(() => Observable.of(false));
+    return this.getService(serviceName).pipe(
+      map((service: Service) => (service !== undefined)),
+      catchError(() => observableOf(false)),);
   }
 
   public getServiceNames(): Observable<string[]> {
-    return this.getServices().map((services: Service[]) => services.map(s => s.name).sort());
+    return this.getServices().pipe(map((services: Service[]) => services.map(s => s.name).sort()));
   }
 
   public getServiceUsage(serviceName: string): Observable<ServiceUsage> {

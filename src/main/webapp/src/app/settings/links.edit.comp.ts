@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { AdditionalLinkHttpService, AdditionalLink } from '../util/http/additionalLinks.http.service';
 import { Validator } from '../util/validator.util';
@@ -45,45 +44,51 @@ export class LinksEdit implements OnInit, OnDestroy {
     )
   }
 
-  protected saveEditLink(): void {
+  public saveEditLink(): void {
     if (this.editLinkFieldValidation()) {
       return;
     }
     this.linksHttp.editLink(this.editLink).subscribe(
       () => this.abortEditLink(),
-      (error) => this.alerts.danger('Error editing link!')
+      (err) => {
+        console.error(err)
+        this.alerts.danger('Error editing link!');
+      }
     );
   }
 
-  protected saveNewLink(): void {
+  public saveNewLink(): void {
     if (this.newLinkFieldValidation()) {
       return;
     }
     this.linksHttp.newLink(this.newLink).subscribe(
       () => this.abortNewLink(),
-      (error) => this.alerts.danger('Error creating link: The choosen label already exists. Please choose another label.')
+      (err) => {
+        console.error(err);
+        this.alerts.danger('Error creating link: The chosen label already exists. Please choose another label.');
+      }
     );
   }
 
-  protected deleteLink(link: AdditionalLink): void {
+  public deleteLink(link: AdditionalLink): void {
     this.linksHttp.deleteLink(link.id);
   }
 
-  protected goToAddLink(): void {
+  public goToAddLink(): void {
     this.abortEditLink();
     this.newLink = {label: '', url: ''};
   }
 
-  protected goToEditLink(link: AdditionalLink) {
+  public goToEditLink(link: AdditionalLink) {
     this.abortNewLink();
     this.editLink = link;
   }
 
-  private abortEditLink(): void {
+  public abortEditLink(): void {
     this.editLink = null;
   }
 
-  private abortNewLink(): void {
+  public abortNewLink(): void {
     this.newLink = null;
   }
 
@@ -113,19 +118,19 @@ export class LinksEdit implements OnInit, OnDestroy {
     return error;
   }
 
-  private isEditLinkLabelValid(): boolean {
+  public isEditLinkLabelValid(): boolean {
     return Validator.notEmpty(this.editLink.label);
   }
 
-  private isEditLinkUrlValid(): boolean {
+  public isEditLinkUrlValid(): boolean {
     return Validator.notEmpty(this.editLink.url);
   }
 
-  private isNewLinkLabelValid(): boolean {
+  public isNewLinkLabelValid(): boolean {
     return Validator.notEmpty(this.newLink.label);
   }
 
-  private isNewLinkUrlValid(): boolean {
+  public isNewLinkUrlValid(): boolean {
     return Validator.notEmpty(this.newLink.url);
   }
 }

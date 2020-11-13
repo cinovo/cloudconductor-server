@@ -1,7 +1,9 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { Sorter } from '../util/sorters.util';
@@ -155,8 +157,8 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
   }
 
   private loadData(): void {
-    this.configHttp.getValues(this.template)
-      .finally(() => this.kvLoaded = true)
+    this.configHttp.getValues(this.template).pipe(
+      finalize(() => this.kvLoaded = true))
       .subscribe(
         (result) => {
           this.allCVs = result;

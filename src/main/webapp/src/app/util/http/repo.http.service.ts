@@ -1,7 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 
 import { RepoMirror } from './repomirror.http.service';
 
@@ -36,9 +38,9 @@ export class RepoHttpService {
   }
 
   public existsRepo(repoName: string): Observable<boolean> {
-    return this.getRepo(repoName)
-                .map(r => r !== undefined && r.id !== undefined)
-                .catch(err => Observable.of(false));
+    return this.getRepo(repoName).pipe(
+                map(r => r !== undefined && r.id !== undefined),
+                catchError(err => observableOf(false)),);
   }
 
   public deleteRepo(repoName: string): Observable<boolean> {

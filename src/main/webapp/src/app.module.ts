@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
-import './rxjs-extensions';
 
 import { CoreModule } from './app/core/core.module';
 import { SharedModule } from './app/shared/shared.module';

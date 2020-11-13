@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
 
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import {of as observableOf,  Subject ,  Observable ,  Observer } from 'rxjs';
+
+import {map} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
 import { WSConfigHttpService, WSConfig } from '../http/wsconfig.http.service';
 
@@ -25,10 +25,10 @@ export class WebSocketService {
 
   public connect(name: string, objName = ''): Observable<Subject<MessageEvent | Heartbeat>> {
     if (this._baseUrl) {
-      return Observable.of(this.createWebSocket(this._baseUrl, name, objName));
+      return observableOf(this.createWebSocket(this._baseUrl, name, objName));
     } else {
-      return this.wsConfigService.getWSConfig()
-        .map((config: WSConfig) => {
+      return this.wsConfigService.getWSConfig().pipe(
+        map((config: WSConfig) => {
           if(location.protocol === "https:") {
             this._baseUrl = "wss://"+location.host+"/websocket"
           }else {
@@ -36,7 +36,7 @@ export class WebSocketService {
           }
           this._timeout = config.timeout;
           return this.createWebSocket( this._baseUrl , name, objName);
-        });
+        }));
     }
   }
 

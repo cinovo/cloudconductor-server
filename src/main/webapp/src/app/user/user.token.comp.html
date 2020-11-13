@@ -24,7 +24,7 @@
             <a *ngIf="!authToken.revoked" href="javascript:void()" mwlConfirmationPopover
               title="Revoke auth token"
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to revoke the auth token \'' + authToken.token + '\' for the user \''+ username + '\'?'"
+              [popoverMessage]="'Are you sure you want to revoke the auth token \'' + authToken.token + '\' for the user \''+ username + '\'?'"
               placement="left"
               confirmButtonType="danger"
               (confirm)="revokeAuthToken(authToken)">

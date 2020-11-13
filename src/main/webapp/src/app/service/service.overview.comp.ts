@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import {forkJoin, Observable} from 'rxjs';
+import {finalize, map, mergeMap} from 'rxjs/operators';
 
-import { AlertService } from '../util/alert/alert.service';
-import { Service, ServiceHttpService, ServiceUsage } from '../util/http/service.http.service';
-import { Sorter } from '../util/sorters.util';
-import { Validator } from '../util/validator.util';
+import {AlertService} from '../util/alert/alert.service';
+import {Service, ServiceHttpService, ServiceUsage} from '../util/http/service.http.service';
+import {Sorter} from '../util/sorters.util';
+import {Validator} from '../util/validator.util';
 
 /**
   * Copyright 2017 Cinovo AG<br>
@@ -42,22 +43,22 @@ export class ServiceOverview implements OnInit {
   }
 
   private loadData() {
-    this.serviceHttp.getServices()
-    .flatMap(services => {
-      this.services = services;
+    this.serviceHttp.getServices().pipe(
+      mergeMap(services => {
+        this.services = services;
 
-      const usageOps: Observable<ServiceUsage>[] = services.map(service => this.serviceHttp.getServiceUsage(service.name));
-
-      return Observable.forkJoin(usageOps).map((usages) => {
-        const servicesWithUsage = usages.map((usage, index) => {
-          const usingTemplates = Object.keys(usage);
-          return {...services[index], templates: usingTemplates};
-        });
-        return servicesWithUsage;
-      });
-    })
-    .finally(() => this.servicesLoaded = true)
-    .subscribe(
+        const usageOps: Observable<ServiceUsage>[] = services.map(service => this.serviceHttp.getServiceUsage(service.name));
+        return forkJoin(usageOps).pipe(
+          map((usages) => {
+            return usages.map((usage, index) => {
+              const usingTemplates = Object.keys(usage);
+              return {...services[index], templates: usingTemplates};
+            });
+          })
+        );
+      }),
+      finalize(() => this.servicesLoaded = true)
+    ).subscribe(
       (services) => {
         this.services = services;
       }, (err) => {
@@ -86,13 +87,13 @@ export class ServiceOverview implements OnInit {
     this.loadData();
   }
 
-  protected gotoDetails(service: Service) {
+  public gotoDetails(service: Service) {
     if (Validator.notEmpty(service.name)) {
       this.router.navigate(['service', service.name]);
     }
   }
 
-  protected deleteService(service: Service): void {
+  public deleteService(service: Service): void {
     if (service) {
       this.serviceHttp.deleteService(service)
         .subscribe(() =>  {

@@ -3,7 +3,7 @@
      title="Delete all for template"
      [title]="'Please verify!'"
      [placement]="'right'"
-     [message]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
+     [popoverMessage]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
      confirmButtonType="danger"
      (confirm)="deleteCurrentTemplate()"
      [appendToBody]="true">
@@ -63,7 +63,7 @@
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
-           [message]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
+           [popoverMessage]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
            confirmButtonType="danger"
            (confirm)="deleteService(service.name)"
            [appendToBody]="true">
@@ -96,7 +96,7 @@
               <a href="javascript:void(0)" mwlConfirmationPopover
                  title="Delete Pair"
                  [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
+                 [popoverMessage]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
                  placement="left"
                  confirmButtonType="danger"
                  (confirm)="doDelete(kv)">

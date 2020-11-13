@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject ,  Observable } from 'rxjs';
+import { share } from 'rxjs/operators';
 
-import { Sorter } from '../../util/sorters.util';
+import { Sorter } from '../sorters.util';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -33,25 +33,25 @@ export class AdditionalLinkHttpService {
   }
 
   public getLinks(): Observable<AdditionalLink[]> {
-    return this.http.get<AdditionalLink[]>(this.basePathURL).share();
+    return this.http.get<AdditionalLink[]>(this.basePathURL).pipe(share());
   }
 
   public deleteLink(id: number): Observable<boolean> {
-    let res = this.http.delete<boolean>(`${this.basePathURL}/${id.toString()}`).share();
+    let res = this.http.delete<boolean>(`${this.basePathURL}/${id.toString()}`).pipe(share());
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
   public newLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this.http.post<AdditionalLink>(this.basePathURL, link).share();
+    let res = this.http.post<AdditionalLink>(this.basePathURL, link).pipe(share());
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }
 
   public editLink(link: AdditionalLink): Observable<AdditionalLink> {
     link['@class'] = 'de.cinovo.cloudconductor.api.model.AdditionalLink';
-    let res = this.http.put<AdditionalLink>(this.basePathURL, link).share();
+    let res = this.http.put<AdditionalLink>(this.basePathURL, link).pipe(share());
     res.subscribe(() => this.reloadLinks(), () => {});
     return res;
   }

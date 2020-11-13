@@ -1,7 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -54,14 +56,14 @@ export class UserHttpService {
   }
 
   public getUser(username: string): Observable<User> {
-    return this.http.get<User>(`${this._basePath}/${username}`)
-                              .map(u => Object.assign(UserHttpService.getEmptyUser(), u));
+    return this.http.get<User>(`${this._basePath}/${username}`).pipe(
+                              map(u => Object.assign(UserHttpService.getEmptyUser(), u)));
   }
 
   public existsUser(username: string): Observable<boolean> {
-    return this.getUser(username)
-              .map((u) => u.loginName && u.loginName.length > 0)
-              .catch(err => Observable.of(false));
+    return this.getUser(username).pipe(
+              map((u) => u.loginName && u.loginName.length > 0),
+              catchError(err => observableOf(false)),);
   }
 
   public saveUser(userToSave: User): Observable<boolean> {

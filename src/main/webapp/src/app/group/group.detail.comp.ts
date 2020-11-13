@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';

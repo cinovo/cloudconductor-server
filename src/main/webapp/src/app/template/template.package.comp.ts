@@ -1,7 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import {forkJoin as observableForkJoin,  Observable ,  Subscription } from 'rxjs';
+
+import {finalize} from 'rxjs/operators';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { saveAs } from "file-saver";
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
@@ -87,7 +88,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     if (this.template.repos) {
       const repoOps: Observable<PackageVersion[]>[] = this.template.repos.map(repo => this.packageHttp.getVersionsOfRepo(repo));
 
-      Observable.forkJoin(repoOps).subscribe((results) => {
+      observableForkJoin(repoOps).subscribe((results) => {
         const flattetResults = results.reduce((flat, toFlatten) => {
           return flat.concat(toFlatten);
         }, []);
@@ -367,8 +368,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
       }
 
       this.importing = true;
-      this.templateHttp.replacePackageVersionsForTemplate(this.template.name, packageVersions)
-        .finally(() => this.importing = false)
+      this.templateHttp.replacePackageVersionsForTemplate(this.template.name, packageVersions).pipe(
+        finalize(() => this.importing = false))
         .subscribe(
         (updatedTemplate) => this.alerts.success(`Successfully replaced packages in template '${updatedTemplate.name}'`),
         (err) => {

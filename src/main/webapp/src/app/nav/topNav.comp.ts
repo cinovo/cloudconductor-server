@@ -1,7 +1,7 @@
 import { AfterContentInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { AuthHttpService, AuthenticatedUser } from '../util/http/auth.http.service';

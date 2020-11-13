@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { User } from '../util/http/user.http.service';
 

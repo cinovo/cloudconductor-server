@@ -1,8 +1,10 @@
+
+import {finalize, switchMap} from 'rxjs/operators';
 import { Component, OnInit } from "@angular/core";
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { _throw } from "rxjs/observable/throw";
+import { throwError as _throw } from "rxjs";
 
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { ServiceHttpService } from "../util/http/service.http.service";
@@ -72,16 +74,16 @@ export class ConfigValueNew implements OnInit {
     const existingTemplate = this.kvForm.value.template;
     const newTemplate = this.kvForm.value.newTemplate;
 
-    this.configHttp.getValues(existingTemplate)
-      .switchMap((originConfigs: ConfigValue[]) => {
+    this.configHttp.getValues(existingTemplate).pipe(
+      switchMap((originConfigs: ConfigValue[]) => {
         if (!originConfigs) {
           return _throw(new Error("No configs to copy"));
         }
 
         const newConfigs = originConfigs.map((cv: ConfigValue) => ({...cv, template: newTemplate}));
         return this.configHttp.saveBulk(newConfigs)
-      })
-      .finally(() => this.working = false)
+      }),
+      finalize(() => this.working = false),)
       .subscribe(() => {
         this.alerts.success(`Successfully created new template '${newTemplate}' and copied values from '${existingTemplate}'.`);
         // noinspection JSIgnoredPromiseFromCall
@@ -120,8 +122,8 @@ export class ConfigValueNew implements OnInit {
       return;
     }
 
-    this.configHttp.saveBulk(importedValues)
-      .finally(() => this.working = false)
+    this.configHttp.saveBulk(importedValues).pipe(
+      finalize(() => this.working = false))
       .subscribe(() => {
         this.alerts.success(`Successfully created new template '${newTemplate}' and imported ${importedValues.length} values.`);
         // noinspection JSIgnoredPromiseFromCall

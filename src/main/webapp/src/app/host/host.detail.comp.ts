@@ -1,10 +1,7 @@
+
+import {interval as observableInterval,  BehaviorSubject ,  Observable ,  Subject ,  Subscription } from 'rxjs';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -81,7 +78,7 @@ export class HostDetail implements OnInit, OnDestroy {
       });
 
       const iv = (this.wsService.timeout * 0.4);
-      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+      this._heartBeatSub = observableInterval(iv).subscribe(() => {
         // send heart beat message via WebSockets
         this._webSocket.next({data: 'Alive!'});
       });

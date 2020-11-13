@@ -1,7 +1,9 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AuthTokenProviderService } from './authtokenprovider.service';
 
@@ -25,7 +27,7 @@ export class AuthenticationGuard implements CanActivate {
 
     const requestedRoute = route.url;
 
-    return this.authTokenProvider.loggedIn.map(actualLoggedIn => {
+    return this.authTokenProvider.loggedIn.pipe(map(actualLoggedIn => {
       const match = (actualLoggedIn === expectedLoggedIn);
       if (!match) {
         if (actualLoggedIn) {
@@ -35,6 +37,6 @@ export class AuthenticationGuard implements CanActivate {
         }
       }
       return match;
-    });
+    }));
   }
 }

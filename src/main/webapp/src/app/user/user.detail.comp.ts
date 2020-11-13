@@ -1,13 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
-import { GroupHttpService } from '../util/http/group.http.service';
 import { User, UserHttpService } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
 import { Sorter } from '../util/sorters.util';

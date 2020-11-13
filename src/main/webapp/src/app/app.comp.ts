@@ -1,7 +1,8 @@
-import { Component, HostListener, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable'
-import { Subscription } from 'rxjs/Subscription';
+import {of as observableOf,  Observable ,  Subscription } from 'rxjs';
+
+import {mergeMap, delay} from 'rxjs/operators';
+import { Component, HostListener, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 
 import { AuthHttpService } from './util/http/auth.http.service';
 import { AuthTokenProviderService } from './util/auth/authtokenprovider.service';
@@ -61,9 +62,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this._loginSub = this.loggedIn.subscribe((loggedIn) => {
       if (loggedIn) {
-        const delay = Math.max(this.authTokenProvider.nextRefresh - (new Date().getTime()), 0);
-        this._timerSub = Observable.of(this.authTokenProvider.token).delay(delay)
-                  .flatMap((token) => this.authHttp.refresh(token))
+        const d = Math.max(this.authTokenProvider.nextRefresh - (new Date().getTime()), 0);
+        this._timerSub = observableOf(this.authTokenProvider.token).pipe(delay(d),
+                  mergeMap((token) => this.authHttp.refresh(token)),)
                   .subscribe(
                     (newToken) => this.authTokenProvider.storeToken(newToken),
                     (err) => console.error(err)

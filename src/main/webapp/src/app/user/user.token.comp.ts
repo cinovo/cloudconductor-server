@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { AuthToken, User, UserHttpService } from '../util/http/user.http.service';

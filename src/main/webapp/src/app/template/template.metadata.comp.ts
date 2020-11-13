@@ -2,8 +2,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import {throwError as observableThrowError, Observable, Subscription, forkJoin, of} from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { SettingHttpService, Settings } from '../util/http/setting.http.service';
@@ -39,7 +39,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
 
   public settings: Settings = {};
 
-  protected allRepos: Repo[] = [];
+  public allRepos: Repo[] = [];
   public showNewRepo = false;
 
   public templateForm: FormGroup;
@@ -124,29 +124,32 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     if (this.mode === Mode.NEW) {
       let serviceDefaultStates: ServiceDefaultState[] = [];
 
-      this.templateHttp.existsTemplate(templateToSave.name)
-        .flatMap((templateExists) => {
+      this.templateHttp.existsTemplate(templateToSave.name).pipe(
+        mergeMap((templateExists) => {
           if (templateExists) {
-            return Observable.throw(`Template '${templateToSave.name}' does already exist!`);
+            return observableThrowError(`Template '${templateToSave.name}' does already exist!`);
           }
 
-          let templateObs: Observable<Partial<Template>> = Observable.of({});
-          let sdsObs: Observable<ServiceDefaultState[]> = Observable.of([]);
+          let templateObs: Observable<Partial<Template>> = of({});
+          let sdsObs: Observable<ServiceDefaultState[]> = of([]);
           if (Validator.notEmpty(formValue.copyFrom)) {
             templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
             sdsObs = this.templateHttp.getServiceDefaultStates(formValue.copyFrom)
           }
 
-          return Observable.forkJoin(templateObs, sdsObs)
-        }).flatMap(([templateToCopy = {}, sds = []]) => {
-        serviceDefaultStates = sds;
+          return forkJoin(templateObs, sdsObs)
+        }),
+        mergeMap(([templateToCopy = {}, sds = []]) => {
+          serviceDefaultStates = sds;
 
-        // overwrite repos and versions with template to be copied
-        templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
-        return this.templateHttp.save(templateToSave)
-      }).flatMap(() => {
-        return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
-      }).subscribe(() => {
+          // overwrite repos and versions with template to be copied
+          templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
+          return this.templateHttp.save(templateToSave)
+        }),
+        mergeMap(() => {
+          return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
+        })
+      ).subscribe(() => {
           this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
           this.router.navigate(['template', templateToSave.name]);
         }, (err) => {
@@ -168,17 +171,16 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     }
   }
 
-  private updateServiceStates(templateName: string, serviceDefaultStates): Observable<ServiceDefaultState[]> {
-    const sdsUpdates = serviceDefaultStates.map(sds => {
-      return this.templateHttp.saveServiceDefaultState(templateName, sds.service, sds.state);
-    });
-    return Observable.forkJoin(sdsUpdates);
+  private updateServiceStates(templateName: string, serviceDefaultStates: ServiceDefaultState[]): Observable<ServiceDefaultState[]> {
+    const sdsUpdates = serviceDefaultStates.map(sds => this.templateHttp.saveServiceDefaultState(templateName, sds.service, sds.state));
+    return forkJoin(sdsUpdates);
   }
 
-  protected deleteTemplate(): void {
+  public deleteTemplate(): void {
     this.templateHttp.deleteTemplate(this.template).subscribe(
       () => {
         this.alerts.success(`Successfully deleted template '${this.template.name}'`);
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['template']);
       },
       () => {
@@ -187,7 +189,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     );
   }
 
-  protected addNewRepo(newRepo: string): void {
+  public addNewRepo(newRepo: string): void {
     if (Validator.notEmpty(newRepo)) {
       const newRepos = [...this.template.repos, newRepo];
       newRepos.sort();
@@ -203,7 +205,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     }
   }
 
-  protected removeRepo(repoName: string): void {
+  public removeRepo(repoName: string): void {
     if (Validator.notEmpty(repoName)) {
       this.template.repos.splice(this.template.repos.indexOf(repoName), 1);
       if (this.mode === Mode.EDIT) {
@@ -215,18 +217,12 @@ export class TemplateMetaData implements OnInit, OnDestroy {
     }
   }
 
-  protected goToAddRepo(): void {
+  public goToAddRepo(): void {
     this.templateForm.controls.newRepo.setValue('');
     this.showNewRepo = true;
-    this.repoHttp.getRepos().subscribe(
-      (result) => {
-        this.allRepos = result.filter(
-          (repo) => {
-            return !this.template.repos.includes(repo.name)
-          }
-        ).sort(Sorter.repo);
-      }
-    );
+    this.repoHttp.getRepos().subscribe((repos) => {
+        this.allRepos = repos.filter((repo) => !this.template.repos.includes(repo.name)).sort(Sorter.repo);
+    });
   }
 
 }

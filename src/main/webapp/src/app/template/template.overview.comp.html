@@ -54,7 +54,7 @@
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
-           [message]="'Are you sure you want to delete <strong>all<strong> templates?'"
+           [popoverMessage]="'Are you sure you want to delete <strong>all<strong> templates?'"
            confirmButtonType="danger"
            (confirm)="deleteAllTemplates()"
            [appendToBody]="true">
@@ -108,7 +108,7 @@
               <a href="javascript:void(0)" mwlConfirmationPopover
                  title="Delete Template"
                  [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following template: '+ template.name+'?'"
+                 [popoverMessage]="'Are you sure you want to delete the following template: '+ template.name+'?'"
                  placement="left"
                  confirmButtonType="danger"
                  (confirm)="deleteTemplate(template)">

@@ -1,7 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 
 import { User } from './user.http.service';
 
@@ -35,7 +37,7 @@ export class GroupHttpService {
   }
 
   public getGroupNames(): Observable<string[]> {
-    return this.getGroups().map(groups => groups.map(g => g.name));
+    return this.getGroups().pipe(map(groups => groups.map(g => g.name)));
   }
 
   public getGroup(groupName: string): Observable<Group> {
@@ -43,9 +45,9 @@ export class GroupHttpService {
   }
 
   public existsGroup(groupName: string): Observable<boolean> {
-    return this.getGroup(groupName)
-                .map((g) => g.name && g.name.length > 0)
-                .catch(err => Observable.of(false));
+    return this.getGroup(groupName).pipe(
+                map((g) => g.name && g.name.length > 0),
+                catchError(err => observableOf(false)),);
   }
 
   public getMembers(groupName: string): Observable<User[]> {

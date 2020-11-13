@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs';
 
 import { Host } from '../util/http/host.http.service';
 import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';

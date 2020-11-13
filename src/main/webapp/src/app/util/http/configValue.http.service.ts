@@ -1,8 +1,9 @@
+
+import {of as observableOf,  BehaviorSubject ,  Observable } from 'rxjs';
+
+import {catchError, map, share, tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
 
 import { Validator } from '../validator.util';
 
@@ -62,7 +63,7 @@ export class ConfigValueHttpService {
   }
 
   public deleteForTemplate(template: string): Observable<boolean> {
-    return this.http.delete<boolean>(`${this._basePathURL}/${template}`).do(() => this.reloadTemplates());
+    return this.http.delete<boolean>(`${this._basePathURL}/${template}`).pipe(tap(() => this.reloadTemplates()));
   }
 
   public deleteForService(template: string, service: string): Observable<boolean> {
@@ -70,7 +71,7 @@ export class ConfigValueHttpService {
   }
 
   public save(val: ConfigValue): Observable<ConfigValue> {
-    const ret = this.http.put<ConfigValue>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.ConfigValue', ...val}).share();
+    const ret = this.http.put<ConfigValue>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.ConfigValue', ...val}).pipe(share());
     ret.subscribe(() => this.reloadTemplates(), () => {});
     return ret;
   }
@@ -106,9 +107,9 @@ export class ConfigValueHttpService {
   }
 
   public existsConfigValue(template: string, service: string, key: string): Observable<boolean> {
-    return this.getConfigValueExact(template, service, key)
-      .map(s => (s && s.length > 0))
-      .catch(err => Observable.of(false));
+    return this.getConfigValueExact(template, service, key).pipe(
+      map(s => (s && s.length > 0)),
+      catchError(err => observableOf(false)),);
   }
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {

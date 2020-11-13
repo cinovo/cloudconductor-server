@@ -1,6 +1,5 @@
 import { Alert } from "./alert.service";
-import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs/Subject";
+import { Observable ,  Subject } from "rxjs";
 
 export const expectedAlerts: Alert[] = [{type: 'warning', msg: 'Alert One', autoFadeOut: true}, {type: 'danger', msg: 'Alert Two', autoFadeOut: true}];
 

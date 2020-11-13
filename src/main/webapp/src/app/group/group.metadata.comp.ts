@@ -1,10 +1,11 @@
+
+import {throwError as observableThrowError, of as observableOf,  Observable ,  Subscription } from 'rxjs';
+
+import {mergeMap} from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';
@@ -93,15 +94,15 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
     groupToSave.name = groupToSave.name.trim();
     const groupName = groupToSave.name;
 
-    const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.groupHttp.existsGroup(groupName) : Observable.of(false);
+    const check: Observable<boolean> = (this.mode === this.modes.NEW) ? this.groupHttp.existsGroup(groupName) : observableOf(false);
 
-    check.flatMap((exists) => {
+    check.pipe(mergeMap((exists) => {
       if (exists) {
-        return Observable.throw(`A user group named '${groupName}' already exists!`);
+        return observableThrowError(`A user group named '${groupName}' already exists!`);
       } else {
         return this.groupHttp.saveGroup(groupToSave)
       }
-    }).subscribe(
+    })).subscribe(
       () => {
         this.alertService.success(`Successfully saved user group '${groupName}'.`);
         this.userGroupForm.reset();
