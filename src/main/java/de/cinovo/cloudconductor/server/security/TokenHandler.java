@@ -1,5 +1,11 @@
 package de.cinovo.cloudconductor.server.security;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IJWTTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
@@ -8,7 +14,6 @@ import de.cinovo.cloudconductor.server.model.EJWTToken;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.cinovo.cloudconductor.server.model.enums.AuthType;
-import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,6 +41,12 @@ public class TokenHandler {
 	
 	@Value("${cloudconductor.tokenlength:32}")
 	private int TOKEN_LENGTH;
+	@Value("${jwtauth.timeout:3600000}")
+	private Long jwtTimeout;
+	@Value("${jwtauth.secret}")
+	private String jwtSharedSecret;
+	@Value("${jwtauth.issuer}")
+	private String jwtIssuer;
 	
 	@Autowired
 	private IAuthTokenDAO authTokenDao;
@@ -66,13 +78,13 @@ public class TokenHandler {
 			}
 		}
 		
-		AuthenticatedUser newUser = new AuthenticatedUser();
+		CCAuthenticatedUser newUser = new CCAuthenticatedUser();
 		newUser.setUsername(user.getLoginName());
 		newUser.setDisplayName(user.getDisplayName());
 		newUser.setId(String.valueOf(user.getId()));
 		newUser.setRoles(this.userGroupDAO.findByIds(user.getUserGroup()).stream().map(EUserGroup::getPermissionsAsString).distinct().flatMap(Set::stream).toArray(String[]::new));
 		
-		String token = this.jwtAuth.signToken(newUser);
+		String token = this.signToken(newUser);
 		EJWTToken existing = this.jwtTokenDao.findByToken(token);
 		if (existing != null) {
 			return this.generateJWTToken(user, type, refToken);
@@ -175,5 +187,35 @@ public class TokenHandler {
 		char temp = toSwapIn[i];
 		toSwapIn[i] = toSwapIn[j];
 		toSwapIn[j] = temp;
+	}
+	
+	
+	/**
+	 * Sign the given claims
+	 *
+	 * @param user the user to create the claims from
+	 * @return the created and signed JSON Web Token as string
+	 */
+	private String signToken(CCAuthenticatedUser user) {
+		Date expiry = new Date(System.currentTimeMillis() + this.jwtTimeout);
+		JWTClaimsSet claimsSet = user.toClaimSet(this.jwtIssuer, expiry);
+		SignedJWT jwt = this.signToken(claimsSet);
+		return jwt.serialize();
+	}
+	
+	/**
+	 * Sign the given claims
+	 *
+	 * @param claims the claims to sign
+	 * @return the created and signed JSON Web Token
+	 */
+	private SignedJWT signToken(JWTClaimsSet claims) {
+		try {
+			SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+			signedJWT.sign(new MACSigner(this.jwtSharedSecret));
+			return signedJWT;
+		} catch (JOSEException e) {
+			throw new RuntimeException("Error signing JSON Web Token", e);
+		}
 	}
 }
