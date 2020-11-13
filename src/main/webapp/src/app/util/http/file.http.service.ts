@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map} from 'rxjs/operators';
 
-import { ConfigFile, FileForm, FileType } from './config-file.model';
+import { ConfigFile } from './config-file.model';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -32,14 +33,14 @@ export class FileHttpService {
   }
 
   public getFile(fileName: string): Observable<ConfigFile> {
-    return this.http.get<ConfigFile>(`${this._basePathURL}/${fileName}`)
-                    .map(file => Object.assign(new ConfigFile(), file));
+    return this.http.get<ConfigFile>(`${this._basePathURL}/${fileName}`).pipe(
+                    map(file => Object.assign(new ConfigFile(), file)));
   }
 
   public existsFile(fileName: string): Observable<boolean> {
-    return this.getFile(fileName)
-              .map(f => (f !== undefined && f.name !== undefined))
-              .catch(err => Observable.of(false));
+    return this.getFile(fileName).pipe(
+              map(f => (f !== undefined && f.name !== undefined)),
+              catchError(err => observableOf(false)),);
   }
 
   public deleteFile(fileName: string): Observable<boolean> {

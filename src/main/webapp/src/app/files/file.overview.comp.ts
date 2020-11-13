@@ -1,10 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { BehaviorSubject ,  Observable ,  Subject ,  Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { ConfigFile } from '../util/http/config-file.model';

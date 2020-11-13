@@ -6,7 +6,7 @@
       <button *ngIf="mayEdit" type="button" class="btn btn-default" mwlConfirmationPopover
               [attr.title]="'Migrate global config'"
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to migrate global configurations?'"
+              [popoverMessage]="'Are you sure you want to migrate global configurations?'"
               confirmButtonType="warning"
               (confirm)="migrateGlobalConfig()">
         Migrate global config
@@ -49,7 +49,7 @@
             <a *ngIf="mayEdit" href="javascript:void(0)" mwlConfirmationPopover
                [attr.title]="'Delete template \'' + template + '\''"
                [title]="'Please verify!'"
-               [message]="'Are you sure you want to delete the following template: '+ template + '?'"
+               [popoverMessage]="'Are you sure you want to delete the following template: '+ template + '?'"
                placement="left"
                confirmButtonType="danger"
                (confirm)="deleteTemplate(template)">

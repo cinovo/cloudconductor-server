@@ -68,7 +68,7 @@
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
                [title]="'Please verify!'"
-               [message]="'Are you sure you want to remove the link to the package \'' + package + '\' from this service?'"
+               [popoverMessage]="'Are you sure you want to remove the link to the package \'' + package + '\' from this service?'"
                placement="left"
                confirmButtonType="danger"
                (confirm)="deletePackage(package)"

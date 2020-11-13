@@ -1,8 +1,10 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {mergeMap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
 
 import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -66,13 +68,13 @@ export class ConfigValueEdit implements OnInit {
   public save(newConfigPair: ConfigValue): void {
     const trimmedCV: ConfigValue = { key: newConfigPair.key.trim(), ...newConfigPair};
     let check: Observable<boolean> = this.configHttp.existsConfigValue(trimmedCV.template, trimmedCV.service, trimmedCV.key);
-    check.flatMap(exists => {
+    check.pipe(mergeMap(exists => {
       if (exists) {
-        return Observable.throw(`Configuration for '${trimmedCV.key}' does already exist!`);
+        return observableThrowError(`Configuration for '${trimmedCV.key}' does already exist!`);
       } else {
         return this.configHttp.save(trimmedCV);
       }
-    }).subscribe(
+    })).subscribe(
       () => {
         this.alerts.success(`Successfully created key-value pair: '${trimmedCV.key} - ${trimmedCV.value}'.`);
         this.router.navigate(['/config', trimmedCV.template])

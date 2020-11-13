@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import {BehaviorSubject, interval, Observable, of, Subject, Subscription} from 'rxjs';
+import {delay} from 'rxjs/operators';
 
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { Mode } from '../util/enums.util';
@@ -72,7 +70,7 @@ export class TemplateDetail implements OnInit, OnDestroy {
           }
         }, (err) => {
           console.error(`Unable to connect WS for template '${templateName}', retry...`);
-          Observable.of(templateName).delay(1000).subscribe((tn) => {
+          of(templateName).pipe(delay(1000)).subscribe((tn) => {
             this.connectWS(tn);
           });
         }, () => {
@@ -85,7 +83,7 @@ export class TemplateDetail implements OnInit, OnDestroy {
       );
 
       const iv = (this.wsService.timeout * 0.4);
-      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+      this._heartBeatSub = interval(iv).subscribe(() => {
         this._webSocket.next({ data: 'Alive!' });
       });
     });

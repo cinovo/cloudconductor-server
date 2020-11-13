@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  ReplaySubject ,  Subject } from 'rxjs';
 
 import { Group, GroupHttpService } from '../util/http/group.http.service';
 import { Mode } from '../util/enums.util';

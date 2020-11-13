@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router/';
+import { Router, ActivatedRoute } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { throwError as observableThrowError, of as observableOf, Observable, Subscription } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
-import { ConfigFile, FileForm, FileType  } from '../util/http/config-file.model';
+import { ConfigFile, FileForm } from '../util/http/config-file.model';
 import { FileHttpService } from '../util/http/file.http.service';
 import { forbiddenNameValidator } from '../util/validator.util';
 import { ServiceHttpService } from '../util/http/service.http.service';
@@ -102,27 +102,27 @@ export class FileDetailComponent implements OnInit, OnDestroy {
     if (this._createMode) {
       check = this.fileHttpService.existsFile(updatedFile.name);
     } else {
-      check = Observable.of(false);
+      check = observableOf(false);
     }
 
-    check.flatMap(exists => {
+    check.pipe(mergeMap(exists => {
       if (exists) {
-        return Observable.throw(`File or directory named '${updatedFile.name}' already exists!`);
+        return observableThrowError(`File or directory named '${updatedFile.name}' already exists!`);
       } else {
         return this.fileHttpService.updateFile(updatedFile);
       }
-    }).flatMap(() => {
+    }),mergeMap(() => {
       if (updatedFile.isDirectory) {
         // updating content is useless here
-        return Observable.of(true);
+        return observableOf(true);
       } else {
         return this.fileHttpService.updateFileData(updatedFile.name, fv.fileContent);
       }
-    }).subscribe(
+    }),).subscribe(
       () => {
         const verb = (this._createMode) ? 'created' : 'updated' ;
-
         this.alertService.success(`Successfully ${verb} ${this.formObj.toLowerCase()} '${updatedFile.name}'!`);
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/files']);
       },
       (err) => {

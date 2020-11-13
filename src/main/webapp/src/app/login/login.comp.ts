@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
 import { AuthHttpService, Authentication } from '../util/http/auth.http.service';
+import {map, take} from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -55,10 +56,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public login(auth: Authentication): void {
-    this.authHttp.login(auth)
-      .map((jwt: string) => {
-        return this.authTokenProvider.storeToken(jwt);
-      }).take(1).subscribe(
+    this.authHttp.login(auth).pipe(
+        map((jwt: string) => this.authTokenProvider.storeToken(jwt)),
+        take(1)
+      ).subscribe(
       (user) => {
         if (!AuthTokenProviderService.isAnonymous(user)) {
           this.router.navigate([this._redirect]);

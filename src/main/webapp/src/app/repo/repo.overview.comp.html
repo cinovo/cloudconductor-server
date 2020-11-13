@@ -42,7 +42,7 @@
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
            [title]="'Please verify!'"
-           [message]="'Are you sure you want to delete the following repository: <strong>'+ repo.name+'</strong>?'"
+           [popoverMessage]="'Are you sure you want to delete the following repository: <strong>'+ repo.name+'</strong>?'"
            confirmButtonType="danger"
            (confirm)="deleteRepo(repo.name)"
            [appendToBody]="true">
@@ -89,7 +89,7 @@
             <a href="javascript:void(0)" mwlConfirmationPopover
               title="Delete Mirror"
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the following mirror: '+ mirror.description+'?'"
+              [popoverMessage]="'Are you sure you want to delete the following mirror: '+ mirror.description+'?'"
               placement="left"
               confirmButtonType="danger"
               (confirm)="deleteMirror(mirror.id)">

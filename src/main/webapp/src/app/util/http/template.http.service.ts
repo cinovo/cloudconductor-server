@@ -1,7 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError, map, share} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
 import { Service } from './service.http.service';
 import { Sorter } from '../sorters.util';
 import { SimplePackageVersion } from "./package.http.service";
@@ -77,11 +79,11 @@ export class TemplateHttpService {
   }
 
   public getTemplates(): Observable<Template[]> {
-    return this.http.get<Template[]>(this._basePathURL).share();
+    return this.http.get<Template[]>(this._basePathURL).pipe(share());
   }
 
   public getTemplateNames(): Observable<string[]> {
-    return this.getTemplates().map(templates => templates.map(template => template.name).sort());
+    return this.getTemplates().pipe(map(templates => templates.map(template => template.name).sort()));
   }
 
   public getTemplate(templateName: string): Observable<Template> {
@@ -89,11 +91,11 @@ export class TemplateHttpService {
   }
 
   public existsTemplate(templateName: string): Observable<boolean> {
-    return this.getTemplate(templateName).map((template: Template) => {
+    return this.getTemplate(templateName).pipe(map((template: Template) => {
       return (template !== undefined);
-    }).catch(() => {
-      return Observable.of(false);
-    });
+    }),catchError(() => {
+      return observableOf(false);
+    }),);
   }
 
   public deleteTemplate(template: Template | SimpleTemplate): Observable<boolean> {
@@ -123,8 +125,8 @@ export class TemplateHttpService {
   }
 
   public getServicesForTemplate(templateName: string): Observable<Service[]> {
-    return this.http.get<Service[]>(`${this._basePathURL}/${templateName}/services`)
-      .map(services => services.sort(Sorter.nameField));
+    return this.http.get<Service[]>(`${this._basePathURL}/${templateName}/services`).pipe(
+      map(services => services.sort(Sorter.nameField)));
   }
 
   public getServiceDefaultStates(templateName: string): Observable<ServiceDefaultState[]> {
@@ -142,11 +144,11 @@ export class TemplateHttpService {
   }
 
   public getSimpleTemplates(): Observable<SimpleTemplate[]> {
-    return this.http.get<SimpleTemplate[]>(`${this._basePathURL}/simple`).share();
+    return this.http.get<SimpleTemplate[]>(`${this._basePathURL}/simple`).pipe(share());
   }
 
   public getDiff(templateAName: string, templateBName: string): Observable<PackageDiff[]> {
-    return this.http.get<PackageDiff[]>(`${this._basePathURL}/packagediff/${templateAName}/${templateBName}`).share();
+    return this.http.get<PackageDiff[]>(`${this._basePathURL}/packagediff/${templateAName}/${templateBName}`).pipe(share());
   }
 
   public getSimplePackageVersions(templateName: string): Observable<SimplePackageVersion[]> {

@@ -33,7 +33,7 @@
               <a href="javascript:void(0)" mwlConfirmationPopover
                  title="Delete Pair"
                  [title]="'Please verify!'"
-                 [message]="'Are you sure you want to delete the following key-value-pair: ' + kv.key + '?'"
+                 [popoverMessage]="'Are you sure you want to delete the following key-value-pair: ' + kv.key + '?'"
                  placement="left"
                  confirmButtonType="danger"
                  (confirm)="doDelete(kv)">

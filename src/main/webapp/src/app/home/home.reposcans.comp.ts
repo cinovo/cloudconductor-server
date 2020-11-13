@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Rx';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { Repo } from '../util/http/repo.http.service';
 import { RepoScansService } from '../util/reposcans/reposcans.service';

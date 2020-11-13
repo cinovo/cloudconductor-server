@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject ,  Observable } from 'rxjs';
 
 import { Template } from '../util/http/template.http.service';
 import { Mode } from '../util/enums.util';

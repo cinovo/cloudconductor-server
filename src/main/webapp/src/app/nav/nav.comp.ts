@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { AdditionalLink, AdditionalLinkHttpService } from '../util/http/additionalLinks.http.service';
 

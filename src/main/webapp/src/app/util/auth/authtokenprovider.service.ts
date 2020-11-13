@@ -1,5 +1,4 @@
-import { Subject } from 'rxjs/Subject';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject ,  ReplaySubject } from 'rxjs';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 

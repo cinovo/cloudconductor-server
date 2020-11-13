@@ -1,8 +1,9 @@
+
+import {interval as observableInterval,  Observable ,  Subject } from 'rxjs';
+
+import {map, mergeMap, takeUntil, startWith, share, switchMap} from 'rxjs/operators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
@@ -59,21 +60,21 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.hosts$ = this.hostTimer.switchMap((interval) => {
-        return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadHosts());
-    }).share();
+    this.hosts$ = this.hostTimer.pipe(switchMap((interval) => {
+        return observableInterval(interval).pipe(startWith(0),takeUntil(this.onDestroy$),mergeMap(() => this.loadHosts()),);
+    }),share(),);
 
-    this.repos$ = this.scanTimer.switchMap((interval) => {
-        return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadRepos())
-    }).share();
+    this.repos$ = this.scanTimer.pipe(switchMap((interval) => {
+        return observableInterval(interval).pipe(startWith(0),takeUntil(this.onDestroy$),mergeMap(() => this.loadRepos()),)
+    }),share(),);
 
-    this.services$ = this.serviceTimer.switchMap((interval) => {
-      return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadServices());
-    }).share();
+    this.services$ = this.serviceTimer.pipe(switchMap((interval) => {
+      return observableInterval(interval).pipe(startWith(0),takeUntil(this.onDestroy$),mergeMap(() => this.loadServices()),);
+    }),share(),);
 
-    this.stats$ = this.statsTimer.switchMap((interval) => {
-      return Observable.interval(interval).startWith(0).takeUntil(this.onDestroy$).flatMap(() => this.loadStats());
-    }).share();
+    this.stats$ = this.statsTimer.pipe(switchMap((interval) => {
+      return observableInterval(interval).pipe(startWith(0),takeUntil(this.onDestroy$),mergeMap(() => this.loadStats()),);
+    }),share(),);
   }
 
   public loadSettings(): Observable<Settings> {
@@ -81,25 +82,25 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public loadHosts(): Observable<Host[]> {
-    return this.hostHttpService.getSimpleHosts()
-                              .map(hosts => hosts.sort((a, b) => Sorter.byField(a, b, 'lastSeen')));
+    return this.hostHttpService.getSimpleHosts().pipe(
+                              map(hosts => hosts.sort((a, b) => Sorter.byField(a, b, 'lastSeen'))));
   }
 
   public loadRepos(): Observable<Repo[]> {
-    return this.repoHttpService.getRepos()
-                              .map(repos => repos.sort((a, b) => Sorter.byField(a, b, 'lastIndex')));
+    return this.repoHttpService.getRepos().pipe(
+                              map(repos => repos.sort((a, b) => Sorter.byField(a, b, 'lastIndex'))));
   }
 
   public loadServices(): Observable<Service[]> {
-    return this.serviceHttpService.getServices()
-    .flatMap(services => this.serviceUsageHttpService.getUsages()
-      .map(serviceUsages => Object.entries(serviceUsages).map(([serviceName, usage]) => {
+    return this.serviceHttpService.getServices().pipe(
+    mergeMap(services => this.serviceUsageHttpService.getUsages().pipe(
+      map(serviceUsages => Object.entries(serviceUsages).map(([serviceName, usage]) => {
           const templates = (usage) ? Object.keys(usage) : [];
           const serviceIndex = services.findIndex(s => s.name === serviceName);
           return {...services[serviceIndex], templates};
         })
-      )
-    ).map(svsWithUsage => svsWithUsage.sort(Sorter.service));
+      ))
+    ),map(svsWithUsage => svsWithUsage.sort(Sorter.service)),);
   }
 
   public loadStats(): Observable<Stats> {

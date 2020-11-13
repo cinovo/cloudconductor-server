@@ -3,13 +3,14 @@ import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import { throwError as observableThrowError, of } from 'rxjs';
 
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
+import {mergeMap} from 'rxjs/operators';
 
 type Mode = 'new' | 'edit';
 
@@ -28,7 +29,7 @@ export class ServiceDetail implements OnInit {
   public service: Service = {id: -1, name: '', description: '', initScript: '', packages: []};
   public templateRefs: Array<{template: string, pkg: string}> = [];
   public showAddPackage = false;
-  private newPackage: string;
+  public newPackage: string;
   private _allPackages: Package[] = [];
 
   public mode: Mode = 'edit';
@@ -113,14 +114,12 @@ export class ServiceDetail implements OnInit {
     this.service.initScript = formValue.initScript;
     this.service.description = formValue.description;
 
-    const check = (this.mode === 'new') ? this.serviceHttp.existsService(this.service.name) : Observable.of(false);
-    check.flatMap((exists) => {
-      if (exists) {
-        return Observable.throw(`Service named '${this.service.name}' already exists!`);
-      }
-
-      return this.serviceHttp.save(this.service)
-    }).subscribe(
+    const check = (this.mode === 'new') ? this.serviceHttp.existsService(this.service.name) : of(false);
+    check.pipe(
+      mergeMap((exists) => {
+        return exists ? observableThrowError(`Service named '${this.service.name}' already exists!`) : this.serviceHttp.save(this.service);
+      })
+    ).subscribe(
       (result) => {
         this.alerts.success(`Successfully saved service '${this.service.name}'!`);
 
@@ -130,7 +129,7 @@ export class ServiceDetail implements OnInit {
     );
   }
 
-  protected deletePackage(pkg: string) {
+  public deletePackage(pkg: string) {
     if (Validator.idIsSet(this.service.id)) {
       this.serviceHttp.getService(this.service.name).subscribe(
         (result) => {
@@ -155,7 +154,7 @@ export class ServiceDetail implements OnInit {
     }
   }
 
-  protected saveNewPackage() {
+  public saveNewPackage() {
     if (!Validator.notEmpty(this.newPackage)) {
       this.alerts.warning('Please select a package before saving!');
       return;
@@ -197,7 +196,7 @@ export class ServiceDetail implements OnInit {
     }
   }
 
-  protected goToAddPackage() {
+  public goToAddPackage() {
     this.newPackage = null;
     this.showAddPackage = true;
   }
@@ -206,11 +205,11 @@ export class ServiceDetail implements OnInit {
     this.router.navigate(['/service']);
   }
 
-  private gotoPackage(pkgName: string) {
+  public gotoPackage(pkgName: string) {
     this.router.navigate(['package', pkgName]);
   }
 
-  protected gotoTemplate(templateName: string) {
+  public gotoTemplate(templateName: string) {
     this.router.navigate(['template', templateName]);
   }
 

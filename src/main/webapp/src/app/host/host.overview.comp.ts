@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import {interval, Subject, Subscription} from 'rxjs';
 
 import { HostsService } from '../util/hosts/hosts.service';
 import { Host, HostHttpService } from '../util/http/host.http.service';
@@ -98,7 +96,7 @@ export class HostOverview implements OnInit, OnDestroy {
       });
 
       const iv = (this.wsService.timeout * 0.4);
-      this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+      this._heartBeatSub = interval(iv).subscribe(() => {
         // send heart beat message via WebSockets
         this._webSocket.next({data: 'Alive!'});
       });
@@ -148,14 +146,13 @@ export class HostOverview implements OnInit, OnDestroy {
       this.alertService.danger('Error loading hosts!');
       this.hostsLoaded = true;
     });
-
   }
 
   public reloadHosts(): void {
     this.loadData();
   }
 
-  protected gotoDetails(host: Host) {
+  public gotoDetails(host: Host) {
     this.router.navigate(['host', host.uuid]);
   }
 
@@ -168,7 +165,7 @@ export class HostOverview implements OnInit, OnDestroy {
         this.alertService.success(`Successfully deleted host ${hostToDelete.name}!`);
       },
       (err) => {
-        this.alertService.danger(`An error occured deleting host '${hostToDelete.name}'!`);
+        this.alertService.danger(`An error occurred deleting host '${hostToDelete.name}'!`);
         console.error(err);
       });
   }

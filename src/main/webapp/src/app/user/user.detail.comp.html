@@ -3,7 +3,7 @@
     title="Delete user"
     [title]="'Please verify!'"
     [placement]="'right'"
-    [message]="'Are you sure you want to delete the user \'' + loginName + '\'?'"
+    [popoverMessage]="'Are you sure you want to delete the user \'' + loginName + '\'?'"
     confirmButtonType="danger"
     (confirm)="deleteUser()"
     [appendToBody]="true">

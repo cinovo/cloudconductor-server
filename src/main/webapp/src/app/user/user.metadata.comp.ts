@@ -3,8 +3,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { throwError as observableThrowError, Observable, Subscription, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { GroupHttpService } from '../util/http/group.http.service';
@@ -120,15 +120,11 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
       }
     }
 
-    const check: Observable<boolean> = (this.mode === Mode.NEW) ? this.userHttp.existsUser(u.loginName) : Observable.of(false);
+    const check: Observable<boolean> = (this.mode === Mode.NEW) ? this.userHttp.existsUser(u.loginName) : of(false);
 
-    check.flatMap((exists) => {
-      if (exists) {
-        return Observable.throw(`User named '${u.loginName}' does already exist!`);
-      } else {
-        return this.userHttp.saveUser(u);
-      }
-    }).subscribe(
+    check.pipe(switchMap((exists) => {
+      return exists ? observableThrowError(`User named '${u.loginName}' does already exist!`) : this.userHttp.saveUser(u);
+    })).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
         if (this.mode === Mode.NEW) {

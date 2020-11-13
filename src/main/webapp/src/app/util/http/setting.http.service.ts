@@ -1,8 +1,9 @@
+
+import {pluck, share, tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -62,20 +63,20 @@ export class SettingHttpService {
   }
 
   public getSettings(): Observable<Settings> {
-    return this.http.get<Settings>(this._basePathURL)
-    .do(settings => this._settings.next(settings))
-    .share();
+    return this.http.get<Settings>(this._basePathURL).pipe(
+    tap(settings => this._settings.next(settings)),
+    share(),);
   }
 
   public save(settings: Settings): Observable<boolean> {
     settings['@class'] = 'de.cinovo.cloudconductor.api.model.Settings';
-    let res = this.http.put<boolean>(this._basePathURL, settings).share();
+    let res = this.http.put<boolean>(this._basePathURL, settings).pipe(share());
     res.subscribe(() => this.reloadSettings(), () => {});
     return res;
   }
 
   public getNoUninstall(): Observable<string[]> {
-    return this.getSettings().pluck('disallowUninstall');
+    return this.getSettings().pipe(pluck('disallowUninstall'));
   }
 
   private reloadSettings() {

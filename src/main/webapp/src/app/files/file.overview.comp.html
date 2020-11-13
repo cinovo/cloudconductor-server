@@ -90,7 +90,7 @@
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the file ' + file.name + '?'"
+              [popoverMessage]="'Are you sure you want to delete the file ' + file.name + '?'"
               placement="left"
               confirmButtonType="danger"
               (confirm)="deleteFile(file)">

@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
+import { throwError as observableThrowError, Observable, of} from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
@@ -142,23 +143,24 @@ export class RepoEdit implements OnInit {
   }
 
   private doSave(repo: Repo): Observable<Repo> {
-    return this.checkIfNecessary(repo)
-    .flatMap(exists => {
-      if (exists) {
-        return Observable.throw(`Repository named '${repo.name}' already exists!`);
-      }
+    return this.checkIfNecessary(repo).pipe(
+      mergeMap(exists => {
+        if (exists) {
+          return observableThrowError(`Repository named '${repo.name}' already exists!`);
+        }
 
-      if (Validator.idIsSet(repo.id)) {
-        return this.repoHttp.editRepo(repo);
-      }
+        if (Validator.idIsSet(repo.id)) {
+          return this.repoHttp.editRepo(repo);
+        }
 
-      return this.repoHttp.newRepo(repo);
-    });
+        return this.repoHttp.newRepo(repo);
+      })
+    );
   }
 
   private checkIfNecessary(repo: Repo): Observable<boolean> {
     if (this.mode !== 'new') {
-      return Observable.of(false);
+      return of(false);
     }
 
     return this.repoHttp.existsRepo(repo.name)

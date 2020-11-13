@@ -1,7 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import {forkJoin, Observable, Subscription} from 'rxjs';
 
 import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -59,7 +58,7 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
     const serviceDss$ = this.templateHttp.getServiceDefaultStates(templateName);
 
     // get all services for template and merge information with service default states
-    Observable.forkJoin(services$, serviceDss$).subscribe(
+    forkJoin(services$, serviceDss$).subscribe(
       ([services, dss]) => {
         this.services = services.map(service => {
           const autostart = dss.some(state => state.service === service.name && state.state === 'STARTED');
@@ -88,7 +87,7 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
       return this.templateHttp.saveServiceDefaultState(this._templateName, s.service, s.autostart ? 'STARTED' : 'STOPPED');
     });
 
-    Observable.forkJoin(updateOps).subscribe(
+    forkJoin(updateOps).subscribe(
       () => {
         this.servicesToUpdate = [];
         this.alertService.success(`Successfully updated default service states for template '${this._templateName}'.`);

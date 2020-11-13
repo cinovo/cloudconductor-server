@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject ,  Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { UserHttpService, User } from '../util/http/user.http.service';

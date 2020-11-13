@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs';
+import { Observable ,  Subscription } from 'rxjs';
 
 import { Host } from '../util/http/host.http.service';
 import { HostsService } from '../util/hosts/hosts.service';

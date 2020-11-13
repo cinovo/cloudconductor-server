@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { GroupHttpService, Group } from '../util/http/group.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -107,6 +106,7 @@ export class GroupOverviewComponent implements OnInit, OnDestroy {
         this.alertService.success(`Successfully deleted user group '${groupToDelete.name}'!`);
         this.reloadGroups();
       }, (err) => {
+        console.error(err);
         this.alertService.danger(`Error deleting user group '${groupToDelete.name}'!`);
       }
     );

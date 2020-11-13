@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import {forkJoin, interval, Observable, Subject, Subscription} from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
@@ -37,7 +35,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
   private _templates: Array<SimpleTemplate> = [];
-  private templateTree: Array<TemplateGroup> = [];
+  public templateTree: Array<TemplateGroup> = [];
 
   private _webSocketSub: Subscription;
   private _heartBeatSub: Subscription;
@@ -108,7 +106,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
         const iv = (this.wsService.timeout * 0.4);
 
-        this._heartBeatSub = Observable.interval(iv).subscribe(() => {
+        this._heartBeatSub = interval(iv).subscribe(() => {
           // send heart beat message via WebSockets
           this._webSocket.next({data: 'Alive!'});
         });
@@ -178,7 +176,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
     this.loadTemplates();
   }
 
-  private deleteTemplate(template: SimpleTemplate): void {
+  public deleteTemplate(template: SimpleTemplate): void {
     this.templateHttp.deleteTemplate(template).subscribe(
       () => {
         // template list is updated via websocket
@@ -189,10 +187,10 @@ export class TemplateOverview implements OnInit, OnDestroy {
       });
   }
 
-  protected deleteAllTemplates(): void {
+  public deleteAllTemplates(): void {
     const deleteOps: Observable<boolean>[] = this._templates.map(template => this.templateHttp.deleteTemplate(template));
 
-    Observable.forkJoin(deleteOps).subscribe(
+    forkJoin(deleteOps).subscribe(
       () => {
         // template list is updated via websocket
         this.alerts.success(`Successfully deleted ${deleteOps.length} templates.`);
@@ -204,7 +202,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
     )
   }
 
-  protected gotoDetails(template: Template): void {
+  public gotoDetails(template: Template): void {
     if (template) {
       this.router.navigate(['template', template.name]);
     }

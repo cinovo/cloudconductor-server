@@ -71,7 +71,7 @@
               <a href="javascript:void(0)" mwlConfirmationPopover
               title="Delete SSH Key"
               [title]="'Please verify!'"
-              [message]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
+              [popoverMessage]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
               placement="left"
               confirmButtonType="danger"
               (confirm)="deleteKey(sshKey)">
@@ -100,7 +100,7 @@
           <button type="button" class="btn btn-danger" [disabled]="!isKeySelected()" mwlConfirmationPopover
             title="Remove selected keys"
             [title]="'Please verify!'"
-            [message]="'Are you sure you want to remove all selected keys?'"
+            [popoverMessage]="'Are you sure you want to remove all selected keys?'"
             placement="left"
             confirmButtonType="danger"
             (confirm)="deleteSelectedKeys()">

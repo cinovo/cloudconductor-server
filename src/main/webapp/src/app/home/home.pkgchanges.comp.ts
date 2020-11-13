@@ -1,16 +1,13 @@
 import { Component, OnDestroy, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import {forkJoin as observableForkJoin,  Observable ,  Subscription } from 'rxjs';
+import {map} from 'rxjs/operators';
 
-import { HostHttpService, Host } from '../util/http/host.http.service';
+import { Host } from '../util/http/host.http.service';
 import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';
-import { SettingHttpService } from '../util/http/setting.http.service';
-import { TemplateHttpService } from '../util/http/template.http.service';
 import { HostsService } from "../util/hosts/hosts.service";
 
-interface PackageChangeMap { [key: string]: PackageChange[] };
+interface PackageChangeMap { [key: string]: PackageChange[] }
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -42,24 +39,24 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
 
     private loadChangesForHosts(hosts: Host[]): void {
       const changes$: Observable<PackageChangeMap>[] = hosts.filter(host => this.hostsService.isAlive(host)).map(host => {
-        return this.packageChangesService.computePackageChanges(host).map(changes => {
+        return this.packageChangesService.computePackageChanges(host).pipe(map(changes => {
           let container = {};
           changes = changes.filter(change => change.state !== 'ok' && change.state !== 'protected');
           if (changes.length > 0) {
             container[host.name] = changes
           }
           return container;
-        });
+        }));
       });
 
-      Observable.forkJoin(changes$).subscribe(
+      observableForkJoin(changes$).subscribe(
         (data) => {
           this.packageChanges = data.reduce((acc, c) => Object.assign({}, acc, c));
           this.lastUpdate = new Date().getTime();
         },
         (err) => console.error(err),
         () => {
-          // if there are no changes, forkJoin observable will complete immediatly
+          // if there are no changes, forkJoin observable will complete immediately
           this.lastUpdate = new Date().getTime();
         }
       );
