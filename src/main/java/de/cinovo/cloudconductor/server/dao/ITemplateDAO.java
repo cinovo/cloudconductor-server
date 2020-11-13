@@ -17,7 +17,7 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import de.cinovo.cloudconductor.server.model.EPackage;
+import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.dvalin.jpa.IEntityDAO;
@@ -30,23 +30,49 @@ import java.util.List;
  *
  * @author psigloch
  */
+
 public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ETemplate> {
-
+	
 	/**
-	 * @param repo the repo
-	 * @return the templates using the repo
+	 * Disable auto update for all templates
+	 *
+	 * @return number of updated templates
 	 */
-	List<ETemplate> findByRepo(ERepo repo);
-
-
+	int disableAutoUpdate();
+	
 	/**
-	 * @param pkg the package
-	 * @return the templates using a version of this package
+	 * @param templateNames template names
+	 * @return list of templates
 	 */
-	List<ETemplate> findByPackage(EPackage pkg);
-
+	List<ETemplate> findByName(Iterable<String> templateNames);
+	
 	/**
 	 * @return the number of templates
 	 */
 	Long count();
+	
+	/**
+	 * @param repo the repository
+	 * @return number of templates using given repository
+	 */
+	Long countUsingRepo(ERepo repo);
+	
+	/**
+	 * @param repo           the repository
+	 * @param packageVersion the package version
+	 * @return number of templates using repo and package version
+	 */
+	Long countUsingPackageVersion(ERepo repo, EPackageVersion packageVersion);
+	
+	/**
+	 * @param templates the templates ids
+	 * @return the templates
+	 */
+	List<ETemplate> findByIds(Iterable<Long> templates);
+	
+	/**
+	 * @param templateId the template id
+	 * @return the name of the template
+	 */
+	String findNameById(Long templateId);
 }

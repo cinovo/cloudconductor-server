@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -20,19 +20,20 @@ package de.cinovo.cloudconductor.server.model;
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
+import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
 import de.taimos.dvalin.jpa.IEntity;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.HashSet;
@@ -48,15 +49,17 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "packageversion", schema = "cloudconductor")
-public class EPackageVersion extends AModelApiConvertable<PackageVersion> implements IEntity<Long>, INamed {
+public class EPackageVersion implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+	
 	private Long id;
-	private EPackage pkg;
+	private Long pkgId;
+	private String pkgName;
 	private String version;
-	private Set<EDependency> dependencies = new HashSet<>();
+	private Set<Long> dependencies = new HashSet<>();
 	private Boolean deprecated;
-	private Set<ERepo> repos = new HashSet<>();
+	private Set<Long> repos = new HashSet<>();
 	
 	
 	@Override
@@ -76,17 +79,30 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	/**
 	 * @return the package
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	@JoinColumn(name = "packageid")
-	public EPackage getPkg() {
-		return this.pkg;
+	@Column(name = "packageid")
+	public Long getPkgId() {
+		return this.pkgId;
 	}
 	
 	/**
 	 * @param pkg the package to set
 	 */
-	public void setPkg(EPackage pkg) {
-		this.pkg = pkg;
+	public void setPkgId(Long pkg) {
+		this.pkgId = pkg;
+	}
+	
+	/**
+	 * @return the pkgName
+	 */
+	public String getPkgName() {
+		return this.pkgName;
+	}
+	
+	/**
+	 * @param pkgName the pkgName to set
+	 */
+	public void setPkgName(String pkgName) {
+		this.pkgName = pkgName;
 	}
 	
 	/**
@@ -107,17 +123,17 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 	/**
 	 * @return the dependencies
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
-	@JoinTable(name = "mappingrpmdep", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "rpmid"), inverseJoinColumns = @JoinColumn(name = "dependencyid"))
-	public Set<EDependency> getDependencies() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = Long.class)
+	@CollectionTable(schema = "cloudconductor", name = "mappingrpmdep", joinColumns = {@JoinColumn(name = "rpmid")})
+	@Column(name = "dependencyid")
+	public Set<Long> getDependencies() {
 		return this.dependencies;
 	}
 	
 	/**
 	 * @param dependencies the dependencies to set
 	 */
-	public void setDependencies(Set<EDependency> dependencies) {
+	public void setDependencies(Set<Long> dependencies) {
 		this.dependencies = dependencies;
 	}
 	
@@ -164,56 +180,57 @@ public class EPackageVersion extends AModelApiConvertable<PackageVersion> implem
 		if (!this.getVersion().equals(other.getVersion())) {
 			return false;
 		}
-		return this.getPkg().equals(other.getPkg());
+		return this.getPkgId().equals(other.getPkgId());
 	}
 	
 	@Transient
 	@Override
 	public int hashCode() {
 		int val = (this.getVersion() == null) ? 0 : this.getVersion().hashCode();
-		int parent = (this.getPkg() == null) ? 0 : this.getPkg().hashCode();
+		int parent = (this.getPkgId() == null) ? 0 : this.getPkgId().hashCode();
 		return val * parent;
 	}
 	
 	/**
 	 * @return the repos
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
-	@JoinTable(name = "map_version_repo", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "versionid"), inverseJoinColumns = @JoinColumn(name = "repoid"))
-	public Set<ERepo> getRepos() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = Long.class)
+	@CollectionTable(schema = "cloudconductor", name = "map_version_repo", joinColumns = {@JoinColumn(name = "versionid")})
+	@Column(name = "repoid")
+	public Set<Long> getRepos() {
 		return this.repos;
 	}
 	
 	/**
 	 * @param repos the repos to set
 	 */
-	public void setRepos(Set<ERepo> repos) {
+	public void setRepos(Set<Long> repos) {
 		this.repos = repos;
 	}
 	
-	@Override
-	@Transient
-	public Class<PackageVersion> getApiClass() {
-		return PackageVersion.class;
-	}
 	
-	@Override
+	/**
+	 * @param repoDAO       repo dao
+	 * @param dependencyDAO dependency dao
+	 * @return the api object
+	 */
 	@Transient
-	public PackageVersion toApi() {
-		PackageVersion packageVersion = super.toApi();
-		packageVersion.setName(this.pkg.getName());
-		packageVersion.setRepos(this.namedModelToStringSet(this.repos));
+	public PackageVersion toApi(IRepoDAO repoDAO, IDependencyDAO dependencyDAO) {
+		PackageVersion packageVersion = GenericModelApiConverter.convert(this, PackageVersion.class);
+		packageVersion.setName(this.pkgName);
+		packageVersion.setRepos(new HashSet<>(repoDAO.findNamesByIds(this.repos)));
 		packageVersion.setDependencies(new HashSet<>());
-		for (EDependency dep : this.dependencies) {
-			packageVersion.getDependencies().add(dep.toApi());
-		}
+		packageVersion.setDependencies(dependencyDAO.findByIds(this.dependencies).stream().map(EDependency::toApi).collect(Collectors.toSet()));
 		return packageVersion;
 	}
 	
+	/**
+	 * @param repoDAO repo dao
+	 * @return the simple api object
+	 */
 	@Transient
-	public SimplePackageVersion toSimpleApi() {
-		List<String> repoNames = this.repos.stream().map(ERepo::getName).sorted().collect(Collectors.toList());
-		return new SimplePackageVersion(this.pkg.getName(), this.getVersion(), repoNames);
+	public SimplePackageVersion toSimpleApi(IRepoDAO repoDAO) {
+		List<String> repoNames = repoDAO.findNamesByIds(this.repos);
+		return new SimplePackageVersion(this.pkgName, this.getVersion(), repoNames);
 	}
 }

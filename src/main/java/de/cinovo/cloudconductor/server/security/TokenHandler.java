@@ -2,9 +2,11 @@ package de.cinovo.cloudconductor.server.security;
 
 import de.cinovo.cloudconductor.server.dao.IAuthTokenDAO;
 import de.cinovo.cloudconductor.server.dao.IJWTTokenDAO;
+import de.cinovo.cloudconductor.server.dao.IUserGroupDAO;
 import de.cinovo.cloudconductor.server.model.EAuthToken;
 import de.cinovo.cloudconductor.server.model.EJWTToken;
 import de.cinovo.cloudconductor.server.model.EUser;
+import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.cinovo.cloudconductor.server.model.enums.AuthType;
 import de.taimos.dvalin.jaxrs.security.jwt.AuthenticatedUser;
 import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -39,11 +42,12 @@ public class TokenHandler {
 	private IJWTTokenDAO jwtTokenDao;
 	@Autowired
 	private JWTAuth jwtAuth;
-	
+	@Autowired
+	private IUserGroupDAO userGroupDAO;
 	
 	/**
-	 * @param user the user to generate the jwttoken for
-	 * @param type the authentication type
+	 * @param user     the user to generate the JWT for
+	 * @param type     the authentication type
 	 * @param refToken the referenced login token
 	 * @return the token
 	 */
@@ -63,22 +67,25 @@ public class TokenHandler {
 		}
 		
 		AuthenticatedUser newUser = new AuthenticatedUser();
-		newUser.setUsername(user.getUsername());
+		newUser.setUsername(user.getLoginName());
 		newUser.setDisplayName(user.getDisplayName());
 		newUser.setId(String.valueOf(user.getId()));
-		newUser.setRoles(user.getRoles());
+		newUser.setRoles(this.userGroupDAO.findByIds(user.getUserGroup()).stream().map(EUserGroup::getPermissionsAsString).distinct().flatMap(Set::stream).toArray(String[]::new));
+		
 		String token = this.jwtAuth.signToken(newUser);
 		EJWTToken existing = this.jwtTokenDao.findByToken(token);
-		if(existing != null) {
+		if (existing != null) {
 			return this.generateJWTToken(user, type, refToken);
 		}
-
+		
 		EJWTToken ejwtToken = new EJWTToken();
 		ejwtToken.setActive(true);
 		ejwtToken.setToken(token);
-		ejwtToken.setUser(user);
+		ejwtToken.setUserId(user.getId());
 		ejwtToken.setAuthType(type);
-		ejwtToken.setRefToken(referenceToken);
+		if (referenceToken != null) {
+			ejwtToken.setRefToken(referenceToken.getId());
+		}
 		return this.jwtTokenDao.save(ejwtToken);
 	}
 	
@@ -89,12 +96,7 @@ public class TokenHandler {
 		if (user == null) {
 			return;
 		}
-		for (EJWTToken jwtToken : user.getJwtTokens()) {
-			if (jwtToken == null) {
-				return;
-			}
-			this.jwtTokenDao.delete(jwtToken);
-		}
+		this.jwtTokenDao.deleteByUser(user);
 	}
 	
 	/**
@@ -104,26 +106,15 @@ public class TokenHandler {
 		if (token == null) {
 			return;
 		}
-		EJWTToken jwtToken = this.jwtTokenDao.findByToken(token);
-		if (jwtToken == null) {
-			return;
-		}
-		this.jwtTokenDao.delete(jwtToken);
-	}
-	
-	private void revokeJWTToken(EUser user, EAuthToken token) {
-		for (EJWTToken jwtToken : this.jwtTokenDao.findByRefToken(user, token)) {
-			this.jwtTokenDao.delete(jwtToken);
-		}
+		this.jwtTokenDao.deleteByToken(token);
 	}
 	
 	/**
 	 * Generates a unique AuthToken and saves it in the database.
 	 *
 	 * @param user the user the toke is created for
-	 * @return a generated AuthToken if generated successful, or null if something went wrong
 	 */
-	public EAuthToken generateAuthToken(EUser user) {
+	public void generateAuthToken(EUser user) {
 		String generatedToken = null;
 		
 		int count = 0;
@@ -131,7 +122,7 @@ public class TokenHandler {
 			if (count > 10) {
 				String errorMsg = "Failed to generate unique token.";
 				TokenHandler.LOGGER.error(errorMsg);
-				return null;
+				return;
 			}
 			count++;
 			generatedToken = this.generateToken();
@@ -139,34 +130,25 @@ public class TokenHandler {
 		EAuthToken token = new EAuthToken();
 		token.setCreationDate(DateTime.now());
 		token.setToken(generatedToken);
-		token.setUser(user);
-		return this.authTokenDao.save(token);
+		token.setUserid(user.getId());
+		this.authTokenDao.save(token);
 	}
 	
 	/**
-	 * @param user the user to revoke the token for
+	 * @param user  the user to revoke the token for
 	 * @param token the token to revoke
 	 * @return true if revoking was successful, false otherwise
 	 */
 	public boolean revokeAuthToken(EUser user, String token) {
-		EAuthToken authToken = this.authTokenDao.findByToken(token);
+		EAuthToken authToken = this.authTokenDao.findByUserAndToken(user, token);
 		if (authToken == null) {
 			return false;
 		}
-		boolean found = false;
-		for (EAuthToken eAuthToken : user.getAuthTokens()) {
-			if (eAuthToken.getToken().equals(token)) {
-				found = true;
-				break;
-			}
-		}
-		if (found) {
-			authToken.setRevokeDate(DateTime.now());
-			EAuthToken save = this.authTokenDao.save(authToken);
-			this.revokeJWTToken(user, save);
-			return true;
-		}
-		return false;
+		
+		authToken.setRevokeDate(DateTime.now());
+		EAuthToken savedAuthToken = this.authTokenDao.save(authToken);
+		this.jwtTokenDao.deleteByRefToken(savedAuthToken);
+		return true;
 	}
 	
 	private String generateToken() {
@@ -176,10 +158,7 @@ public class TokenHandler {
 	}
 	
 	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
-		StringBuilder tokenStringToShuffle = new StringBuilder();
-		tokenStringToShuffle.append(currentToken.toUpperCase(), 0, tokenLength / 2);
-		tokenStringToShuffle.append(currentToken, tokenLength / 2, tokenLength);
-		return tokenStringToShuffle.toString();
+		return currentToken.toUpperCase().substring(0, tokenLength / 2) + currentToken.substring(tokenLength / 2, tokenLength - 1);
 	}
 	
 	private String shuffleWithFisherYates(String tokenStringToShuffle) {
@@ -187,15 +166,14 @@ public class TokenHandler {
 		int tokenLength = tokenStringToShuffle.length();
 		for (int i = 0; i < (tokenLength - 2); i++) {
 			int j = ThreadLocalRandom.current().nextInt(i, tokenLength);
-			shuffleArray = this.swap(shuffleArray, i, j);
+			this.swap(shuffleArray, i, j);
 		}
 		return new String(shuffleArray);
 	}
 	
-	private char[] swap(char[] toSwapIn, int i, int j) {
+	private void swap(char[] toSwapIn, int i, int j) {
 		char temp = toSwapIn[i];
 		toSwapIn[i] = toSwapIn[j];
 		toSwapIn[j] = temp;
-		return toSwapIn;
 	}
 }

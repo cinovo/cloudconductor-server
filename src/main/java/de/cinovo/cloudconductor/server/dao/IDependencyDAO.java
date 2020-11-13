@@ -21,6 +21,9 @@ import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
@@ -34,5 +37,10 @@ public interface IDependencyDAO extends IEntityDAO<EDependency, Long> {
 	 * @return the database dependency object
 	 */
 	EDependency find(Dependency dep);
-
+	
+	/**
+	 * @param dependencies the dependcie ids
+	 * @return the objects
+	 */
+	List<EDependency> findByIds(Set<Long> dependencies);
 }

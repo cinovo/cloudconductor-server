@@ -17,9 +17,9 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import de.cinovo.cloudconductor.api.model.Settings;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -31,20 +31,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.model.Settings;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
- *
  */
 @Entity
 @Table(name = "serveroptions", schema = "cloudconductor")
-public class EServerOptions extends AModelApiConvertable<Settings> implements IEntity<Long> {
+public class EServerOptions implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -272,9 +271,11 @@ public class EServerOptions extends AModelApiConvertable<Settings> implements IE
 		this.disallowUninstall = disallowUninstall;
 	}
 	
-	@Override
+	/**
+	 * @return the api object
+	 */
 	@Transient
-	public Class<Settings> getApiClass() {
-		return Settings.class;
+	public Settings toApi() {
+		return GenericModelApiConverter.convert(this, Settings.class);
 	}
 }

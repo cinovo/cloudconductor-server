@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.util.comparators;
 
 import de.cinovo.cloudconductor.api.model.PackageDiff;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ETemplate;
@@ -19,12 +20,14 @@ import java.util.Set;
  */
 @Service
 public class TemplatePackageDiffer {
-
+	
 	private static final VersionStringComparator versionStringComparator = new VersionStringComparator();
-
+	
 	@Autowired
 	private ITemplateDAO templateDAO;
-
+	@Autowired
+	private IPackageVersionDAO packageVersionDAO;
+	
 	/**
 	 * @param templateNameA template a
 	 * @param templateNameB template b
@@ -33,53 +36,53 @@ public class TemplatePackageDiffer {
 	public PackageDiff[] compare(String templateNameA, String templateNameB) {
 		ETemplate templateA = this.templateDAO.findByName(templateNameA);
 		ETemplate templateB = this.templateDAO.findByName(templateNameB);
-		if(templateA == null && templateB == null) {
+		if (templateA == null && templateB == null) {
 			return new PackageDiff[0];
 		}
-		if(templateA == null || templateA.getPackageVersions() == null || templateA.getPackageVersions().isEmpty()) {
-			return this.packageVersionToPackageDiff(templateB.getPackageVersions());
+		if (templateA == null || templateA.getPackageVersions() == null || templateA.getPackageVersions().isEmpty()) {
+			return this.packageVersionToPackageDiff(this.packageVersionDAO.findByIds(templateB.getPackageVersions()));
 		}
-		if(templateB == null || templateB.getPackageVersions() == null || templateB.getPackageVersions().isEmpty()) {
-			return this.packageVersionToPackageDiff(templateA.getPackageVersions());
+		if (templateB == null || templateB.getPackageVersions() == null || templateB.getPackageVersions().isEmpty()) {
+			return this.packageVersionToPackageDiff(this.packageVersionDAO.findByIds(templateA.getPackageVersions()));
 		}
-
+		
 		Set<PackageDiff> res = new HashSet<>();
-
-		Set<EPackageVersion> missingFromA = new HashSet<>(templateA.getPackageVersions());
-
-		for(EPackageVersion ePackageVersionB : templateB.getPackageVersions()) {
+		List<EPackageVersion> pvsTemplateA = this.packageVersionDAO.findByIds(templateA.getPackageVersions());
+		Set<EPackageVersion> missingFromA = new HashSet<>(pvsTemplateA);
+		
+		for (EPackageVersion ePackageVersionB : this.packageVersionDAO.findByIds(templateB.getPackageVersions())) {
 			boolean found = false;
-			for(EPackageVersion ePackageVersionA : templateA.getPackageVersions()) {
-				if(ePackageVersionB.getPkg().equals(ePackageVersionA.getPkg())) {
+			for (EPackageVersion ePackageVersionA : pvsTemplateA) {
+				if (ePackageVersionB.getPkgId().equals(ePackageVersionA.getPkgId())) {
 					missingFromA.remove(ePackageVersionA);
 					int vComp = TemplatePackageDiffer.versionStringComparator.compare(ePackageVersionA.getVersion(), ePackageVersionB.getVersion());
-					if(vComp > 0) {
+					if (vComp > 0) {
 						res.add(this.packageVersionToPackageDiff(ePackageVersionA));
-					} else if(vComp < 0) {
+					} else if (vComp < 0) {
 						res.add(this.packageVersionToPackageDiff(ePackageVersionB));
 					}
 					found = true;
 				}
 			}
-			if(!found) {
+			if (!found) {
 				res.add(this.packageVersionToPackageDiff(ePackageVersionB));
 			}
 		}
-
-		for(EPackageVersion ePackageVersionA : missingFromA) {
+		
+		for (EPackageVersion ePackageVersionA : missingFromA) {
 			res.add(this.packageVersionToPackageDiff(ePackageVersionA));
 		}
-
+		
 		return res.toArray(new PackageDiff[0]);
 	}
-
-	private PackageDiff packageVersionToPackageDiff(EPackageVersion ePackageVersionB) {
+	
+	private PackageDiff packageVersionToPackageDiff(EPackageVersion pkgVersion) {
 		PackageDiff res = new PackageDiff();
-		res.setName(ePackageVersionB.getPkg().getName());
-		res.setVersion(ePackageVersionB.getVersion());
+		res.setName(pkgVersion.getPkgName());
+		res.setVersion(pkgVersion.getVersion());
 		return res;
 	}
-
+	
 	private PackageDiff[] packageVersionToPackageDiff(List<EPackageVersion> packageVersions) {
 		return packageVersions.stream().map(this::packageVersionToPackageDiff).toArray(PackageDiff[]::new);
 	}

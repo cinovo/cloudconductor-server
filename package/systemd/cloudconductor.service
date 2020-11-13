@@ -1,6 +1,5 @@
 [Unit]
 Description=cloudconductor
-Requires=network.service
 
 [Service]
 User=root

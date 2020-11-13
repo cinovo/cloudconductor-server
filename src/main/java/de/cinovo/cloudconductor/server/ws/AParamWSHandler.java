@@ -1,29 +1,27 @@
 package de.cinovo.cloudconductor.server.ws;
 
+import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
-
 /**
- * 
  * Copyright 2017 Cinovo AG<br>
  * <br>
- * 
- * @author mweise
  *
  * @param <A> the type of WS adapter to be handled
  * @param <T> the type of objects to be broadcasted
+ * @author mweise
  */
-public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
+public abstract class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	
-	private Map<String, List<A>> connectedWS = new ConcurrentHashMap<String, List<A>>();
+	private final Map<String, List<A>> connectedWS = new ConcurrentHashMap<>();
 	
 	
 	/**
-	 * @param name the name for which the WS adapter should be added
+	 * @param name    the name for which the WS adapter should be added
 	 * @param adapter the WS adapter to add
 	 */
 	public void addSocketAdapter(String name, A adapter) {
@@ -38,7 +36,7 @@ public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	}
 	
 	/**
-	 * @param name the name for which the given adapter should be removed
+	 * @param name    the name for which the given adapter should be removed
 	 * @param adapter the adapter to be removed
 	 * @return true if removal was successful, false otherwise
 	 */
@@ -52,7 +50,7 @@ public class AParamWSHandler<A extends AParamWSAdapter<T>, T> {
 	}
 	
 	/**
-	 * @param name the name for which the event should be broadcasted
+	 * @param name  the name for which the event should be broadcasted
 	 * @param event the event to be broadcasted
 	 */
 	public void broadcastChange(String name, WSChangeEvent<T> event) {

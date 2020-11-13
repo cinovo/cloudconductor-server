@@ -8,14 +8,25 @@ import java.util.List;
 /**
  * Copyright 2015 Cinovo AG<br>
  * <br>
- * 
- * @author psigloch
  *
+ * @author psigloch
  */
 public interface IRepoDAO extends IEntityDAO<ERepo, Long>, IFindNamed<ERepo> {
 	/**
-	 * @param templateId the template ide
+	 * @param repoNames repository names
+	 * @return list of repositories
+	 */
+	List<ERepo> findByNames(Iterable<String> repoNames);
+	
+	/**
+	 * @param repos the repo ids
+	 * @return the repo names
+	 */
+	List<String> findNamesByIds(Iterable<Long> repos);
+	
+	/**
+	 * @param repos the repo ids
 	 * @return the repos
 	 */
-	List<ERepo> findByTemplate(Long templateId);
+	List<ERepo> findByIds(Iterable<Long> repos);
 }

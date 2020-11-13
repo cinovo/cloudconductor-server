@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import de.cinovo.cloudconductor.api.enums.RepoProviderType;
+import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.util.AWSClientFactory;
@@ -25,14 +26,17 @@ import java.util.Set;
  */
 public class AWSS3Provider implements IRepoProvider {
 	
+	private final ERepo repo;
 	private ERepoMirror mirror;
 	private AmazonS3 s3Client;
 	
 	
 	/**
 	 * @param mirror the mirror to contact
+	 * @param repo the repo of the mirror
 	 */
-	public AWSS3Provider(ERepoMirror mirror) {
+	public AWSS3Provider(ERepoMirror mirror, ERepo repo) {
+		this.repo = repo;
 		if (mirror.getProviderType() == RepoProviderType.AWSS3) {
 			this.mirror = mirror;
 			this.s3Client = AWSClientFactory.createClient(AmazonS3Client.class, mirror);
@@ -108,10 +112,10 @@ public class AWSS3Provider implements IRepoProvider {
 	
 	@Override
 	public String getRepoName() {
-		if ((this.mirror == null)) {
+		if ((this.repo == null)) {
 			return null;
 		}
-		return this.mirror.getRepo().getName();
+		return this.repo.getName();
 	}
 	
 }

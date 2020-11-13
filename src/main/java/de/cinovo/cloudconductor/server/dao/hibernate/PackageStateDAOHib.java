@@ -17,11 +17,12 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
  * #L%
  */
 
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.server.dao.IPackageStateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageState;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
@@ -37,4 +38,12 @@ public class PackageStateDAOHib extends EntityDAOHibernate<EPackageState, Long> 
 	public Class<EPackageState> getEntityClass() {
 		return EPackageState.class;
 	}
+	
+	@Override
+	public List<EPackageState> findByHost(Long id) {
+		// language=HQL
+		String q = "FROM EPackageState as ps WHERE ps.hostId = ?1";
+		return this.findListByQuery(q, id);
+	}
+
 }

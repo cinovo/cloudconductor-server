@@ -1,17 +1,13 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
-import org.springframework.stereotype.Repository;
-
 import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 /*
  * #%L
@@ -46,51 +42,38 @@ public class HostDAOHib extends EntityDAOHibernate<EHost, Long> implements IHost
 	
 	@Override
 	public EHost findByName(String name) {
-		return this.findByQuery("FROM EHost h WHERE h.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM EHost AS h WHERE h.name = ?1", name);
+	}
+	
+	@Override
+	public boolean exists(String name) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(h) FROM EHost AS h WHERE h.name = ?1", Long.class).getSingleResult() > 0;
 	}
 	
 	@Override
 	public Long count() {
-		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-		query.select(builder.count(query.from(EHost.class)));
-		return this.entityManager.createQuery(query).getSingleResult();
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(h) FROM EHost AS h ", Long.class).getSingleResult();
+	}
+	
+	@Override
+	public Long countForTemplate(Long templateId) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(h) FROM EHost AS h WHERE h.templateId = ?1", Long.class).setParameter(1, templateId).getSingleResult();
 	}
 	
 	@Override
 	public EHost findByUuid(String uuid) {
-		return this.findByQuery("FROM EHost h where h.uuid = ?1", uuid);
+		// language=HQL
+		return this.findByQuery("FROM EHost AS h WHERE h.uuid = ?1", uuid);
 	}
 	
 	@Override
-	public List<EHost> findHostsForTemplate(String templateName) {
-		return this.findListByQuery("FROM EHost h WHERE h.template.name = ?1", templateName);
-	}
-	
-	@Override
-	public List<SimpleHost> findSimpleHosts() {
-		StringBuilder query = this.getSimpleHostQuery();
-		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
-		return tq.getResultList();
-	}
-	
-	@Override
-	public SimpleHost findSimpleHost(Long id) {
-		StringBuilder query = this.getSimpleHostQuery();
-		query.append(" WHERE h.id = ?1");
-		TypedQuery<SimpleHost> tq = this.entityManager.createQuery(query.toString(), SimpleHost.class);
-		tq.setParameter(1, id);
-		List<SimpleHost> resultList = tq.getResultList();
-		return resultList.isEmpty() ? null : resultList.get(0);
-	}
-	
-	private StringBuilder getSimpleHostQuery() {
-		StringBuilder query = new StringBuilder();
-		query.append("SELECT new de.cinovo.cloudconductor.api.model.SimpleHost(h.name, agent.name, h.uuid, h.template.name, h.lastSeen, ");
-		query.append("(SELECT count(ss) FROM EServiceState ss WHERE ss.host.id = h.id), ");
-		query.append("(SELECT count(ps) FROM EPackageState ps WHERE ps.host.id = h.id) ");
-		query.append(") FROM EHost h");
-		return query;
+	public List<EHost> findHostsForTemplate(Long templateId) {
+		// language=HQL
+		return this.findListByQuery("SELECT h FROM EHost AS h WHERE h.templateId = ?1", templateId);
 	}
 	
 }

@@ -7,11 +7,10 @@ import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import de.taimos.dvalin.jaxrs.MapperFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 /**
@@ -29,8 +28,7 @@ public class IndexFileIndexer implements IRepoIndexer {
 
 	private RepoEntry latest;
 
-	@Autowired
-	private ObjectMapper mapper = MapperFactory.createDefault();
+	private final ObjectMapper mapper = MapperFactory.createDefault();
 
 
 	@Override
@@ -42,7 +40,7 @@ public class IndexFileIndexer implements IRepoIndexer {
 			}
 			this.latest = indexEntry;
 			try {
-				String indexString = StreamUtils.copyToString(provider.getEntryStream(IndexFileIndexer.INDEX_FILE), Charset.forName("UTF-8"));
+				String indexString = StreamUtils.copyToString(provider.getEntryStream(IndexFileIndexer.INDEX_FILE), StandardCharsets.UTF_8);
 				CollectionType indexType = TypeFactory.defaultInstance().constructCollectionType(Set.class, TypeFactory.defaultInstance().constructType(PackageVersion.class));
 				return this.mapper.readValue(indexString, indexType);
 			} catch(IOException e) {

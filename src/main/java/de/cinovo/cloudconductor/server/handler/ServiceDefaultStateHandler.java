@@ -13,12 +13,10 @@ import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
 
 /**
- * 
  * Copyright 2018 Cinovo AG<br>
  * <br>
- * 
- * @author mweise
  *
+ * @author mweise
  */
 @Service
 public class ServiceDefaultStateHandler {
@@ -32,13 +30,18 @@ public class ServiceDefaultStateHandler {
 	
 	
 	/**
-	 * @param templateName the name of the template
-	 * @param serviceName the name of the service
+	 * @param templateName           the name of the template
+	 * @param serviceName            the name of the service
 	 * @param newServiceDefaultState the new default state of the given service in the given template
 	 * @return the updated default state
 	 */
 	public EServiceDefaultState updateServiceDefaultState(String templateName, String serviceName, ServiceState newServiceDefaultState) {
-		EServiceDefaultState esds = this.serviceDefaultStateDAO.findByName(serviceName, templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+		EService service = this.serviceDAO.findByName(serviceName);
+		RESTAssert.assertNotNull(service);
+		
+		EServiceDefaultState esds = this.serviceDefaultStateDAO.findByServiceAndTemplate(service.getId(), template.getId());
 		
 		if (esds == null) {
 			esds = this.createServiceDefaultState(templateName, serviceName, newServiceDefaultState);
@@ -58,8 +61,8 @@ public class ServiceDefaultStateHandler {
 		RESTAssert.assertNotNull(eService);
 		
 		EServiceDefaultState newEntity = new EServiceDefaultState();
-		newEntity.setTemplate(eTemplate);
-		newEntity.setService(eService);
+		newEntity.setTemplateId(eTemplate.getId());
+		newEntity.setServiceId(eService.getId());
 		newEntity.setState(state);
 		
 		return this.serviceDefaultStateDAO.save(newEntity);

@@ -5,7 +5,6 @@ import de.cinovo.cloudconductor.server.dao.ISSHKeyDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ESSHKey;
 import de.cinovo.cloudconductor.server.model.ETemplate;
-import de.taimos.restutils.RESTAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,46 +12,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
- * 
- * @author mweise
  *
+ * @author mweise
  */
 @Service
 public class SSHHandler {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(SSHHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SSHHandler.class);
 	
 	@Autowired
 	private ISSHKeyDAO sshKeyDao;
-	
 	@Autowired
 	private ITemplateDAO templateDao;
 	
 	
 	/**
-	 * @param templateName the name of the template
+	 * @param template the template
 	 * @return set of SSH keys for the given template
 	 */
-	public Set<SSHKey> getSSHKeyForTemplate(String templateName) {
-		ETemplate template = this.templateDao.findByName(templateName);
-		RESTAssert.assertNotNull(template);
-		
-		Set<SSHKey> result = new HashSet<>();
-		for (ESSHKey key : template.getSshkeys()) {
-			result.add(key.toApi());
-		}
-		
-		return result;
+	public Set<SSHKey> getSSHKeyForTemplate(ETemplate template) {
+		return this.sshKeyDao.findByTemplate(template).stream().map(k -> k.toApi(this.templateDao)).collect(Collectors.toSet());
 	}
 	
 	/**
-	 * @param entityKey the existing ssh key entity
+	 * @param entityKey     the existing ssh key entity
 	 * @param updatedSSHKey the updated ssh key
 	 * @return the updated ssh key entity
 	 */
@@ -80,12 +69,8 @@ public class SSHHandler {
 		entityKey.setLastChangedDate(new Date().getTime());
 		
 		entityKey.setTemplates(new ArrayList<>());
-		if(newSSHKey.getTemplates() != null) {
-			for(ETemplate template : this.templateDao.findList()) {
-				if(newSSHKey.getTemplates().contains(template.getName())) {
-					entityKey.getTemplates().add(template);
-				}
-			}
+		if (newSSHKey.getTemplates() != null) {
+			entityKey.getTemplates().addAll(this.templateDao.findByName(newSSHKey.getTemplates()).stream().map(ETemplate::getId).collect(Collectors.toList()));
 		}
 	}
 }

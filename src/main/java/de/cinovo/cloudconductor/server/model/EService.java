@@ -8,9 +8,9 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
@@ -19,29 +19,41 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
 import de.taimos.dvalin.jpa.IEntity;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "service", schema = "cloudconductor")
-public class EService extends AModelApiConvertable<Service> implements IEntity<Long>, INamed {
+public class EService implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private String name;
 	private String description;
 	private String initScript;
-	private List<EPackage> packages = new ArrayList<>();
+	private List<Long> packages = new ArrayList<>();
 	
 	
 	@Override
@@ -91,17 +103,17 @@ public class EService extends AModelApiConvertable<Service> implements IEntity<L
 	/**
 	 * @return the packages
 	 */
-	@ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.LAZY)
-	@JoinTable(name = "mappingsvcpkg", schema = "cloudconductor", //
-	joinColumns = @JoinColumn(name = "svcid"), inverseJoinColumns = @JoinColumn(name = "pkgid"))
-	public List<EPackage> getPackages() {
+	@ElementCollection(fetch = FetchType.LAZY, targetClass = Long.class)
+	@CollectionTable(schema = "cloudconductor", name = "mappingsvcpkg", joinColumns = {@JoinColumn(name = "svcid")})
+	@Column(name = "pkgid")
+	public List<Long> getPackages() {
 		return this.packages;
 	}
 	
 	/**
 	 * @param packages the packages to set
 	 */
-	public void setPackages(List<EPackage> packages) {
+	public void setPackages(List<Long> packages) {
 		this.packages = packages;
 	}
 	
@@ -126,10 +138,7 @@ public class EService extends AModelApiConvertable<Service> implements IEntity<L
 			return false;
 		}
 		EService other = (EService) obj;
-		if (this.getName().equals(other.getName()) && this.id.equals(other.getId())) {
-			return true;
-		}
-		return false;
+		return this.getName().equals(other.getName()) && this.id.equals(other.getId());
 	}
 	
 	@Override
@@ -138,17 +147,22 @@ public class EService extends AModelApiConvertable<Service> implements IEntity<L
 		int idVal = (this.getId() == null) ? 0 : this.getId().hashCode();
 		return val * idVal;
 	}
-
-	@Override
+	
+	
+	/**
+	 * @param packageDAO the package dao
+	 * @return the api object
+	 */
 	@Transient
-	public Class<Service> getApiClass() {
-		return Service.class;
-	}
-
-	@Override
-	public Service toApi() {
-		Service service = super.toApi();
-		service.setPackages(this.namedModelToStringSet(this.packages));
+	public Service toApi(IPackageDAO packageDAO) {
+		Service service = new Service();
+		service.setId(this.id);
+		service.setName(this.name);
+		service.setDescription(this.description);
+		service.setInitScript(this.initScript);
+		if (packageDAO != null) {
+			service.setPackages(packageDAO.findByIds(new ArrayList<>(this.packages)).stream().map(EPackage::getName).collect(Collectors.toSet()));
+		}
 		return service;
 	}
 }

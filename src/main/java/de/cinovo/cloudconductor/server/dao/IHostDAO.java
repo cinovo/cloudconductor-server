@@ -8,27 +8,25 @@ package de.cinovo.cloudconductor.server.dao;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  * #L%
  */
 
-import java.util.List;
-
-import de.cinovo.cloudconductor.api.model.SimpleHost;
 import de.cinovo.cloudconductor.server.model.EHost;
 import de.taimos.dvalin.jpa.IEntityDAO;
+
+import java.util.List;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
 	
@@ -44,20 +42,14 @@ public interface IHostDAO extends IEntityDAO<EHost, Long>, IFindNamed<EHost> {
 	EHost findByUuid(String uuid);
 	
 	/**
-	 * 
-	 * @param templateName the name of the template
+	 * @param templateId the id of the template
 	 * @return list of hosts with given template
 	 */
-	List<EHost> findHostsForTemplate(String templateName);
+	List<EHost> findHostsForTemplate(Long templateId);
 	
 	/**
-	 * @return a list of simple hosts
+	 * @param templateId the template id
+	 * @return the number of hosts of a template
 	 */
-	List<SimpleHost> findSimpleHosts();
-	
-	/**
-	 * @param id the host id
-	 * @return a list of simple hosts
-	 */
-	SimpleHost findSimpleHost(Long id);
+	Long countForTemplate(Long templateId);
 }

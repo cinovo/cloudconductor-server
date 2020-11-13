@@ -43,7 +43,7 @@ public class AuthHandler {
 	 */
 	public AuthenticatedUserWithToken getCurrentAuthenticatedUser() {
 		IUser currentUser = this.rsContext.getCurrentUser();
-		if ((currentUser == null) || !(currentUser instanceof AuthenticatedUserWithToken)) {
+		if (!(currentUser instanceof AuthenticatedUserWithToken)) {
 			return null;
 		}
 		return (AuthenticatedUserWithToken) currentUser;
@@ -51,7 +51,7 @@ public class AuthHandler {
 	
 	/**
 	 * @param username the username
-	 * @param password the passwort
+	 * @param password the password
 	 * @return the corresponding user
 	 */
 	public EUser getUser(String username, String password) {
@@ -71,9 +71,9 @@ public class AuthHandler {
 	 */
 	public EUser getUser(String token) {
 		EAuthToken authToken = this.authTokenDAO.findByToken(token);
-		if ((authToken == null) || (authToken.getUser() == null)) {
+		if ((authToken == null) || (authToken.getUserid() == null)) {
 			return null;
 		}
-		return authToken.getUser();
+		return this.userDAO.findById(authToken.getUserid());
 	}
 }

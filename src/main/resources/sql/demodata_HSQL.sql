@@ -42,7 +42,7 @@ INSERT INTO cloudconductor.filedata VALUES (1, 1, 'Testfile for root');
 
 INSERT INTO cloudconductor.file_template VALUES (1, 'dev');
 
-INSERT INTO cloudconductor.mappingtemplatesshkey VALUES (1, 1, 1);
+INSERT INTO cloudconductor.mappingtemplatesshkey VALUES (1, 1);
 
 INSERT INTO cloudconductor.service VALUES (1, 'postgresql-9.2', 'postgresql-9.2', 'postgresql-9.2');
 INSERT INTO cloudconductor.service VALUES (2, 'nginx', 'nginx', 'nginx');
@@ -80,12 +80,12 @@ INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', 1);
 
 INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1, '123123-123123-123123');
 
-INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6');
-INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6');
-INSERT INTO cloudconductor.packageversion VALUES (3, 5, NULL, '9.2.4-1PGDG.rhel6');
-INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1');
-INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs');
-INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1');
+INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92');
+INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92-libs');
+INSERT INTO cloudconductor.packageversion VALUES (3, 5, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92-server');
+INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1', 'nginx');
+INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs', 'jdk');
+INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1', 'nodejs');
 
 INSERT INTO cloudconductor.map_version_repo VALUES (1,1);
 INSERT INTO cloudconductor.map_version_repo VALUES (2,1);
@@ -94,14 +94,14 @@ INSERT INTO cloudconductor.map_version_repo VALUES (4,1);
 INSERT INTO cloudconductor.map_version_repo VALUES (5,1);
 INSERT INTO cloudconductor.map_version_repo VALUES (6,1);
 
-INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1, 1);
-INSERT INTO cloudconductor.mappingrpmtemplate VALUES (2, 1, 2);
-INSERT INTO cloudconductor.mappingrpmtemplate VALUES (3, 1, 3);
-INSERT INTO cloudconductor.mappingrpmtemplate VALUES (4, 1, 4);
-INSERT INTO cloudconductor.mappingrpmtemplate VALUES (5, 1, 5);
+INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 1);
+INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 2);
+INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 3);
+INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 4);
+INSERT INTO cloudconductor.mappingrpmtemplate VALUES (1, 5);
 
-INSERT INTO cloudconductor.mappingsvcpkg VALUES (1, 5, 1);
-INSERT INTO cloudconductor.mappingsvcpkg VALUES (2, 3, 2);
+INSERT INTO cloudconductor.mappingsvcpkg VALUES (5, 1);
+INSERT INTO cloudconductor.mappingsvcpkg VALUES (3, 2);
 
 UPDATE cloudconductor.template SET smoothupdate=true WHERE id=1;
 

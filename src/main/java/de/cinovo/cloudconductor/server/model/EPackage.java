@@ -8,47 +8,45 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  * #L%
  */
 
-import java.util.Set;
+import de.cinovo.cloudconductor.api.interfaces.INamed;
+import de.cinovo.cloudconductor.api.model.Package;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
+import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.interfaces.INamed;
-import de.cinovo.cloudconductor.api.model.Package;
-import de.taimos.dvalin.jpa.IEntity;
+import java.util.stream.Collectors;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "package", schema = "cloudconductor")
-public class EPackage extends AModelApiConvertable<Package> implements IEntity<Long>, INamed {
+public class EPackage implements IEntity<Long>, INamed {
 	
 	private static final long serialVersionUID = 1L;
+	
 	private Long id;
 	private String name;
 	private String description;
-	private Set<EPackageVersion> versions;
 	
 	
 	@Override
@@ -95,21 +93,6 @@ public class EPackage extends AModelApiConvertable<Package> implements IEntity<L
 		this.description = description;
 	}
 	
-	/**
-	 * @return the versions
-	 */
-	@OneToMany(mappedBy = "pkg", fetch = FetchType.EAGER)
-	public Set<EPackageVersion> getVersions() {
-		return this.versions;
-	}
-	
-	/**
-	 * @param rpms the versions to set
-	 */
-	public void setVersions(Set<EPackageVersion> rpms) {
-		this.versions = rpms;
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof EPackage)) {
@@ -126,18 +109,18 @@ public class EPackage extends AModelApiConvertable<Package> implements IEntity<L
 	public int hashCode() {
 		return (this.getName() == null) ? 0 : this.getName().hashCode();
 	}
-
-	@Override
+	
+	
+	/**
+	 * @param pvDao the package version dao
+	 * @return the api object
+	 */
 	@Transient
-	public Class<Package> getApiClass() {
-		return Package.class;
-	}
-
-	@Override
-	@Transient
-	public Package toApi() {
-		Package ret = super.toApi();
-		ret.setVersions(this.namedModelToStringSet(this.versions));
+	public Package toApi(IPackageVersionDAO pvDao) {
+		Package ret = GenericModelApiConverter.convert(this, Package.class);
+		if (pvDao != null) {
+			ret.setVersions(pvDao.findByPackage(this.getId()).stream().map(EPackageVersion::getName).collect(Collectors.toSet()));
+		}
 		return ret;
 	}
 }

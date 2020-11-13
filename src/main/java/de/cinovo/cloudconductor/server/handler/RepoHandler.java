@@ -7,7 +7,6 @@ import de.cinovo.cloudconductor.server.dao.IRepoMirrorDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
-import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.repo.indexer.IRepoIndexer;
 import de.cinovo.cloudconductor.server.repo.indexer.IndexFileIndexer;
 import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
@@ -24,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -36,51 +32,65 @@ import java.util.Objects;
  */
 @Service
 public class RepoHandler {
-
+	
 	@Autowired
 	private IRepoMirrorDAO repoMirrorDAO;
 	@Autowired
 	private IRepoDAO repoDAO;
 	@Autowired
 	private ITemplateDAO templateDAO;
-
+	
 	@Autowired
 	private IServerRepoTaskHandler repoTaskHandler;
-
-
+	
+	/**
+	 * @param repoName the name of the repo
+	 * @return provider for given repo
+	 */
+	@Transactional
+	public IRepoProvider findRepoProvider(String repoName) {
+		ERepo erepo = this.repoDAO.findByName(repoName);
+		if (erepo == null) {
+			return null;
+		}
+		ERepoMirror primaryMirror = this.findPrimaryMirror(erepo);
+		return this.findRepoProvider(primaryMirror, erepo);
+	}
+	
 	/**
 	 * @param mirror the mirror you want the repo provider for
+	 * @param erepo  the repo of the mirror
 	 * @return the repo provider
 	 */
-	public IRepoProvider findRepoProvider(ERepoMirror mirror) {
-		if(mirror == null) {
+	public IRepoProvider findRepoProvider(ERepoMirror mirror, ERepo erepo) {
+		if (mirror == null) {
 			return null;
 		}
 		try {
-			switch(mirror.getProviderType()) {
+			switch (mirror.getProviderType()) {
 				case AWSS3:
-					return new AWSS3Provider(mirror);
+					return new AWSS3Provider(mirror, erepo);
 				case FILE:
-					return new FileProvider(mirror);
+					return new FileProvider(mirror, erepo);
 				case HTTP:
-					return new HTTPProvider(mirror);
+					return new HTTPProvider(mirror, erepo);
 				default:
 					return null;
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
-
+	
 	/**
 	 * @param mirror the mirror you want the repo indexer for
 	 * @return the repo indexer
 	 */
 	public IRepoIndexer findRepoIndexer(ERepoMirror mirror) {
-		if(mirror == null) {
+		if (mirror == null) {
 			return null;
 		}
-		switch(mirror.getIndexerType()) {
+		switch (mirror.getIndexerType()) {
 			case FILE:
 				return new IndexFileIndexer();
 			case RPM:
@@ -89,57 +99,62 @@ public class RepoHandler {
 				return null;
 		}
 	}
-
+	
 	/**
 	 * @param newMirror the repo mirror to save
 	 * @return the saved repo mirror
 	 */
 	public ERepoMirror createMirror(RepoMirror newMirror) {
 		ERepoMirror emirror = this.createEntity(newMirror);
-
+		
 		ERepo erepo = this.updatePrimaryMirrorOfRepo(newMirror.getRepo(), emirror.getId());
 		// trigger repo index tasks
 		this.repoTaskHandler.newRepo(erepo);
-
+		
 		return emirror;
 	}
-
+	
+	/**
+	 * @param repoName the repo name
+	 * @param id       the mirror id
+	 * @return the saved repo
+	 */
 	@Transactional
-	private ERepo updatePrimaryMirrorOfRepo(String repoName, Long id) {
+	public ERepo updatePrimaryMirrorOfRepo(String repoName, Long id) {
 		RESTAssert.assertNotEmpty(repoName);
 		RESTAssert.assertNotNull(id);
-
+		
 		ERepo erepo = this.repoDAO.findByName(repoName);
-
+		Long mirrorCount = this.repoMirrorDAO.countForRepo(erepo.getId());
 		// set to primary if this is the first mirror
-		if(erepo.getRepoMirrors().size() == 1) {
+		if (mirrorCount == 1) {
 			erepo.setPrimaryMirrorId(id);
 			erepo = this.repoDAO.save(erepo);
 		}
-
+		
 		return erepo;
 	}
-
+	
 	/**
 	 * @param mirror the data
 	 * @return the saved entity
 	 * @throws WebApplicationException on error
 	 */
 	@Transactional
-	private ERepoMirror createEntity(RepoMirror mirror) throws WebApplicationException {
+	public ERepoMirror createEntity(RepoMirror mirror) throws WebApplicationException {
 		String repoName = mirror.getRepo();
 		ERepo erepo = this.repoDAO.findByName(repoName);
-		if(erepo == null) {
-			throw new NotFoundException("Repo '" + repoName + "' not found!");
+		if (erepo == null) {
+			throw new NotFoundException(String.format("Repo '%s' not found!", repoName));
 		}
-
+		
 		ERepoMirror emirror = new ERepoMirror();
-		emirror = this.fillFields(emirror, erepo, mirror);
+		this.fillFields(emirror, erepo, mirror);
 		RESTAssert.assertNotNull(emirror);
-
+		
 		return this.repoMirrorDAO.save(emirror);
 	}
-
+	
 	/**
 	 * @param updatedMirror the updated mirror
 	 * @return the saved mirror
@@ -147,16 +162,16 @@ public class RepoHandler {
 	public ERepoMirror updateMirror(RepoMirror updatedMirror) {
 		ERepoMirror emirror = this.repoMirrorDAO.findById(updatedMirror.getId());
 		RESTAssert.assertNotNull(emirror);
-
+		
 		ERepoMirror saved = this.updateEntity(emirror, updatedMirror);
 		RESTAssert.assertNotNull(saved);
-
+		
 		ERepo erepo = this.repoDAO.findByName(updatedMirror.getRepo());
 		this.repoTaskHandler.newRepo(erepo);
-
+		
 		return saved;
 	}
-
+	
 	/**
 	 * @param emirror the entity to update
 	 * @param mirror  the update data
@@ -164,145 +179,94 @@ public class RepoHandler {
 	 * @throws WebApplicationException on error
 	 */
 	@Transactional
-	private ERepoMirror updateEntity(ERepoMirror emirror, RepoMirror mirror) throws WebApplicationException {
+	public ERepoMirror updateEntity(ERepoMirror emirror, RepoMirror mirror) throws WebApplicationException {
 		String repoName = mirror.getRepo();
 		ERepo erepo = this.repoDAO.findByName(repoName);
-		if(erepo == null) {
-			throw new NotFoundException("Repo '" + repoName + "' not found!");
+		if (erepo == null) {
+			throw new NotFoundException(String.format("Repo '%s' not found!", repoName));
 		}
-
+		
 		ERepoMirror entity = this.fillFields(emirror, erepo, mirror);
 		RESTAssert.assertNotNull(entity);
 		return this.repoMirrorDAO.save(entity);
 	}
-
+	
 	/**
 	 * @param repo the repo entity
 	 * @return whether the mirror is in use by a template or not
 	 */
 	public boolean checkIfInUse(ERepo repo) {
-		List<ETemplate> templates = this.templateDAO.findByRepo(repo);
-		return !templates.isEmpty();
+		return this.templateDAO.countUsingRepo(repo) > 0;
 	}
-
+	
 	/**
 	 * @param newRepo the new repository
 	 * @return the saved repository
 	 */
-	public ERepo createRepo(Repo newRepo) {
-		ERepo erepo = this.createEntity(newRepo);
-		this.repoTaskHandler.newRepo(erepo);
-
-		return erepo;
-	}
-
-	/**
-	 * @param repo the data
-	 * @return the saved entity
-	 * @throws WebApplicationException on error
-	 */
 	@Transactional
-	private ERepo createEntity(Repo repo) throws WebApplicationException {
-		ERepo existing = this.repoDAO.findByName(repo.getName());
-		RESTAssert.assertTrue(existing == null);
-
-		ERepo newRepo = new ERepo();
-		newRepo = this.fillFields(newRepo, repo);
-		RESTAssert.assertNotNull(newRepo);
-		return this.repoDAO.save(newRepo);
+	public ERepo createRepo(Repo newRepo) {
+		RESTAssert.assertFalse(this.repoDAO.exists(newRepo.getName()));
+		
+		ERepo eRepo = new ERepo();
+		this.fillFields(eRepo, newRepo);
+		ERepo savedRepo = this.repoDAO.save(eRepo);
+		RESTAssert.assertNotNull(savedRepo);
+		this.repoTaskHandler.newRepo(savedRepo);
+		return savedRepo;
 	}
-
+	
 	/**
 	 * @param updatedRepo the updated Repo
-	 * @return the saved repo
-	 */
-	public ERepo updateRepo(Repo updatedRepo) {
-		ERepo saved = this.updateEntity(updatedRepo);
-		this.repoTaskHandler.newRepo(saved);
-
-		return saved;
-	}
-
-	/**
-	 * @param erepo the entity to update
-	 * @param repo  the update data
-	 * @return the updated, saved entity
-	 * @throws WebApplicationException on error
 	 */
 	@Transactional
-	private ERepo updateEntity(Repo repo) throws WebApplicationException {
-		ERepo erepo = this.repoDAO.findById(repo.getId());
+	public void updateRepo(Repo updatedRepo) {
+		ERepo erepo = this.repoDAO.findById(updatedRepo.getId());
 		RESTAssert.assertNotNull(erepo);
-
-		ERepo entity = this.fillFields(erepo, repo);
-		RESTAssert.assertNotNull(entity);
-		ERepo saved = this.repoDAO.save(entity);
-
-		return saved;
+		
+		ERepo eRepo = this.fillFields(erepo, updatedRepo);
+		ERepo saved = this.repoDAO.save(eRepo);
+		RESTAssert.assertNotNull(saved);
+		
+		this.repoTaskHandler.newRepo(saved);
 	}
-
+	
 	/**
-	 * Deletes a repo and its sub mirrors
+	 * Deletes a repo and all its mirrors
 	 *
 	 * @param erepo the repo to delete
-	 * @throws WebApplicationException on error
 	 */
-	public void deleteEntity(ERepo erepo) throws WebApplicationException {
-		if(this.checkIfInUse(erepo)) {
-			throw new WebApplicationException("Repository '" + erepo.getName() + "' is still used by a template!", Status.CONFLICT);
+	public void deleteEntity(ERepo erepo) {
+		if (this.checkIfInUse(erepo)) {
+			throw new WebApplicationException(String.format("Repository '%s' is still used by a template!", erepo.getName()), Status.CONFLICT);
 		}
-		if((erepo.getRepoMirrors() != null) && !erepo.getRepoMirrors().isEmpty()) {
-			for(ERepoMirror mirror : erepo.getRepoMirrors()) {
-				this.repoMirrorDAO.delete(mirror);
-			}
-		}
+		
+		long id = erepo.getId();
+		this.repoMirrorDAO.deleteForRepo(erepo);
 		this.repoDAO.delete(erepo);
-		this.repoTaskHandler.deleteRepo(erepo.getId());
+		this.repoTaskHandler.deleteRepo(id);
 	}
-
-	/**
-	 * @param repo the repo
-	 * @return list of all mirrors provided by the repo
-	 */
-	public List<ERepoMirror> getRepoMirrors(Repo repo) {
-		List<ERepoMirror> mirrors = new ArrayList<>();
-		for(RepoMirror mirror : repo.getMirrors()) {
-			ERepoMirror emirror = this.repoMirrorDAO.findById(mirror.getId());
-			if(emirror != null) {
-				mirrors.add(emirror);
-			}
-		}
-		return mirrors;
-	}
-
+	
 	/**
 	 * @param repo the repo
 	 * @return the primary mirror of that repo
 	 */
 	public ERepoMirror findPrimaryMirror(ERepo repo) {
-		for(ERepoMirror mirror : repo.getRepoMirrors()) {
-			if(Objects.equals(mirror.getId(), repo.getPrimaryMirrorId())) {
-				return mirror;
-			}
-		}
-		return repo.getRepoMirrors().isEmpty() ? null : repo.getRepoMirrors().iterator().next();
+		return this.repoMirrorDAO.findById(repo.getPrimaryMirrorId());
 	}
-
+	
 	private ERepo fillFields(ERepo eRepo, Repo repo) {
-		if((repo.getName() != null) && !repo.getName().isEmpty()) {
+		if ((repo.getName() != null) && !repo.getName().isEmpty()) {
 			eRepo.setName(repo.getName());
 		}
-		List<ERepoMirror> mirrors = this.getRepoMirrors(repo);
-		eRepo.setRepoMirrors(mirrors);
 		eRepo.setPrimaryMirrorId(repo.getPrimaryMirror());
-		if((repo.getMirrors() != null) && (this.findPrimaryMirror(eRepo) == null)) {
+		if ((repo.getMirrors() != null) && (this.findPrimaryMirror(eRepo) == null)) {
 			eRepo.setPrimaryMirrorId(null);
 		}
 		return eRepo;
 	}
-
+	
 	private ERepoMirror fillFields(ERepoMirror emirror, ERepo erepo, RepoMirror mirror) {
-		emirror.setRepo(erepo);
+		emirror.setRepoId(erepo.getId());
 		emirror.setAccessKeyId(mirror.getAccessKeyId());
 		emirror.setAwsRegion(mirror.getAwsRegion());
 		emirror.setBasePath(mirror.getBasePath());

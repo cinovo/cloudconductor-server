@@ -42,28 +42,51 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 
 	@Override
 	public EService findByName(String name) {
-		return this.findByQuery("FROM EService s WHERE s.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM EService AS s WHERE s.name = ?1", name);
+	}
+
+	@Override
+	public int deleteByName(String serviceName) {
+		// language=HQL
+		return this.entityManager.createQuery("DELETE FROM EService AS s WHERE s.name = ?1").setParameter(1, serviceName).executeUpdate();
+	}
+
+	@Override
+	public boolean exists(String serviceName) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(s) FROM EService AS s WHERE s.name = ?1", Long.class).setParameter(1, serviceName).getSingleResult() > 0;
 	}
 
 	@Override
 	public List<EService> findByName(Set<String> names) {
-		StringBuilder find = new StringBuilder();
-		find.append("(");
-		for(String n : names) {
-			find.append("'" + n + "'");
-		}
-		find.append(")");
-		return this.findListByQuery("FROM EService s WHERE s.name IN ?1", find);
+		// language=HQL
+		return this.findListByQuery("FROM EService AS s WHERE s.name IN ?1", names);
 	}
 
 	@Override
 	public List<EService> findByPackage(EPackage pkg) {
-		return this.findListByQuery("FROM EService s WHERE ?1 in elements(s.packages)", pkg);
+		// language=HQL
+		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkg.getId());
 	}
-
+	
+	@Override
+	public List<EService> findByPackage(Long pkgId) {
+		// language=HQL
+		return this.findListByQuery("FROM EService AS s WHERE ?1 in elements(s.packages)", pkgId);
+	}
+	
+	@Override
+	public String findNameById(Long serviceId) {
+		// language=HQL
+		String q = "SELECT s.name FROM EService AS s WHERE s.id = ?1";
+		return this.entityManager.createQuery(q, String.class).setParameter(1, serviceId).getSingleResult();
+	}
+	
 	@Override
 	public Long count() {
-		return (Long) this.entityManager.createQuery("SELECT COUNT(*) FROM EService").getSingleResult();
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(s) FROM EService AS s", Long.class).getSingleResult();
 	}
 
 }

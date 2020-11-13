@@ -1,24 +1,24 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
+import de.cinovo.cloudconductor.api.enums.RepoProviderType;
+import de.cinovo.cloudconductor.server.model.ERepo;
+import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import de.cinovo.cloudconductor.server.repo.RepoEntry;
+import de.taimos.httputils.HTTPResponse;
+import de.taimos.httputils.WS;
+import de.taimos.httputils.WSConstants;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Date;
 import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-
-import de.cinovo.cloudconductor.api.enums.RepoProviderType;
-import de.cinovo.cloudconductor.server.model.ERepoMirror;
-import de.cinovo.cloudconductor.server.repo.RepoEntry;
-import de.taimos.httputils.HTTPResponse;
-import de.taimos.httputils.WS;
-import de.taimos.httputils.WSConstants;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -28,13 +28,16 @@ import de.taimos.httputils.WSConstants;
  */
 public class HTTPProvider implements IRepoProvider {
 	
+	private final ERepo repo;
 	private ERepoMirror mirror;
 	
 	
 	/**
 	 * @param mirror the mirror to contact
+	 * @param erepo the repo of the mirror
 	 */
-	public HTTPProvider(ERepoMirror mirror) {
+	public HTTPProvider(ERepoMirror mirror, ERepo erepo) {
+		this.repo = erepo;
 		if (mirror.getProviderType() == RepoProviderType.HTTP) {
 			this.mirror = mirror;
 		}
@@ -52,33 +55,24 @@ public class HTTPProvider implements IRepoProvider {
 	
 	@Override
 	public RepoEntry getEntry(String key) {
-		if ((this.mirror != null) && (this.mirror.getBasePath() != null)) {
-			try (HTTPResponse response = WS.url(this.getUrl(key)).get()) {
-				RepoEntry e = new RepoEntry();
-				e.setDirectory(false);
-				e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
-				e.setSize(this.getSize(response));
-				e.setModified(new Date());
-				e.setChecksum(this.getChecksum(response));
-				e.setContentType(this.getType(response));
-				return e;
-			}
+		if ((this.mirror == null) || (this.mirror.getBasePath() == null)) {
+			return null;
 		}
-		return null;
+
+		try (HTTPResponse response = WS.url(this.getUrl(key)).get()) {
+			RepoEntry e = new RepoEntry();
+			e.setDirectory(false);
+			e.setName(key.substring(Math.max(0, key.lastIndexOf("/") + 1)));
+			e.setSize(this.getSize(response));
+			e.setModified(new Date());
+			e.setChecksum(this.getChecksum(response));
+			e.setContentType(this.getType(response));
+			return e;
+		}
 	}
 	
 	private String getUrl(String key) {
-		StringBuilder url = new StringBuilder();
-		url.append(this.mirror.getBasePath());
-		if (!this.mirror.getBasePath().endsWith("/")) {
-			url.append("/");
-		}
-		if (key.startsWith("/")) {
-			url.append(key.substring(1));
-		} else {
-			url.append(key);
-		}
-		return url.toString();
+		return UriBuilder.fromPath(this.mirror.getBasePath()).path(key).build().toString();
 	}
 	
 	private String getType(HTTPResponse response) {
@@ -121,28 +115,30 @@ public class HTTPProvider implements IRepoProvider {
 		if (sizeHeader != null) {
 			String size = sizeHeader.getValue();
 			if ((size != null) && size.matches("[0-9]+")) {
-				return Long.valueOf(size);
+				return Long.parseLong(size);
 			}
 		}
 		return 0;
 	}
 	
 	@Override
-	public InputStream getEntryStream(String key) {
-		HTTPResponse response = WS.url(this.mirror.getBasePath() + key).get();
+	public InputStream getEntryStream(String relativeFilePath) {
+		String url = this.getUrl(relativeFilePath);
+		HTTPResponse response = WS.url(url).get();
 		HttpEntity entity = response.getResponse().getEntity();
-		if (entity != null) {
-			try {
-				return entity.getContent();
-			} catch (IllegalStateException | IOException e) {
-				throw new RuntimeException("Failed to createEntity stream", e);
-			}
+		if (entity == null) {
+			throw new RuntimeException(String.format("No HTTP entity in Response for '%s'", url));
 		}
-		throw new RuntimeException("HTTP entity was null");
+
+		try {
+			return entity.getContent();
+		} catch (IllegalStateException | IOException e) {
+			throw new RuntimeException(String.format("Failed to create entity stream for response of '%s': ", url), e);
+		}
 	}
 	
 	@Override
 	public String getRepoName() {
-		return this.mirror.getRepo().getName();
+		return this.repo.getName();
 	}
 }

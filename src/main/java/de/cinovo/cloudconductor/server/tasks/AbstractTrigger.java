@@ -1,11 +1,11 @@
 package de.cinovo.cloudconductor.server.tasks;
 
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.TriggerContext;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
-
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.TriggerContext;
 
 /**
  * Copyright 2018 Cinovo AG<br>
@@ -18,7 +18,7 @@ public abstract class AbstractTrigger implements Trigger {
 	protected SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	private boolean isCancelled = false;
 	private ScheduledFuture<?> future;
-	private IServerTasks task;
+	private final IServerTasks task;
 	
 	
 	/**

@@ -46,7 +46,7 @@ public class AgentImpl implements IAgent {
 		RESTAssert.assertNotNull(serviceState);
 		RESTAssert.assertNotEmpty(uuid);
 
-		return this.agentHandler.handleServiceState(host, template, serviceState, uuid);
+		return this.agentHandler.handleServiceState(template, serviceState, uuid);
 	}
 	
 	@Override

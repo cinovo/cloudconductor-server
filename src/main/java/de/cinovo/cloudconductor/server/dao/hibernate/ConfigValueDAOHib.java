@@ -73,7 +73,7 @@ public class ConfigValueDAOHib extends EntityDAOHibernate<EConfigValue, Long> im
 	
 	@Override
 	public List<String> findTemplates() {
-		List<String> result = this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES).getResultList();
+		List<String> result = this.entityManager.createQuery(ConfigValueDAOHib.TEMPLATES, String.class).getResultList();
 		if (!result.contains(ConfigValueDAOHib.RESERVED_GLOBAL)) {
 			result.add(ConfigValueDAOHib.RESERVED_GLOBAL);
 		}

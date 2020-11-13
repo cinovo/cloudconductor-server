@@ -25,7 +25,7 @@ public class ReservedConfigKeyStore {
 	 */
 	public static ReservedConfigKeyStore instance = new ReservedConfigKeyStore();
 	
-	private Map<String, String> reserved = new HashMap<>();
+	private final Map<String, String> reserved = new HashMap<>();
 	
 	
 	private ReservedConfigKeyStore() {

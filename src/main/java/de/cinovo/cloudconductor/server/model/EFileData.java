@@ -19,13 +19,11 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.taimos.dvalin.jpa.IEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -42,7 +40,7 @@ public class EFileData implements IEntity<Long> {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private EFile parent;
+	private Long parent;
 	private String data;
 	
 	@Override
@@ -62,16 +60,15 @@ public class EFileData implements IEntity<Long> {
 	/**
 	 * @return the parent
 	 */
-	@OneToOne(optional = true, fetch = FetchType.LAZY)
-	@JoinColumn(name = "fileid")
-	public EFile getParent() {
+	@Column(name = "fileid")
+	public Long getParent() {
 		return this.parent;
 	}
 	
 	/**
 	 * @param parent the parent to set
 	 */
-	public void setParent(EFile parent) {
+	public void setParent(Long parent) {
 		this.parent = parent;
 	}
 	

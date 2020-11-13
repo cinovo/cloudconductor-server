@@ -19,12 +19,10 @@ package de.cinovo.cloudconductor.server.dao.hibernate;
 
 import de.cinovo.cloudconductor.server.dao.IFileDAO;
 import de.cinovo.cloudconductor.server.model.EFile;
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.taimos.dvalin.jpa.EntityDAOHibernate;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,7 +30,6 @@ import java.util.List;
  * <br>
  *
  * @author psigloch
- *
  */
 @Repository("FileDAOHib")
 public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFileDAO {
@@ -44,25 +41,31 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 	
 	@Override
 	public EFile findByName(String name) {
-		return this.findByQuery("FROM EFile c WHERE c.name = ?1", name);
+		// language=HQL
+		return this.findByQuery("FROM EFile AS f WHERE f.name = ?1", name);
+	}
+	
+	@Override
+	public boolean exists(String fileName) {
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(f) FROM EFile AS f WHERE f.name = ?1", Long.class).setParameter(1, fileName).getSingleResult() > 0;
 	}
 	
 	@Override
 	public Long count() {
-		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
-		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-		query.select(builder.count(query.from(EFile.class)));
-		return this.entityManager.createQuery(query).getSingleResult();
-	}
-	
-	@Override
-	public List<EFile> findByTag(String... tagnames) {
-		String query = "FROM EFile f WHERE f.tags.name IN ?1";
-		return this.findListByQuery(query,  Arrays.asList(tagnames));
+		// language=HQL
+		return this.entityManager.createQuery("SELECT COUNT(f) FROM EFile AS f", Long.class).getSingleResult();
 	}
 	
 	@Override
 	public List<EFile> findByTemplate(String templateName) {
-		return this.findListByQuery("FROM EFile f WHERE ?1 MEMBER OF f.templates", templateName);
+		// language=HQL
+		return this.findListByQuery("FROM EFile AS f WHERE ?1 in elements(f.templates)", templateName);
+	}
+	
+	@Override
+	public List<EFile> findByPackage(EPackage pkg) {
+		// language=HQL
+		return this.findListByQuery("FROM EFile AS f WHERE f.pkgId = ?1", pkg.getId());
 	}
 }

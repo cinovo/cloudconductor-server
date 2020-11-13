@@ -3,16 +3,19 @@ package de.cinovo.cloudconductor.server.dao;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.taimos.dvalin.jpa.IEntityDAO;
 
+import java.util.List;
+
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
  *
  * @author psigloch
  */
-public interface IUserGroupDAO extends IEntityDAO<EUserGroup, Long> {
+public interface IUserGroupDAO extends IEntityDAO<EUserGroup, Long>, IFindNamed<EUserGroup> {
 	/**
-	 * @param groupName the group name
-	 * @return the group
+	 * @param userGroup the user group ids
+	 * @return the user groups
 	 */
-	EUserGroup findByName(String groupName);
+	List<EUserGroup> findByIds(Iterable<Long> userGroup);
+	
 }

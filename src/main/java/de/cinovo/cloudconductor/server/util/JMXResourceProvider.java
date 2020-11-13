@@ -1,5 +1,15 @@
 package de.cinovo.cloudconductor.server.util;
 
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
+import de.cinovo.cloudconductor.server.model.EHost;
+import de.cinovo.cloudconductor.server.model.EServiceState;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -10,17 +20,6 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.ReflectionException;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
-import de.cinovo.cloudconductor.server.dao.IServiceStateDAO;
-import de.cinovo.cloudconductor.server.model.EHost;
-import de.cinovo.cloudconductor.server.model.EServiceState;
 
 /**
  * Copyright 2014 Cinovo AG<br>
@@ -70,13 +69,13 @@ public class JMXResourceProvider implements DynamicMBean {
 	@Override
 	public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException, ReflectionException {
 		switch (attribute) {
-		case SERVICES_STOPPED:
+		case JMXResourceProvider.SERVICES_STOPPED:
 			return this.getStoppedServices();
-		case SERVICES_RUNNING:
+		case JMXResourceProvider.SERVICES_RUNNING:
 			return this.getStartedServices();
-		case HOSTS_DOWN:
+		case JMXResourceProvider.HOSTS_DOWN:
 			return this.getDeadHosts();
-		case HOSTS_LIVE:
+		case JMXResourceProvider.HOSTS_LIVE:
 			return this.getLiveHosts();
 		}
 		

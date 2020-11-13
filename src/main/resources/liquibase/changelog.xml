@@ -1234,10 +1234,51 @@
             <column name="service" type="varchar(1024)"/>
         </createTable>
         <sql>
-            INSERT INTO cloudconductor.file_template(file_id, template) SELECT mft.fileid, t.name FROM cloudconductor.mappingfiletemplate as mft, cloudconductor.template as t WHERE mft.templateid = t.id;
-            INSERT INTO cloudconductor.file_services(file_id, service) SELECT mfs.fileid, s.name FROM cloudconductor.mappingfileservice as mfs, cloudconductor.service as s WHERE mfs.serviceid = s.id;
+            INSERT INTO cloudconductor.file_template(file_id, template) SELECT mft.fileid, t.name FROM
+            cloudconductor.mappingfiletemplate as mft, cloudconductor.template as t WHERE mft.templateid = t.id;
+            INSERT INTO cloudconductor.file_services(file_id, service) SELECT mfs.fileid, s.name FROM
+            cloudconductor.mappingfileservice as mfs, cloudconductor.service as s WHERE mfs.serviceid = s.id;
         </sql>
-        <dropTable tableName="mappingfileservice" schemaName="cloudconductor" />
-        <dropTable tableName="mappingfiletemplate" schemaName="cloudconductor" />
+        <dropTable tableName="mappingfileservice" schemaName="cloudconductor"/>
+        <dropTable tableName="mappingfiletemplate" schemaName="cloudconductor"/>
     </changeSet>
+
+    <changeSet id="41" author="psigloch">
+        <addColumn tableName="packageversion" schemaName="cloudconductor">
+            <column name="pkgname" type="varchar(255)"/>
+        </addColumn>
+        <sql>
+            UPDATE cloudconductor.packageversion as pv SET pkgname=(SELECT pk.name FROM cloudconductor.package as pk
+            WHERE pv.packageid = pk.id);
+        </sql>
+
+        <addColumn tableName="servicestate" schemaName="cloudconductor">
+            <column name="servicename" type="varchar(255)"/>
+        </addColumn>
+        <sql>
+            UPDATE cloudconductor.servicestate as ss SET serviceName=(SELECT s.name FROM cloudconductor.service as s
+            WHERE ss.serviceId = s.id);
+        </sql>
+
+        <addColumn tableName="packagestate" schemaName="cloudconductor">
+            <column name="pkgid" type="bigint"/>
+            <column name="pkgname" type="varchar(255)"/>
+            <column name="version" type="varchar(255)"/>
+        </addColumn>
+        <sql>
+            UPDATE cloudconductor.packagestate as ps SET
+            pkgid=(SELECT pv.packageid FROM cloudconductor.packageversion as pv WHERE pv.id = ps.rpmid),
+            pkgname=(SELECT pv.pkgname FROM cloudconductor.packageversion as pv WHERE pv.id = ps.rpmid),
+            version=(SELECT pv.version FROM cloudconductor.packageversion as pv WHERE pv.id = ps.rpmid);
+        </sql>
+
+        <dropColumn schemaName="cloudconductor" tableName="mappinghostsvcst" columnName="id"/>
+        <dropColumn schemaName="cloudconductor" tableName="mappingrpmdep" columnName="id"/>
+        <dropColumn schemaName="cloudconductor" tableName="mappingrpmtemplate" columnName="id"/>
+        <dropColumn schemaName="cloudconductor" tableName="mappingsvcpkg" columnName="id"/>
+        <dropColumn schemaName="cloudconductor" tableName="mappingtemplatehost" columnName="id"/>
+        <dropColumn schemaName="cloudconductor" tableName="mappingtemplatesshkey" columnName="id"/>
+
+    </changeSet>
+
 </databaseChangeLog>

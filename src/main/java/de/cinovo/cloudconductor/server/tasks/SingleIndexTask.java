@@ -25,6 +25,7 @@ import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -43,25 +44,25 @@ public class SingleIndexTask implements IServerTasks {
 	public static final String TASK_ID_PREFIX = "REPO_INDEX_TASK_REPOID_";
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private IRepoDAO repoDAO;
-	private RepoHandler repoHandler;
-	private IPackageImport packageImport;
+	private final IRepoDAO repoDAO;
+	private final RepoHandler repoHandler;
+	private final IPackageImport packageImport;
 	
-	private Long repoId;
+	private final Long repoId;
 	
-	private Integer timer;
-	private TimeUnit timerUnit;
-	private Integer delay;
+	private final Integer timer;
+	private final TimeUnit timerUnit;
+	private final Integer delay;
 	
 	
 	/**
-	 * @param repoDAO the repo dao
-	 * @param repoHandler the repo handler
+	 * @param repoDAO       the repo dao
+	 * @param repoHandler   the repo handler
 	 * @param packageImport the package import
-	 * @param repoId the repo id
-	 * @param timer the timer
-	 * @param timerUnit the timer unit
-	 * @param delay the delay in timerUnit
+	 * @param repoId        the repo id
+	 * @param timer         the timer
+	 * @param timerUnit     the timer unit
+	 * @param delay         the delay in timerUnit
 	 */
 	public SingleIndexTask(IRepoDAO repoDAO, RepoHandler repoHandler, IPackageImport packageImport, Long repoId, Integer timer, TimeUnit timerUnit, Integer delay) {
 		this.repoDAO = repoDAO;
@@ -107,7 +108,6 @@ public class SingleIndexTask implements IServerTasks {
 	
 	@Override
 	public void run() {
-
 		this.execute(false);
 	}
 	
@@ -127,7 +127,7 @@ public class SingleIndexTask implements IServerTasks {
 		}
 		
 		this.logger.debug("Start task '{}' indexing mirror '{}' of Repository '{}'", this.getTaskIdentifier(), mirror.getPath(), repo.getName());
-		String checksum = this.indexRepo(mirror, repo.getLastIndexHash(), force);
+		String checksum = this.indexRepo(repo, mirror, force);
 		if (checksum != null) {
 			repo.setLastIndex(DateTime.now().getMillis());
 			repo.setLastIndexHash(checksum);
@@ -136,9 +136,9 @@ public class SingleIndexTask implements IServerTasks {
 		this.logger.debug("End of Index Task '{}'.", this.getTaskIdentifier());
 	}
 	
-	private String indexRepo(ERepoMirror mirror, String oldChecksum, boolean force) {
+	private String indexRepo(ERepo repo, ERepoMirror mirror, boolean force) {
 		try {
-			IRepoProvider repoProvider = this.repoHandler.findRepoProvider(mirror);
+			IRepoProvider repoProvider = this.repoHandler.findRepoProvider(mirror, repo);
 			if (repoProvider == null) {
 				throw new CloudConductorException("No repo provider for mirror '" + mirror.getPath() + "'!");
 			}
@@ -150,7 +150,7 @@ public class SingleIndexTask implements IServerTasks {
 			if (entry == null) {
 				throw new CloudConductorException("No repo entry to index for mirror '" + mirror.getPath() + "' found!");
 			}
-			if ((oldChecksum != null) && oldChecksum.equals(entry.getChecksum()) && !force) {
+			if ((repo.getLastIndexHash() != null) && repo.getLastIndexHash().equals(entry.getChecksum()) && !force) {
 				this.logger.debug("Skipped repo indexing, no new files for mirror '{}'", mirror.getPath());
 				return entry.getChecksum();
 			}

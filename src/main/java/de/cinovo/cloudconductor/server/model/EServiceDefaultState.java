@@ -8,46 +8,45 @@ package de.cinovo.cloudconductor.server.model;
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
  * and limitations under the License.
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
+import de.taimos.dvalin.jpa.IEntity;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.cinovo.cloudconductor.api.enums.ServiceState;
-import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
-import de.taimos.dvalin.jpa.IEntity;
 
 /**
  * Copyright 2013 Cinovo AG<br>
  * <br>
- * 
+ *
  * @author psigloch
- * 
  */
 @Entity
 @Table(name = "servicedefaultstate", schema = "cloudconductor")
-public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultState> implements IEntity<Long> {
+public class EServiceDefaultState implements IEntity<Long> {
 	
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	
-	private EService service;
+	private Long serviceId;
 	
-	private ETemplate template;
+	private Long templateId;
 	private ServiceState state = ServiceState.STOPPED;
 	
 	
@@ -68,33 +67,31 @@ public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultSta
 	/**
 	 * @return the service
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceid")
-	public EService getService() {
-		return this.service;
+	@Column(name = "serviceid")
+	public Long getServiceId() {
+		return this.serviceId;
 	}
 	
 	/**
 	 * @param service the service to set
 	 */
-	public void setService(EService service) {
-		this.service = service;
+	public void setServiceId(Long service) {
+		this.serviceId = service;
 	}
 	
 	/**
 	 * @return the host
 	 */
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "templateid")
-	public ETemplate getTemplate() {
-		return this.template;
+	@Column(name = "templateid")
+	public Long getTemplateId() {
+		return this.templateId;
 	}
 	
 	/**
 	 * @param template the template to set
 	 */
-	public void setTemplate(ETemplate template) {
-		this.template = template;
+	public void setTemplateId(Long template) {
+		this.templateId = template;
 	}
 	
 	/**
@@ -120,9 +117,9 @@ public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultSta
 		if ((this.getId() != null) && (other.getId() != null)) {
 			return this.getId().equals(other.getId());
 		}
-		boolean result = this.service.getId().equals(other.service.getId());
+		boolean result = this.serviceId.equals(other.serviceId);
 		if (result) {
-			result = this.template.getId().equals(other.template.getId());
+			result = this.templateId.equals(other.templateId);
 		}
 		return result;
 	}
@@ -130,15 +127,22 @@ public class EServiceDefaultState extends AModelApiConvertable<ServiceDefaultSta
 	@Override
 	public int hashCode() {
 		int val = (this.getId() == null) ? 0 : this.getId().hashCode();
-		int parent = (this.service == null) ? 0 : this.service.hashCode();
-		int parent2 = (this.template == null) ? 0 : this.template.hashCode();
+		int parent = (this.serviceId == null) ? 0 : this.serviceId.hashCode();
+		int parent2 = (this.templateId == null) ? 0 : this.templateId.hashCode();
 		return val * (parent + parent2);
 	}
 	
-	@Override
+	/**
+	 * @param templateDAO the template dao
+	 * @param serviceDAO  the service dao
+	 * @return the api object
+	 */
 	@Transient
-	public Class<ServiceDefaultState> getApiClass() {
-		return ServiceDefaultState.class;
+	public ServiceDefaultState toApi(ITemplateDAO templateDAO, IServiceDAO serviceDAO) {
+		ServiceDefaultState s = new ServiceDefaultState();
+		s.setDefaultState(this.getState());
+		s.setService(serviceDAO.findNameById(this.serviceId));
+		s.setTemplate(templateDAO.findNameById(this.templateId));
+		return s;
 	}
-	
 }
