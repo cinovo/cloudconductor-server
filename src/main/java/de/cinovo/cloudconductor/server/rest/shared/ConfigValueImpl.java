@@ -246,7 +246,13 @@ public class ConfigValueImpl implements IConfigValue {
 		RESTAssert.assertNotEmpty(template);
 		RESTAssert.assertNotEmpty(service);
 		
-		this.configValueDAO.findBy(template, service).forEach(cv -> this.configValueDAO.delete(cv));
+		List<EConfigValue> configsToDelete;
+		if (ConfigValueDAOHib.RESERVED_GLOBAL.equals(service)) {
+			configsToDelete = this.configValueDAO.findForGlobalService(template);
+		} else {
+			configsToDelete = this.configValueDAO.findBy(template, service);
+		}
+		configsToDelete.forEach(cv -> this.configValueDAO.delete(cv));
 	}
 	
 	@Override
