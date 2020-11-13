@@ -35,7 +35,7 @@ public class JWTTokenDAOHib extends EntityDAOHibernate<EJWTToken, Long> implemen
 	@Override
 	public void deleteByRefToken(EAuthToken refToken) {
 		// language=HQL
-		this.entityManager.createQuery("DELETE FROM EJWTToken AS j WHERE j.refToken = ?1").setParameter(1, refToken).executeUpdate();
+		this.entityManager.createQuery("DELETE FROM EJWTToken AS j WHERE j.refToken = ?1").setParameter(1, refToken.getId()).executeUpdate();
 	}
 	
 	@Override

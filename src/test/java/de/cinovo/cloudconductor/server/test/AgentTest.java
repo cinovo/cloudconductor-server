@@ -37,8 +37,8 @@ public class AgentTest extends APITest {
 		{
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), optionsC.getUuid());
 			Assert.assertEquals(4, result.getToInstall().size());
-			Assert.assertTrue(!result.getToErase().isEmpty());
-			Assert.assertTrue(!result.getToUpdate().isEmpty());
+			Assert.assertFalse(result.getToErase().isEmpty());
+			Assert.assertFalse(result.getToUpdate().isEmpty());
 		}
 	}
 	
@@ -47,33 +47,33 @@ public class AgentTest extends APITest {
 		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
 		AgentOption optionsA = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_A, null, "asd");
 		AgentOption optionsB = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_B, null, "asd2");
-
+		
 		{
 			// block the second host on update
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), optionsA.getUuid());
-			result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(),  optionsB.getUuid());
+			agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), optionsA.getUuid());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), optionsB.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on host a
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(),  optionsA.getUuid());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), optionsA.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
-			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<String>()),  optionsA.getUuid());
+			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<>()), optionsA.getUuid());
 		}
 		{
 			// finally start update on host b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(),  optionsB.getUuid());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), optionsB.getUuid());
 			Assert.assertEquals(4, result.getToInstall().size());
-			Assert.assertTrue(!result.getToErase().isEmpty());
-			Assert.assertTrue(!result.getToUpdate().isEmpty());
+			Assert.assertFalse(result.getToErase().isEmpty());
+			Assert.assertFalse(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on b
-			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(),  optionsB.getUuid());
+			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), optionsB.getUuid());
 			Assert.assertTrue(result.getToInstall().isEmpty());
 			Assert.assertTrue(result.getToUpdate().isEmpty());
 			Assert.assertTrue(result.getToErase().isEmpty());
@@ -97,6 +97,7 @@ public class AgentTest extends APITest {
 		return new PackageState(pkgs);
 	}
 	
+	@SuppressWarnings("SameParameterValue")
 	private PackageVersion createPackageState(String name, String version, Set<Dependency> dep, String psg) {
 		PackageVersion packageVersion = new PackageVersion();
 		packageVersion.setName(name);

@@ -77,6 +77,13 @@ public class ServiceDAOHib extends EntityDAOHibernate<EService, Long> implements
 	}
 	
 	@Override
+	public String findNameById(Long serviceId) {
+		// language=HQL
+		String q = "SELECT s.name FROM EService AS s WHERE s.id = ?1";
+		return this.entityManager.createQuery(q, String.class).setParameter(1, serviceId).getSingleResult();
+	}
+	
+	@Override
 	public Long count() {
 		// language=HQL
 		return this.entityManager.createQuery("SELECT COUNT(s) FROM EService AS s", Long.class).getSingleResult();

@@ -4,6 +4,7 @@ import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.dao.*;
 import de.cinovo.cloudconductor.server.model.EFile;
 import de.cinovo.cloudconductor.server.model.EFileData;
+import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EService;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.taimos.restutils.RESTAssert;
@@ -100,7 +101,12 @@ public class FileHandler {
 		ef.setTemplate(cf.isTemplate());
 		ef.setDirectory(cf.isDirectory());
 		ef.setTargetPath(cf.getTargetPath());
-		ef.setPkgId(this.packageDAO.findByName(cf.getPkg()).getId());
+		if (cf.getPkg() != null) {
+			EPackage pkg = this.packageDAO.findByName(cf.getPkg());
+			if (pkg != null) {
+				ef.setPkgId(pkg.getId());
+			}
+		}
 		
 		ef.setDependentServices(new HashSet<>());
 		if (cf.getDependentServices() != null) {

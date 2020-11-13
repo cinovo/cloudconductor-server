@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -117,7 +116,7 @@ public class PackageStateChangeHandler {
 		}
 		//keep packages from an repository not provided in the template
 		for (EPackageVersion erase : toErase) {
-			if (Collections.disjoint(erase.getRepos(), repos)) {
+			if (erase.getRepos().stream().noneMatch(r -> repos.stream().anyMatch(ir -> ir.getId().equals(r)))) {
 				keep.add(erase);
 			}
 		}

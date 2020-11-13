@@ -19,7 +19,8 @@ package de.cinovo.cloudconductor.server.model;
 
 import de.cinovo.cloudconductor.api.enums.ServiceState;
 import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
-import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.taimos.dvalin.jpa.IEntity;
 
 import javax.persistence.Column;
@@ -132,10 +133,16 @@ public class EServiceDefaultState implements IEntity<Long> {
 	}
 	
 	/**
+	 * @param templateDAO the template dao
+	 * @param serviceDAO  the service dao
 	 * @return the api object
 	 */
 	@Transient
-	public ServiceDefaultState toApi() {
-		return GenericModelApiConverter.convert(this, ServiceDefaultState.class);
+	public ServiceDefaultState toApi(ITemplateDAO templateDAO, IServiceDAO serviceDAO) {
+		ServiceDefaultState s = new ServiceDefaultState();
+		s.setDefaultState(this.getState());
+		s.setService(serviceDAO.findNameById(this.serviceId));
+		s.setTemplate(templateDAO.findNameById(this.templateId));
+		return s;
 	}
 }

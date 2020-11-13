@@ -265,7 +265,7 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotEmpty(templateName);
 		ETemplate template = this.templateDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
-		return this.serviceDefaultStateDAO.findByTemplate(template.getId()).stream().map(EServiceDefaultState::toApi).toArray(ServiceDefaultState[]::new);
+		return this.serviceDefaultStateDAO.findByTemplate(template.getId()).stream().map(s -> s.toApi(this.templateDAO, this.serviceDAO)).toArray(ServiceDefaultState[]::new);
 	}
 	
 	@Override
@@ -277,7 +277,7 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertNotNull(template);
 		EService service = this.serviceDAO.findByName(templateName);
 		RESTAssert.assertNotNull(template);
-		return this.serviceDefaultStateDAO.findByServiceAndTemplate(service.getId(), template.getId()).toApi();
+		return this.serviceDefaultStateDAO.findByServiceAndTemplate(service.getId(), template.getId()).toApi(this.templateDAO, this.serviceDAO);
 	}
 	
 	@Override
@@ -290,7 +290,7 @@ public class TemplateImpl implements ITemplate {
 		RESTAssert.assertTrue(newDefaultState.equals(ServiceState.STOPPED) || newDefaultState.equals(ServiceState.STARTED));
 		EServiceDefaultState esds = this.serviceDefaultStateHandler.updateServiceDefaultState(templateName, serviceName, newDefaultState);
 		RESTAssert.assertNotNull(esds);
-		return esds.toApi();
+		return esds.toApi(this.templateDAO, this.serviceDAO);
 	}
 	
 }

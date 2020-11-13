@@ -17,7 +17,6 @@ package de.cinovo.cloudconductor.server.dao;
  * #L%
  */
 
-import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
@@ -33,11 +32,6 @@ import java.util.List;
  */
 
 public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ETemplate> {
-	
-	/**
-	 * @return the simple template list
-	 */
-	List<SimpleTemplate> findSimpleList();
 	
 	/**
 	 * Disable auto update for all templates
@@ -76,5 +70,9 @@ public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ET
 	 */
 	List<ETemplate> findByIds(Iterable<Long> templates);
 	
-	ETemplate withPackageVersions(List<Long> pvs);
+	/**
+	 * @param templateId the template id
+	 * @return the name of the template
+	 */
+	String findNameById(Long templateId);
 }

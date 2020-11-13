@@ -1,6 +1,5 @@
 package de.cinovo.cloudconductor.server.dao.hibernate;
 
-import de.cinovo.cloudconductor.api.model.SimpleTemplate;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
@@ -40,15 +39,6 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	@Override
 	public Class<ETemplate> getEntityClass() {
 		return ETemplate.class;
-	}
-
-	@Override
-	public List<SimpleTemplate> findSimpleList() {
-		// lamguage=HQL
-		String q = "SELECT new de.cinovo.cloudconductor.api.model.SimpleTemplate(t.name, SIZE(h), SIZE(t.packageVersions), t.group)" +
-				" FROM ETemplate AS t LEFT JOIN t.hosts AS h " +
-				" GROUP BY t.name, t.group";
-		return this.entityManager.createQuery(q, SimpleTemplate.class).getResultList();
 	}
 
 	@Override
@@ -107,7 +97,10 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 	}
 	
 	@Override
-	public ETemplate withPackageVersions(List<Long> pvs) {
-		return null;
+	public String findNameById(Long templateId) {
+		// language=HQL
+		String q = "SELECT t.name FROM ETemplate AS t WHERE t.id = ?1";
+		return this.entityManager.createQuery(q, String.class).setParameter(1, templateId).getSingleResult();
 	}
+	
 }

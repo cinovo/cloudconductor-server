@@ -61,4 +61,9 @@ public interface IServiceDAO extends IEntityDAO<EService, Long>, IFindNamed<ESer
 	 */
 	List<EService> findByPackage(Long pkgId);
 	
+	/**
+	 * @param serviceId the service id
+	 * @return the name of the service
+	 */
+	String findNameById(Long serviceId);
 }
