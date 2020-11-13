@@ -1,5 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
-import { RouterModule, CanActivate, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 /**
  * Copyright 2017 Cinovo AG<br>

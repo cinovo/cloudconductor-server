@@ -1,8 +1,9 @@
-
-import {forkJoin as observableForkJoin,  Observable ,  Subscription } from 'rxjs';
-
-import {finalize} from 'rxjs/operators';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { DatePipe } from "@angular/common";
+
+import { forkJoin as observableForkJoin,  Observable, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
 import { saveAs } from "file-saver";
 
 import { Template, TemplateHttpService } from '../util/http/template.http.service';
@@ -10,7 +11,6 @@ import { PackageHttpService, PackageVersion, SimplePackageVersion } from '../uti
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
-import { DatePipe } from "@angular/common";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -137,7 +137,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     return newPVTree;
   }
 
-  protected updatePackage(pv: TemplatePackageVersion): void {
+  public updatePackage(pv: TemplatePackageVersion): void {
     if (pv) {
       this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
         () => this.alerts.success('The package ' + pv.pkg + ' has been updated successfully.'),
@@ -161,7 +161,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-  private updateSelected(): void {
+  public updateSelected(): void {
     let packageNames: TemplatePackageVersion[] = [];
     for (let pkg of this.packageVersions) {
       if (pkg.selected && !this.isPkgLatest(pkg)) {
@@ -172,13 +172,14 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.allSelected = false;
   }
 
-  protected removePackage(pv: TemplatePackageVersion) {
+  public removePackage(pv: TemplatePackageVersion) {
     if (pv) {
       this.templateHttp.deletePackage(this.template, pv.pkg).subscribe(
         () => {
           this.alerts.success(`Package '${pv.pkg}' has been removed successfully.`);
         },
         (err) => {
+          console.error(err);
           this.alerts.danger(`Error removing package '${pv.pkg}'!`);
         }
       )
@@ -201,8 +202,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-
-  private removeSelected(index = 0): void {
+  public removeSelected(index = 0): void {
     let packageNames: TemplatePackageVersion[] = [];
     for (let pkg of this.packageVersions) {
       if (pkg.selected) {
@@ -224,18 +224,18 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-  protected selectPackage(pv: TemplatePackageVersion, event: any) {
+  public selectPackage(pv: TemplatePackageVersion, event: any) {
     let index = this.packageVersions.indexOf(pv);
     if (index > -1) {
       this.packageVersions[index].selected = event.target.checked;
     }
   }
 
-  protected isPkgSelected(): boolean {
+  public isPkgSelected(): boolean {
     return this.packageVersions.some(pv => pv.selected);
   }
 
-  private isPkgLatest(pv: TemplatePackageVersion): boolean {
+  public isPkgLatest(pv: TemplatePackageVersion): boolean {
     return this.packageTree[pv.pkg] && this.packageTree[pv.pkg].newestVersion.version === pv.version;
   }
 
@@ -244,7 +244,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     return this.isPkgLatest(this.packageVersions[index]);
   }
 
-  protected goToAddPackage(): void {
+  public goToAddPackage(): void {
     this.newPackage = {pkg: '', version: ''};
   }
 
@@ -255,7 +255,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.updatePackageForTemplate(this.template.name, { pkg, version });
   }
 
-  protected addNewPackage(): void {
+  public addNewPackage(): void {
     if (!this.newPackage || !this.newPackage.pkg || !this.newPackage.version) {
       return;
     }
@@ -298,7 +298,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     return this.getVersions(pkgName).map(pv => pv.version);
   }
 
-  protected onPackageChange(): void {
+  public onPackageChange(): void {
     let versions = this.getVersions(this.newPackage.pkg);
     if (versions.length > 0) {
       this.newPackage.version = versions[versions.length - 1].version;
@@ -307,11 +307,11 @@ export class TemplatePackages implements OnInit, OnDestroy {
     }
   }
 
-  private cancelAddPackage(): void {
+  public cancelAddPackage(): void {
     this.newPackage = null;
   }
 
-  protected packageTreeArray(): PackageTreeNode[] {
+  public packageTreeArray(): PackageTreeNode[] {
     let result = [];
     for (let element of Object.values(this.packageTree)) {
       if (this.template.versions[element.pkgName] == null) {
@@ -334,8 +334,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
     const templateName = this.template.name;
 
     this.templateHttp.getSimplePackageVersions(templateName).subscribe(
-      (simpePVs) => {
-        const jsonBlob = new Blob([JSON.stringify(simpePVs, null, 2)], {type : 'application/json'});
+      (simplePVs) => {
+        const jsonBlob = new Blob([JSON.stringify(simplePVs, null, 2)], {type : 'application/json'});
         const filename =  [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
         saveAs(jsonBlob, filename);
       },
@@ -360,7 +360,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     reader.onloadend = () => {
       let packageVersions: SimplePackageVersion[];
       try {
-        packageVersions = JSON.parse(reader.result);
+        packageVersions = JSON.parse("" + reader.result);
       } catch (err) {
         this.alerts.danger(`Error reading package versions from JSON file!`);
         console.error(err);

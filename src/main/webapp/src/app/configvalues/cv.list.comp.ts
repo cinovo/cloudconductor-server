@@ -27,13 +27,11 @@ export class ConfigValueList implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.confHttp.templates.subscribe((e) => {
-      this.templates = e;
-    });
+    this.confHttp.templates.subscribe((templates) => this.templates = templates);
     this.authGuard.hasRole(Role.EDIT_CONFIGVALUES).subscribe((e) => this.mayEdit = e);
   }
 
-  protected gotoDetails(template: string): void {
+  public gotoDetails(template: string): void {
     if (template) {
       // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['config', template]);
@@ -48,7 +46,7 @@ export class ConfigValueList implements OnInit, OnDestroy {
     this._templates = value.filter(i => !this.reservedValues.includes(i));
   }
 
-  protected deleteTemplate(template: string): void {
+  public deleteTemplate(template: string): void {
     this.confHttp.deleteForTemplate(template)
       .subscribe(
         () => {

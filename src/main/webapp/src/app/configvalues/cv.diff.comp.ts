@@ -23,7 +23,7 @@ export interface ConfigDiffGroup {
 export class ConfigValueDiff implements OnInit {
   protected reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
 
-  private templates: string[];
+  public templates: string[];
 
   private _templateA: string;
   private _templateB: string;
@@ -52,6 +52,7 @@ export class ConfigValueDiff implements OnInit {
       }
       this.templatesLoaded = true;
     }, (err) => {
+      console.error(err);
       this.alerts.danger('Error loading templates!');
     });
   }
@@ -66,6 +67,7 @@ export class ConfigValueDiff implements OnInit {
         this.createTree();
         this.loaded = true;
       }, (err) => {
+        console.error(err);
         this.alerts.danger('Error loading difference between the two packages!');
       });
     }
