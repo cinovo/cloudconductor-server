@@ -1,5 +1,5 @@
 import { DebugElement } from "@angular/core";
-import { async, TestBed, ComponentFixture } from "@angular/core/testing";
+import { TestBed, ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 
@@ -15,7 +15,7 @@ describe('cc-filter', () => {
   const expectedData = ['One', 'Two', 'Three'];
   const expectedComplexData = [{ name: 'One' }, { name: 'Two' }, { name: 'Three' }];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [CCFilter]

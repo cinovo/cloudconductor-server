@@ -1,5 +1,5 @@
 import { DebugElement } from "@angular/core";
-import { async, TestBed, ComponentFixture } from "@angular/core/testing";
+import { TestBed, ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 
 import { AlertComponent } from "./alert.comp";
@@ -11,7 +11,7 @@ describe('alert-area', () => {
   let comp: AlertComponent;
   let alertService: AlertService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AlertComponent],
       providers: [{ provide: AlertService, useClass: AlertStubService }]

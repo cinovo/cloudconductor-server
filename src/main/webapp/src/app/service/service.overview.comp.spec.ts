@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { Router } from "@angular/router";
@@ -31,7 +31,7 @@ describe('service-overview', () => {
   let servicesStub: ServicesStub;
   let alertStub: AlertStubService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [CCTitle, CCPanel, CCFilter, ServiceOverview,
@@ -51,7 +51,7 @@ describe('service-overview', () => {
 
   it('should show loading message', checkLoadingMessage(ServiceOverview, ServiceHttpService, 'getServices'));
 
-  it('should display services in table rows', async(() => {
+  it('should display services in table rows', waitForAsync(() => {
     const spy = spyOn(servicesStub, 'getServices').and.callThrough();
 
     fixture.detectChanges();
@@ -65,7 +65,7 @@ describe('service-overview', () => {
     });
   }));
 
-  it('should display warning if there are no services', async(() => {
+  it('should display warning if there are no services', waitForAsync(() => {
     const spy = spyOn(servicesStub, 'getServices').and.returnValue(Observable.of([]));
 
     fixture.detectChanges();
@@ -79,7 +79,7 @@ describe('service-overview', () => {
     });
   }));
 
-  it('should create error alert when services can not be retrieved', async(() => {
+  it('should create error alert when services can not be retrieved', waitForAsync(() => {
     const spy = spyOn(servicesStub, 'getServices').and.returnValue(Observable.throw({}));
     const alertSpy = spyOn(alertStub, 'danger').and.callThrough();
 
@@ -92,7 +92,7 @@ describe('service-overview', () => {
     });
   }));
 
-  it('should navigate to service when double clicked', async(() => {
+  it('should navigate to service when double clicked', waitForAsync(() => {
     const router = fixture.debugElement.injector.get(Router);
     const spy = spyOn(router, 'navigate').and.callThrough();
 

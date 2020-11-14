@@ -1,5 +1,5 @@
 import { DebugElement } from "@angular/core";
-import { async, TestBed, ComponentFixture } from "@angular/core/testing";
+import { TestBed, ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 
 import { CCTitle } from "./cctitle.comp";
@@ -17,7 +17,7 @@ describe('cc-title', () => {
   let expectedIcon: string;
 
   // async beforeEach()
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CCTitle]
     }).compileComponents();
