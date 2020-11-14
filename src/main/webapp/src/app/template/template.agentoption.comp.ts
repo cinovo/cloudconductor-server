@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 
 import { Observable } from 'rxjs';
 

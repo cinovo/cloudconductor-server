@@ -1,5 +1,5 @@
 import { DebugElement } from "@angular/core";
-import { async, TestBed, ComponentFixture } from "@angular/core/testing";
+import { TestBed, ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 
 import { CCPanel } from "./ccpanel.comp";
@@ -20,7 +20,7 @@ describe('cc-panel', () => {
   const expectedSubtitle = 'Panel Subtitle';
   const expectedDropdownLabel = 'Dropdown Label';
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CCPanel]
     }).compileComponents();

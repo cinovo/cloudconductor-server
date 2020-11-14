@@ -58,7 +58,7 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
     const serviceDss$ = this.templateHttp.getServiceDefaultStates(templateName);
 
     // get all services for template and merge information with service default states
-    forkJoin(services$, serviceDss$).subscribe(
+    forkJoin([services$, serviceDss$]).subscribe(
       ([services, dss]) => {
         this.services = services.map(service => {
           const autostart = dss.some(state => state.service === service.name && state.state === 'STARTED');

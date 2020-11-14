@@ -1,7 +1,7 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
+import {animate, keyframes, query, stagger, style, transition, trigger} from '@angular/animations';
 
 import { Alert, AlertService } from './alert.service';
-import {animate, keyframes, query, stagger, style, transition, trigger} from '@angular/animations';
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>

@@ -23,7 +23,7 @@ export class FileForm {
     this.owner = '';
     this.group = '';
     this.fileMode = '644';
-    this.fileContent = '',
+    this.fileContent = '';
     this.isTemplate = false;
     this.isReloadable = false;
     this.type = FileType.File;
