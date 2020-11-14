@@ -80,7 +80,7 @@
               [subTitleCondition]="repo.lastIndex" [collapsable]="true">
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
-           [title]="'Please verify!'"
+           [popoverTitle]="'Please verify!'"
            [popoverMessage]="'Are you sure you want to force an update on this repository: <strong>'+ repo.name+'</strong>?'"
            confirmButtonType="warning"
            (confirm)="forceReindex()"

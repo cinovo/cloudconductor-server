@@ -1,4 +1,3 @@
-import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 /**
@@ -28,4 +27,4 @@ const APP_ROUTES: Routes = [
   {path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
 
-export const routing: ModuleWithProviders = RouterModule.forRoot(APP_ROUTES, { useHash: true });
+export const routing = RouterModule.forRoot(APP_ROUTES, { useHash: true });

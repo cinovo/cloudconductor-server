@@ -107,17 +107,17 @@
                 There are currently no deinstall-protected packages.
               </td>
             </tr>
-            <tr *ngFor="let package of settingsForm.value.disallowUninstall">
+            <tr *ngFor="let pkg of settingsForm.value.disallowUninstall">
               <td>
-                {{package}}
+                {{pkg}}
               </td>
               <td width="30px">
                 <a href="javascript:void(0)" mwlConfirmationPopover
-                   [title]="'Please verify!'"
-                   [popoverMessage]="'Are you sure you want to remove the following package protection from the settings: '+ package+'?'"
+                   [popoverTitle]="'Please verify!'"
+                   [popoverMessage]="'Are you sure you want to remove the following package protection from the settings: '+ pkg+'?'"
                    placement="left"
                    confirmButtonType="danger"
-                   (confirm)="removePackage(package)">
+                   (confirm)="removePackage(pkg)">
                   <i class="fa fa-trash-o fa-fw" title="Remove package"></i>
                 </a>
               </td>

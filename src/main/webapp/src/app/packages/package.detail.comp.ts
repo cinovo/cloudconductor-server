@@ -31,9 +31,9 @@ export class PackageDetail implements AfterViewInit {
   public templateRefs: Array<{template: string, version: string}> = [];
 
   public services: Array<Service>;
-  protected addableServices: Array<Service> = [];
+  public addableServices: Array<Service> = [];
   public showAddService = false;
-  private newService: Service;
+  public newService: Service;
 
   public repos: Array<RepoVersionTree> = [];
 
@@ -114,7 +114,7 @@ export class PackageDetail implements AfterViewInit {
     )
   }
 
-  protected removeService(service: Service): void {
+  public removeService(service: Service): void {
     if (Validator.idIsSet(service.id)) {
       let index = this.services.indexOf(service);
       service.packages.splice(service.packages.indexOf(this.pkg.name), 1);
@@ -128,7 +128,7 @@ export class PackageDetail implements AfterViewInit {
     }
   }
 
-  protected saveNewService(): void {
+  public saveNewService(): void {
     if (this.newService) {
       this.newService.packages.push(this.pkg.name);
       this.serviceHttp.save(this.newService).subscribe(
@@ -160,7 +160,7 @@ export class PackageDetail implements AfterViewInit {
     this.router.navigate(['repo', repo]);
   }
 
-  protected goToAddService(): void {
+  public goToAddService(): void {
     this.serviceHttp.getServices().subscribe(
       (result) => this.addableServices = result.filter((service) => this.serviceNotProvidedFilter(service)).sort(Sorter.service)
     );

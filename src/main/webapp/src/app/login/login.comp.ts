@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
+import {map, take} from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
 import { AuthHttpService, Authentication } from '../util/http/auth.http.service';
-import {map, take} from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
