@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewEncapsulation} from '@angular/core';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -24,21 +24,19 @@ export class CCPanel implements AfterViewInit {
   @Input() dropDownLabel = 'Actions';
   @Output() onHeaderDblClick: EventEmitter<any> = new EventEmitter();
 
-  public showDropDown = false;
+  @ViewChild('dropdownmenu', { static: true })
+  public dropDownElement: ElementRef;
 
-  constructor() { };
+  public showDropDown: boolean = false;
+
+  constructor(private cdRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     if (!this.collapsable) {
       this.collapseBody = false;
     }
-  }
-
-  @ViewChild('dropdownmenu')
-  set dropDownElements(element: any) {
-    if (element) {
-      this.showDropDown = element.nativeElement.childElementCount > 0;
-    }
+    this.showDropDown = this.dropDownElement.nativeElement && this.dropDownElement.nativeElement.children.length > 0;
+    this.cdRef.detectChanges();
   }
 
   public doHeaderDblClick(): void {
