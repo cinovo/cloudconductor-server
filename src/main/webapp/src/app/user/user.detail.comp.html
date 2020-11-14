@@ -1,7 +1,7 @@
 <cc-title [title]="'User Details'" titleIcon="fa-user" [subtitle]="(user$ | async)?.loginName">
   <a cc-subtitle-addition *ngIf="mode === modes.EDIT" href="javascript:void(0)" mwlConfirmationPopover
     title="Delete user"
-    [title]="'Please verify!'"
+    [popoverTitle]="'Please verify!'"
     [placement]="'right'"
     [popoverMessage]="'Are you sure you want to delete the user \'' + loginName + '\'?'"
     confirmButtonType="danger"

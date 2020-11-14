@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { SettingHttpService, Settings, timeUnits } from '../util/http/setting.http.service';
@@ -24,7 +24,7 @@ export class SettingsOverview implements OnInit {
 
   public settingsForm: FormGroup;
 
-  protected allPackages: Package[] = [];
+  public allPackages: Package[] = [];
   public newPackage: string;
   public showAddPackage = false;
 
@@ -84,20 +84,21 @@ export class SettingsOverview implements OnInit {
 
     this.settingHttp.save(updatedSettings).subscribe(
       (result) => this.alerts.success('Settings have been successfully saved.'),
-      (error) => {
+      (err) => {
         this.alerts.danger('Error saving settings!');
+        console.error(err);
       }
     )
   }
 
-  protected removePackage(pkg: string): void {
+  public removePackage(pkg: string): void {
     const settings = this.settingsForm.value;
     let index = settings.disallowUninstall.indexOf(pkg);
     settings.disallowUninstall.splice(index, 1);
     settings.disallowUninstall.sort();
   }
 
-  protected saveNewPackage(): void {
+  public saveNewPackage(): void {
     const settings = this.settingsForm.value;
     if (Validator.notEmpty(settings.newPackage) && settings.disallowUninstall.indexOf(settings.newPackage) < 0) {
       settings.disallowUninstall.push(settings.newPackage);
@@ -107,7 +108,7 @@ export class SettingsOverview implements OnInit {
     }
   }
 
-  protected goToAddPackage(): void {
+  public goToAddPackage(): void {
     this.settingsForm.value.newPackage = null;
     this.packageHttp.getPackages().subscribe((result) => {
       this.allPackages = result.filter((pkg) => this.filterUsedPackages(pkg))

@@ -1,7 +1,7 @@
 <cc-title [title]="'Configuration Key-Value-Pairs'" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
   <a cc-subtitle-addition *ngIf="template !== 'GLOBAL'" href="javascript:void(0)" mwlConfirmationPopover
      title="Delete all for template"
-     [title]="'Please verify!'"
+     [popoverTitle]="'Please verify!'"
      [placement]="'right'"
      [popoverMessage]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
      confirmButtonType="danger"
@@ -62,7 +62,7 @@
       <li class="divider" cc-panel-dropdown></li>
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
-           [title]="'Please verify!'"
+           [popoverTitle]="'Please verify!'"
            [popoverMessage]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
            confirmButtonType="danger"
            (confirm)="deleteService(service.name)"
@@ -95,7 +95,7 @@
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
                  title="Delete Pair"
-                 [title]="'Please verify!'"
+                 [popoverTitle]="'Please verify!'"
                  [popoverMessage]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
                  placement="left"
                  confirmButtonType="danger"

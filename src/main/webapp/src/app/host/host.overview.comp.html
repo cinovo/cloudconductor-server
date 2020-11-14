@@ -20,7 +20,7 @@
 
 <div class="row" *ngIf="hostsLoaded && hosts.length < 1">
   <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert-1">
+    <div class="alert alert-warning" role="alert">
       No hosts found
     </div>
   </div>
@@ -38,7 +38,7 @@
 
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
-           [title]="'Please verify!'"
+           [popoverTitle]="'Please verify!'"
            [popoverMessage]="'Are you sure you want to delete <strong>all<strong> hosts?'"
            confirmButtonType="danger"
            (confirm)="deleteHosts()"
@@ -82,7 +82,7 @@
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
               title="Delete Host"
-              [title]="'Please verify!'"
+              [popoverTitle]="'Please verify!'"
               [popoverMessage]="'Are you sure you want to delete the following host: ' + host.name + '?'"
               placement="left"
               confirmButtonType="danger"

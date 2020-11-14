@@ -69,7 +69,7 @@
               </td>
               <td width="30px">
                 <a href="javascript:void(0)" mwlConfirmationPopover
-                   [title]="'Please verify!'"
+                   [popoverTitle]="'Please verify!'"
                    [popoverMessage]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
                    placement="left"
                    confirmButtonType="danger"
@@ -125,7 +125,7 @@
           </button>
           <button *ngIf="mode == modes.EDIT" type="button" class="btn btn-danger" mwlConfirmationPopover
                   title="Delete Template"
-                  [title]="'Please verify!'"
+                  [popoverTitle]="'Please verify!'"
                   [popoverMessage]="'Are you sure you want to remove this template and its configuration?'"
                   placement="left"
                   confirmButtonType="danger"

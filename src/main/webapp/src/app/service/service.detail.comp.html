@@ -56,22 +56,22 @@
             This service is currently not provided by a package.
           </td>
         </tr>
-        <tr *ngFor="let package of service.packages" (dblclick)="gotoPackage(package)">
+        <tr *ngFor="let pkg of service.packages" (dblclick)="gotoPackage(pkg)">
           <td>
-            {{package}}
+            {{pkg}}
           </td>
           <td>
-            <a [routerLink]="['/package', package]" title="Show Package">
+            <a [routerLink]="['/package', pkg]" title="Show Package">
               <i class="fa fa-external-link fa-fw"></i>
             </a>
           </td>
           <td>
             <a href="javascript:void(0)" mwlConfirmationPopover
-               [title]="'Please verify!'"
-               [popoverMessage]="'Are you sure you want to remove the link to the package \'' + package + '\' from this service?'"
+               [popoverTitle]="'Please verify!'"
+               [popoverMessage]="'Are you sure you want to remove the link to the package \'' + pkg + '\' from this service?'"
                placement="left"
                confirmButtonType="danger"
-               (confirm)="deletePackage(package)"
+               (confirm)="deletePackage(pkg)"
                title="Delete package from service">
               <i class="fa fa-trash-o fa-fw"></i>
             </a>

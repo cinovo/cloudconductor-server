@@ -50,7 +50,7 @@
           <td>
             <a role="button" mwlConfirmationPopover
               [attr.title]="'Remove package \'' + pv.pkg + '\' from template'"
-              [title]="'Please verify!'"
+              [popoverTitle]="'Please verify!'"
               [popoverMessage]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
               placement="left"
               confirmButtonType="danger"
@@ -121,7 +121,7 @@
         </button>
         <button class="btn btn-danger" [disabled]="!isPkgSelected()" mwlConfirmationPopover
           [attr.title]="'Remove packages from template'"
-          [title]="'Please verify!'"
+          [popoverTitle]="'Please verify!'"
           [popoverMessage]="'Are you sure you want to remove all selected packages from the template?'"
           confirmButtonType="danger"
           (confirm)="removeSelected()">

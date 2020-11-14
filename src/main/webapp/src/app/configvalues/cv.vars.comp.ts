@@ -24,7 +24,6 @@ export class CvVarsComp implements OnInit {
   };
 
   ngOnInit(): void {
-
     if (this.template) {
       this.title = 'Variable overwrites for this template';
       this.configHttp.getVariableValues(this.template).subscribe((result) => {
@@ -86,7 +85,7 @@ export class CvVarsComp implements OnInit {
     }
   }
 
-  protected doDelete(kv: ConfigValue) {
+  public doDelete(kv: ConfigValue) {
     this.configHttp.deleteValue(kv).subscribe(
       () => {
         this.kvs = this.kvs.filter((e) => e != kv);
@@ -99,7 +98,7 @@ export class CvVarsComp implements OnInit {
     );
   }
 
-  protected save(kv: ConfigValue, event: any) {
+  public save(kv: ConfigValue, event: any) {
     const oldVal = kv.value;
     kv.value = event;
     this.configHttp.save(kv).subscribe((success) => {

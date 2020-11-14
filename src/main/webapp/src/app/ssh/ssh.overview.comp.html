@@ -70,7 +70,7 @@
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
               title="Delete SSH Key"
-              [title]="'Please verify!'"
+              [popoverTitle]="'Please verify!'"
               [popoverMessage]="'Are you sure you want to delete the ssh key of ' + sshKey.owner + '?'"
               placement="left"
               confirmButtonType="danger"
@@ -99,7 +99,7 @@
 
           <button type="button" class="btn btn-danger" [disabled]="!isKeySelected()" mwlConfirmationPopover
             title="Remove selected keys"
-            [title]="'Please verify!'"
+            [popoverTitle]="'Please verify!'"
             [popoverMessage]="'Are you sure you want to remove all selected keys?'"
             placement="left"
             confirmButtonType="danger"

@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { ServiceState } from '../util/enums.util';
 import { Sorter } from '../util/sorters.util';
-import { AlertService } from '../util/alert/alert.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -35,9 +34,7 @@ export class HostServices implements AfterViewInit {
 
   private _allSelected = false;
 
-  constructor(private hostHTTP: HostHttpService,
-              private alerts: AlertService) {
-  };
+  constructor(private hostHTTP: HostHttpService) {  }
 
   ngAfterViewInit(): void {
     this.obsHost.subscribe(
@@ -67,7 +64,7 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  protected handleService(type: ServiceActionType, service: ServiceStateElement): void {
+  public handleService(type: ServiceActionType, service: ServiceStateElement): void {
     if (service) {
       this.httpServiceCall(type, service.name,
         () => {
@@ -77,7 +74,7 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  private handleSelected(type: ServiceActionType) {
+  public handleSelected(type: ServiceActionType) {
     let serviceNames: string[] = [];
     for (let service of this.services) {
       if (service.selected) {
@@ -117,7 +114,7 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  private isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
+  public isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
     let ret: boolean = (service.state.toString() === ServiceState[ServiceState.STARTED] ||
       service.state.toString() === ServiceState[ServiceState.IN_SERVICE]);
     if (includeTrannsient && !ret) {
@@ -126,11 +123,11 @@ export class HostServices implements AfterViewInit {
     return ret;
   }
 
-  private isServiceTransient(service: ServiceStateElement): boolean {
+  public isServiceTransient(service: ServiceStateElement): boolean {
     return !this.isServiceStarted(service) && !this.isServiceStoped(service)
   }
 
-  private isServiceStoped(service: ServiceStateElement, includeTrannsient = false): boolean {
+  public isServiceStoped(service: ServiceStateElement, includeTrannsient = false): boolean {
     let ret: boolean = service.state.toString() === ServiceState[ServiceState.STOPPED];
     if (includeTrannsient && !ret) {
       ret = service.state.toString() === ServiceState[ServiceState.STOPPING] || this.isServiceRestarting(service);
@@ -138,7 +135,7 @@ export class HostServices implements AfterViewInit {
     return ret;
   }
 
-  private isServiceRestarting(service: ServiceStateElement): boolean {
+  public isServiceRestarting(service: ServiceStateElement): boolean {
     return (service.state.toString() === ServiceState[ServiceState.RESTARTING_STARTING] ||
       service.state.toString() === ServiceState[ServiceState.RESTARTING_STOPPING]);
   }
@@ -154,7 +151,7 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  protected isSelected(type: ServiceActionType): boolean {
+  public isSelected(type: ServiceActionType): boolean {
     for (let service of this.services) {
       if (service.selected) {
         switch (type) {

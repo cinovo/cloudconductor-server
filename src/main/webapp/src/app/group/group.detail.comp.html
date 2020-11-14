@@ -1,7 +1,7 @@
 <cc-title [title]="'Group Details'" [titleIcon]="'fa-users'" [subtitle]="(group$ | async)?.name">
   <a cc-subtitle-addition *ngIf="mode === modes.EDIT" href="javascript:void(0)" mwlConfirmationPopover
     title="Delete group"
-    [title]="'Please verify!'"
+    [popoverTitle]="'Please verify!'"
     [placement]="'right'"
     [popoverMessage]="'Are you sure you want to delete the user group \'' + groupName + '\'?'"
     confirmButtonType="danger"

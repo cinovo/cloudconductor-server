@@ -1,9 +1,8 @@
-
-import {finalize} from 'rxjs/operators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
+import {finalize} from 'rxjs/operators';
 
 import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { Sorter } from '../util/sorters.util';
@@ -79,7 +78,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
     return Object.values(configValue).some(value => typeof value === "string" && value.includes(this._searchQuery.trim()))
   }
 
-  protected deleteCurrentTemplate(): void {
+  public deleteCurrentTemplate(): void {
     this.configHttp.deleteForTemplate(this.template)
       .subscribe(
         () => {
@@ -94,7 +93,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
       );
   }
 
-  protected deleteService(serviceName: string): void {
+  public deleteService(serviceName: string): void {
     if (!serviceName || serviceName.length < 1) {
       serviceName = "GLOBAL";
     }
@@ -111,20 +110,20 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
       );
   }
 
-  protected triggerEdit(kv: ConfigValue): void {
+  public triggerEdit(kv: ConfigValue): void {
     if (!this.edit[kv.service + kv.key]) {
       this.edit[kv.service + kv.key] = false;
     }
     this.edit[kv.service + kv.key] = true;
   }
 
-  protected triggerEditDone(kv: ConfigValue): void {
+  public triggerEditDone(kv: ConfigValue): void {
     if (this.edit[kv.service + kv.key]) {
       this.edit[kv.service + kv.key] = false;
     }
   }
 
-  private doDelete(kv: ConfigValue) {
+  public doDelete(kv: ConfigValue) {
     this.configHttp.deleteValue(kv).subscribe(() => this.loadData(),
       (err) => {
         this.alerts.danger(`Error deleting config pair '${kv.key}'-'${kv.value}'!`);
