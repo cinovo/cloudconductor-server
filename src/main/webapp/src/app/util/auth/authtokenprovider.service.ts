@@ -3,6 +3,7 @@ import { Subject ,  ReplaySubject } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
+import { Injectable } from "@angular/core";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -10,6 +11,7 @@ import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
  *
  * @author mweise
  */
+@Injectable()
 export class AuthTokenProviderService {
 
   public static readonly ANONYMOUS: AuthenticatedUser = {name: '', preferred_username: 'ANONYMOUS', roles: []};
