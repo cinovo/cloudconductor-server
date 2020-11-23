@@ -59,6 +59,9 @@ public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepo
 	
 	@Override
 	public List<String> findNamesByIds(Iterable<Long> ids) {
+		if (ids == null || !ids.iterator().hasNext()) {
+			return new ArrayList<>();
+		}
 		//language=HQL
 		String q = "SELECT r.name FROM ERepo AS r WHERE r.id IN ?1";
 		return this.entityManager.createQuery(q, String.class).setParameter(1, ids).getResultList();

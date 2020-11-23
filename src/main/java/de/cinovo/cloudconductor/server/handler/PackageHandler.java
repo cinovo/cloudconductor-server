@@ -36,9 +36,6 @@ public class PackageHandler {
 	private IRepoDAO repoDAO;
 	@Autowired
 	private IDependencyDAO dependencyDAO;
-	@Autowired
-	private ITemplateDAO templateDAO;
-	
 	
 	/**
 	 * @param pv the package version
@@ -122,8 +119,8 @@ public class PackageHandler {
 	}
 	
 	/**
-	 * @param epackage the package
-	 * @param repos    the repos to look in
+	 * @param pkgId the package id
+	 * @param repos the repos to look in
 	 * @return the latest package version in the provided repos
 	 */
 	public EPackageVersion getNewestPackageInRepos(Long pkgId, Collection<ERepo> repos) {
@@ -158,19 +155,9 @@ public class PackageHandler {
 		return version;
 	}
 	
-	/**
-	 * @param version     the version
-	 * @param currentRepo the current repo
-	 * @return true, if any template uses the version
-	 */
-	public boolean checkIfInUse(EPackageVersion version, ERepo currentRepo) {
-		return this.templateDAO.countUsingPackageVersion(currentRepo, version) > 0;
-	}
-	
 	private void fillFields(EPackageVersion epv, PackageVersion pv) {
 		epv.setVersion(pv.getVersion());
 		epv.getRepos().addAll(this.repoDAO.findByNames(pv.getRepos()).stream().map(ERepo::getId).collect(Collectors.toList()));
-		epv.setDeprecated(false);
 		epv.setDependencies(new HashSet<>());
 		for (Dependency dep : pv.getDependencies()) {
 			EDependency eDependency = this.dependencyDAO.find(dep);

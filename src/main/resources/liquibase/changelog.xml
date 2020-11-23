@@ -1280,5 +1280,7 @@
         <dropColumn schemaName="cloudconductor" tableName="mappingtemplatesshkey" columnName="id"/>
 
     </changeSet>
-
+    <changeSet id="e11c17a7-11aa-427d-9df8-18a93dc1d14b" author="psigloch">
+        <dropColumn schemaName="cloudconductor" tableName="packageversion" columnName="deprecated" />
+    </changeSet>
 </databaseChangeLog>

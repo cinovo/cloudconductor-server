@@ -86,6 +86,12 @@ public class TemplateDaoHib extends EntityDAOHibernate<ETemplate, Long> implemen
 		return this.entityManager.createQuery(q, Long.class).setParameter(1, repo.getId()).setParameter(2, packageVersion.getId()).getSingleResult();
 	}
 	
+	public Long countUsingPackageVersion(EPackageVersion packageVersion) {
+		// language=HQL
+		String q = "SELECT COUNT(t) FROM ETemplate AS t WHERE ?1 MEMBER OF t.packageVersions";
+		return this.entityManager.createQuery(q, Long.class).setParameter(1, packageVersion.getId()).getSingleResult();
+	}
+	
 	@Override
 	public List<ETemplate> findByIds(Iterable<Long> templates) {
 		if (templates == null || !templates.iterator().hasNext()) {

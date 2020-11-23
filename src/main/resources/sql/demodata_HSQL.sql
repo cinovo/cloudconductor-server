@@ -80,12 +80,12 @@ INSERT INTO cloudconductor.agent VALUES (8, 'testAgent08', 1);
 
 INSERT INTO cloudconductor.host VALUES (1, 'host1', NULL, 1, 1981489459832, NULL, false, false, false, 1, '123123-123123-123123');
 
-INSERT INTO cloudconductor.packageversion VALUES (1, 1, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92');
-INSERT INTO cloudconductor.packageversion VALUES (2, 2, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92-libs');
-INSERT INTO cloudconductor.packageversion VALUES (3, 5, NULL, '9.2.4-1PGDG.rhel6', 'postgresql92-server');
-INSERT INTO cloudconductor.packageversion VALUES (4, 3, NULL, '1.5.3-1', 'nginx');
-INSERT INTO cloudconductor.packageversion VALUES (5, 4, NULL, '1.7.0_45-fcs', 'jdk');
-INSERT INTO cloudconductor.packageversion VALUES (6, 6, NULL, '0.10.12-1', 'nodejs');
+INSERT INTO cloudconductor.packageversion VALUES (1, 1, '9.2.4-1PGDG.rhel6', 'postgresql92');
+INSERT INTO cloudconductor.packageversion VALUES (2, 2, '9.2.4-1PGDG.rhel6', 'postgresql92-libs');
+INSERT INTO cloudconductor.packageversion VALUES (3, 5, '9.2.4-1PGDG.rhel6', 'postgresql92-server');
+INSERT INTO cloudconductor.packageversion VALUES (4, 3, '1.5.3-1', 'nginx');
+INSERT INTO cloudconductor.packageversion VALUES (5, 4, '1.7.0_45-fcs', 'jdk');
+INSERT INTO cloudconductor.packageversion VALUES (6, 6, '0.10.12-1', 'nodejs');
 
 INSERT INTO cloudconductor.map_version_repo VALUES (1,1);
 INSERT INTO cloudconductor.map_version_repo VALUES (2,1);

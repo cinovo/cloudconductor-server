@@ -63,7 +63,6 @@ public class PackageStateHandler {
 					pkgVersion.setPkgId(packageState.getPkgId());
 					pkgVersion.setPkgName(packageState.getPkgName());
 					pkgVersion.setVersion(installedPV.getVersion());
-					pkgVersion.setDeprecated(true);
 					for (String repoName : installedPV.getRepos()) {
 						ERepo repo = this.repoDAO.findByName(repoName);
 						if (repo != null) {
@@ -103,8 +102,6 @@ public class PackageStateHandler {
 			pkgVersion.setPkgId(pkg.getId());
 			pkgVersion.setPkgName(pkg.getName());
 			pkgVersion.setVersion(installedPV.getVersion());
-			pkgVersion.setDeprecated(true);
-			
 			for (String repoName : installedPV.getRepos()) {
 				ERepo repo = this.repoDAO.findByName(repoName);
 				if (repo != null) {

@@ -47,8 +47,6 @@ public interface IFileDAO extends IEntityDAO<EFile, Long>, IFindNamed<EFile> {
 	 * @param pkg	the package
 	 * @return list of files linked to given package
 	 */
-	List<EFile> findByPackage(EPackage pkg);
-
-	// TODO int deleteByName(String fileName)
-
+	Long countByPackage(EPackage pkg);
+	
 }

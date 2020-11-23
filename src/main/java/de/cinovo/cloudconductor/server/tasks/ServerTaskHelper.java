@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +41,11 @@ import java.util.stream.Collectors;
 public class ServerTaskHelper implements SchedulingConfigurer, IServerRepoTaskHandler {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	/**
+	 * prefix for id of repository index tasks
+	 */
+	static final ReentrantLock TASK_WORKING = new ReentrantLock();
 	
 	@Value("${indexTaskType:all}")
 	private String indexTaskType;

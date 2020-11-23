@@ -25,7 +25,6 @@ import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -103,12 +102,32 @@ public class SingleIndexTask implements IServerTasks {
 	 * forces a re index, ignoring checksum
 	 */
 	public void forceRun() {
-		this.execute(true);
+		try {
+			if (ServerTaskHelper.TASK_WORKING.tryLock(5, TimeUnit.MINUTES)) {
+				try {
+					this.execute(true);
+				} finally {
+					ServerTaskHelper.TASK_WORKING.unlock();
+				}
+			}
+		} catch (InterruptedException e) {
+			this.logger.error("Failed to acquire lock for indexing task: {}", this.repoId);
+		}
 	}
 	
 	@Override
 	public void run() {
-		this.execute(false);
+		try {
+			if (ServerTaskHelper.TASK_WORKING.tryLock(5, TimeUnit.MINUTES)) {
+				try {
+					this.execute(false);
+				} finally {
+					ServerTaskHelper.TASK_WORKING.unlock();
+				}
+			}
+		} catch (InterruptedException e) {
+			this.logger.error("Failed to acquire lock for indexing task: {}", this.repoId);
+		}
 	}
 	
 	private void execute(boolean force) {
@@ -157,7 +176,7 @@ public class SingleIndexTask implements IServerTasks {
 			Set<PackageVersion> latestIndex = indexer.getRepoIndex(repoProvider);
 			if (latestIndex != null) {
 				this.logger.debug("Latest index includes " + latestIndex.size() + " package versions!");
-				this.packageImport.importVersions(latestIndex);
+				this.packageImport.importVersions(repo, latestIndex);
 				return entry.getChecksum();
 			}
 		} catch (Exception e) {

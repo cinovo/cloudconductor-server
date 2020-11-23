@@ -58,6 +58,12 @@ public interface ITemplateDAO extends IEntityDAO<ETemplate, Long>, IFindNamed<ET
 	Long countUsingRepo(ERepo repo);
 	
 	/**
+	 * @param packageVersion the package version
+	 * @return number of templates using package version
+	 */
+	Long countUsingPackageVersion(EPackageVersion packageVersion);
+	
+	/**
 	 * @param repo           the repository
 	 * @param packageVersion the package version
 	 * @return number of templates using repo and package version

@@ -32,7 +32,7 @@ public class AllIndexTask implements IServerTasks {
 	/**
 	 * prefix for id of repository index tasks
 	 */
-	private static final ReentrantLock WORKING = new ReentrantLock();
+	public static final ReentrantLock WORKING = new ReentrantLock();
 
 	private final IRepoDAO repoDAO;
 	private final RepoHandler repoHandler;

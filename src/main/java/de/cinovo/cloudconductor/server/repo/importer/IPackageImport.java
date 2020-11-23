@@ -1,6 +1,7 @@
 package de.cinovo.cloudconductor.server.repo.importer;
 
 import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.server.model.ERepo;
 
 import java.util.Set;
 
@@ -14,8 +15,9 @@ import java.util.Set;
 public interface IPackageImport {
 	
 	/**
+	 * @param repo
 	 * @param packageVersions the package versions
 	 */
-	void importVersions(Set<PackageVersion> packageVersions);
+	void importVersions(ERepo repo, Set<PackageVersion> packageVersions);
 
 }

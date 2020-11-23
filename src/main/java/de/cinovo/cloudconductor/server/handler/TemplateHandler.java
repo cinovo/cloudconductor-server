@@ -4,24 +4,18 @@ import de.cinovo.cloudconductor.api.model.AgentOption;
 import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
-import de.cinovo.cloudconductor.server.dao.IHostDAO;
 import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
 import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.model.EAgentOption;
-import de.cinovo.cloudconductor.server.model.EHost;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.GenericModelApiConverter;
-import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
-import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
-import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -50,17 +44,9 @@ public class TemplateHandler {
 	private IAgentOptionsDAO agentOptionsDAO;
 	@Autowired
 	private IPackageVersionDAO packageVersionDAO;
-	@Autowired
-	private IHostDAO hostDAO;
 	
 	@Autowired
 	private PackageHandler packageHandler;
-	
-	@Autowired
-	private TemplateDetailWSHandler templateDetailWSHandler;
-	@Autowired
-	private HostDetailWSHandler hostDetailWSHandler;
-	
 	
 	/**
 	 * @param t the data
@@ -108,62 +94,6 @@ public class TemplateHandler {
 		return this.agentOptionsDAO.save(eao);
 	}
 	
-	/**
-	 * updates all packages of all templates to the newest version
-	 */
-	@Transactional
-	public void updateAllPackages() {
-		for (ETemplate t : this.templateDAO.findList()) {
-			ETemplate updatedTemplate = this.updateAllPackages(t);
-			this.sendTemplateUpdate(updatedTemplate);
-		}
-	}
-	
-	private void sendTemplateUpdate(ETemplate template) {
-		this.templateDetailWSHandler.broadcastChange(template, ChangeType.UPDATED);
-	}
-	
-	/**
-	 * Updates all packages of a given template to the newest version
-	 *
-	 * @param template the template to update the packages for
-	 * @return the template
-	 */
-	@Transactional
-	public ETemplate updateAllPackages(ETemplate template) {
-		if ((template.getAutoUpdate() == null) || !template.getAutoUpdate()) {
-			return template;
-		}
-		
-		boolean updatedPackage = false;
-		List<ERepo> repos = this.repoDAO.findByIds(template.getRepos());
-		List<Long> list = new ArrayList<>(template.getPackageVersions());
-		
-		for (EPackageVersion version : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
-			EPackageVersion newest = this.packageHandler.getNewestPackageInRepos(version.getPkgId(), repos);
-			if (newest == null) {
-				continue;
-			}
-			if (!newest.equals(version)) {
-				list.remove(version.getId());
-				list.add(newest.getId());
-				updatedPackage = true;
-			}
-		}
-		
-		if (updatedPackage) {
-			template.setPackageVersions(list);
-			ETemplate updatedTemplate = this.templateDAO.save(template);
-			List<EHost> affectedHosts = this.hostDAO.findHostsForTemplate(updatedTemplate.getId());
-			affectedHosts.forEach(host -> {
-				this.hostDetailWSHandler.broadcastChange(host, ChangeType.UPDATED);
-			});
-			
-			return updatedTemplate;
-		}
-		
-		return template;
-	}
 	
 	/**
 	 * disables auto update for all templates

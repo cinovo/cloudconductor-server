@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author psigloch
  */
-@Service()
+@Service
 public class CleanUpTask implements IServerTasks {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CleanUpTask.class);

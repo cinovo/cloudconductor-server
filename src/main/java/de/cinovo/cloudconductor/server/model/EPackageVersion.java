@@ -38,6 +38,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,6 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 	private String pkgName;
 	private String version;
 	private Set<Long> dependencies = new HashSet<>();
-	private Boolean deprecated;
 	private Set<Long> repos = new HashSet<>();
 	
 	
@@ -150,19 +150,6 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 		this.setVersion(name);
 	}
 	
-	/**
-	 * @return the deprecated
-	 */
-	public Boolean getDeprecated() {
-		return this.deprecated;
-	}
-	
-	/**
-	 * @param deprecated the deprecated to set
-	 */
-	public void setDeprecated(Boolean deprecated) {
-		this.deprecated = deprecated;
-	}
 	
 	@Transient
 	@Override
@@ -186,15 +173,16 @@ public class EPackageVersion implements IEntity<Long>, INamed {
 	@Transient
 	@Override
 	public int hashCode() {
+		int id = this.id == 0 ? 0 : this.id.hashCode();
 		int val = (this.getVersion() == null) ? 0 : this.getVersion().hashCode();
 		int parent = (this.getPkgId() == null) ? 0 : this.getPkgId().hashCode();
-		return val * parent;
+		return Objects.hash(id, val, parent);
 	}
 	
 	/**
 	 * @return the repos
 	 */
-	@ElementCollection(fetch = FetchType.LAZY, targetClass = Long.class)
+	@ElementCollection(fetch = FetchType.EAGER, targetClass = Long.class)
 	@CollectionTable(schema = "cloudconductor", name = "map_version_repo", joinColumns = {@JoinColumn(name = "versionid")})
 	@Column(name = "repoid")
 	public Set<Long> getRepos() {

@@ -64,8 +64,9 @@ public class FileDAOHib extends EntityDAOHibernate<EFile, Long> implements IFile
 	}
 	
 	@Override
-	public List<EFile> findByPackage(EPackage pkg) {
+	public Long countByPackage(EPackage pkg) {
 		// language=HQL
-		return this.findListByQuery("FROM EFile AS f WHERE f.pkgId = ?1", pkg.getId());
+		String q = "SELECT COUNT(f) FROM EFile AS f WHERE f.pkgId = ?1";
+		return this.entityManager.createQuery(q, Long.class).setParameter(1, pkg.getId()).getSingleResult();
 	}
 }
