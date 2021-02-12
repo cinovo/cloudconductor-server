@@ -28,7 +28,7 @@ export class AdditionalLinkHttpService {
 
   private basePathURL = 'api/links'
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     this.reloadLinks();
   }
 

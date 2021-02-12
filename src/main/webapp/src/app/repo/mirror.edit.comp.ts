@@ -26,13 +26,13 @@ export class MirrorEdit implements OnInit {
   public repoName: string;
   public mirrorForm: FormGroup;
 
-  constructor(private repoHttp: RepoHttpService,
-              private mirrorHttp: RepoMirrorHttpService,
-              private route: ActivatedRoute,
-              private alerts: AlertService,
-              private router: Router,
-              private fb: FormBuilder,
-              private location: Location) {
+  constructor(private readonly repoHttp: RepoHttpService,
+              private readonly mirrorHttp: RepoMirrorHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly alerts: AlertService,
+              private readonly router: Router,
+              private readonly fb: FormBuilder,
+              private readonly location: Location) {
     this.mirrorForm = fb.group({
       id: '',
       description: ['', [Validators.required, forbiddenNameValidator('new')]],
@@ -93,8 +93,8 @@ export class MirrorEdit implements OnInit {
     mirror.basePath = mirror.basePath.trim();
 
     this.doSave(mirror).subscribe(
-      (result) => {
-        this.alerts.success(`Successfully saved mirror '${mirror.description}'`);
+      (savedMirror) => {
+        this.alerts.success(`Successfully saved mirror '${savedMirror.description}'`);
         this.location.back();
       },
       (error) => this.alerts.danger('Failed to save the mirror')

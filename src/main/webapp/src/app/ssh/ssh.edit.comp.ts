@@ -26,11 +26,11 @@ export class SSHEditComponent implements OnInit {
 
   public keyForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder) {
     this.createForm();
   }
 
-  private createForm(): any {
+  private createForm(): void {
     this.keyForm = this.fb.group({
       owner: ['', [Validators.required, Validators.email]],
       username: ['root', Validators.required],
@@ -45,11 +45,11 @@ export class SSHEditComponent implements OnInit {
     }
   }
 
-  public save(keyToSave: SSHKey) {
+  public save(keyToSave: SSHKey): void {
     this.onSave.emit(keyToSave);
   }
 
-  public cancel() {
+  public cancel(): void {
     this.onCancel.emit('');
   }
 

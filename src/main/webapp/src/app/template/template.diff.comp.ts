@@ -25,15 +25,14 @@ export class TemplateDiff implements OnInit {
   public templatesLoaded: boolean = false;
   public loaded: boolean = false;
 
-  constructor(private templateHttp: TemplateHttpService,
-              private router: Router,
-              private alerts: AlertService) {
+  constructor(private readonly templateHttp: TemplateHttpService,
+              private readonly router: Router,
+              private readonly alerts: AlertService) {
   };
 
   ngOnInit(): void {
     this.loadTemplates();
   }
-
 
   private loadTemplates(): void {
     this.templateHttp.getTemplates().subscribe((result) => {
@@ -62,7 +61,6 @@ export class TemplateDiff implements OnInit {
       });
     }
   }
-
 
   get templateA(): string {
     return this._templateA;

@@ -1,9 +1,8 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { SSHKey } from './sshkey.model';
 
@@ -16,9 +15,9 @@ import { SSHKey } from './sshkey.model';
 @Injectable()
 export class SSHKeyHttpService {
 
-  private _basePathURL = 'api/ssh';
+  private readonly _basePathURL = 'api/ssh';
 
-  constructor(private http: HttpClient) { };
+  constructor(private readonly http: HttpClient) { };
 
   public getKeys(): Observable<SSHKey[]> {
     return this.http.get<SSHKey[]>(this._basePathURL);
@@ -33,11 +32,10 @@ export class SSHKeyHttpService {
   }
 
   public existsKey(owner: string): Observable<boolean> {
-    return this.http.get(`${this._basePathURL}/${owner}`).pipe(map((sshKey: SSHKey) => {
-      return (sshKey !== undefined);
-    }),catchError(() => {
-      return observableOf(false);
-    }),);
+    return this.http.get<SSHKey>(`${this._basePathURL}/${owner}`).pipe(
+      map(k => (k !== undefined)),
+      catchError(() => observableOf(false)),
+    );
   }
 
   public updateKey(sshKey: SSHKey): Observable<boolean> {

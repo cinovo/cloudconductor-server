@@ -18,9 +18,9 @@ export interface ServiceUsages {
 @Injectable()
 export class ServiceUsageHttpService {
 
-  private _basePathURL = 'api/serviceusages';
+  private readonly _basePathURL = 'api/serviceusages';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getUsages(): Observable<ServiceUsages> {
     return this.http.get<ServiceUsages>(this._basePathURL);

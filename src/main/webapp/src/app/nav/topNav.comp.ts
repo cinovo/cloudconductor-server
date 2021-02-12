@@ -29,11 +29,11 @@ export class TopNavComponent implements AfterContentInit, OnInit {
 
   public version: string = VERSION;
 
-  constructor(private settingHttp: SettingHttpService,
-              private alertService: AlertService,
-              private authTokenProvider: AuthTokenProviderService,
-              private authHttpService: AuthHttpService,
-              private router: Router) { };
+  constructor(private readonly settingHttp: SettingHttpService,
+              private readonly alertService: AlertService,
+              private readonly authTokenProvider: AuthTokenProviderService,
+              private readonly authHttpService: AuthHttpService,
+              private readonly router: Router) { };
 
   ngOnInit(): void {
     this.settingsObs = this.settingHttp.settings;

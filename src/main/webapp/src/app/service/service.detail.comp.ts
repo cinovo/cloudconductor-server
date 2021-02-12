@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { throwError as observableThrowError, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { Service, ServiceHttpService } from '../util/http/service.http.service';
 import { AlertService } from '../util/alert/alert.service';
 import { PackageHttpService, Package } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
-import {mergeMap} from 'rxjs/operators';
 
 type Mode = 'new' | 'edit';
 
@@ -35,13 +34,12 @@ export class ServiceDetail implements OnInit {
   public mode: Mode = 'edit';
   public serviceForm: FormGroup;
 
-  constructor(private serviceHttp: ServiceHttpService,
-              private packageHttp: PackageHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private alerts: AlertService,
-              private fb: FormBuilder,
-              private location: Location) {
+  constructor(private readonly serviceHttp: ServiceHttpService,
+              private readonly packageHttp: PackageHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly alerts: AlertService,
+              private readonly fb: FormBuilder) {
     this.serviceForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]],
       initScript: ['', Validators.required],
@@ -81,7 +79,7 @@ export class ServiceDetail implements OnInit {
             initScript: this.service.initScript,
             description: this.service.description});
         },
-        (err) => this.router.navigate(['/not-found', 'service', serviceName])
+        (_) => this.router.navigate(['/not-found', 'service', serviceName])
       );
 
       this.reloadServiceUsage(serviceName);
@@ -201,16 +199,16 @@ export class ServiceDetail implements OnInit {
     this.showAddPackage = true;
   }
 
-  public goToBack(): void {
-    this.router.navigate(['/service']);
+  public goToBack(): Promise<boolean> {
+    return this.router.navigate(['/service']);
   }
 
-  public gotoPackage(pkgName: string) {
-    this.router.navigate(['package', pkgName]);
+  public gotoPackage(pkgName: string): Promise<boolean> {
+    return this.router.navigate(['package', pkgName]);
   }
 
-  public gotoTemplate(templateName: string) {
-    this.router.navigate(['template', templateName]);
+  public gotoTemplate(templateName: string): Promise<boolean> {
+    return this.router.navigate(['template', templateName]);
   }
 
   private filterUsedPackages(pkg: Package): boolean {

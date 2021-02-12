@@ -33,9 +33,9 @@ export class ConfigValueDiff implements OnInit {
   public templatesLoaded: boolean = false;
   public loaded: boolean = false;
 
-  constructor(private confHttp: ConfigValueHttpService,
-              private router: Router,
-              private alerts: AlertService) {
+  constructor(private readonly confHttp: ConfigValueHttpService,
+              private readonly router: Router,
+              private readonly alerts: AlertService) {
   };
 
   ngOnInit(): void {
@@ -72,7 +72,6 @@ export class ConfigValueDiff implements OnInit {
       });
     }
   }
-
 
   get templateA(): string {
     return this._templateA;

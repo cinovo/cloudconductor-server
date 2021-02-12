@@ -1,9 +1,9 @@
 
-import {map} from 'rxjs/operators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { TemplateHttpService } from '../util/http/template.http.service';
@@ -23,7 +23,7 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
 
   public templateNames: string[];
   public serviceNames: string[] = [];
-  public modes = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
+  public readonly modes = ['application/json;charset=UTF-8', 'application/x-javaargs', 'application/x-javaprops'];
   public preview: any;
 
   private _templateQuery: string;
@@ -33,10 +33,10 @@ export class ConfigValuePreview implements OnInit, OnDestroy {
   private _templateNamesSub: Subscription;
   private _serviceNamesSub: Subscription;
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private templateHttp: TemplateHttpService,
-              private serviceHttp: ServiceHttpService,
-              private route: ActivatedRoute) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly templateHttp: TemplateHttpService,
+              private readonly serviceHttp: ServiceHttpService,
+              private readonly route: ActivatedRoute) {
   };
 
   ngOnInit(): void {

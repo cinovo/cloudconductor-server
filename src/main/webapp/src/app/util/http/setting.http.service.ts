@@ -1,9 +1,8 @@
-
-import {pluck, share, tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable ,  BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { pluck, share, tap } from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -44,7 +43,7 @@ export class SettingHttpService {
 
   private reloading = false;
 
-  private _basePathURL = 'api/settings';
+  private readonly _basePathURL = 'api/settings';
 
   public static calcIntervalInMillis(n: number, label: string) {
     const unit = timeUnits.find(u => u.value === label);
@@ -54,7 +53,7 @@ export class SettingHttpService {
     return n * 1000;
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     this.reloadSettings();
   }
 

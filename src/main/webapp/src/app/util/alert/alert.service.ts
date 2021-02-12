@@ -22,8 +22,7 @@ export class AlertService {
 
   private subject = new Subject<Alert>();
 
-  constructor() {
-  }
+  constructor() { }
 
   public getAlerts(): Observable<Alert> {
     return this.subject.asObservable();
@@ -53,7 +52,7 @@ export class AlertService {
     this.addAlert('danger', message);
   }
 
-  public clear() {
+  public clear(): void {
     this.subject.next();
   }
 }

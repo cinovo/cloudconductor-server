@@ -8,18 +8,23 @@ import { Validator } from '../util/validator.util';
 import { ServiceHttpService, Service } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 
 interface RepoVersionTree {
   name: string;
   versions: Array<PackageVersion>;
 }
 
+interface TemplateRef {
+  template: string;
+  version: string;
+}
+
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'package-detail',
   templateUrl: './package.detail.comp.html'
@@ -28,21 +33,21 @@ export class PackageDetail implements AfterViewInit {
 
   public pkg: Package = {name: '', description: '', versions: []};
 
-  public templateRefs: Array<{template: string, version: string}> = [];
+  public templateRefs: TemplateRef[] = [];
 
-  public services: Array<Service>;
-  public addableServices: Array<Service> = [];
+  public services: Service[];
+  public addableServices: Service[] = [];
   public showAddService = false;
   public newService: Service;
 
-  public repos: Array<RepoVersionTree> = [];
+  public repos: RepoVersionTree[] = [];
 
-  constructor(private packageHttp: PackageHttpService,
-              private serviceHttp: ServiceHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private alerts: AlertService,
-              private location: Location) { };
+  constructor(private readonly packageHttp: PackageHttpService,
+              private readonly serviceHttp: ServiceHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly alerts: AlertService,
+              private readonly location: Location) { };
 
 
   ngAfterViewInit(): void {
@@ -61,7 +66,7 @@ export class PackageDetail implements AfterViewInit {
           this.loadTemplateUsage();
           this.loadRepoProvision();
         },
-        (err) => this.router.navigate(['/not-found', 'package', packageName])
+        (_) => this.router.navigate(['/not-found', 'package', packageName])
       );
     }
   }
@@ -95,7 +100,7 @@ export class PackageDetail implements AfterViewInit {
     this.packageHttp.getVersions(this.pkg).subscribe(
       (result) => {
 
-        let temp: {[repoName: string]: Array<PackageVersion>; } = {};
+        let temp: {[repoName: string]: PackageVersion[]} = {};
         for (let pv of result) {
           for (let repo of pv.repos) {
             if (!temp[repo]) {
@@ -111,7 +116,7 @@ export class PackageDetail implements AfterViewInit {
         }
         this.repos = this.repos.sort(Sorter.nameField);
       }
-    )
+    );
   }
 
   public removeService(service: Service): void {
@@ -148,16 +153,16 @@ export class PackageDetail implements AfterViewInit {
     this.location.back();
   }
 
-  protected gotoTemplate(templateName: string) {
-    this.router.navigate(['template', templateName]);
+  public gotoTemplate(templateName: string): Promise<boolean> {
+    return this.router.navigate(['template', templateName]);
   }
 
-  private gotoService(service: string): void {
-    this.router.navigate(['service', service]);
+  public gotoService(service: string): Promise<boolean> {
+    return this.router.navigate(['service', service]);
   }
 
-  private gotoRepo(repo: string) {
-    this.router.navigate(['repo', repo]);
+  public gotoRepo(repo: string): Promise<boolean> {
+    return this.router.navigate(['repo', repo]);
   }
 
   public goToAddService(): void {

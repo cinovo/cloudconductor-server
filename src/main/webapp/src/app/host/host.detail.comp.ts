@@ -1,7 +1,7 @@
-
-import {interval as observableInterval,  BehaviorSubject ,  Observable ,  Subject ,  Subscription } from 'rxjs';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { interval as observableInterval, BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -33,12 +33,12 @@ export class HostDetail implements OnInit, OnDestroy {
   private _heartBeatSub: Subscription;
   public templates: string[] = [];
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
-              private hostHttp: HostHttpService,
-              private alerts: AlertService,
-              private wsService: WebSocketService,
-              private templateHttp: TemplateHttpService) {
+  constructor(private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly hostHttp: HostHttpService,
+              private readonly alerts: AlertService,
+              private readonly wsService: WebSocketService,
+              private readonly templateHttp: TemplateHttpService) {
   };
 
   ngOnInit(): void {
@@ -93,7 +93,7 @@ export class HostDetail implements OnInit, OnDestroy {
     if (Validator.notEmpty(hostUuid) && hostUuid !== 'new') {
       this.hostHttp.getHost(hostUuid).subscribe(
         (result) => this._behavHost.next(result),
-        (error) => this.router.navigate(['/not-found', 'host', hostUuid])
+        (_) => this.router.navigate(['/not-found', 'host', hostUuid])
       );
     }
   }
@@ -102,7 +102,7 @@ export class HostDetail implements OnInit, OnDestroy {
     if (Validator.notEmpty(this.host.template)) {
       this.hostHttp.moveHost(this.host.uuid, this.host.template).subscribe(
         (result) => this.alerts.success('Moved Host ' + this.host.name + ' to new Template ' + this.host.template),
-        (error) => this.alerts.danger('Failed to move Host' + this.host.name + ' to new Template ' + this.host.template)
+        (_) => this.alerts.danger('Failed to move Host' + this.host.name + ' to new Template ' + this.host.template)
       );
     }
   }

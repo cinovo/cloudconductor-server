@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Observable ,  Subject ,  ReplaySubject } from 'rxjs';
-
+import { Observable, Subject, ReplaySubject } from 'rxjs';
 
 import { UserHttpService, User } from '../util/http/user.http.service';
 import { Mode } from '../util/enums.util';
@@ -22,7 +21,7 @@ export class UserNewComponent implements OnInit {
 
   public modes = Mode;
 
-  constructor(userHttp: UserHttpService) { }
+  constructor() { }
 
   ngOnInit(): void {
     const emptyUser = UserHttpService.getEmptyUser();

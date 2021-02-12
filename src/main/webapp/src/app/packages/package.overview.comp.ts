@@ -147,7 +147,7 @@ export class PackageOverview implements OnInit, OnDestroy {
     this.loadPackages();
   }
 
-  protected gotoDetails(pkg: Package) {
+  public gotoDetails(pkg: Package): void {
     if (Validator.notEmpty(pkg.name)) {
       this.router.navigate(['/package', pkg.name]);
     }

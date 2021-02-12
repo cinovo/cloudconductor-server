@@ -21,7 +21,7 @@ export class StatsHttpService {
 
   private _basePathURL = 'api/stats';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getStats(): Observable<Stats> {
     return this.http.get<Stats>(this._basePathURL);

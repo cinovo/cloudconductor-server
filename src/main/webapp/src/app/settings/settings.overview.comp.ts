@@ -28,11 +28,11 @@ export class SettingsOverview implements OnInit {
   public newPackage: string;
   public showAddPackage = false;
 
-  constructor(private settingHttp: SettingHttpService,
-              private packageHttp: PackageHttpService,
-              private alerts: AlertService,
-              private fb: FormBuilder,
-              private location: Location) {
+  constructor(private readonly settingHttp: SettingHttpService,
+              private readonly packageHttp: PackageHttpService,
+              private readonly alerts: AlertService,
+              private readonly fb: FormBuilder,
+              private readonly location: Location) {
     this.settingsForm = fb.group({
       name: ['Default', [Validators.required]],
       description: [''],

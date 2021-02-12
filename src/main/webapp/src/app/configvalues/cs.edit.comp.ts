@@ -1,7 +1,7 @@
 
-import {throwError as observableThrowError,  Observable } from 'rxjs';
+import { throwError as observableThrowError,  Observable } from 'rxjs';
 
-import {mergeMap} from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,17 +25,16 @@ import { Sorter } from '../util/sorters.util';
 export class ConfigValueEdit implements OnInit {
 
   public kvForm: FormGroup;
-
   public template: string;
-  public templates: Array<String> = [];
-  public services: Array<String> = [];
+  public templates: string[] = [];
+  public services: string[] = [];
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private route: ActivatedRoute,
-              private alerts: AlertService,
-              private router: Router,
-              private serviceHttp: ServiceHttpService,
-              private fb: FormBuilder) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly alerts: AlertService,
+              private readonly router: Router,
+              private readonly serviceHttp: ServiceHttpService,
+              private readonly fb: FormBuilder) {
     this.kvForm = this.fb.group({
       key: ['', [Validators.required, Validators.pattern('^[\\w.-]+$'), forbiddenNameValidator('new')]],
       value: ['', Validators.required],
@@ -45,12 +44,7 @@ export class ConfigValueEdit implements OnInit {
   };
 
   ngOnInit(): void {
-    this.route.params.subscribe((params) => {
-      let template = params['template'] || '';
-      const service = params['service'] || '';
-      const key = params['key'] || '';
-      const value = params['value'] || '';
-
+    this.route.params.subscribe(({template = '', service = '', key = '', value = ''}) => {
       this.template = template;
 
       if (template === 'newTemplate') {
@@ -77,6 +71,7 @@ export class ConfigValueEdit implements OnInit {
     })).subscribe(
       () => {
         this.alerts.success(`Successfully created key-value pair: '${trimmedCV.key} - ${trimmedCV.value}'.`);
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/config', trimmedCV.template])
       }, (err) => {
         this.alerts.danger(`Error creating new key-value pair '${trimmedCV.key} - ${trimmedCV.value}': ${err}`);

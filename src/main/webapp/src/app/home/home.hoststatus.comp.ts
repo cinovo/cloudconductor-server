@@ -23,7 +23,7 @@ export class HomeHostStatusComponent implements OnInit, OnDestroy {
   public lastUpdate: number;
   private hostsSub: Subscription;
 
-  constructor(public hostsService: HostsService) { }
+  constructor(public readonly hostsService: HostsService) { }
 
   ngOnInit(): void {
     this.hostsSub = this.hostsObs.subscribe(() => {
@@ -36,5 +36,4 @@ export class HomeHostStatusComponent implements OnInit, OnDestroy {
       this.hostsSub.unsubscribe();
     }
   }
-
 }

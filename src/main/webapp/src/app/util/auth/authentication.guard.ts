@@ -1,5 +1,5 @@
 
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 
@@ -16,8 +16,8 @@ import { AuthTokenProviderService } from './authtokenprovider.service';
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
 
-  constructor(private authTokenProvider: AuthTokenProviderService,
-              private router: Router) { }
+  constructor(private readonly authTokenProvider: AuthTokenProviderService,
+              private readonly router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     let expectedLoggedIn = true;

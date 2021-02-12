@@ -14,7 +14,7 @@ import { AuthTokenProviderService } from '../auth/authtokenprovider.service';
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  constructor(private authTokenProvider: AuthTokenProviderService) { }
+  constructor(private readonly authTokenProvider: AuthTokenProviderService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const requestedUrl = req.urlWithParams;

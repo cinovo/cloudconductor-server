@@ -12,7 +12,7 @@ import { SettingHttpService } from '../http/setting.http.service';
 @Injectable()
 export class RepoScansService {
 
-  constructor(private settingHttpService: SettingHttpService) { }
+  constructor(private readonly settingHttpService: SettingHttpService) { }
 
   private get scanInterval() {
     const intervalNumber = this.settingHttpService.lastInstance.indexScanTimer;

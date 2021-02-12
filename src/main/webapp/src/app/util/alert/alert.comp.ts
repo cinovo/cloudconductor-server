@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {animate, keyframes, query, stagger, style, transition, trigger} from '@angular/animations';
+import { animate, keyframes, query, stagger, style, transition, trigger } from '@angular/animations';
 
 import { Alert, AlertService } from './alert.service';
 /**
@@ -35,8 +35,7 @@ export class AlertComponent {
 
   alerts: Alert[] = [];
 
-  constructor(private alertService: AlertService) {
-  }
+  constructor(private readonly alertService: AlertService) { }
 
   ngOnInit() {
     this.alertService.getAlerts().subscribe((alert: Alert) => {

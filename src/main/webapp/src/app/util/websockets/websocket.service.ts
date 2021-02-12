@@ -1,8 +1,7 @@
-
-import {of as observableOf,  Subject ,  Observable ,  Observer } from 'rxjs';
-
-import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
+
+import { of as observableOf, Subject, Observable, Observer } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { WSConfigHttpService, WSConfig } from '../http/wsconfig.http.service';
 
@@ -17,7 +16,7 @@ export class WebSocketService {
   private _timeout: number;
   private _socket: WebSocket;
 
-  constructor(private wsConfigService: WSConfigHttpService) { }
+  constructor(private readonly wsConfigService: WSConfigHttpService) { }
 
   get timeout() {
     return this._timeout;
@@ -35,7 +34,7 @@ export class WebSocketService {
             this._baseUrl = "ws://"+location.host+"/websocket"
           }
           this._timeout = config.timeout;
-          return this.createWebSocket( this._baseUrl , name, objName);
+          return this.createWebSocket(this._baseUrl, name, objName);
         }));
     }
   }

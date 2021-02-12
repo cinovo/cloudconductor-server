@@ -37,13 +37,13 @@ export class FileDetailComponent implements OnInit, OnDestroy {
 
   private _dataSub: Subscription;
 
-  constructor(private alertService: AlertService,
-              private fileHttpService: FileHttpService,
-              private formBuilder: FormBuilder,
-              private route: ActivatedRoute,
-              private router: Router,
-              private serviceHttpService: ServiceHttpService,
-              private templateHttpService: TemplateHttpService) {
+  constructor(private readonly alertService: AlertService,
+              private readonly fileHttpService: FileHttpService,
+              private readonly formBuilder: FormBuilder,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly serviceHttpService: ServiceHttpService,
+              private readonly templateHttpService: TemplateHttpService) {
 
     this.fileForm = this.formBuilder.group({
       name: [this.file.name, [Validators.required, forbiddenNameValidator('new')]],

@@ -19,7 +19,7 @@ export class CCExport {
 
   @Input() export: string;
 
-  constructor(@Inject(DOCUMENT) private dom: Document) { }
+  constructor(@Inject(DOCUMENT) private readonly dom: Document) { }
 
   public copyToClipboard(exportCV: HTMLTextAreaElement) {
     exportCV.select();

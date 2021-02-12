@@ -42,9 +42,9 @@ export class GroupOverviewComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  constructor(private groupHttp: GroupHttpService,
-              private alertService: AlertService,
-              private router: Router) { }
+  constructor(private readonly groupHttp: GroupHttpService,
+              private readonly alertService: AlertService,
+              private readonly router: Router) { }
 
   ngOnInit(): void {
     this.reloadGroups();

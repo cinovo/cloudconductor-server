@@ -1,9 +1,8 @@
-
-import {interval as observableInterval,  Observable ,  Subject } from 'rxjs';
-
-import {map, mergeMap, takeUntil, startWith, share, switchMap} from 'rxjs/operators';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { interval as observableInterval, Observable, Subject } from 'rxjs';
+import { map, mergeMap, takeUntil, startWith, share, switchMap } from 'rxjs/operators';
 
 import { Host, HostHttpService } from '../util/http/host.http.service';
 import { Repo, RepoHttpService } from '../util/http/repo.http.service';
@@ -36,13 +35,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   public repos$: Observable<Repo[]>;
   public stats$: Observable<Stats>;
 
-  constructor(private router: Router,
-              private settingHttpService: SettingHttpService,
-              private hostHttpService: HostHttpService,
-              private serviceHttpService: ServiceHttpService,
-              private serviceUsageHttpService: ServiceUsageHttpService,
-              private repoHttpService: RepoHttpService,
-              private statsHttpService: StatsHttpService) { };
+  constructor(private readonly router: Router,
+              private readonly settingHttpService: SettingHttpService,
+              private readonly hostHttpService: HostHttpService,
+              private readonly serviceHttpService: ServiceHttpService,
+              private readonly serviceUsageHttpService: ServiceUsageHttpService,
+              private readonly repoHttpService: RepoHttpService,
+              private readonly statsHttpService: StatsHttpService) { };
 
   ngOnInit(): void {
     this.loadSettings().subscribe(
@@ -111,16 +110,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
   }
 
-  public gotoHost(hostUuid: string) {
-    this.router.navigate(['/host', hostUuid]);
+  public gotoHost(hostUuid: string): Promise<boolean> {
+    return this.router.navigate(['/host', hostUuid]);
   }
 
-  public gotoService(serviceName: string) {
-    this.router.navigate(['/service', serviceName]);
+  public gotoService(serviceName: string): Promise<boolean> {
+    return this.router.navigate(['/service', serviceName]);
   }
 
-  public gotoRepo(repoName: string) {
-    this.router.navigate(['/repo', repoName]);
+  public gotoRepo(repoName: string): Promise<boolean> {
+    return this.router.navigate(['/repo', repoName]);
   }
 
 }

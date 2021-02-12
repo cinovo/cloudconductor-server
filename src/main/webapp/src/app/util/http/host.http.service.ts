@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import {share} from 'rxjs/operators';
+import { share } from 'rxjs/operators';
 
 import { ServiceState } from '../enums.util';
 
@@ -35,10 +35,9 @@ export interface ChangeServiceState {
 @Injectable()
 export class HostHttpService {
 
-  private _basePathURL = 'api/host';
+  private readonly _basePathURL = 'api/host';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private readonly http: HttpClient) { }
 
   public getHosts(): Observable<Host[]> {
     return this.http.get<Host[]>(this._basePathURL).pipe(share());

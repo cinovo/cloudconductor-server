@@ -17,9 +17,8 @@ import { Role } from "../enums.util";
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
 
-  constructor(private authTokenProvider: AuthTokenProviderService,
-              private router: Router) {
-  }
+  constructor(private readonly authTokenProvider: AuthTokenProviderService,
+              private readonly router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (route.data && route.data.rolesAllowed && route.data.rolesAllowed.length > 0) {
@@ -33,7 +32,8 @@ export class AuthorizationGuard implements CanActivate {
             this.router.navigate(['/forbidden']);
           }
           return allowed;
-        }),);
+        })
+      );
     }
 
     return observableOf(true);
@@ -42,9 +42,8 @@ export class AuthorizationGuard implements CanActivate {
   hasRole(role: Role): Observable<boolean> {
     return this.authTokenProvider.currentUser.pipe(
       map(user => user.roles.filter(r => r == role)),
-      map(matchingRoles => {
-        return matchingRoles.length > 0
-      }),);
+      map(matchingRoles => matchingRoles.length > 0)
+    );
   }
 
 }

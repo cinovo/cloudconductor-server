@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
@@ -26,12 +26,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   private _redirect = '/home';
   private _querySub: Subscription;
 
-  constructor(private fb: FormBuilder,
-    private authHttp: AuthHttpService,
-    private authTokenProvider: AuthTokenProviderService,
-    private alertService: AlertService,
-    private route: ActivatedRoute,
-    private router: Router) {
+  constructor(private readonly fb: FormBuilder,
+              private readonly authHttp: AuthHttpService,
+              private readonly authTokenProvider: AuthTokenProviderService,
+              private readonly alertService: AlertService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router) {
     this.loginForm = fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.alertService.danger('Authentication failed! You logged in as anonymous...');
         }
         this.loginForm.reset();
-      }, (err) => {
+      }, (_) => {
         this.alertService.danger('Authentication failed!');
         this.loginForm.reset();
       }

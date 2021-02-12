@@ -37,7 +37,7 @@ export class AuthHttpService {
 
   private _basePathURL = 'api/auth';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public login(auth: Authentication): Observable<string> {
     return this.http.put<string>(this._basePathURL, auth);

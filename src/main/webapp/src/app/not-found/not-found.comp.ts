@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 /**
@@ -17,7 +16,7 @@ export class NotFoundComponent implements OnInit {
   public type = 'Page';
   public name = '';
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private readonly route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((paraMap) => {

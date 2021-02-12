@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable ,  Subject ,  Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { User, UserHttpService } from '../util/http/user.http.service';
@@ -28,10 +28,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   public loginName = '';
 
-  constructor(private userHttp: UserHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private alertService: AlertService) { }
+  constructor(private readonly userHttp: UserHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
     this._routeSub = this.route.paramMap.subscribe(paraMap => {

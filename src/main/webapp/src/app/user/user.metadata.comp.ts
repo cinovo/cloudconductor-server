@@ -48,12 +48,12 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
   private _userSub: Subscription;
   private _groupSub: Subscription;
 
-  constructor(private fb: FormBuilder,
-              private location: Location,
-              private router: Router,
-              private userHttp: UserHttpService,
-              private groupHttp: GroupHttpService,
-              private alertService: AlertService) {
+  constructor(private readonly fb: FormBuilder,
+              private readonly location: Location,
+              private readonly router: Router,
+              private readonly userHttp: UserHttpService,
+              private readonly groupHttp: GroupHttpService,
+              private readonly alertService: AlertService) {
   }
 
   ngOnInit(): void {

@@ -1,9 +1,9 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {catchError, map, share} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map, share } from 'rxjs/operators';
+
 import { Service } from './service.http.service';
 import { Sorter } from '../sorters.util';
 import { SimplePackageVersion } from "./package.http.service";
@@ -75,8 +75,7 @@ export class TemplateHttpService {
 
   private _basePathURL = 'api/template';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private readonly http: HttpClient) { }
 
   public getTemplates(): Observable<Template[]> {
     return this.http.get<Template[]>(this._basePathURL).pipe(share());

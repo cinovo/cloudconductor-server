@@ -29,7 +29,7 @@ export class CCPanel implements AfterViewInit {
 
   public showDropDown: boolean = false;
 
-  constructor(private cdRef: ChangeDetectorRef) { }
+  constructor(private readonly cdRef: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
     if (!this.collapsable) {

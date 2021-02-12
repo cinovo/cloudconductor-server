@@ -1,10 +1,9 @@
-
-import {throwError as observableThrowError,  Observable } from 'rxjs';
-
-import {catchError} from 'rxjs/operators';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Router } from '@angular/router';
+
+import { throwError as observableThrowError, Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { AuthTokenProviderService } from '../auth/authtokenprovider.service';
 
@@ -17,8 +16,8 @@ import { AuthTokenProviderService } from '../auth/authtokenprovider.service';
 @Injectable()
 export class UnauthorizedInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router,
-              private authTokenProvider: AuthTokenProviderService) { }
+  constructor(private readonly router: Router,
+              private readonly authTokenProvider: AuthTokenProviderService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(error => {

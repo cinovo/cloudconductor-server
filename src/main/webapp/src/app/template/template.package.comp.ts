@@ -59,10 +59,10 @@ export class TemplatePackages implements OnInit, OnDestroy {
   private _allSelected = false;
   private templateSub: Subscription;
 
-  constructor(private packageHttp: PackageHttpService,
-              private templateHttp: TemplateHttpService,
-              private alerts: AlertService,
-              private datePipe: DatePipe) {
+  constructor(private readonly packageHttp: PackageHttpService,
+              private readonly templateHttp: TemplateHttpService,
+              private readonly alerts: AlertService,
+              private readonly datePipe: DatePipe) {
   };
 
   ngOnInit(): void {

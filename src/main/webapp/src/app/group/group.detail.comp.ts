@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Observable,  Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';
@@ -26,10 +26,10 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
   public modes = Mode;
   public mode: Mode;
 
-  constructor(private groupHttp: GroupHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private alertService: AlertService) { }
+  constructor(private readonly groupHttp: GroupHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
     this._routeSub = this.route.paramMap.subscribe((paraMap) => {

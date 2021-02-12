@@ -32,14 +32,14 @@ export class RepoEdit implements OnInit {
 
   public repoForm: FormGroup;
 
-  constructor(private repoHttp: RepoHttpService,
-              private mirrorHttp: RepoMirrorHttpService,
-              private packageHttp: PackageHttpService,
-              private route: ActivatedRoute,
-              private alerts: AlertService,
-              private router: Router,
-              private fb: FormBuilder,
-              private location: Location) {
+  constructor(private readonly repoHttp: RepoHttpService,
+              private readonly mirrorHttp: RepoMirrorHttpService,
+              private readonly packageHttp: PackageHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly alerts: AlertService,
+              private readonly router: Router,
+              private readonly fb: FormBuilder,
+              private readonly location: Location) {
     this.repoForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]]
     });

@@ -43,8 +43,7 @@ export class PackageHttpService {
 
   private _basePathURL = 'api/package';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private readonly http: HttpClient) { }
 
   public getPackages(): Observable<Package[]> {
     return this.http.get<Package[]>(this._basePathURL);

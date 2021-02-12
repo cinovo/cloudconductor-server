@@ -17,7 +17,7 @@ export class FileHttpService {
 
   private _basePathURL = 'api/file';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getFiles(): Observable<ConfigFile[]> {
     return this.http.get<ConfigFile[]>(this._basePathURL);
@@ -39,8 +39,9 @@ export class FileHttpService {
 
   public existsFile(fileName: string): Observable<boolean> {
     return this.getFile(fileName).pipe(
-              map(f => (f !== undefined && f.name !== undefined)),
-              catchError(err => observableOf(false)),);
+      map(f => (f !== undefined && f.name !== undefined)),
+      catchError(_ => observableOf(false)),
+    );
   }
 
   public deleteFile(fileName: string): Observable<boolean> {
