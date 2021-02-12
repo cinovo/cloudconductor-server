@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input} from '@angular/core';
 
 /**
  * Copyright 2017 Cinovo AG<br>

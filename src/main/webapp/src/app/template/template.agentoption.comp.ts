@@ -22,14 +22,14 @@ export class TemplateAgentOptions implements AfterViewInit {
   public options: AgentOption = {};
   public noGtEqZero = Validator.noGtEqZero;
 
-  constructor(private templateHttp: TemplateHttpService,
-              private alerts: AlertService) {
+  constructor(private readonly templateHttp: TemplateHttpService,
+              private readonly alerts: AlertService) {
   };
 
   ngAfterViewInit(): void {
     this.obsTemplate.subscribe(
       (result) => this.loadOptions(result)
-    )
+    );
   }
 
   private loadOptions(template: Template): void {
@@ -49,7 +49,6 @@ export class TemplateAgentOptions implements AfterViewInit {
         this.alerts.success('Successfully saved the agent behaviour.')
       },
       () => this.alerts.danger('Failed to save the agent behaviour.')
-    )
+    );
   }
-
 }

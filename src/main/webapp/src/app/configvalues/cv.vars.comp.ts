@@ -12,15 +12,15 @@ export class CvVarsComp implements OnInit {
 
   @Input() public template: string;
 
-  public kvs: Array<ConfigValue> = [];
+  public kvs: ConfigValue[] = [];
   public newKV: ConfigValue = null;
   public kvLoaded: boolean = false;
 
   public availableVars: string[] = [];
   public title: string;
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private alerts: AlertService) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly alerts: AlertService) {
   };
 
   ngOnInit(): void {
@@ -56,8 +56,7 @@ export class CvVarsComp implements OnInit {
     }
   }
 
-
-  addNew() {
+  public addNew(): void {
     if (this.newKV) {
       if (this.template) {
         this.newKV.template = this.template;
@@ -81,7 +80,6 @@ export class CvVarsComp implements OnInit {
         (error) => {
           this.alerts.danger("Failed to add new variable: " + this.newKV.key);
         })
-
     }
   }
 

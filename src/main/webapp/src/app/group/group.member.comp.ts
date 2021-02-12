@@ -1,8 +1,7 @@
-
-import {mergeMap} from 'rxjs/operators';
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { Group, GroupHttpService } from '../util/http/group.http.service';
 import { User } from '../util/http/user.http.service';
@@ -23,13 +22,14 @@ export class GroupMemberComponent implements OnInit {
 
   public groupMembers: User[];
 
-  constructor(private groupHttp: GroupHttpService) {  }
+  constructor(private readonly groupHttp: GroupHttpService) {  }
 
   ngOnInit(): void {
-    this.groupObs.pipe(mergeMap((group) => this.groupHttp.getMembers(group.name))).subscribe(
-      (members) => this.groupMembers = members,
-      (err) => console.error(err)
-    );
+    this.groupObs.pipe(mergeMap((group) => this.groupHttp.getMembers(group.name)))
+      .subscribe(
+        (members) => this.groupMembers = members,
+        (err) => console.error(err)
+      );
   }
 
 }

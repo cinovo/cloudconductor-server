@@ -5,6 +5,7 @@ import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { AuthorizationGuard } from "../util/auth/authorization.guard";
 import { Role } from "../util/enums.util";
 import { AlertService } from "../util/alert/alert.service";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'cv-list',
@@ -12,23 +13,27 @@ import { AlertService } from "../util/alert/alert.service";
 })
 export class ConfigValueList implements OnInit, OnDestroy {
 
-  public reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
+  public readonly reservedValues: string[] = ['GLOBAL', 'VARIABLES'];
 
   private _templates: string[];
+  private roleSub: Subscription;
   public mayEdit = false;
 
-  constructor(private confHttp: ConfigValueHttpService,
-              private router: Router,
-              private authGuard: AuthorizationGuard,
-              private alerts: AlertService) {
-  }
-
-  ngOnDestroy(): void {
+  constructor(private readonly confHttp: ConfigValueHttpService,
+              private readonly router: Router,
+              private readonly authGuard: AuthorizationGuard,
+              private readonly alerts: AlertService) {
   }
 
   ngOnInit(): void {
-    this.confHttp.templates.subscribe((templates) => this.templates = templates);
-    this.authGuard.hasRole(Role.EDIT_CONFIGVALUES).subscribe((e) => this.mayEdit = e);
+    this.confHttp.templates.subscribe((templates: string[]) => this.templates = templates);
+    this.roleSub = this.authGuard.hasRole(Role.EDIT_CONFIGVALUES).subscribe((mayEdit: boolean) => this.mayEdit = mayEdit);
+  }
+
+  ngOnDestroy(): void {
+    if (this.roleSub) {
+      this.roleSub.unsubscribe();
+    }
   }
 
   public gotoDetails(template: string): void {
@@ -70,5 +75,4 @@ export class ConfigValueList implements OnInit, OnDestroy {
       }
     );
   }
-
 }

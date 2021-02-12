@@ -17,9 +17,9 @@ export interface WSConfig {
 @Injectable()
 export class WSConfigHttpService {
 
-  private _basePathURL = 'api/wsconfig';
+  private readonly _basePathURL = 'api/wsconfig';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getWSConfig(): Observable<WSConfig> {
     return this.http.get<WSConfig>(this._basePathURL);

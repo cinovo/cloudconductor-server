@@ -48,10 +48,10 @@ export class UserOverviewComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  constructor(private userHttp: UserHttpService,
-              private groupHttp: GroupHttpService,
-              private alertService: AlertService,
-              private router: Router) { }
+  constructor(private readonly userHttp: UserHttpService,
+              private readonly groupHttp: GroupHttpService,
+              private readonly alertService: AlertService,
+              private readonly router: Router) { }
 
   ngOnInit(): void {
     this.reloadData();

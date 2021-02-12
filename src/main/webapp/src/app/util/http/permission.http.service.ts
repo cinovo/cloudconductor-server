@@ -12,9 +12,9 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class PermissionHttpService {
 
-  private _basePath = 'api/permission';
+  private readonly _basePath = 'api/permission';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getPermissions(): Observable<string[]> {
     return this.http.get<string[]>(this._basePath);

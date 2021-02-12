@@ -36,7 +36,7 @@ export class ConfigValueHttpService {
 
   private _basePathURL = 'api/config';
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     this.reloadTemplates();
   }
 
@@ -109,7 +109,7 @@ export class ConfigValueHttpService {
   public existsConfigValue(template: string, service: string, key: string): Observable<boolean> {
     return this.getConfigValueExact(template, service, key).pipe(
       map(s => (s && s.length > 0)),
-      catchError(err => observableOf(false)),);
+      catchError(_ => observableOf(false)));
   }
 
   public getConfigValue(template: string, service: string, key: string): Observable<string> {

@@ -26,9 +26,9 @@ export interface RepoMirror {
 @Injectable()
 export class RepoMirrorHttpService {
 
-  private _basePathURL = 'api/repomirror';
+  private readonly _basePathURL = 'api/repomirror';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getMirror(id: string): Observable<RepoMirror> {
     return this.http.get<RepoMirror>(`${this._basePathURL}/${id}`);

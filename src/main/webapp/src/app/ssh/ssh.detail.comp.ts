@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BehaviorSubject ,  Observable ,  Subject ,  Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKey } from '../util/http/sshkey.model';
@@ -26,11 +26,11 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
   private paraSub: Subscription;
   private keySub: Subscription;
 
-  constructor(private alertService: AlertService,
-              private sshHttp: SSHKeyHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private templateHttp: TemplateHttpService) { }
+  constructor(private readonly alertService: AlertService,
+              private readonly sshHttp: SSHKeyHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly templateHttp: TemplateHttpService) { }
 
   ngOnInit(): void {
     this.paraSub = this.route.paramMap.subscribe((paraMap) => {
@@ -67,7 +67,7 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  public cancelEdit() {
-    this.router.navigate(['/ssh']);
+  public cancelEdit(): Promise<boolean> {
+    return this.router.navigate(['/ssh']);
   }
 }

@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import {BehaviorSubject, interval, Observable, of, Subject, Subscription} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import { BehaviorSubject, interval, Observable, of, Subject, Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 import { Heartbeat, WebSocketService } from '../util/websockets/websocket.service';
 import { Mode } from '../util/enums.util';
@@ -35,10 +35,10 @@ export class TemplateDetail implements OnInit, OnDestroy {
 
   private _wsDisconnected = false;
 
-  constructor(private templateHttp: TemplateHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private wsService: WebSocketService) { };
+  constructor(private readonly templateHttp: TemplateHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly wsService: WebSocketService) { };
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {

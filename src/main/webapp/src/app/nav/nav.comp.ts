@@ -6,8 +6,6 @@ import { AdditionalLink, AdditionalLinkHttpService } from '../util/http/addition
 
 declare let $: any;
 
-/// <reference path="../../../typings/globals/jquery/index.d.ts" />;
-
 /**
  * Copyright 2017 Cinovo AG<br>
  * <br>
@@ -25,8 +23,7 @@ export class NavComponent implements AfterViewInit, OnInit {
   public links$: Observable<AdditionalLink[]>;
   public templates$: Observable<string[]>;
 
-  constructor(private linksHttp: AdditionalLinkHttpService) {
-  };
+  constructor(private readonly linksHttp: AdditionalLinkHttpService) {};
 
   ngAfterViewInit(): void {
     (<any>$('#sideMenu')).metisMenu();

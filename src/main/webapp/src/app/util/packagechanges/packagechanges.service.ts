@@ -1,9 +1,9 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {mergeMap} from 'rxjs/operators';
-import { Sorter } from '../sorters.util';
 import { Injectable } from '@angular/core';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
+import { Sorter } from '../sorters.util';
 import { Host } from "../http/host.http.service";
 import { PackageHttpService, PackageStateChanges } from "../http/package.http.service";
 import { Validator } from "../validator.util";
@@ -24,8 +24,7 @@ export interface PackageChange {
 @Injectable()
 export class PackageChangesService {
 
-  constructor(private packageHttp: PackageHttpService) {
-  }
+  constructor(private readonly packageHttp: PackageHttpService) { }
 
   public computePackageChanges(host: Host): Observable<PackageChange[]> {
     if(!Validator.notEmpty(host.uuid)) {

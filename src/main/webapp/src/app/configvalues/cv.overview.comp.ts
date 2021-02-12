@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
-import {finalize} from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 
 import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { Sorter } from '../util/sorters.util';
@@ -40,10 +40,10 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
   public edit: boolean[] = [];
   public tree: ConfigValueTreeNode[] = [];
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private alerts: AlertService) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly router: Router,
+              private readonly alerts: AlertService) {
   };
 
   ngOnInit(): void {
@@ -149,7 +149,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
       .sort(Sorter.nameField);
   }
 
-  private static getIcon(name: string): string{
+  private static getIcon(name: string): string {
     const globalIcon = 'fa-institution';
     const serviceIcon = 'fa-flask';
     return name.length === 0 ? globalIcon : serviceIcon
@@ -174,7 +174,7 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
     this.configHttp.save(kv).subscribe(() => this.alerts.success(`Modified value for key '${kv.key}'`),
       (err) => {
         kv.value = oldVal;
-        this.alerts.success(`Failed to modify value for key '${kv.key}'`);
+        this.alerts.danger(`Failed to modify value for key '${kv.key}'`);
         console.error(err);
       });
   }

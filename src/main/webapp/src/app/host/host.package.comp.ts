@@ -26,7 +26,7 @@ export class HostPackages implements OnInit, OnDestroy {
   private hostSub: Subscription;
   private packageChangesSub: Subscription;
 
-  constructor(private packageChangesService: PackageChangesService) { };
+  constructor(private readonly packageChangesService: PackageChangesService) { };
 
   public ngOnInit(): void {
     this.hostSub = this.obsHost.subscribe((newHost) => {

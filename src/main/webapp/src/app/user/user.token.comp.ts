@@ -22,8 +22,8 @@ export class UserTokenComponent implements OnInit {
 
   public username: string;
 
-  constructor(private userHttp: UserHttpService,
-              private alertService: AlertService) { }
+  constructor(private readonly userHttp: UserHttpService,
+              private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
     this.userObs.subscribe(user => {

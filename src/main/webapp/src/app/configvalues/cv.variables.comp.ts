@@ -9,12 +9,12 @@ import { Sorter } from "../util/sorters.util";
 })
 export class ConfigValueVariables implements OnInit {
 
-  public kvs: Array<ConfigValue> = [];
+  public kvs: ConfigValue[] = [];
   public newKV: ConfigValue = null;
   private kvLoaded: boolean = false;
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private alerts: AlertService) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly alerts: AlertService) {
   };
 
   ngOnInit(): void {
@@ -25,7 +25,6 @@ export class ConfigValueVariables implements OnInit {
       this.alerts.danger(`Error loading config values for template 'VARIABLES'!`);
       this.kvLoaded = true;
     });
-
   }
 
   addNew() {

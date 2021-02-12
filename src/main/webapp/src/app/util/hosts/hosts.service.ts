@@ -14,7 +14,7 @@ export class HostsService {
 
   private static readonly defaultHostsInterval = 30 * 1000 * 60;
 
-  constructor(private settingHttpService: SettingHttpService) { }
+  constructor(private readonly settingHttpService: SettingHttpService) { }
 
   public isAlive(host: Host): boolean {
     const settings = this.settingHttpService.lastInstance;

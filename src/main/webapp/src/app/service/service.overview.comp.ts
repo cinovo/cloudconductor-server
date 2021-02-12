@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
-import {forkJoin, Observable} from 'rxjs';
-import {finalize, map, mergeMap} from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 
-import {AlertService} from '../util/alert/alert.service';
-import {Service, ServiceHttpService, ServiceUsage} from '../util/http/service.http.service';
-import {Sorter} from '../util/sorters.util';
-import {Validator} from '../util/validator.util';
+import { AlertService } from '../util/alert/alert.service';
+import { Service, ServiceHttpService, ServiceUsage } from '../util/http/service.http.service';
+import { Sorter } from '../util/sorters.util';
+import { Validator } from '../util/validator.util';
 
 /**
   * Copyright 2017 Cinovo AG<br>
@@ -34,9 +34,9 @@ export class ServiceOverview implements OnInit {
     return true;
   }
 
-  constructor(private serviceHttp: ServiceHttpService,
-              private router: Router,
-              private alerts: AlertService) { };
+  constructor(private readonly serviceHttp: ServiceHttpService,
+              private readonly router: Router,
+              private readonly alerts: AlertService) { };
 
   public ngOnInit(): void {
       this.loadData();

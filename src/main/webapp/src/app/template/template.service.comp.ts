@@ -1,6 +1,6 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import {forkJoin, Observable, Subscription} from 'rxjs';
+import { forkJoin, Observable, Subscription } from 'rxjs';
 
 import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -32,8 +32,8 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
 
   private servicesToUpdate: AutoStartService[] = [];
 
-  constructor(private templateHttp: TemplateHttpService,
-              private alertService: AlertService) { }
+  constructor(private readonly templateHttp: TemplateHttpService,
+              private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
     this.templateSub = this.obsTemplate.subscribe(

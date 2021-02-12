@@ -1,11 +1,10 @@
-
-import {throwError as observableThrowError, of as observableOf,  Observable ,  Subscription } from 'rxjs';
-
-import {mergeMap} from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
+import { throwError as observableThrowError, of as observableOf, Observable, Subscription } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Group, GroupHttpService } from '../util/http/group.http.service';
@@ -36,12 +35,12 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
 
   private _groupSub: Subscription;
 
-  constructor(private fb: FormBuilder,
-              private location: Location,
-              private router: Router,
-              private groupHttp: GroupHttpService,
-              private permissionHttp: PermissionHttpService,
-              private alertService: AlertService) {
+  constructor(private readonly fb: FormBuilder,
+              private readonly location: Location,
+              private readonly router: Router,
+              private readonly groupHttp: GroupHttpService,
+              private readonly permissionHttp: PermissionHttpService,
+              private readonly alertService: AlertService) {
   }
 
   ngOnInit(): void {

@@ -1,9 +1,8 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -49,7 +48,7 @@ export class UserHttpService {
     return Object.assign({}, UserHttpService.emptyUser);
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this._basePath)

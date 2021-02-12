@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import {forkJoin, Observable, of} from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { SSHKeyHttpService } from '../util/http/sshKey.http.service';
@@ -10,7 +11,6 @@ import { Template, TemplateHttpService } from '../util/http/template.http.servic
 import { Validator } from '../util/validator.util';
 import { Sorter } from '../util/sorters.util';
 import { SSHKey } from '../util/http/sshkey.model';
-import {map} from 'rxjs/operators';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -60,11 +60,11 @@ export class SSHOverviewComponent implements OnInit {
     return true;
   }
 
-  constructor(private alertService: AlertService,
-              private fb: FormBuilder,
-              private sshKeyHttp: SSHKeyHttpService,
-              private templateHttp: TemplateHttpService,
-              private router: Router) {
+  constructor(private readonly alertService: AlertService,
+              private readonly fb: FormBuilder,
+              private readonly sshKeyHttp: SSHKeyHttpService,
+              private readonly templateHttp: TemplateHttpService,
+              private readonly router: Router) {
     this.addTemplateForm = fb.group({addTemplate: ['', Validators.required]});
   }
 
@@ -143,8 +143,8 @@ export class SSHOverviewComponent implements OnInit {
     return this.selectedKeys.length > 0;
   }
 
-  public gotoDetails(sshKey: SSHKey) {
-    this.router.navigate(['/ssh', sshKey.owner]);
+  public gotoDetails(sshKey: SSHKey): Promise<boolean> {
+    return this.router.navigate(['/ssh', sshKey.owner]);
   }
 
   public deleteKey(sshKey: SSHKey) {
@@ -217,6 +217,7 @@ export class SSHOverviewComponent implements OnInit {
 
   public deleteSelectedKeys(): void {
     const deleteOps: Observable<boolean>[] = this.selectedKeys.map(key => this.sshKeyHttp.deleteKey(key.owner));
+
     forkJoin(deleteOps).subscribe(
       () => {
         this.alertService.success(`Successfully deleted ${deleteOps.length} keys.`);

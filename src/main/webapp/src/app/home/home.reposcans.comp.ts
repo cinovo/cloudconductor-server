@@ -24,7 +24,7 @@ export class HomeRepoScansComponent implements OnInit, OnDestroy {
 
   private repoSub: Subscription;
 
-  constructor(public repoScans: RepoScansService) { }
+  constructor(public readonly repoScans: RepoScansService) { }
 
   ngOnInit(): void {
     this.repoSub = this.reposObs.subscribe(() => {

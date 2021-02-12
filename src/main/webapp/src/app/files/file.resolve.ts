@@ -1,9 +1,8 @@
-
-import {of as observableOf, throwError as observableThrowError,  Observable } from 'rxjs';
-
-import {map, catchError, mergeMap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+
+import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
+import { map, catchError, mergeMap } from 'rxjs/operators';
 
 import { FileHttpService } from '../util/http/file.http.service';
 import { FileForm } from '../util/http/config-file.model';
@@ -11,8 +10,8 @@ import { FileForm } from '../util/http/config-file.model';
 @Injectable()
 export class FileResolver implements Resolve<FileForm> {
 
-  constructor(private fileHttpService: FileHttpService,
-              private router: Router) { }
+  constructor(private readonly fileHttpService: FileHttpService,
+              private readonly router: Router) { }
 
   resolve(route: ActivatedRouteSnapshot): Observable<FileForm> {
     const fileName = route.paramMap.get('fileName');

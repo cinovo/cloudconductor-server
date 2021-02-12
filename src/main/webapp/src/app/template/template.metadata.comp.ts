@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import {throwError as observableThrowError, Observable, Subscription, forkJoin, of} from 'rxjs';
+import { throwError as observableThrowError, Observable, Subscription, forkJoin, of} from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 import { ServiceDefaultState, Template, TemplateHttpService } from '../util/http/template.http.service';
@@ -50,13 +50,13 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   private _templateSub: Subscription;
   private _settingsSub: Subscription;
 
-  constructor(private route: ActivatedRoute,
-              private settingsHttp: SettingHttpService,
-              private templateHttp: TemplateHttpService,
-              private repoHttp: RepoHttpService,
-              private alerts: AlertService,
-              private router: Router,
-              private fb: FormBuilder) {
+  constructor(private readonly route: ActivatedRoute,
+              private readonly settingsHttp: SettingHttpService,
+              private readonly templateHttp: TemplateHttpService,
+              private readonly repoHttp: RepoHttpService,
+              private readonly alerts: AlertService,
+              private readonly router: Router,
+              private readonly fb: FormBuilder) {
     this.copyFrom = fb.control('');
     this.templateForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]],

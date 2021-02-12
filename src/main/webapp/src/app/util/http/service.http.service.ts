@@ -25,9 +25,9 @@ export interface Service {
 @Injectable()
 export class ServiceHttpService {
 
-  private _basePathURL = 'api/service';
+  private readonly _basePathURL = 'api/service';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getServices(): Observable<Service[]> {
     return this.http.get<Service[]>(this._basePathURL);

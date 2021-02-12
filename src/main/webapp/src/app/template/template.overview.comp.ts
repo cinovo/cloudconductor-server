@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {forkJoin, interval, Observable, Subject, Subscription} from 'rxjs';
+import { forkJoin, interval, Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
@@ -46,7 +46,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   private static filterByRepo(template: SimpleTemplate, repoName: string): boolean {
     if (Validator.notEmpty(repoName)) {
-      return template.repos.indexOf(repoName) > -1
+      return template.repos.indexOf(repoName) > -1;
     }
     return true;
   }
@@ -58,11 +58,11 @@ export class TemplateOverview implements OnInit, OnDestroy {
     return true;
   }
 
-  constructor(private templateHttp: TemplateHttpService,
-              private repoHttp: RepoHttpService,
-              private router: Router,
-              private alerts: AlertService,
-              private wsService: WebSocketService) {
+  constructor(private readonly templateHttp: TemplateHttpService,
+              private readonly repoHttp: RepoHttpService,
+              private readonly router: Router,
+              private readonly alerts: AlertService,
+              private readonly wsService: WebSocketService) {
   };
 
   ngOnInit(): void {
@@ -204,6 +204,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   public gotoDetails(template: Template): void {
     if (template) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['template', template.name]);
     }
   }

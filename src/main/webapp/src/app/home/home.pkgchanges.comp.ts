@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
-import {forkJoin as observableForkJoin,  Observable ,  Subscription } from 'rxjs';
-import {map} from 'rxjs/operators';
+import { forkJoin as observableForkJoin, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Host } from '../util/http/host.http.service';
 import { PackageChange, PackageChangesService } from '../util/packagechanges/packagechanges.service';

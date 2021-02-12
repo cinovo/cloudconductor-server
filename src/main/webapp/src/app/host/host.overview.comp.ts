@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {interval, Subject, Subscription} from 'rxjs';
+import { interval, Subject, Subscription } from 'rxjs';
 
 import { HostsService } from '../util/hosts/hosts.service';
 import { Host, HostHttpService } from '../util/http/host.http.service';
@@ -53,12 +53,11 @@ export class HostOverview implements OnInit, OnDestroy {
     return true;
   }
 
-  constructor(private alertService: AlertService,
-              private hostHttp: HostHttpService,
-              public hostsService: HostsService,
-              private router: Router,
-              private wsService: WebSocketService) {
-  };
+  constructor(private readonly alertService: AlertService,
+              private readonly hostHttp: HostHttpService,
+              public readonly hostsService: HostsService,
+              private readonly router: Router,
+              private readonly wsService: WebSocketService) { };
 
   ngOnInit(): void {
     this.loadData();
@@ -152,8 +151,8 @@ export class HostOverview implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  public gotoDetails(host: Host) {
-    this.router.navigate(['host', host.uuid]);
+  public gotoDetails(host: Host): Promise<boolean> {
+    return this.router.navigate(['host', host.uuid]);
   }
 
   public deleteHosts() {
@@ -169,5 +168,4 @@ export class HostOverview implements OnInit, OnDestroy {
         console.error(err);
       });
   }
-
 }

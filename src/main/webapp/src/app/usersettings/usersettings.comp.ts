@@ -31,12 +31,12 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   private _userSub: Subscription;
   private _username: string;
 
-  constructor(private fb: FormBuilder,
-              private location: Location,
-              private router: Router,
-              private alertService: AlertService,
-              private authTokenProvider: AuthTokenProviderService,
-              private userHttp: UserHttpService) {
+  constructor(private readonly fb: FormBuilder,
+              private readonly location: Location,
+              private readonly router: Router,
+              private readonly alertService: AlertService,
+              private readonly authTokenProvider: AuthTokenProviderService,
+              private readonly userHttp: UserHttpService) {
     this.passwordForm = fb.group({
       'oldPassword': ['', Validators.required],
       'newPassword': ['', Validators.required],

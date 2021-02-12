@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { BehaviorSubject ,  Observable ,  Subject ,  Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { ConfigFile } from '../util/http/config-file.model';
@@ -53,11 +53,11 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  constructor(private alertService: AlertService,
-              private fileHttp: FileHttpService,
-              private templateHttp: TemplateHttpService,
-              private serviceHttp: ServiceHttpService,
-              private router: Router) { }
+  constructor(private readonly alertService: AlertService,
+              private readonly fileHttp: FileHttpService,
+              private readonly templateHttp: TemplateHttpService,
+              private readonly serviceHttp: ServiceHttpService,
+              private readonly router: Router) { }
 
   ngOnInit(): void {
     this.reloadData();
@@ -126,8 +126,8 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  public gotoDetails(file: ConfigFile) {
-    this.router.navigate(['/files', file.name]);
+  public gotoDetails(file: ConfigFile): Promise<boolean> {
+    return this.router.navigate(['/files', file.name]);
   }
 
   public deleteFile(fileToDelete: ConfigFile) {
@@ -135,9 +135,7 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
       this.alertService.success(`File '${fileToDelete.name}' successfully deleted!`);
       this.reloadData();
     },
-    (err) => {
-      console.error(err);
-    });
+    (err) => console.error(err)
+    );
   }
-
 }

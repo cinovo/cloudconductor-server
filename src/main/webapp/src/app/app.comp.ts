@@ -1,6 +1,6 @@
 import { Component, HostListener, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 
-import { of as observableOf,  Observable ,  Subscription } from 'rxjs';
+import { of as observableOf,  Observable, Subscription } from 'rxjs';
 import { mergeMap, delay } from 'rxjs/operators';
 
 import { AuthHttpService } from './util/http/auth.http.service';

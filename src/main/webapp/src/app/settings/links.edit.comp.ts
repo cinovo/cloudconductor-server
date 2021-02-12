@@ -24,8 +24,8 @@ export class LinksEdit implements OnInit, OnDestroy {
 
   private _linksSub: Subscription;
 
-  constructor(private linksHttp: AdditionalLinkHttpService,
-              private alerts: AlertService) { };
+  constructor(private readonly linksHttp: AdditionalLinkHttpService,
+              private readonly alerts: AlertService) { };
 
   ngOnInit(): void {
     this.loadLinks();

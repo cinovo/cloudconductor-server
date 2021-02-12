@@ -32,10 +32,10 @@ export class RepoOverview implements OnInit {
     return true;
   }
 
-  constructor(private repoHttp: RepoHttpService,
-              private mirrorHttp: RepoMirrorHttpService,
-              private router: Router,
-              private alertService: AlertService) { };
+  constructor(private readonly repoHttp: RepoHttpService,
+              private readonly mirrorHttp: RepoMirrorHttpService,
+              private readonly router: Router,
+              private readonly alertService: AlertService) { };
 
   public ngOnInit(): void {
     this.loadData();
@@ -92,16 +92,17 @@ export class RepoOverview implements OnInit {
     this.loadData();
   }
 
-  goToMirror(mirror: RepoMirror) {
+  public goToMirror(mirror: RepoMirror): void {
     if (mirror) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['repo', mirror.repo, 'mirror', mirror.id]);
     }
   }
 
-  goToDetail(repo: Repo) {
+  public goToDetail(repo: Repo): void {
     if (repo) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['repo', repo.name]);
     }
   }
-
 }

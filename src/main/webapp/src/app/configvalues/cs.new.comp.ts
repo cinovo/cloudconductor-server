@@ -1,10 +1,9 @@
-
-import {finalize, switchMap} from 'rxjs/operators';
 import { Component, OnInit } from "@angular/core";
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { throwError as _throw } from "rxjs";
+import { finalize, switchMap } from 'rxjs/operators';
 
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { ServiceHttpService } from "../util/http/service.http.service";
@@ -27,12 +26,12 @@ export class ConfigValueNew implements OnInit {
   public templates: string[] = [];
   public working = false;
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private route: ActivatedRoute,
-              private alerts: AlertService,
-              private router: Router,
-              private serviceHttp: ServiceHttpService,
-              private fb: FormBuilder) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly alerts: AlertService,
+              private readonly router: Router,
+              private readonly serviceHttp: ServiceHttpService,
+              private readonly fb: FormBuilder) {
     this.kvForm = this.fb.group({
       template: [''],
       newTemplate: ['', [Validators.required, Validators.pattern(/^[\w.-]+$/)]],
@@ -83,8 +82,8 @@ export class ConfigValueNew implements OnInit {
         const newConfigs = originConfigs.map((cv: ConfigValue) => ({...cv, template: newTemplate}));
         return this.configHttp.saveBulk(newConfigs)
       }),
-      finalize(() => this.working = false),)
-      .subscribe(() => {
+      finalize(() => this.working = false),
+    ).subscribe(() => {
         this.alerts.success(`Successfully created new template '${newTemplate}' and copied values from '${existingTemplate}'.`);
         // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['/config', newTemplate]);

@@ -1,9 +1,8 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { User } from './user.http.service';
 
@@ -24,13 +23,13 @@ export class GroupHttpService {
 
   private static readonly emptyGroup: Group = {name: '', description: '', permissions: []};
 
-  private _basePath = 'api/usergroup'
+  private readonly _basePath = 'api/usergroup';
 
   public static getEmptyGroup(): Group {
     return Object.assign({}, GroupHttpService.emptyGroup);
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(this._basePath);
@@ -47,7 +46,8 @@ export class GroupHttpService {
   public existsGroup(groupName: string): Observable<boolean> {
     return this.getGroup(groupName).pipe(
                 map((g) => g.name && g.name.length > 0),
-                catchError(err => observableOf(false)),);
+                catchError(_ => observableOf(false)),
+    );
   }
 
   public getMembers(groupName: string): Observable<User[]> {

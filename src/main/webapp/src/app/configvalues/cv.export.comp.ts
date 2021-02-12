@@ -24,10 +24,10 @@ export class ConfigValueExport implements OnInit, OnDestroy {
   public template: string;
   public export: ConfigValue[];
 
-  constructor(private configHttp: ConfigValueHttpService,
-              private route: ActivatedRoute,
-              private alerts: AlertService,
-              @Inject(DOCUMENT) private dom: Document) {
+  constructor(private readonly configHttp: ConfigValueHttpService,
+              private readonly route: ActivatedRoute,
+              private readonly alerts: AlertService,
+              @Inject(DOCUMENT) private readonly dom: Document) {
   }
 
   ngOnInit(): void {

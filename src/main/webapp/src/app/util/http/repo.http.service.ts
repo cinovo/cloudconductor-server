@@ -1,9 +1,8 @@
-
-import {of as observableOf,  Observable } from 'rxjs';
-
-import {catchError, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
+import { of as observableOf, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { RepoMirror } from './repomirror.http.service';
 
@@ -25,9 +24,9 @@ export interface Repo {
 @Injectable()
 export class RepoHttpService {
 
-  private _basePathURL = 'api/repo';
+  private readonly _basePathURL = 'api/repo';
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
 
   public getRepos(): Observable<Repo[]> {
     return this.http.get<Repo[]>(this._basePathURL);
@@ -40,7 +39,8 @@ export class RepoHttpService {
   public existsRepo(repoName: string): Observable<boolean> {
     return this.getRepo(repoName).pipe(
                 map(r => r !== undefined && r.id !== undefined),
-                catchError(err => observableOf(false)),);
+                catchError(_ => observableOf(false)),
+    );
   }
 
   public deleteRepo(repoName: string): Observable<boolean> {
@@ -57,7 +57,7 @@ export class RepoHttpService {
     return this.http.put<Repo>(this._basePathURL, repo);
   }
 
-  public forceReindex(repo: Repo) : Observable<boolean> {
+  public forceReindex(repo: Repo): Observable<boolean> {
     return this.http.put<boolean>(`${this._basePathURL}/${repo.name}/forceupdate`, {});
   }
 }
