@@ -6,12 +6,6 @@ import { catchError, map } from 'rxjs/operators';
 
 import { RepoMirror } from './repomirror.http.service';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 export interface Repo {
   id?: number;
   name: string;
@@ -21,6 +15,12 @@ export interface Repo {
   lastIndex?: number;
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Injectable()
 export class RepoHttpService {
 

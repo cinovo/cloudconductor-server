@@ -38,9 +38,9 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
               private readonly authTokenProvider: AuthTokenProviderService,
               private readonly userHttp: UserHttpService) {
     this.passwordForm = fb.group({
-      'oldPassword': ['', Validators.required],
-      'newPassword': ['', Validators.required],
-      'repeatPassword': ['', Validators.required]
+      oldPassword: ['', Validators.required],
+      newPassword: ['', Validators.required],
+      repeatPassword: ['', Validators.required]
     });
   }
 

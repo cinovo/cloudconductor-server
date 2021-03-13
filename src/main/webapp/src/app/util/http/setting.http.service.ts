@@ -4,12 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { pluck, share, tap } from 'rxjs/operators';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 export interface Settings {
   name?: string;
   description?: string;
@@ -35,6 +29,12 @@ export const timeUnits: {value: TimeUnit, label: string, factor: number}[] = [
   { value: 'DAYS', label: 'Days', factor: 86400000 }
 ];
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Injectable()
 export class SettingHttpService {
 
@@ -69,7 +69,7 @@ export class SettingHttpService {
 
   public save(settings: Settings): Observable<boolean> {
     settings['@class'] = 'de.cinovo.cloudconductor.api.model.Settings';
-    let res = this.http.put<boolean>(this._basePathURL, settings).pipe(share());
+    const res = this.http.put<boolean>(this._basePathURL, settings).pipe(share());
     res.subscribe(() => this.reloadSettings(), () => {});
     return res;
   }

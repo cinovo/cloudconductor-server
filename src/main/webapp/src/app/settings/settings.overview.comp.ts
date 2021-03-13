@@ -93,7 +93,7 @@ export class SettingsOverview implements OnInit {
 
   public removePackage(pkg: string): void {
     const settings = this.settingsForm.value;
-    let index = settings.disallowUninstall.indexOf(pkg);
+    const index = settings.disallowUninstall.indexOf(pkg);
     settings.disallowUninstall.splice(index, 1);
     settings.disallowUninstall.sort();
   }

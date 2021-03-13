@@ -85,7 +85,7 @@ export class ConfigValueHttpService {
     return this.http.put<boolean>(`${this._basePathURL}/bulk`, cvBody);
   }
 
-  /* tslint:disable:curly */
+  /* eslint-disable curly */
   private reloadTemplates(): void {
     if (!this.reloading) {
       this.reloading = true;

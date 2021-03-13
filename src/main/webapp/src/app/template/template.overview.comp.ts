@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { forkJoin, interval, Observable, Subject, Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
@@ -127,22 +128,22 @@ export class TemplateOverview implements OnInit, OnDestroy {
   }
 
   private loadTemplates(): void {
-    this.templateHttp.getSimpleTemplates().subscribe((result) => {
-      this.templates = result;
-      this.templatesLoaded = true;
-    }, (err) => {
-      this.alerts.danger('Error loading templates!');
-      this.templatesLoaded = true;
-    });
+    this.templateHttp.getSimpleTemplates()
+      .pipe(finalize(() => this.templatesLoaded = true))
+      .subscribe(
+        (templates) => this.templates = templates,
+        (err) => {
+          this.alerts.danger('Error loading templates!');
+          console.error(err);
+        }
+      );
   }
 
   private loadRepos(): void {
     this.repoHttp.getRepos().subscribe(
       (repos) => this.repos = repos,
-      (err) => {
-        console.error(err);
-      }
-    )
+      (err) => console.error(err)
+    );
   }
 
   get templates(): SimpleTemplate[] {
@@ -215,7 +216,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
       if (!element.group) {
         element.group = "";
       }
-      let te = this.templateTree.find((treeElement) => treeElement.group == element.group);
+      let te = this.templateTree.find((treeElement) => treeElement.group === element.group);
       if (!te) {
         te = {group: element.group, templates: [], expanded: false};
         this.templateTree.push(te);
@@ -224,7 +225,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
     });
     this.templateTree.sort(Sorter.groupFieldNoneLast);
     this.templateTree.forEach((e) => e.templates.sort(Sorter.template));
-    if (this.templateTree.length == 1) {
+    if (this.templateTree.length === 1) {
       this.templateTree[0].expanded = true;
     }
   }

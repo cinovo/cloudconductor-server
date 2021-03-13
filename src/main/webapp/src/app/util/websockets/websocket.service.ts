@@ -54,7 +54,7 @@ export class WebSocketService {
       }
     );
     const observer = {
-      next: (data: Object) => {
+      next: (data: Record<string, unknown>) => {
         if (socket.readyState === WebSocket.OPEN) {
           socket.send(JSON.stringify(data));
         }

@@ -61,14 +61,8 @@ export class FileOverviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.reloadData();
-
-    this.templateSub = this.templateHttp.getTemplates().subscribe((result) => {
-      this.templates = result;
-    });
-
-    this.servicesSub = this.serviceHttp.getServices().subscribe((services) => {
-      this.services = services;
-    });
+    this.templateSub = this.templateHttp.getTemplates().subscribe((templates) => this.templates = templates);
+    this.servicesSub = this.serviceHttp.getServices().subscribe((services) => this.services = services);
   }
 
   ngOnDestroy(): void {

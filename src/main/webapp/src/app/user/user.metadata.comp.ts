@@ -58,14 +58,14 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userForm = this.fb.group({
-      'loginName': ['', [Validators.required, forbiddenNamesValidator(['new', 'admin', 'agent'], this.mode === Mode.NEW)]],
-      'displayName': [''],
-      'email': [''],
-      'newPassword': [''],
-      'repeatPassword': [''],
-      'registrationDate': [''],
-      'active': [false],
-      'newGroup': ['']
+      loginName: ['', [Validators.required, forbiddenNamesValidator(['new', 'admin', 'agent'], this.mode === Mode.NEW)]],
+      displayName: [''],
+      email: [''],
+      newPassword: [''],
+      repeatPassword: [''],
+      registrationDate: [''],
+      active: [false],
+      newGroup: ['']
     });
 
     this._userSub = this.userObs.subscribe(
@@ -121,14 +121,14 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
     }
 
     const check: Observable<boolean> = (this.mode === Mode.NEW) ? this.userHttp.existsUser(u.loginName) : of(false);
-
-    check.pipe(switchMap((exists) => {
-      return exists ? observableThrowError(`User named '${u.loginName}' does already exist!`) : this.userHttp.saveUser(u);
-    })).subscribe(
+    check.pipe(
+      switchMap((exists) => exists ? observableThrowError(`User named '${u.loginName}' does already exist!`) : this.userHttp.saveUser(u))
+    ).subscribe(
       () => {
         this.alertService.success(`Successfully saved user '${u.loginName}'!`);
         if (this.mode === Mode.NEW) {
           this.userForm.reset();
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate(['/user', u.loginName]);
         } else {
           // only clear new password

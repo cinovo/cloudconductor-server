@@ -22,8 +22,8 @@ export class TemplateDiff implements OnInit {
   private _templateA: string;
   private _templateB: string;
   public diffResult: PackageDiff[];
-  public templatesLoaded: boolean = false;
-  public loaded: boolean = false;
+  public templatesLoaded = false;
+  public loaded = false;
 
   constructor(private readonly templateHttp: TemplateHttpService,
               private readonly router: Router,
@@ -45,6 +45,7 @@ export class TemplateDiff implements OnInit {
       this.templatesLoaded = true;
     }, (err) => {
       this.alerts.danger('Error loading templates!');
+      console.error(err);
     });
   }
 
@@ -58,6 +59,7 @@ export class TemplateDiff implements OnInit {
         this.loaded = true;
       }, (err) => {
         this.alerts.danger('Error loading difference between the two packages!');
+        console.error(err);
       });
     }
   }

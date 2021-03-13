@@ -10,7 +10,7 @@ export class FileForm {
   group: string;
   fileMode: string;
   isTemplate: boolean;
-  isReloadable:boolean;
+  isReloadable: boolean;
   targetPath: string;
   dependentServices: string[];
   templates: string[];

@@ -27,7 +27,7 @@ export class CCPanel implements AfterViewInit {
   @ViewChild('dropdownmenu', { static: true })
   public dropDownElement: ElementRef;
 
-  public showDropDown: boolean = false;
+  public showDropDown = false;
 
   constructor(private readonly cdRef: ChangeDetectorRef) { }
 

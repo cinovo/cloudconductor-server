@@ -94,7 +94,7 @@ public class HostHandler {
 	 *
 	 * @param hostName the name for the new host
 	 * @param template the template to be used by the new host
-	 * @param agent
+	 * @param agent		the agent
 	 * @return the new host
 	 */
 	public EHost createNewHost(String hostName, ETemplate template, EAgent agent) {

@@ -73,12 +73,12 @@ export class RepoOverview implements OnInit {
     return this._repos;
   }
 
-  set repos(value: Array<Repo>) {
+  set repos(value: Repo[]) {
     this._repos = value
       .filter(repo => RepoOverview.filterData(repo, this._searchQuery))
       .sort(Sorter.repo);
 
-    for (let repo of this._repos) {
+    for (const repo of this._repos) {
       repo.mirrors = repo.mirrors.sort(Sorter.mirror);
     }
   }

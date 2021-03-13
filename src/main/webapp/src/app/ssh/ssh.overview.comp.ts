@@ -35,7 +35,7 @@ export class SSHOverviewComponent implements OnInit {
   public newKey: Observable<SSHKey> = of({ owner: '', username: 'root', key: '', templates: [] });
 
   public templates$: Observable<Template[]>;
-  public templateNames: Observable<String[]>;
+  public templateNames: Observable<string[]>;
 
   public addTemplateForm: FormGroup;
 
@@ -90,6 +90,7 @@ export class SSHOverviewComponent implements OnInit {
       this.keysLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading SSH keys!');
+      console.error(err);
     });
   }
 

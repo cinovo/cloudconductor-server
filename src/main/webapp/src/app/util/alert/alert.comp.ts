@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { animate, keyframes, query, stagger, style, transition, trigger } from '@angular/animations';
 
 import { Alert, AlertService } from './alert.service';
@@ -31,7 +31,7 @@ import { Alert, AlertService } from './alert.service';
     ])
   ]
 })
-export class AlertComponent {
+export class AlertComponent implements OnInit {
 
   alerts: Alert[] = [];
 

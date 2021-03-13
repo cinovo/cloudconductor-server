@@ -8,10 +8,9 @@ import { Validator } from '../util/validator.util';
 import { ServiceHttpService, Service } from '../util/http/service.http.service';
 import { Sorter } from '../util/sorters.util';
 
-
 interface RepoVersionTree {
   name: string;
-  versions: Array<PackageVersion>;
+  versions: PackageVersion[];
 }
 
 interface TemplateRef {
@@ -83,13 +82,10 @@ export class PackageDetail implements AfterViewInit {
     }
 
     this.packageHttp.getUsage(this.pkg).subscribe(
-      (result) => {
-        this.templateRefs = [];
-        let keys = Object.keys(result);
-        for (let key of keys) {
-          this.templateRefs.push({template: key, version: result[key]});
-        }
-        this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));
+      (packageUsageMap) => {
+        this.templateRefs = Object.entries(packageUsageMap)
+          .map(([template, version]) => ({template, version} as TemplateRef))
+          .sort((a, b) => Sorter.byField(a, b, 'template'));
       });
   }
 
@@ -121,7 +117,7 @@ export class PackageDetail implements AfterViewInit {
 
   public removeService(service: Service): void {
     if (Validator.idIsSet(service.id)) {
-      let index = this.services.indexOf(service);
+      const index = this.services.indexOf(service);
       service.packages.splice(service.packages.indexOf(this.pkg.name), 1);
       this.serviceHttp.save(service).subscribe(
         () => {

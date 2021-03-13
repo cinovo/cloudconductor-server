@@ -27,7 +27,7 @@ export interface SimpleTemplate {
   group?: string;
 }
 
-export type UpdateRange ='all' | 'major' | 'minor' | 'patch'
+export type UpdateRange = 'all' | 'major' | 'minor' | 'patch'
 
 export interface Template {
   name: string;
@@ -113,7 +113,8 @@ export class TemplateHttpService {
   }
 
   public save(template: Template): Observable<boolean> {
-    return this.http.put<boolean>(this._basePathURL,{'@class': 'de.cinovo.cloudconductor.api.model.Template', ...template});
+    const templateToUpdate = {'@class': 'de.cinovo.cloudconductor.api.model.Template', ...template};
+    return this.http.put<boolean>(this._basePathURL, templateToUpdate);
   }
 
   public updatePackage(template: Template, packageName: string): Observable<Template> {
@@ -129,13 +130,14 @@ export class TemplateHttpService {
   }
 
   public saveAgentOptions(agentOption: AgentOption): Observable<AgentOption> {
-    agentOption['@class'] = 'de.cinovo.cloudconductor.api.model.AgentOption';
-    return this.http.put<AgentOption>(`${this._basePathURL}/${agentOption.templateName}/agentoption`, agentOption);
+    const option = { '@class': 'de.cinovo.cloudconductor.api.model.AgentOption', ...agentOption};
+    return this.http.put<AgentOption>(`${this._basePathURL}/${agentOption.templateName}/agentoption`, option);
   }
 
   public getServicesForTemplate(templateName: string): Observable<Service[]> {
     return this.http.get<Service[]>(`${this._basePathURL}/${templateName}/services`).pipe(
-      map(services => services.sort(Sorter.nameField)));
+      map(services => services.sort(Sorter.nameField))
+    );
   }
 
   public getServiceDefaultStates(templateName: string): Observable<ServiceDefaultState[]> {
@@ -146,10 +148,9 @@ export class TemplateHttpService {
     return this.http.get<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`);
   }
 
-  public saveServiceDefaultState(templateName: string, serviceName: string, serviceDefaultState: ServiceState) {
-    const newServiceDefaultState = {template: templateName, service: serviceName, defaultState: serviceDefaultState};
-    newServiceDefaultState['@class'] = 'de.cinovo.cloudconductor.api.model.ServiceDefaultState';
-    return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${templateName}/servicedefaultstate/${serviceName}`, newServiceDefaultState);
+  public saveServiceDefaultState(template: string, service: string, defaultState: ServiceState) {
+    const newServiceDefaultState = {'@class': 'de.cinovo.cloudconductor.api.model.ServiceDefaultState', template, service, defaultState};
+    return this.http.put<ServiceDefaultState>(`${this._basePathURL}/${template}/servicedefaultstate/${service}`, newServiceDefaultState);
   }
 
   public getSimpleTemplates(): Observable<SimpleTemplate[]> {

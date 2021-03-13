@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subject ,  Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { UserHttpService, User } from '../util/http/user.http.service';
@@ -105,7 +105,7 @@ export class UserOverviewComponent implements OnInit, OnDestroy {
     );
   }
 
-  public deleteUser(userToDelete: User) {
+  public deleteUser(userToDelete: User): void {
     const username = userToDelete.loginName;
     this.userHttp.deleteUser(userToDelete.loginName).subscribe(
       () => {
@@ -120,6 +120,7 @@ export class UserOverviewComponent implements OnInit, OnDestroy {
 
   public goToDetails(user: User) {
     if (user && user.loginName) {
+      // noinspection JSIgnoredPromiseFromCall
       this.router.navigate(['/user', user.loginName]);
     }
   }

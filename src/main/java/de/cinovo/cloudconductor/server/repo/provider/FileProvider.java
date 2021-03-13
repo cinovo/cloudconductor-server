@@ -48,7 +48,7 @@ public class FileProvider implements IRepoProvider {
 		if (!dir.isDirectory()) {
 			return null;
 		}
-		List<RepoEntry> list = new ArrayList<RepoEntry>();
+		List<RepoEntry> list = new ArrayList<>();
 		for (File file : dir.listFiles()) {
 			list.add(this.createEntry(file));
 		}

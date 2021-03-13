@@ -48,7 +48,7 @@ export class ConfigValueNew implements OnInit {
     this.working = true;
 
     const cvToSave = {key: "firstKey", value: "empty", template: this.kvForm.value.newTemplate.trim()};
-    if (this.kvForm.value.prefil == 'none') {
+    if (this.kvForm.value.prefil === 'none') {
       this.configHttp.save(cvToSave).subscribe((result) => {
           this.working = false;
           this.alerts.success(`Successfully created new template '${cvToSave.template}' .`);
@@ -58,13 +58,13 @@ export class ConfigValueNew implements OnInit {
       );
       return;
     }
-    if (this.kvForm.value.prefil == 'copy') {
+    if (this.kvForm.value.prefil === 'copy') {
       this.copyFromTemplate();
     }
-    if (this.kvForm.value.prefil == 'importjson') {
+    if (this.kvForm.value.prefil === 'importjson') {
       this.importFromJSON();
     }
-    if (this.kvForm.value.prefil == 'import') {
+    if (this.kvForm.value.prefil === 'import') {
       this.importFromJSON();
     }
   }
@@ -134,9 +134,9 @@ export class ConfigValueNew implements OnInit {
   }
 
   updateFile(event: any): void {
-    let reader = new FileReader();
+    const reader = new FileReader();
     if (event.target.files && event.target.files.length > 0) {
-      let file = event.target.files[0];
+      const file = event.target.files[0];
       reader.readAsText(file);
       reader.onloadend = () => {
         this.kvForm.patchValue({importValues: reader.result}, {emitEvent: true});
@@ -146,14 +146,14 @@ export class ConfigValueNew implements OnInit {
 
   static fullValidator(control: AbstractControl): ValidationErrors | null {
     const prefil = control.get('prefil');
-    if (prefil.value == 'none') {
+    if (prefil.value === 'none') {
       return null;
     }
-    if (prefil.value == 'copy') {
+    if (prefil.value === 'copy') {
       const template = control.get('template');
       return Validators.required(template);
     }
-    if (prefil.value == 'import') {
+    if (prefil.value === 'import') {
       const importValues = control.get('importValues');
       return Validators.required(importValues);
     }

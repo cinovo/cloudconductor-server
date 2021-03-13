@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Role } from '../enums.util';
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export interface JwtClaimSet {
   exp: number,
   iss: string,
@@ -35,7 +36,7 @@ export interface AuthenticatedUser {
 @Injectable()
 export class AuthHttpService {
 
-  private _basePathURL = 'api/auth';
+  private readonly _basePathURL = 'api/auth';
 
   constructor(private readonly http: HttpClient) { }
 

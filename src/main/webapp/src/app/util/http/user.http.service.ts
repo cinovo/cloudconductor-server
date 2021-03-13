@@ -4,12 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { of as observableOf, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author mweise
- */
 export interface User {
   loginName: string,
   displayName: string,
@@ -34,6 +28,12 @@ export interface PasswordChangeRequest {
   userName: string
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author mweise
+ */
 @Injectable()
 export class UserHttpService {
 
@@ -42,7 +42,7 @@ export class UserHttpService {
     userGroups: [], agents: [], authTokens: []
   };
 
-  private _basePath = 'api/user';
+  private readonly _basePath = 'api/user';
 
   public static getEmptyUser(): User {
     return Object.assign({}, UserHttpService.emptyUser);
@@ -56,18 +56,19 @@ export class UserHttpService {
 
   public getUser(username: string): Observable<User> {
     return this.http.get<User>(`${this._basePath}/${username}`).pipe(
-                              map(u => Object.assign(UserHttpService.getEmptyUser(), u)));
+      map(u => Object.assign(UserHttpService.getEmptyUser(), u)),
+    );
   }
 
   public existsUser(username: string): Observable<boolean> {
     return this.getUser(username).pipe(
               map((u) => u.loginName && u.loginName.length > 0),
-              catchError(err => observableOf(false)),);
+              catchError(_ => observableOf(false)),
+    );
   }
 
   public saveUser(userToSave: User): Observable<boolean> {
-    userToSave['@class'] = 'de.cinovo.cloudconductor.api.model.User';
-    return this.http.put<boolean>(this._basePath, userToSave);
+    return this.http.put<boolean>(this._basePath, {'@class': 'de.cinovo.cloudconductor.api.model.User', ...userToSave});
   }
 
   public deleteUser(username: string): Observable<boolean> {

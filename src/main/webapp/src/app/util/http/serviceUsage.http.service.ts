@@ -5,16 +5,14 @@ import { Observable } from 'rxjs';
 
 import { ServiceUsage } from './service.http.service';
 
+export type ServiceUsages = Record<string, ServiceUsage>
+
 /**
  * Copyright 2018 Cinovo AG<br>
  * <br>
  *
  * @author mweise
  */
-export interface ServiceUsages {
-  [key: string]: ServiceUsage
-}
-
 @Injectable()
 export class ServiceUsageHttpService {
 

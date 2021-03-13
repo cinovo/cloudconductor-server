@@ -31,8 +31,6 @@ export class CCFilter implements OnInit {
 
   private _query = '';
 
-  constructor() {
-  };
 
   ngOnInit(): void {
   }

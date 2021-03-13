@@ -7,12 +7,6 @@ import { catchError, map } from 'rxjs/operators';
 export interface ServiceUsage { [templateName: string]: PackageName }
 type PackageName = string;
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 export interface Service {
   id?: number;
   name: string;
@@ -22,6 +16,12 @@ export interface Service {
   templates?: string[];
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Injectable()
 export class ServiceHttpService {
 
@@ -40,7 +40,8 @@ export class ServiceHttpService {
   public existsService(serviceName: string): Observable<boolean> {
     return this.getService(serviceName).pipe(
       map((service: Service) => (service !== undefined)),
-      catchError(() => observableOf(false)),);
+      catchError(() => observableOf(false)),
+    );
   }
 
   public getServiceNames(): Observable<string[]> {
@@ -56,8 +57,7 @@ export class ServiceHttpService {
   }
 
   public save(service: Service): Observable<boolean> {
-    service['@class'] = 'de.cinovo.cloudconductor.api.model.Service';
-    return this.http.put<boolean>(this._basePathURL, service);
+    return this.http.put<boolean>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.Service', ...service});
   }
 
 }

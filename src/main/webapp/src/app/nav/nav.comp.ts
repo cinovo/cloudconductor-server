@@ -26,7 +26,7 @@ export class NavComponent implements AfterViewInit, OnInit {
   constructor(private readonly linksHttp: AdditionalLinkHttpService) {};
 
   ngAfterViewInit(): void {
-    (<any>$('#sideMenu')).metisMenu();
+    ($('#sideMenu') as any).metisMenu();
   }
 
   ngOnInit(): void {

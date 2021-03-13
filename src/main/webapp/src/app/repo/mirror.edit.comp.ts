@@ -57,7 +57,7 @@ export class MirrorEdit implements OnInit {
         }
       }
       this.mirrorForm.get('basePath').valueChanges.subscribe(val => {
-        if (this.mirrorForm.controls.providerType.value == 'HTTP' && val) {
+        if (this.mirrorForm.controls.providerType.value === 'HTTP' && val) {
           this.mirrorForm.controls.path.setValue(val);
           this.mirrorForm.patchValue({path: val});
         }
@@ -97,7 +97,7 @@ export class MirrorEdit implements OnInit {
         this.alerts.success(`Successfully saved mirror '${savedMirror.description}'`);
         this.location.back();
       },
-      (error) => this.alerts.danger('Failed to save the mirror')
+      (_) => this.alerts.danger('Failed to save the mirror')
     );
   }
 
@@ -121,7 +121,7 @@ export class MirrorEdit implements OnInit {
       this.mirrorHttp.getMirror(mirrorid).subscribe((result) => {
         const formValue = {
           id: result.id,
-          repoName: repoName,
+          repoName,
           description: result.description,
           path: result.path,
           indexerType: result.indexerType,

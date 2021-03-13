@@ -9,12 +9,6 @@ import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 import { AlertService } from '../util/alert/alert.service';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 interface ConfigValueTreeNode {
   name: string;
   kvs: ConfigValue[];
@@ -25,6 +19,12 @@ interface ServiceConfigMap {
   [serviceName: string]: ConfigValue[];
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'cv-overview',
   templateUrl: './cv.overview.comp.html'
@@ -142,17 +142,17 @@ export class ConfigValueOverview implements OnInit, OnDestroy {
         }
         serviceMap[serviceName].push(currentCV);
         return serviceMap
-      }, <ServiceConfigMap>{});
+      }, {} as ServiceConfigMap);
 
     return Object.entries(tmpServiceConfigMap)
-      .map(([name, cvs]) => <ConfigValueTreeNode>{name, kvs: cvs.sort(Sorter.configValue), icon: ConfigValueOverview.getIcon(name)})
+      .map(([name, cvs]) => ({name, kvs: cvs.sort(Sorter.configValue), icon: ConfigValueOverview.getIcon(name)}) as ConfigValueTreeNode)
       .sort(Sorter.nameField);
   }
 
   private static getIcon(name: string): string {
     const globalIcon = 'fa-institution';
     const serviceIcon = 'fa-flask';
-    return name.length === 0 ? globalIcon : serviceIcon
+    return name.length === 0 ? globalIcon : serviceIcon;
   }
 
   private loadData(): void {

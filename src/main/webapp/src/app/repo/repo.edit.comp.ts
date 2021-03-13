@@ -64,7 +64,7 @@ export class RepoEdit implements OnInit {
         this.repoForm.controls.name.setValue(result.name);
         this.loadPackages();
       },
-      (err) => {
+      (_) => {
         this.router.navigate(['/not-found', 'repo', repoName]);
       });
     }
@@ -122,7 +122,7 @@ export class RepoEdit implements OnInit {
       this.mirrorHttp.deleteMirror(id.toString())
       .subscribe(
         () => {
-          this.repo.mirrors.forEach(function (item, index, object) {
+          this.repo.mirrors.forEach((item, index, object) => {
             if (item.id === id) {
               object.splice(index, 1);
             }
@@ -148,11 +148,9 @@ export class RepoEdit implements OnInit {
         if (exists) {
           return observableThrowError(`Repository named '${repo.name}' already exists!`);
         }
-
         if (Validator.idIsSet(repo.id)) {
           return this.repoHttp.editRepo(repo);
         }
-
         return this.repoHttp.newRepo(repo);
       })
     );

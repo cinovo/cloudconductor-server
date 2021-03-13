@@ -96,10 +96,7 @@
               {{template.packageCount}}
             </td>
             <td>
-              <ng-template ngFor let-repo [ngForOf]="template.repos" let-last="last">
-                {{repo}}
-                <ng-template [ngIf]="!last">,</ng-template>
-              </ng-template>
+              {{template.repos.join(", ")}}
             </td>
             <td>
               <a title="Edit Template" [routerLink]="[template.name]"><i class="fa fa-edit fa-fw"></i></a>
