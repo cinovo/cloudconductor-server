@@ -1,16 +1,38 @@
 package de.cinovo.cloudconductor.server.rest.ui;
 
 import de.cinovo.cloudconductor.api.enums.ServiceState;
+import de.cinovo.cloudconductor.api.enums.UpdateRange;
 import de.cinovo.cloudconductor.api.interfaces.ITemplate;
-import de.cinovo.cloudconductor.api.model.*;
-import de.cinovo.cloudconductor.server.dao.*;
+import de.cinovo.cloudconductor.api.model.AgentOption;
+import de.cinovo.cloudconductor.api.model.PackageDiff;
+import de.cinovo.cloudconductor.api.model.PackageVersion;
+import de.cinovo.cloudconductor.api.model.PackageVersionUpdates;
+import de.cinovo.cloudconductor.api.model.Repo;
+import de.cinovo.cloudconductor.api.model.SSHKey;
+import de.cinovo.cloudconductor.api.model.Service;
+import de.cinovo.cloudconductor.api.model.ServiceDefaultState;
+import de.cinovo.cloudconductor.api.model.SimplePackageVersion;
+import de.cinovo.cloudconductor.api.model.SimpleTemplate;
+import de.cinovo.cloudconductor.api.model.Template;
+import de.cinovo.cloudconductor.server.dao.IAgentOptionsDAO;
+import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
+import de.cinovo.cloudconductor.server.dao.IHostDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoMirrorDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDAO;
+import de.cinovo.cloudconductor.server.dao.IServiceDefaultStateDAO;
+import de.cinovo.cloudconductor.server.dao.ITemplateDAO;
 import de.cinovo.cloudconductor.server.handler.HostHandler;
+import de.cinovo.cloudconductor.server.handler.PackageHandler;
 import de.cinovo.cloudconductor.server.handler.SSHHandler;
 import de.cinovo.cloudconductor.server.handler.ServiceDefaultStateHandler;
 import de.cinovo.cloudconductor.server.handler.ServiceHandler;
 import de.cinovo.cloudconductor.server.handler.TemplateHandler;
 import de.cinovo.cloudconductor.server.model.*;
 import de.cinovo.cloudconductor.server.util.comparators.TemplatePackageDiffer;
+import de.cinovo.cloudconductor.server.util.comparators.VersionStringComparator;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
@@ -62,6 +84,8 @@ public class TemplateImpl implements ITemplate {
 	private TemplateHandler templateHandler;
 	@Autowired
 	private TemplatePackageDiffer templatePackageComparator;
+	@Autowired
+	private PackageHandler pkgHandler;
 	
 	@Autowired
 	private TemplatesWSHandler templatesWSHandler;
@@ -143,9 +167,10 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public Template updatePackage(String templateName, String packageName) {
+		RESTAssert.assertNotEmpty(templateName);
 		RESTAssert.assertNotEmpty(packageName);
 		ETemplate template = this.getTemplateByName(templateName);
-		template = this.templateHandler.updatePackage(template, packageName);
+		template = this.templateHandler.updatePackage(template, packageName, template.getUpdateRange());
 		template = this.templateDAO.save(template);
 		Template aTemplate = template.toApi(this.hostDAO, this.repoDAO, this.packageVersionDAO);
 		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
@@ -153,7 +178,39 @@ public class TemplateImpl implements ITemplate {
 		this.hostHandler.updateHostDetails(template);
 		return aTemplate;
 	}
-	
+
+	@Override
+	@Transactional
+	public Template updatePackage(String templateName, String packageName, UpdateRange range) {
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertNotEmpty(packageName);
+		RESTAssert.assertNotNull(range);
+		ETemplate template = this.getTemplateByName(templateName);
+		template = this.templateHandler.updatePackage(template, packageName, range);
+		template = this.templateDAO.save(template);
+		Template aTemplate = template.toApi(this.hostDAO, this.repoDAO, this.packageVersionDAO);
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.hostHandler.updateHostDetails(template);
+		return aTemplate;
+	}
+
+	@Override
+	@Transactional
+	public Template updatePackage(String templateName, String packageName, String targetVersion) {
+		RESTAssert.assertNotEmpty(templateName);
+		RESTAssert.assertNotEmpty(packageName);
+		RESTAssert.assertNotNull(targetVersion);
+		ETemplate template = this.getTemplateByName(templateName);
+		template = this.templateHandler.updatePackage(template, packageName, targetVersion);
+		template = this.templateDAO.save(template);
+		Template aTemplate = template.toApi(this.hostDAO, this.repoDAO, this.packageVersionDAO);
+		this.templatesWSHandler.broadcastEvent(new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.templateDetailWSHandler.broadcastChange(templateName, new WSChangeEvent<>(ChangeType.UPDATED, aTemplate));
+		this.hostHandler.updateHostDetails(template);
+		return aTemplate;
+	}
+
 	@Override
 	@Transactional
 	public Template deletePackage(String templateName, String packageName) {
@@ -252,7 +309,37 @@ public class TemplateImpl implements ITemplate {
 				.sorted(Comparator.comparing(SimplePackageVersion::getName)) //
 				.toArray(SimplePackageVersion[]::new);
 	}
-	
+
+	@Override
+	@Transactional
+	public PackageVersionUpdates getPackageVersionUpdatesForTemplate(String templateName) {
+		RESTAssert.assertNotEmpty(templateName);
+		ETemplate template = this.templateDAO.findByName(templateName);
+		RESTAssert.assertNotNull(template);
+
+		VersionStringComparator comparator = new VersionStringComparator();
+
+		// collect available PVs to multi-map
+		Map<String, SortedSet<String>> availablePVMultiMap = new LinkedHashMap<>();
+		for (EPackageVersion availablePV : this.packageVersionDAO.findByRepo(template.getRepos())) {
+			availablePVMultiMap.computeIfAbsent(availablePV.getPkgName(), k -> new TreeSet<>(comparator));
+			availablePVMultiMap.get(availablePV.getPkgName()).add(availablePV.getVersion());
+		}
+
+		// collect PVs in range
+		Map<String, SortedSet<String>> inRange = new LinkedHashMap<>();
+		for (EPackageVersion installedPV : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
+			inRange.computeIfAbsent(installedPV.getPkgName(), k -> new TreeSet<>(comparator));
+			Set<String> providedVersions = this.pkgHandler.getProvidedPackageVersions(installedPV, template).stream().map(EPackageVersion::getVersion).collect(Collectors.toSet());
+			if (providedVersions.isEmpty()) {
+				inRange.get(installedPV.getPkgName()).add(installedPV.getVersion());
+				continue;
+			}
+			inRange.get(installedPV.getPkgName()).addAll(providedVersions);
+		}
+		return new PackageVersionUpdates(availablePVMultiMap, inRange);
+	}
+
 	@Override
 	@Transactional
 	public PackageDiff[] packageDiff(String templateA, String templateB) {

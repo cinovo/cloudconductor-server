@@ -135,8 +135,8 @@ export class Sorter {
   }
 
   public static versionComp(a: string, b: string): number {
-    let aNumbers: Array<any> = Sorter.versionToArray(a);
-    let bNumbers: Array<any> = Sorter.versionToArray(b);
+    let aNumbers: string[] = Sorter.versionToArray(a);
+    let bNumbers: string[] = Sorter.versionToArray(b);
 
     const maxIndex = Math.max(aNumbers.length, bNumbers.length);
 
@@ -144,13 +144,13 @@ export class Sorter {
       let res: number;
       if (aNumbers[i] === undefined) res = -1;
       else if (bNumbers[i] === undefined) res = 1;
-      else if (isNaN(aNumbers[i]) || isNaN(bNumbers[i])) {
+      else if (isNaN(Number(aNumbers[i])) || isNaN(Number(bNumbers[i]))) {
         if (aNumbers[i].startsWith('SNAPSHOT') && !bNumbers[i].startsWith('SNAPSHOT')) res = -1;
         else if (!aNumbers[i].startsWith('SNAPSHOT') && bNumbers[i].startsWith('SNAPSHOT')) res = 1;
         else if (aNumbers[i] < bNumbers[i]) res = -1;
         else if (aNumbers[i] > bNumbers[i]) res = 1;
       } else {
-        res = aNumbers[i] - bNumbers[i];
+        res = Number(aNumbers[i]) - Number(bNumbers[i]);
       }
       if (res !== 0) {
         return res;
@@ -159,7 +159,7 @@ export class Sorter {
     return 0;
   }
 
-  private static versionToArray(version: string): Array<string> {
+  private static versionToArray(version: string): string[] {
     let res = [];
     if (version) {
       for (let element of version.split('.')) {

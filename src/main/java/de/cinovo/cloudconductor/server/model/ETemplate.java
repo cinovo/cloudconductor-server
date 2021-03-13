@@ -17,6 +17,7 @@ package de.cinovo.cloudconductor.server.model;
  * #L%
  */
 
+import de.cinovo.cloudconductor.api.enums.UpdateRange;
 import de.cinovo.cloudconductor.api.interfaces.INamed;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.dao.IHostDAO;
@@ -65,6 +66,8 @@ public class ETemplate implements IEntity<Long>, INamed {
 	private Boolean smoothUpdate;
 	
 	private String group;
+
+	private UpdateRange updateRange;
 	
 	
 	@Override
@@ -219,8 +222,17 @@ public class ETemplate implements IEntity<Long>, INamed {
 	public void setGroup(String group) {
 		this.group = group;
 	}
-	
-	
+
+
+	@Column(name = "updaterange")
+	public UpdateRange getUpdateRange() {
+		return updateRange;
+	}
+
+	public void setUpdateRange(UpdateRange updateRange) {
+		this.updateRange = updateRange;
+	}
+
 	/**
 	 * @param hostDAO           the host dao
 	 * @param repoDAO           the repo dao
@@ -238,6 +250,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 		template.setAutoUpdate(this.autoUpdate);
 		template.setSmoothUpdate(this.smoothUpdate);
 		template.setGroup(this.group);
+		template.setUpdateRange(this.updateRange);
 		return template;
 	}
 }

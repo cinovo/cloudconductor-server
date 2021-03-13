@@ -13,8 +13,9 @@
         <tr>
           <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
           <th class="sorting_asc">Package-Name</th>
-          <th class="sorting">Installed version</th>
-          <th class="sorting">Latest version</th>
+          <th class="sorting">Installed</th>
+          <th class="sorting">Latest in range</th>
+          <th class="sorting">Latest available</th>
           <th width="15px"></th>
           <th width="15px"></th>
         </tr>
@@ -25,7 +26,7 @@
             There are currently no packages installed.
           </td>
         </tr>
-        <tr *ngFor="let pv of packageVersions;" [class.warning]="packageTree[pv.pkg] && !isPkgLatest(pv)">
+        <tr *ngFor="let pv of packageVersions;" [class.warning]="pvInRange && !isPkgLatestInRange(pv)">
           <td>
             <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="selectPackage(pv, $event)">
           </td>
@@ -34,16 +35,24 @@
             <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
           </td>
           <td>
-            <cc-inlineedit [value]="pv.version" [options]="getVersionStrings(pv.pkg)" (onSave)="updatePackageVersion(pv.pkg, $event)">
+            <cc-inlineedit *ngIf="pvAvailable; else readonly" [value]="pv.version" [options]="pvAvailable[pv.pkg]" (onSave)="updatePackageVersion(pv.pkg, $event)">
             </cc-inlineedit>
+            <ng-template #readonly>
+              {{pv.version}}
+            </ng-template>
           </td>
           <td>
-            <span *ngIf="packageTree[pv.pkg]">
-              {{packageTree[pv.pkg].newestVersion.version}}
+            <span *ngIf="pvInRange">
+              {{getLatestPkgInRange(pv)}}
             </span>
           </td>
           <td>
-            <a *ngIf="packageTree[pv.pkg] && !isPkgLatest(pv)" (click)="updatePackage(pv)" role="button" [title]="'Update package \'' + pv.pkg + '\' to latest'">
+            <span>
+              {{getLatestPkg(pv)}}
+            </span>
+          </td>
+          <td>
+            <a *ngIf="pvInRange && !isPkgLatestInRange(pv)" (click)="updatePackage(pv)" role="button" [title]="'Update package \'' + pv.pkg + '\' to latest'">
               <i class="fa fa-refresh fa-fw"></i>
             </a>
           </td>
@@ -70,13 +79,13 @@
               <div class="form-group">
                 <div class="col-sm-6">
                   <select class="form-control" id="pkg" [(ngModel)]="newPackage.pkg" (ngModelChange)="onPackageChange()">
-                    <option *ngFor="let pt of packageTreeArray()" value="{{pt.pkgName}}">{{pt.pkgName}}</option>
+                    <option *ngFor="let pkg of getInstallablePackages()" value="{{pkg}}">{{pkg}}</option>
                   </select>
                 </div>
                 <div class="col-sm-6">
                   <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!newPackage.pkg">
-                    <option *ngFor="let version of getVersions(newPackage.pkg)" value="{{version.version}}">
-                      {{version.version}}
+                    <option *ngFor="let version of getAvailableVersionStrings(newPackage.pkg)" value="{{version}}">
+                      {{version}}
                     </option>
                   </select>
                 </div>

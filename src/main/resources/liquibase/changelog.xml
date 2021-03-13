@@ -1283,4 +1283,9 @@
     <changeSet id="e11c17a7-11aa-427d-9df8-18a93dc1d14b" author="psigloch">
         <dropColumn schemaName="cloudconductor" tableName="packageversion" columnName="deprecated" />
     </changeSet>
+    <changeSet id="bf3758b8-3127-4375-9b65-e935f222a9dc" author="mweise">
+        <addColumn schemaName="cloudconductor" tableName="template">
+            <column name="updaterange" type="int" defaultValue="0" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

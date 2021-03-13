@@ -33,6 +33,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   @Input() mode: Mode = Mode.EDIT;
 
   public modes = Mode;
+  public ranges = ['all','major','minor', 'patch'];
+
   public template: Template = {name: '', description: ''};
 
   public existingTemplateNames: Observable<string[]>;
@@ -63,6 +65,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       description: [''],
       autoUpdate: false,
       smoothUpdate: false,
+      updateRange: ['all', [Validators.required]],
       copyFrom: this.copyFrom,
       newRepo: '',
       group: ''
@@ -76,20 +79,21 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       // update metadata form
       this.templateForm.controls.name.setValue(template.name);
       this.templateForm.controls.description.setValue(template.description);
+      this.templateForm.controls.updateRange.setValue(template.updateRange);
       this.templateForm.controls.autoUpdate.setValue(template.autoUpdate);
       this.templateForm.controls.smoothUpdate.setValue(template.smoothUpdate);
       this.templateForm.controls.group.setValue(template.group);
     });
 
     this._settingsSub = this.settingsHttp.getSettings().subscribe(
-      (result) => this.settings = result,
+      (settings) => this.settings = settings,
       (err) => console.error(err)
     );
 
-    this.templateHttp.getSimpleTemplates().subscribe((result) => {
-      result.forEach((t) => {
-        if (!this.groups.some((e) => e === t.group)) {
-          this.groups.push(t.group);
+    this.templateHttp.getSimpleTemplates().subscribe((templates) => {
+      templates.forEach((template) => {
+        if (!this.groups.some((group) => group === template.group)) {
+          this.groups.push(template.group);
         }
       });
     });
@@ -116,6 +120,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       repos: this.template.repos,
       versions: this.template.versions,
       hosts: this.template.hosts,
+      updateRange: formValue.updateRange,
       autoUpdate: formValue.autoUpdate,
       smoothUpdate: formValue.smoothUpdate,
       group: formValue.group
@@ -136,8 +141,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
             templateObs = this.templateHttp.getTemplate(formValue.copyFrom);
             sdsObs = this.templateHttp.getServiceDefaultStates(formValue.copyFrom)
           }
-
-          return forkJoin(templateObs, sdsObs)
+          return forkJoin([templateObs, sdsObs]);
         }),
         mergeMap(([templateToCopy = {}, sds = []]) => {
           serviceDefaultStates = sds;
@@ -146,23 +150,22 @@ export class TemplateMetaData implements OnInit, OnDestroy {
           templateToSave = {...templateToSave, repos: templateToCopy.repos, versions: templateToCopy.versions};
           return this.templateHttp.save(templateToSave)
         }),
-        mergeMap(() => {
-          return this.updateServiceStates(templateToSave.name, serviceDefaultStates);
-        })
+        mergeMap(() =>  this.updateServiceStates(templateToSave.name, serviceDefaultStates))
       ).subscribe(() => {
-          this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
-          this.router.navigate(['template', templateToSave.name]);
-        }, (err) => {
-          this.alerts.danger(`Failed to create template '${templateToSave.name}': ${err}`);
-          console.error(err);
-        }
-      );
+        this.alerts.success(`Successfully created template '${templateToSave.name}'.`);
+        // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate(['template', templateToSave.name]);
+      }, (err) => {
+        this.alerts.danger(`Failed to create template '${templateToSave.name}': ${err}`);
+        console.error(err);
+      });
     } else {
       this.templateHttp.save(templateToSave).subscribe(() => {
         this.alerts.success(`Successfully saved template '${templateToSave.name}'.`);
         if (this.mode === Mode.EDIT) {
           return;
         }
+        // noinspection JSIgnoredPromiseFromCall
         this.router.navigate(['template', templateToSave.name]);
       }, (err) => {
         this.alerts.danger(`Failed to save template '${templateToSave.name}'`);

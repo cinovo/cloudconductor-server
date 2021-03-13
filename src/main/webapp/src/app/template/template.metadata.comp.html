@@ -19,12 +19,22 @@
 
         <div class="form-group"
              [ngClass]="{ 'has-error': !templateForm.controls.group.pristine && !templateForm.controls.group.valid }">
-          <label class="control-label" for="group">Gruppe</label>
+          <label class="control-label" for="group">Group</label>
           <input type="text" class="form-control" formControlName="group" id="group" list="groupList">
           <datalist id="groupList">
-            <option *ngFor="let elem of groups" value="{{elem}}"></option>
+            <option *ngFor="let group of groups" value="{{group}}"></option>
           </datalist>
           <span *ngIf="!templateForm.controls.group.pristine && !templateForm.controls.group.valid" class="help-block">
+            This field is required
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="range" class="control-label">Update range</label>
+          <select id="range" formControlName="updateRange" class="form-control">
+            <option *ngFor="let range of ranges" value="{{range}}">{{range}}</option>
+          </select>
+          <span *ngIf="!templateForm.controls.updateRange.pristine && !templateForm.controls.updateRange.valid" class="help-block">
             This field is required
           </span>
         </div>
@@ -45,7 +55,7 @@
           <label for="copypackages">Copy behaviour from </label>
           <select class="form-control" formControlName="copyFrom" id="copypackages">
             <option value="" selected>None</option>
-            <option *ngFor="let existingTemplate of (existingTemplateNames| async)" value="{{existingTemplate}}">
+            <option *ngFor="let existingTemplate of (existingTemplateNames | async)" value="{{existingTemplate}}">
               {{existingTemplate}}
             </option>
           </select>
@@ -55,7 +65,7 @@
           <table class="table-responsive table table-striped table-hover" cc-panel-body
                  *ngIf="mode === modes.EDIT || (mode === modes.NEW && !copyFrom.value)">
             <tbody>
-            <tr *ngIf="!template.repos || template.repos.length < 1; else repoList" class="danger">
+            <tr *ngIf="!template.repos || template.repos.length < 1; else reposList" class="danger">
               <td colspan="3" class="text-center">
                 There are currently no repositories selected.
               </td>
@@ -133,7 +143,6 @@
             Delete
           </button>
         </div>
-
       </form>
     </cc-panel>
   </div>

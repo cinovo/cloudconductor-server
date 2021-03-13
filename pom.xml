@@ -59,7 +59,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dvalin.version>1.28</dvalin.version>
-        <cloudconductor.api.version>3.5</cloudconductor.api.version>
+        <cloudconductor.api.version>3.6-SNAPSHOT</cloudconductor.api.version>
     </properties>
 
     <dependencies>

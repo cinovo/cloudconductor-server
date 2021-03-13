@@ -1,12 +1,17 @@
 package de.cinovo.cloudconductor.server.handler;
 
+import de.cinovo.cloudconductor.api.enums.UpdateRange;
 import de.cinovo.cloudconductor.api.model.Dependency;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
-import de.cinovo.cloudconductor.server.dao.*;
+import de.cinovo.cloudconductor.server.dao.IDependencyDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageDAO;
+import de.cinovo.cloudconductor.server.dao.IPackageVersionDAO;
+import de.cinovo.cloudconductor.server.dao.IRepoDAO;
 import de.cinovo.cloudconductor.server.model.EDependency;
 import de.cinovo.cloudconductor.server.model.EPackage;
 import de.cinovo.cloudconductor.server.model.EPackageVersion;
 import de.cinovo.cloudconductor.server.model.ERepo;
+import de.cinovo.cloudconductor.server.model.ETemplate;
 import de.cinovo.cloudconductor.server.util.comparators.PackageVersionComparator;
 import de.taimos.restutils.RESTAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +19,12 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.WebApplicationException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +37,8 @@ import java.util.stream.Collectors;
 public class PackageHandler {
 	
 	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+	private final Pattern versionSeparator = Pattern.compile("[.-]");
+
 	@Autowired
 	private IPackageDAO packageDAO;
 	@Autowired
@@ -117,42 +128,59 @@ public class PackageHandler {
 		}
 		return pv;
 	}
-	
+
 	/**
-	 * @param pkgId the package id
-	 * @param repos the repos to look in
-	 * @return the latest package version in the provided repos
+	 * @param currentPV	the package version which is currently installed
+	 * @param template	template
+	 * @return latest provided package version in update range of template or null if none was found
 	 */
-	public EPackageVersion getNewestPackageInRepos(Long pkgId, Collection<ERepo> repos) {
-		if ((repos == null) || repos.isEmpty() || (pkgId == null)) {
+	public EPackageVersion getLatestPackageInRepos(EPackageVersion currentPV, ETemplate template) {
+		return getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
+	}
+
+	/**
+	 * @param currentPV		the package version which is currently installed
+	 * @param repoIds		the providing repo ids
+	 * @param customRange	custom update range
+	 * @return latest provided package version or null if none was found
+	 */
+	public EPackageVersion getLatestPackageInRepos(EPackageVersion currentPV, Collection<Long> repoIds, UpdateRange customRange) {
+		return getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), repoIds, customRange);
+	}
+
+	/**
+	 * @param pkgName			name of the package
+	 * @param currentVersion	current version installed
+	 * @param availableRepoIds	available repo ids
+	 * @param range				update range
+	 * @return latest provided package version in update range or null if none was found
+	 */
+	public EPackageVersion getLatestPackageInRepos(String pkgName, String currentVersion, Collection<Long> availableRepoIds, UpdateRange range) {
+		if (availableRepoIds == null || availableRepoIds.isEmpty() || pkgName == null || currentVersion == null) {
 			return null;
 		}
-		
-		List<EPackageVersion> packageVersions = this.packageVersionDAO.findByPackage(pkgId);
-		if (packageVersions.isEmpty()) {
-			return null;
+
+		return getProvidedPackageVersions(pkgName, currentVersion, availableRepoIds, range).stream().max(new PackageVersionComparator()).orElse(null);
+	}
+
+	public List<EPackageVersion> getProvidedPackageVersions(EPackageVersion currentPV, ETemplate template) {
+		return getProvidedPackageVersions(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
+	}
+
+	public List<EPackageVersion> getProvidedPackageVersions(String pkgName, String currentVersion, Collection<Long> availableRepoIds, UpdateRange range) {
+		String[] versionParts = this.versionSeparator.split(currentVersion);
+		switch (range) {
+			case all:
+				return this.packageVersionDAO.findProvidedByPackage(pkgName, availableRepoIds);
+			case major:
+				return this.packageVersionDAO.findProvidedInRange(pkgName, availableRepoIds, versionParts[0]);
+			case minor:
+				return this.packageVersionDAO.findProvidedInRange(pkgName, availableRepoIds, versionParts[0], versionParts[1]);
+			case patch:
+				return this.packageVersionDAO.findProvidedInRange(pkgName, availableRepoIds, versionParts[0], versionParts[1], versionParts[2]);
+			default:
+				return Collections.emptyList();
 		}
-		
-		PackageVersionComparator versionComp = new PackageVersionComparator();
-		
-		List<EPackageVersion> existingVersions = new ArrayList<>(packageVersions);
-		existingVersions.sort((left, right) -> -versionComp.compare(left, right));
-		
-		
-		EPackageVersion version = null;
-		for (EPackageVersion existingVersion : existingVersions) {
-			if (version != null) {
-				//we already found the newest one
-				break;
-			}
-			for (Long repoId : existingVersion.getRepos()) {
-				if (repos.stream().anyMatch(r -> r.getId().equals(repoId))) {
-					version = existingVersion;
-					break;
-				}
-			}
-		}
-		return version;
 	}
 	
 	private void fillFields(EPackageVersion epv, PackageVersion pv) {
