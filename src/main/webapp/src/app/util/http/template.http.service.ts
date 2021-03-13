@@ -27,6 +27,8 @@ export interface SimpleTemplate {
   group?: string;
 }
 
+export type UpdateRange ='all' | 'major' | 'minor' | 'patch'
+
 export interface Template {
   name: string;
   description?: string;
@@ -36,6 +38,7 @@ export interface Template {
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
   group?: string;
+  updateRange?: UpdateRange;
 }
 
 export interface PackageDiff {
@@ -70,10 +73,19 @@ export interface ServiceDefaultState {
   state: ServiceState;
 }
 
+export interface PackageVersionMultiMap {
+  [packageName: string]: string[];
+}
+
+export interface TemplateUpdates {
+  available: PackageVersionMultiMap;
+  inRange: PackageVersionMultiMap;
+}
+
 @Injectable()
 export class TemplateHttpService {
 
-  private _basePathURL = 'api/template';
+  private readonly _basePathURL = 'api/template';
 
   constructor(private readonly http: HttpClient) { }
 
@@ -90,11 +102,10 @@ export class TemplateHttpService {
   }
 
   public existsTemplate(templateName: string): Observable<boolean> {
-    return this.getTemplate(templateName).pipe(map((template: Template) => {
-      return (template !== undefined);
-    }),catchError(() => {
-      return observableOf(false);
-    }),);
+    return this.getTemplate(templateName).pipe(
+      map((template: Template) => (template !== undefined)), //
+      catchError(() => observableOf(false)), //
+    );
   }
 
   public deleteTemplate(template: Template | SimpleTemplate): Observable<boolean> {
@@ -102,8 +113,7 @@ export class TemplateHttpService {
   }
 
   public save(template: Template): Observable<boolean> {
-    template['@class'] = 'de.cinovo.cloudconductor.api.model.Template';
-    return this.http.put<boolean>(this._basePathURL, template);
+    return this.http.put<boolean>(this._basePathURL,{'@class': 'de.cinovo.cloudconductor.api.model.Template', ...template});
   }
 
   public updatePackage(template: Template, packageName: string): Observable<Template> {
@@ -158,5 +168,10 @@ export class TemplateHttpService {
     return this.http.put<Template>(`${this._basePathURL}/${templateName}/package/versions`, packageVersions);
   }
 
+  public getUpdates(templateName: string): Observable<TemplateUpdates> {
+    return this.http.get<TemplateUpdates>(`${this._basePathURL}/${templateName}/updates`)
+  }
 }
+
+
 

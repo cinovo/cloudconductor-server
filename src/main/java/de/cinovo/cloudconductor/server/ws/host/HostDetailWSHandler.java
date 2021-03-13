@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 public class HostDetailWSHandler extends AParamWSHandler<AParamWSAdapter<Host>, Host> {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HostDetailWSHandler.class);
+	
 	@Autowired
 	private IServiceStateDAO serviceStateDAO;
 	@Autowired

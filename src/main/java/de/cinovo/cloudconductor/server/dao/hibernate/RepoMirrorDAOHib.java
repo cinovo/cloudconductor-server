@@ -54,8 +54,11 @@ public class RepoMirrorDAOHib extends EntityDAOHibernate<ERepoMirror, Long> impl
 	
 	@Override
 	public void deleteForRepo(ERepo repo) {
+		if (repo == null) {
+			return;
+		}
 		// language=HQL
-		this.entityManager.createQuery("DELETE FROM ERepoMirror AS m WHERE m.repoId = ?1").setParameter(1, repo).executeUpdate();
+		this.entityManager.createQuery("DELETE FROM ERepoMirror AS m WHERE m.repoId = ?1").setParameter(1, repo.getId()).executeUpdate();
 	}
 	
 	@Override

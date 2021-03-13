@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from "@angular/common";
 
-import { forkJoin as observableForkJoin,  Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { saveAs } from "file-saver";
 
-import { Template, TemplateHttpService } from '../util/http/template.http.service';
-import { PackageHttpService, PackageVersion, SimplePackageVersion } from '../util/http/package.http.service';
+import { PackageVersionMultiMap, Template, TemplateHttpService } from '../util/http/template.http.service';
+import { SimplePackageVersion } from '../util/http/package.http.service';
 import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
@@ -22,17 +22,6 @@ export interface TemplatePackageVersion {
   pkg: string,
   version: string,
   selected: boolean
-}
-
-type PackageTree = {
-  [pkgName: string]: PackageTreeNode
-}
-
-type PackageTreeNode = {
-  pkgName: string,
-  inUse: boolean,
-  versions: Array<PackageVersion>,
-  newestVersion?: PackageVersion
 }
 
 type NewPackageVersion = {
@@ -51,7 +40,9 @@ export class TemplatePackages implements OnInit, OnDestroy {
   private template: Template = {name: '', description: ''};
   public packageVersions: TemplatePackageVersion[] = [];
 
-  public packageTree: PackageTree = {};
+  public pvAvailable: PackageVersionMultiMap;
+  public pvInRange: PackageVersionMultiMap;
+
   public newPackage: NewPackageVersion = null;
 
   public importing = false;
@@ -59,8 +50,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
   private _allSelected = false;
   private templateSub: Subscription;
 
-  constructor(private readonly packageHttp: PackageHttpService,
-              private readonly templateHttp: TemplateHttpService,
+  constructor(private readonly templateHttp: TemplateHttpService,
               private readonly alerts: AlertService,
               private readonly datePipe: DatePipe) {
   };
@@ -84,18 +74,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.template = template;
     this.loadVersions();
     this.cancelAddPackage();
-
-    if (this.template.repos) {
-      const repoOps: Observable<PackageVersion[]>[] = this.template.repos.map(repo => this.packageHttp.getVersionsOfRepo(repo));
-
-      observableForkJoin(repoOps).subscribe((results) => {
-        const flattetResults = results.reduce((flat, toFlatten) => {
-          return flat.concat(toFlatten);
-        }, []);
-
-        this.packageTree = this.preparePVS(flattetResults);
-      });
-    }
+    this.loadUpdates(template.name);
   }
 
   private loadVersions(): void {
@@ -118,27 +97,22 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.packageVersions = newPackageVersions;
   }
 
-  private preparePVS(pvs: PackageVersion[]) {
-    const newPVTree = {};
-    for (let pv of pvs) {
-      if (!newPVTree[pv.name]) {
-        newPVTree[pv.name] = {pkgName: pv.name, inUse: this.templateContainsPackage(pv), versions: []};
-      }
-      let entry = newPVTree[pv.name];
-      if (entry.versions.findIndex((version) => version.name === pv.name && version.version === pv.version) < 0) {
-        entry.versions.push(pv);
-        entry.versions.sort(Sorter.packageVersion);
-        if (Sorter.packageVersion(entry.newestVersion, pv) < 0) {
-          entry.newestVersion = pv;
-        }
-      }
+  private loadUpdates(templateName: string): void {
+    if (!templateName || templateName.length < 1){
+      return
     }
 
-    return newPVTree;
+    this.templateHttp.getUpdates(templateName).subscribe(
+      (updates) => {
+        this.pvAvailable = updates.available;
+        this.pvInRange = updates.inRange;
+      },
+      (err) => console.error(err)
+    );
   }
 
   public updatePackage(pv: TemplatePackageVersion): void {
-    if (pv) {
+    if (pv) { // TODO use new HTTP calls to update
       this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
         () => this.alerts.success('The package ' + pv.pkg + ' has been updated successfully.'),
         (error) => this.alerts.danger('The package update of ' + pv.pkg + ' failed.')
@@ -235,13 +209,20 @@ export class TemplatePackages implements OnInit, OnDestroy {
     return this.packageVersions.some(pv => pv.selected);
   }
 
-  public isPkgLatest(pv: TemplatePackageVersion): boolean {
-    return this.packageTree[pv.pkg] && this.packageTree[pv.pkg].newestVersion.version === pv.version;
+  public getLatestPkg(pv: TemplatePackageVersion): string {
+    return (this.pvAvailable && this.pvAvailable[pv.pkg]) ? this.pvAvailable[pv.pkg].slice(-1).pop() : null;
   }
 
-  private isPkgLatestByName(packageName: string): boolean {
-    let index = this.packageVersions.findIndex((element) => element.pkg == packageName);
-    return this.isPkgLatest(this.packageVersions[index]);
+  public isPkgLatest(pv: TemplatePackageVersion): boolean {
+    return pv.version === this.getLatestPkg(pv);
+  }
+
+  public getLatestPkgInRange(pv: TemplatePackageVersion): string {
+    return (this.pvInRange && this.pvInRange[pv.pkg]) ? this.pvInRange[pv.pkg].slice(-1).pop() : null;
+  }
+
+  public isPkgLatestInRange(pv: TemplatePackageVersion): boolean {
+    return pv.version === this.getLatestPkgInRange(pv);
   }
 
   public goToAddPackage(): void {
@@ -284,24 +265,17 @@ export class TemplatePackages implements OnInit, OnDestroy {
       }
     );
   }
-
-  public getVersions(pkgName: string): Array<PackageVersion> {
-    if (Validator.notEmpty(pkgName)) {
-      if (this.packageTree[pkgName]) {
-        return [...this.packageTree[pkgName].versions].sort(Sorter.packageVersion);
-      }
+  public getAvailableVersionStrings(pkgName: string): string[] {
+    if (Validator.notEmpty(pkgName) && this.pvAvailable && this.pvAvailable[pkgName]) {
+        return this.pvAvailable[pkgName].slice().sort(Sorter.versionComp);
     }
     return [];
   }
 
-  public getVersionStrings(pkgName: string): string[] {
-    return this.getVersions(pkgName).map(pv => pv.version);
-  }
-
   public onPackageChange(): void {
-    let versions = this.getVersions(this.newPackage.pkg);
+    const versions = this.getAvailableVersionStrings(this.newPackage.pkg);
     if (versions.length > 0) {
-      this.newPackage.version = versions[versions.length - 1].version;
+      this.newPackage.version = versions.slice(-1).pop();
     } else {
       this.newPackage.version = '';
     }
@@ -311,23 +285,12 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.newPackage = null;
   }
 
-  public packageTreeArray(): PackageTreeNode[] {
-    let result = [];
-    for (let element of Object.values(this.packageTree)) {
-      if (this.template.versions[element.pkgName] == null) {
-        result.push(element);
-      }
-    }
-    return result.sort((a, b) => Sorter.byField(a, b, 'pkgName'));
+  public getInstallablePackages(): String[] {
+    return Object.keys(this.pvAvailable).filter(pkg => this.templateContainsPackage(pkg))
   }
 
-  private templateContainsPackage(pv: PackageVersion): boolean {
-    for (let name in this.template.versions) {
-      if (name === pv.name) {
-        return true;
-      }
-    }
-    return false;
+  private templateContainsPackage(pkgName: string): boolean {
+    return Object.keys(this.template.versions).includes(pkgName);
   }
 
   public exportFile(): void {
@@ -383,6 +346,5 @@ export class TemplatePackages implements OnInit, OnDestroy {
       );
     };
   }
-
 }
 
