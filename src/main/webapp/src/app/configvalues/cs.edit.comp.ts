@@ -50,7 +50,7 @@ export class ConfigValueEdit implements OnInit {
       if (template === 'newTemplate') {
         template = '';
       }
-      let formObj = {key, value, template, service};
+      const formObj = {key, value, template, service};
       this.kvForm.setValue(formObj);
     });
     this.configHttp.templates.subscribe((result) => this.templates = result);
@@ -61,7 +61,7 @@ export class ConfigValueEdit implements OnInit {
 
   public save(newConfigPair: ConfigValue): void {
     const trimmedCV: ConfigValue = { key: newConfigPair.key.trim(), ...newConfigPair};
-    let check: Observable<boolean> = this.configHttp.existsConfigValue(trimmedCV.template, trimmedCV.service, trimmedCV.key);
+    const check: Observable<boolean> = this.configHttp.existsConfigValue(trimmedCV.template, trimmedCV.service, trimmedCV.key);
     check.pipe(mergeMap(exists => {
       if (exists) {
         return observableThrowError(`Configuration for '${trimmedCV.key}' does already exist!`);

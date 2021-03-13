@@ -15,8 +15,7 @@ import { DOCUMENT } from "@angular/common";
 export class CCExport {
 
   @Input() fileName: string = CCExport.genFileName();
-  @Input() title: string = 'Just copy the string below';
-
+  @Input() title = 'Just copy the string below';
   @Input() export: string;
 
   constructor(@Inject(DOCUMENT) private readonly dom: Document) { }
@@ -28,9 +27,9 @@ export class CCExport {
   }
 
   public download(exportElement: HTMLTextAreaElement) {
-    let json = exportElement.value;
-    let blob = new Blob([json], {type: 'application/json;charset=utf-8;'});
-    let link = document.createElement('a');
+    const json = exportElement.value;
+    const blob = new Blob([json], {type: 'application/json;charset=utf-8;'});
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = this.fileName + ".json";
     link.click();

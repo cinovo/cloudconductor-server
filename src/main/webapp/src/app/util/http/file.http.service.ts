@@ -15,7 +15,7 @@ import { ConfigFile } from './config-file.model';
 @Injectable()
 export class FileHttpService {
 
-  private _basePathURL = 'api/file';
+  private readonly _basePathURL = 'api/file';
 
   constructor(private readonly http: HttpClient) { }
 
@@ -28,13 +28,11 @@ export class FileHttpService {
   }
 
   public updateFile(updatedFile: ConfigFile): Observable<boolean> {
-    updatedFile['@class'] = 'de.cinovo.cloudconductor.api.model.ConfigFile';
-    return this.http.put<boolean>(this._basePathURL, updatedFile);
+    return this.http.put<boolean>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.ConfigFile', ...updatedFile});
   }
 
   public getFile(fileName: string): Observable<ConfigFile> {
-    return this.http.get<ConfigFile>(`${this._basePathURL}/${fileName}`).pipe(
-                    map(file => Object.assign(new ConfigFile(), file)));
+    return this.http.get<ConfigFile>(`${this._basePathURL}/${fileName}`).pipe(map(file => Object.assign(new ConfigFile(), file)));
   }
 
   public existsFile(fileName: string): Observable<boolean> {

@@ -39,8 +39,7 @@ export class SSHKeyHttpService {
   }
 
   public updateKey(sshKey: SSHKey): Observable<boolean> {
-    sshKey['@class'] = 'de.cinovo.cloudconductor.api.model.SSHKey';
-    return this.http.put<boolean>(this._basePathURL, sshKey);
+    return this.http.put<boolean>(this._basePathURL, { '@class': 'de.cinovo.cloudconductor.api.model.SSHKey', ...sshKey});
   }
 
   public deleteKey(owner: string): Observable<boolean> {

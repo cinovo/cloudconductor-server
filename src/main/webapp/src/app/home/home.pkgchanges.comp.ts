@@ -29,7 +29,8 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
 
   private hostsSub: Subscription;
 
-  constructor(private packageChangesService: PackageChangesService, private hostsService: HostsService) { }
+  constructor(private readonly packageChangesService: PackageChangesService,
+              private readonly hostsService: HostsService) { }
 
     public ngOnInit(): void {
       this.hostsSub = this.hostsObs.subscribe((hosts) => {
@@ -38,16 +39,16 @@ export class HomePackageChangesComponent implements OnInit, OnDestroy {
     }
 
     private loadChangesForHosts(hosts: Host[]): void {
-      const changes$: Observable<PackageChangeMap>[] = hosts.filter(host => this.hostsService.isAlive(host)).map(host => {
-        return this.packageChangesService.computePackageChanges(host).pipe(map(changes => {
-          let container = {};
+      const changes$: Observable<PackageChangeMap>[] = hosts.filter(host => this.hostsService.isAlive(host)).map(host =>
+        this.packageChangesService.computePackageChanges(host).pipe(map(changes => {
+          const container = {};
           changes = changes.filter(change => change.state !== 'ok' && change.state !== 'protected');
           if (changes.length > 0) {
             container[host.name] = changes
           }
           return container;
-        }));
-      });
+        }))
+      );
 
       observableForkJoin(changes$).subscribe(
         (data) => {

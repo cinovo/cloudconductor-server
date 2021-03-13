@@ -33,7 +33,7 @@ export class PackageChangesService {
     }
     return this.packageHttp.getPackageChanges(host.uuid).pipe(mergeMap((psc: PackageStateChanges) => {
       const packageChanges: PackageChange[] = [];
-      for (let pkg of psc.toInstall) {
+      for (const pkg of psc.toInstall) {
         packageChanges.push({
           name: pkg.name,
           hostVersion: host.packages[pkg.name],
@@ -41,8 +41,12 @@ export class PackageChangesService {
           state: 'installing'
         });
       }
-      for (let pkg of psc.toUpdate) {
-        let comp = Sorter.versionComp(host.packages[pkg.name], pkg.version);
+
+      for (const pkg of psc.toUpdate) {
+        const comp = Sorter.versionComp(host.packages[pkg.name], pkg.version);
+        if (comp === 0) {
+          continue;
+        }
         packageChanges.push({
           name: pkg.name,
           hostVersion: host.packages[pkg.name],
@@ -51,7 +55,7 @@ export class PackageChangesService {
         });
       }
 
-      for (let pkg of psc.toErase) {
+      for (const pkg of psc.toErase) {
         packageChanges.push({
           name: pkg.name,
           hostVersion: host.packages[pkg.name],

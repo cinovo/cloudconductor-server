@@ -25,8 +25,6 @@ export class TemplateDetail implements OnInit, OnDestroy {
   private _template: BehaviorSubject<Template> = new BehaviorSubject({name: '', description: ''});
   public template: Observable<Template> = this._template.asObservable();
   public currentTemplate: Template = {name: '', description: '', hosts: []};
-  protected autorefesh = false;
-
   public modes = Mode;
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;

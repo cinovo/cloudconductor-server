@@ -1,9 +1,10 @@
 package de.cinovo.cloudconductor.server.ws;
 
 import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent;
-import org.eclipse.jetty.util.ConcurrentHashSet;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
@@ -17,9 +18,8 @@ import java.util.Set;
  */
 public abstract class ASimpleWSHandler<A extends ASimpleWSAdapter<?, T>, T> {
 	
-	private Set<A> connectedWS = new ConcurrentHashSet<>();
-	
-	
+	private final Set<A> connectedWS =  Collections.newSetFromMap(new ConcurrentHashMap<>());
+
 	/**
 	 * @param wsAdapter the WS adapter to add
 	 */
@@ -42,7 +42,4 @@ public abstract class ASimpleWSHandler<A extends ASimpleWSAdapter<?, T>, T> {
 			adapter.sendChangeEvent(changeEvent);
 		}
 	}
-	
-	
-	
 }

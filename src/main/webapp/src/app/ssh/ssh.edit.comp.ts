@@ -22,7 +22,7 @@ export class SSHEditComponent implements OnInit {
   @Input() isCreate = false;
 
   @Output() onSave: EventEmitter<SSHKey> = new EventEmitter();
-  @Output() onCancel: EventEmitter<String> = new EventEmitter();
+  @Output() onCancel: EventEmitter<string> = new EventEmitter();
 
   public keyForm: FormGroup;
 

@@ -6,12 +6,6 @@ import { Host, HostHttpService } from '../util/http/host.http.service';
 import { ServiceState } from '../util/enums.util';
 import { Sorter } from '../util/sorters.util';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 interface ServiceStateElement {
   name: string;
   state: ServiceState;
@@ -21,6 +15,12 @@ interface ServiceStateElement {
 
 type ServiceActionType = 'start' | 'stop' | 'restart';
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'host-services',
   templateUrl: './host.service.comp.html'
@@ -75,12 +75,7 @@ export class HostServices implements AfterViewInit {
   }
 
   public handleSelected(type: ServiceActionType) {
-    let serviceNames: string[] = [];
-    for (let service of this.services) {
-      if (service.selected) {
-        serviceNames.push(service.name);
-      }
-    }
+    const serviceNames: string[] = this.services.filter(s => s.selected).map(s => s.name);
     this.handleServices(type, serviceNames);
     this.allSelected = false;
     return;
@@ -98,7 +93,6 @@ export class HostServices implements AfterViewInit {
       );
     }
   }
-
 
   private httpServiceCall(type: ServiceActionType, serviceName: string, successCallback: () => void, errorCallBack?: (err) => void): void {
     switch (type) {

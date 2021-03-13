@@ -38,7 +38,7 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
       this.keySub = this.sshHttp.getKey(this.owner).subscribe((key) => {
           this.key.next(key)
         },
-        (err) => this.router.navigate(['/not-found', 'ssh', this.owner])
+        (_) => this.router.navigate(['/not-found', 'ssh', this.owner])
       );
     });
 
@@ -59,7 +59,8 @@ export class SSHDetailComponent implements OnInit, OnDestroy {
     const sshKeyToSave: SSHKey = { owner: newSSHKey.owner.trim(), ...newSSHKey};
     this.sshHttp.updateKey(sshKeyToSave).subscribe(() => {
       this.alertService.success(`SSH Key of '${sshKeyToSave.owner}' was successfully updated!`);
-      this.router.navigate(['/ssh']);
+      // noinspection JSIgnoredPromiseFromCall
+        this.router.navigate(['/ssh']);
     },
     (err) => {
       this.alertService.danger(`Error updating SSH key of '${sshKeyToSave.owner}'!`);

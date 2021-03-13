@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+
 import { ConfigValue, ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { AlertService } from "../util/alert/alert.service";
 import { Sorter } from "../util/sorters.util";
@@ -11,7 +12,7 @@ export class ConfigValueVariables implements OnInit {
 
   public kvs: ConfigValue[] = [];
   public newKV: ConfigValue = null;
-  private kvLoaded: boolean = false;
+  private kvLoaded = false;
 
   constructor(private readonly configHttp: ConfigValueHttpService,
               private readonly alerts: AlertService) {
@@ -51,7 +52,7 @@ export class ConfigValueVariables implements OnInit {
   protected doDelete(kv: ConfigValue) {
     this.configHttp.deleteValue(kv).subscribe(
       () => {
-        this.kvs = this.kvs.filter((e) => e != kv);
+        this.kvs = this.kvs.filter((e) => e !== kv);
         this.alerts.success(`Deleted variable '${kv.key}'`);
       },
       (err) => {

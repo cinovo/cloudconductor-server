@@ -3,12 +3,6 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch
- */
 export interface RepoMirror {
   id?: number;
   repo: string;
@@ -23,6 +17,12 @@ export interface RepoMirror {
   secretKey?: string;
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Injectable()
 export class RepoMirrorHttpService {
 
@@ -39,12 +39,10 @@ export class RepoMirrorHttpService {
   }
 
   public newMirror(mirror: RepoMirror): Observable<RepoMirror> {
-    mirror['@class'] = 'de.cinovo.cloudconductor.api.model.RepoMirror';
-    return this.http.post<RepoMirror>(this._basePathURL, mirror);
+    return this.http.post<RepoMirror>(this._basePathURL,{'@class': 'de.cinovo.cloudconductor.api.model.RepoMirror', ...mirror});
   }
 
   public editMirror(mirror: RepoMirror): Observable<RepoMirror> {
-    mirror['@class'] = 'de.cinovo.cloudconductor.api.model.RepoMirror';
-    return this.http.put<RepoMirror>(this._basePathURL, mirror);
+    return this.http.put<RepoMirror>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.RepoMirror', ...mirror});
   }
 }

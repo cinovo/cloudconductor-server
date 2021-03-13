@@ -55,20 +55,20 @@ export class HostHttpService {
     return this.http.delete<boolean>(`${this._basePathURL}/${host.uuid}`).pipe(share());
   }
 
-  public startService(hostUuid: string, serviceName: string): Observable<boolean> {
-    let val: ChangeServiceState = {hostUuid: hostUuid, service: serviceName, targetState: ServiceState.STARTING};
+  public startService(hostUuid: string, service: string): Observable<boolean> {
+    const val: ChangeServiceState = {hostUuid, service, targetState: ServiceState.STARTING};
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
     return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).pipe(share());
   }
 
-  public stopService(hostUuid: string, serviceName: string): Observable<boolean> {
-    let val: ChangeServiceState = {hostUuid: hostUuid, service: serviceName, targetState: ServiceState.STOPPING};
+  public stopService(hostUuid: string, service: string): Observable<boolean> {
+    const val: ChangeServiceState = {hostUuid, service, targetState: ServiceState.STOPPING};
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
     return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).pipe(share());
   }
 
-  public restartService(hostUuid: string, serviceName: string): Observable<boolean> {
-    let val: ChangeServiceState = {hostUuid: hostUuid, service: serviceName, targetState: ServiceState.RESTARTING_STOPPING};
+  public restartService(hostUuid: string, service: string): Observable<boolean> {
+    const val: ChangeServiceState = {hostUuid, service, targetState: ServiceState.RESTARTING_STOPPING};
     val['@class'] = 'de.cinovo.cloudconductor.api.model.ChangeServiceState';
     return this.http.put<boolean>(`${this._basePathURL}/changeservicestate`, val).pipe(share());
   }

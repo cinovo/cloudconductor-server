@@ -18,7 +18,7 @@ import { AlertService } from '../util/alert/alert.service';
  * @author psigloch
  */
 @Component({
-  selector: 'host.overview.comp',
+  selector: 'host-overview',
   templateUrl: './host.overview.comp.html'
 })
 export class HostOverview implements OnInit, OnDestroy {
@@ -29,7 +29,7 @@ export class HostOverview implements OnInit, OnDestroy {
   private _hosts: Array<Host> = [];
 
   public hostsLoaded = false;
-  public templates: Array<String> = [];
+  public templates: string[] = [];
   private _webSocket: Subject<MessageEvent | Heartbeat>;
 
   private _webSocketSub: Subscription;
@@ -120,7 +120,7 @@ export class HostOverview implements OnInit, OnDestroy {
       .filter(repo => HostOverview.filterTemplateData(repo, this._searchTemplateQuery))
       .sort(Sorter.host);
 
-    this._hosts.forEach((h) => this.templates.indexOf(h.template) == -1 ? this.templates.push(h.template) : null);
+    this._hosts.forEach((h) => this.templates.indexOf(h.template) === -1 ? this.templates.push(h.template) : null);
   }
 
   get searchQuery(): string {
@@ -143,6 +143,7 @@ export class HostOverview implements OnInit, OnDestroy {
       this.hostsLoaded = true;
     }, (err) => {
       this.alertService.danger('Error loading hosts!');
+      console.error(err);
       this.hostsLoaded = true;
     });
   }

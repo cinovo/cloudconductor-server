@@ -62,7 +62,7 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
       ([services, dss]) => {
         this.services = services.map(service => {
           const autostart = dss.some(state => state.service === service.name && state.state === 'STARTED');
-          return { service: service.name, template: templateName, autostart: autostart };
+          return { service: service.name, template: templateName, autostart };
         });
       }, (err) => {
         this.alertService.danger(`Error loading services for template '${templateName}'!`);
@@ -72,7 +72,7 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
   }
 
   toggleUpdate(service: AutoStartService): void {
-    const index = this.servicesToUpdate.findIndex((a) => a.service == service.service && a.template == service.template);
+    const index = this.servicesToUpdate.findIndex((a) => a.service === service.service && a.template === service.template);
 
     if (index > -1) {
       // immutable splice
@@ -83,9 +83,9 @@ export class TemplateServiceComponent implements OnInit, OnDestroy {
   }
 
   public updateDefaultStates(): void {
-    const updateOps: Observable<ServiceDefaultState>[] = this.servicesToUpdate.map(s => {
-      return this.templateHttp.saveServiceDefaultState(this._templateName, s.service, s.autostart ? 'STARTED' : 'STOPPED');
-    });
+    const updateOps: Observable<ServiceDefaultState>[] = this.servicesToUpdate.map(s =>
+      this.templateHttp.saveServiceDefaultState(this._templateName, s.service, s.autostart ? 'STARTED' : 'STOPPED')
+    );
 
     forkJoin(updateOps).subscribe(
       () => {

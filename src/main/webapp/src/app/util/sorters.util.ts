@@ -10,7 +10,7 @@ import { ConfigFile } from './http/config-file.model';
 import { SSHKey } from './http/sshkey.model';
 import { TemplatePackageVersion } from '../template/template.package.comp';
 
-/* tslint:disable:curly */
+/* eslint-disable curly */
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -135,8 +135,8 @@ export class Sorter {
   }
 
   public static versionComp(a: string, b: string): number {
-    let aNumbers: string[] = Sorter.versionToArray(a);
-    let bNumbers: string[] = Sorter.versionToArray(b);
+    const aNumbers: string[] = Sorter.versionToArray(a);
+    const bNumbers: string[] = Sorter.versionToArray(b);
 
     const maxIndex = Math.max(aNumbers.length, bNumbers.length);
 
@@ -160,10 +160,10 @@ export class Sorter {
   }
 
   private static versionToArray(version: string): string[] {
-    let res = [];
+    const res = [];
     if (version) {
-      for (let element of version.split('.')) {
-        for (let sub of element.split('-')) {
+      for (const part of version.split('.')) {
+        for (const sub of part.split('-')) {
           res.push(sub);
         }
       }

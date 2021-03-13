@@ -12,12 +12,6 @@ import { Sorter } from '../util/sorters.util';
 import { AlertService } from '../util/alert/alert.service';
 import { Validator } from '../util/validator.util';
 
-/**
- * Copyright 2017 Cinovo AG<br>
- * <br>
- *
- * @author psigloch, mweise
- */
 export interface TemplatePackageVersion {
   pkg: string,
   version: string,
@@ -29,6 +23,12 @@ type NewPackageVersion = {
   version: string;
 }
 
+/**
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch, mweise
+ */
 @Component({
   selector: 'template-packages',
   templateUrl: './template.package.comp.html'
@@ -112,37 +112,37 @@ export class TemplatePackages implements OnInit, OnDestroy {
   }
 
   public updatePackage(pv: TemplatePackageVersion): void {
-    if (pv) { // TODO use new HTTP calls to update
-      this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
-        () => this.alerts.success('The package ' + pv.pkg + ' has been updated successfully.'),
-        (error) => this.alerts.danger('The package update of ' + pv.pkg + ' failed.')
-      );
+    if (!pv) {
+      return;
     }
+    this.templateHttp.updatePackage(this.template, pv.pkg).subscribe(
+      () => this.alerts.success('The package ' + pv.pkg + ' has been updated successfully.'),
+      (err) => {
+        this.alerts.danger('The package update of ' + pv.pkg + ' failed.');
+        console.error(err);
+      }
+    );
   }
 
   protected updatePackages(packageNames: TemplatePackageVersion[]): void {
     if (packageNames && packageNames.length > 0) {
-      let currentPackage = packageNames.pop();
+      const currentPackage = packageNames.pop();
       this.templateHttp.updatePackage(this.template, currentPackage.pkg).subscribe(
         () => {
           this.updatePackages(packageNames);
           this.alerts.success('The package ' + currentPackage.pkg + ' has been updated successfully.');
         },
-        (error) => {
+        (err) => {
           this.updatePackages(packageNames);
           this.alerts.danger('The package update of ' + currentPackage.pkg + ' failed.');
+          console.error(err);
         });
     }
   }
 
   public updateSelected(): void {
-    let packageNames: TemplatePackageVersion[] = [];
-    for (let pkg of this.packageVersions) {
-      if (pkg.selected && !this.isPkgLatest(pkg)) {
-        packageNames.push(pkg);
-      }
-    }
-    this.updatePackages(packageNames);
+    const selected = this.packageVersions.filter(pv => pv.selected && !this.isPkgLatest(pv));
+    this.updatePackages(selected);
     this.allSelected = false;
   }
 
@@ -162,7 +162,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
 
   protected removePackages(packageNames: TemplatePackageVersion[]): void {
     if (packageNames && packageNames.length > 0) {
-      let currentPackage = packageNames.pop();
+      const currentPackage = packageNames.pop();
       this.templateHttp.deletePackage(this.template, currentPackage.pkg).subscribe(
         () => {
           this.removePackages(packageNames);
@@ -171,19 +171,15 @@ export class TemplatePackages implements OnInit, OnDestroy {
         (err) => {
           this.removePackages(packageNames);
           this.alerts.danger(`Error removing package '${currentPackage.pkg}'!`);
+          console.error(err);
         }
       )
     }
   }
 
   public removeSelected(index = 0): void {
-    let packageNames: TemplatePackageVersion[] = [];
-    for (let pkg of this.packageVersions) {
-      if (pkg.selected) {
-        packageNames.push(pkg);
-      }
-    }
-    this.removePackages(packageNames);
+    const selected = this.packageVersions.filter(pv => pv.selected);
+    this.removePackages(selected);
     this.allSelected = false;
   }
 
@@ -193,13 +189,13 @@ export class TemplatePackages implements OnInit, OnDestroy {
 
   set allSelected(value: boolean) {
     this._allSelected = value;
-    for (let pv of this.packageVersions) {
+    for (const pv of this.packageVersions) {
       pv.selected = this._allSelected;
     }
   }
 
   public selectPackage(pv: TemplatePackageVersion, event: any) {
-    let index = this.packageVersions.indexOf(pv);
+    const index = this.packageVersions.indexOf(pv);
     if (index > -1) {
       this.packageVersions[index].selected = event.target.checked;
     }
@@ -285,8 +281,8 @@ export class TemplatePackages implements OnInit, OnDestroy {
     this.newPackage = null;
   }
 
-  public getInstallablePackages(): String[] {
-    return Object.keys(this.pvAvailable).filter(pkg => this.templateContainsPackage(pkg))
+  public getInstallablePackages(): string[] {
+    return Object.keys(this.pvAvailable).filter(pkg => !this.templateContainsPackage(pkg))
   }
 
   private templateContainsPackage(pkgName: string): boolean {

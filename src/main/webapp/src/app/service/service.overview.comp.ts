@@ -10,11 +10,11 @@ import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
 
 /**
-  * Copyright 2017 Cinovo AG<br>
-  * <br>
-  *
-  * @author psigloch
-  */
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'service-overview',
   templateUrl: './service.overview.comp.html'
@@ -87,7 +87,7 @@ export class ServiceOverview implements OnInit {
     this.loadData();
   }
 
-  public gotoDetails(service: Service) {
+  public gotoDetails(service: Service): void {
     if (Validator.notEmpty(service.name)) {
       this.router.navigate(['service', service.name]);
     }

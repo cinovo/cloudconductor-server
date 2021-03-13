@@ -1,20 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { Sorter } from '../util/sorters.util';
 import { Validator } from '../util/validator.util';
-import { PackageHttpService, Package } from '../util/http/package.http.service';
+import { Package, PackageHttpService } from '../util/http/package.http.service';
 
 /**
-  * Copyright 2017 Cinovo AG<br>
-  * <br>
-  *
-  * @author psigloch
-  */
+ * Copyright 2017 Cinovo AG<br>
+ * <br>
+ *
+ * @author psigloch
+ */
 @Component({
   selector: 'package-overview',
   templateUrl: './package.overview.comp.html'
@@ -52,8 +52,7 @@ export class PackageOverview implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._querySub = this.route.queryParamMap.subscribe(qpm => {
-      const pageNumber = +qpm.get('page') || 1;
-      this._page = pageNumber;
+      this._page = +qpm.get('page') || 1;
       this.loadPackages();
     });
   }

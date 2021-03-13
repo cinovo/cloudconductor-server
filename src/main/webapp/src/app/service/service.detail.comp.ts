@@ -90,8 +90,7 @@ export class ServiceDetail implements OnInit {
     this.serviceHttp.getServiceUsage(serviceName).subscribe(
       (result) => {
         this.templateRefs = [];
-        let keys = Object.keys(result);
-        for (let key of keys) {
+        for (const key of Object.keys(result)) {
           this.templateRefs.push({template: key, pkg: result[key]});
         }
         this.templateRefs.sort((a, b) => Sorter.byField(a, b, 'template'));

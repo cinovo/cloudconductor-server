@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         <tr *ngIf="packageVersions.length <= 0" class="warning">
-          <td colspan="6" class="text-center">
+          <td colspan="7" class="text-center">
             There are currently no packages installed.
           </td>
         </tr>
@@ -70,7 +70,7 @@
         </tr>
 
         <tr *ngIf="newPackage">
-          <td colspan="6">
+          <td colspan="7">
             <label class="control-label">
               <i class="fa fa-plus fa-fw"></i>
               Add package to template
@@ -102,7 +102,7 @@
         </tr>
 
         <tr *ngIf="!newPackage" (click)="goToAddPackage()">
-          <td colspan="6" role="button">
+          <td colspan="7" role="button">
             <i class="fa fa-plus fa-fw"></i>
             Add package to template
           </td>

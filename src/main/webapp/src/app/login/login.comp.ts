@@ -62,6 +62,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       ).subscribe(
       (user) => {
         if (!AuthTokenProviderService.isAnonymous(user)) {
+          // noinspection JSIgnoredPromiseFromCall
           this.router.navigate([this._redirect]);
         } else {
           this.alertService.danger('Authentication failed! You logged in as anonymous...');

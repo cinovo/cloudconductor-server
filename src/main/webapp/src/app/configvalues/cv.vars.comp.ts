@@ -28,9 +28,9 @@ export class CvVarsComp implements OnInit {
       this.title = 'Variable overwrites for this template';
       this.configHttp.getVariableValues(this.template).subscribe((result) => {
         this.kvs = result;
-        this.configHttp.getVariableValues().subscribe((result) => {
-          for (let v of result) {
-            if (this.kvs.filter((value) => value.key == v.key).length <= 0) {
+        this.configHttp.getVariableValues().subscribe((cvs) => {
+          for (let v of cvs) {
+            if (this.kvs.filter((value) => value.key === v.key).length <= 0) {
               this.availableVars.push(v.key);
             }
           }

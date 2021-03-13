@@ -38,6 +38,10 @@ export interface PackageStateChanges {
   toErase: Array<PackageVersion>;
 }
 
+export interface PackageUsageMap{
+  [template: string]: string
+}
+
 @Injectable()
 export class PackageHttpService {
 
@@ -52,7 +56,7 @@ export class PackageHttpService {
   public getPackagesPagewise(page = 0, pageSize = 0): Observable<HttpResponse<Package[]>> {
     const params = new HttpParams().set('page', page.toString())
       .set('per_page', pageSize.toString());
-    return this.http.get<Package[]>(this._basePathURL, {observe: 'response', params: params});
+    return this.http.get<Package[]>(this._basePathURL, {observe: 'response', params});
   }
 
   public getPackage(pkgName: string): Observable<Package> {
@@ -63,8 +67,8 @@ export class PackageHttpService {
     return this.http.get<PackageVersion[]>(`${this._basePathURL}/${pkg.name}/versions`);
   }
 
-  public getUsage(pkg: Package): Observable<any> {
-    return this.http.get(`${this._basePathURL}/${pkg.name}/usage`);
+  public getUsage(pkg: Package): Observable<PackageUsageMap> {
+    return this.http.get<PackageUsageMap>(`${this._basePathURL}/${pkg.name}/usage`);
   }
 
   public getVersionsOfRepo(repoName: string): Observable<PackageVersion[]> {

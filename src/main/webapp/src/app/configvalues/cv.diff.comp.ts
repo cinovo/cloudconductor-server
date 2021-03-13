@@ -30,8 +30,8 @@ export class ConfigValueDiff implements OnInit {
   public diffResult: ConfigDiff[];
   public diffTree: ConfigDiffGroup[] = [];
 
-  public templatesLoaded: boolean = false;
-  public loaded: boolean = false;
+  public templatesLoaded = false;
+  public loaded = false;
 
   constructor(private readonly confHttp: ConfigValueHttpService,
               private readonly router: Router,

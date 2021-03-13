@@ -17,7 +17,7 @@ import { TemplateHttpService } from '../util/http/template.http.service';
  * @author psigloch
  */
 @Component({
-  selector: 'host.detail.comp',
+  selector: 'host-detail',
   templateUrl: './host.detail.comp.html'
 })
 export class HostDetail implements OnInit, OnDestroy {
@@ -26,7 +26,7 @@ export class HostDetail implements OnInit, OnDestroy {
   public obsHost: Observable<Host> = this._behavHost.asObservable();
   public host: Host = {name: '', template: '', uuid: ''};
 
-  public templateChanged: boolean = false;
+  public templateChanged = false;
 
   private _webSocket: Subject<MessageEvent | Heartbeat>;
   private _webSocketSub: Subscription;

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 @RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
 public class AgentTest extends APITest {
 	
 	private static final String TEMPLATE = "dev";
