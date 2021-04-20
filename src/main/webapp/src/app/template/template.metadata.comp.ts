@@ -65,6 +65,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       description: [''],
       autoUpdate: false,
       smoothUpdate: false,
+      noUninstalls: false,
       updateRange: ['all', [Validators.required]],
       copyFrom: this.copyFrom,
       newRepo: '',
@@ -82,6 +83,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       this.templateForm.controls.updateRange.setValue(template.updateRange);
       this.templateForm.controls.autoUpdate.setValue(template.autoUpdate);
       this.templateForm.controls.smoothUpdate.setValue(template.smoothUpdate);
+      this.templateForm.controls.noUninstalls.setValue(template.noUninstalls);
       this.templateForm.controls.group.setValue(template.group);
     });
 
@@ -123,6 +125,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
       updateRange: formValue.updateRange,
       autoUpdate: formValue.autoUpdate,
       smoothUpdate: formValue.smoothUpdate,
+      noUninstalls: formValue.noUninstalls,
       group: formValue.group
     };
 

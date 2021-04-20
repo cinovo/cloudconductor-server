@@ -42,13 +42,22 @@
         <div class="form-group" *ngIf="settings.allowautoupdate">
           <label for="autoupdate">
             <input type="checkbox" id="autoupdate" formControlName="autoUpdate">
-            Allow automated package updates for this template</label>
+            Allow automated package updates for this template
+          </label>
         </div>
 
         <div class="form-group">
           <label for="smoothupdates">
             <input type="checkbox" id="smoothupdates" formControlName="smoothUpdate">
-            Minimize overall downtime on package changes </label>
+            Minimize overall downtime on package changes
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="nouninstalls">
+            <input type="checkbox" id="nouninstalls" formControlName="noUninstalls">
+            Disable uninstalls
+          </label>
         </div>
 
         <div class="form-group" *ngIf="mode == modes.NEW">
@@ -65,29 +74,31 @@
           <table class="table-responsive table table-striped table-hover" cc-panel-body
                  *ngIf="mode === modes.EDIT || (mode === modes.NEW && !copyFrom.value)">
             <tbody>
-            <tr *ngIf="!template.repos || template.repos.length < 1; else reposList" class="danger">
+            <tr *ngIf="!template.repos || template.repos.length < 1; else repoList" class="danger">
               <td colspan="3" class="text-center">
                 There are currently no repositories selected.
               </td>
             </tr>
-            <tr *ngFor="let repo of template.repos" #repoList>
-              <td>
-                {{repo}}
-              </td>
-              <td width="30px">
-                <a [routerLink]="['/repo', repo]"><i class="fa fa-external-link fa-fw" title="Show repo"></i></a>
-              </td>
-              <td width="30px">
-                <a href="javascript:void(0)" mwlConfirmationPopover
-                   [popoverTitle]="'Please verify!'"
-                   [popoverMessage]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
-                   placement="left"
-                   confirmButtonType="danger"
-                   (confirm)="removeRepo(repo)">
-                  <i class="fa fa-trash-o fa-fw" title="Remove repo from template"></i>
-                </a>
-              </td>
-            </tr>
+            <ng-template #repoList>
+              <tr *ngFor="let repo of template.repos">
+                <td>
+                  {{repo}}
+                </td>
+                <td width="30px">
+                  <a [routerLink]="['/repo', repo]"><i class="fa fa-external-link fa-fw" title="Show repo"></i></a>
+                </td>
+                <td width="30px">
+                  <a href="javascript:void(0)" mwlConfirmationPopover
+                     [popoverTitle]="'Please verify!'"
+                     [popoverMessage]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
+                     placement="left"
+                     confirmButtonType="danger"
+                     (confirm)="removeRepo(repo)">
+                    <i class="fa fa-trash-o fa-fw" title="Remove repo from template"></i>
+                  </a>
+                </td>
+              </tr>
+            </ng-template>
 
             <tr *ngIf="showNewRepo">
               <td colspan="3">

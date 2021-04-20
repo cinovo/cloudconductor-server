@@ -37,6 +37,7 @@ export interface Template {
   hosts?: HostIdentifier[];
   autoUpdate?: boolean;
   smoothUpdate?: boolean;
+  noUninstalls?: boolean;
   group?: string;
   updateRange?: UpdateRange;
 }

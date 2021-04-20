@@ -62,8 +62,8 @@ public class ETemplate implements IEntity<Long>, INamed {
 	private List<Long> repos = new ArrayList<>();
 	
 	private Boolean autoUpdate;
-	
 	private Boolean smoothUpdate;
+	private Boolean noUninstalls;
 	
 	private String group;
 
@@ -177,6 +177,20 @@ public class ETemplate implements IEntity<Long>, INamed {
 		this.smoothUpdate = smoothUpdate;
 	}
 	
+	/**
+	 * @return the noUninstall
+	 */
+	public Boolean getNoUninstalls() {
+		return this.noUninstalls;
+	}
+	
+	/**
+	 * @param noUninstalls the noUninstall to set
+	 */
+	public void setNoUninstalls(Boolean noUninstalls) {
+		this.noUninstalls = noUninstalls;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ETemplate)) {
@@ -222,13 +236,18 @@ public class ETemplate implements IEntity<Long>, INamed {
 	public void setGroup(String group) {
 		this.group = group;
 	}
-
-
+	
+	/**
+	 * @return the template update range
+	 */
 	@Column(name = "updaterange")
 	public UpdateRange getUpdateRange() {
-		return updateRange;
+		return this.updateRange;
 	}
-
+	
+	/**
+	 * @param updateRange the update range to set
+	 */
 	public void setUpdateRange(UpdateRange updateRange) {
 		this.updateRange = updateRange;
 	}
@@ -249,6 +268,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 		template.setRepos(repoDAO.findByIds(this.repos).stream().map(INamed::getName).collect(Collectors.toSet()));
 		template.setAutoUpdate(this.autoUpdate);
 		template.setSmoothUpdate(this.smoothUpdate);
+		template.setNoUninstalls(this.noUninstalls);
 		template.setGroup(this.group);
 		template.setUpdateRange(this.updateRange);
 		return template;

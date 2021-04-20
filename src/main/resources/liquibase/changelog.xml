@@ -1288,4 +1288,9 @@
             <column name="updaterange" type="int" defaultValue="0" />
         </addColumn>
     </changeSet>
+    <changeSet id="4e0628c3-85d1-45cd-a1c8-f97233322a5d" author="mweise">
+        <addColumn schemaName="cloudconductor" tableName="template">
+            <column name="nouninstalls" type="boolean" defaultValueBoolean="false" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
