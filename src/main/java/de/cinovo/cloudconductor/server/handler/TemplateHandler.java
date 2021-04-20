@@ -171,13 +171,14 @@ public class TemplateHandler {
 	/**
 	 * @param template    the template to update the package in
 	 * @param packageName the package to update
+	 * @param updateRange the update range
 	 * @return the updated template
 	 */
-	public ETemplate updatePackage(ETemplate template, String packageName, UpdateRange level) {
+	public ETemplate updatePackage(ETemplate template, String packageName, UpdateRange updateRange) {
 		Map<EPackageVersion, EPackageVersion> removeAddMap = new HashMap<>();
 		for (EPackageVersion currentVersion : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
 			if (currentVersion.getPkgName().equals(packageName)) {
-				EPackageVersion latest = this.packageHandler.getLatestPackageInRepos(currentVersion, template.getRepos(), level);
+				EPackageVersion latest = this.packageHandler.getLatestPackageInRepos(currentVersion, template.getRepos(), updateRange);
 				if (latest == null) {
 					continue;
 				}
@@ -246,6 +247,7 @@ public class TemplateHandler {
 		}
 		et.setAutoUpdate(t.getAutoUpdate() != null && t.getAutoUpdate());
 		et.setSmoothUpdate(t.getSmoothUpdate() != null && t.getSmoothUpdate());
+		et.setNoUninstalls(t.getNoUninstalls() != null && t.getNoUninstalls());
 		et.setGroup(t.getGroup());
 		et.setUpdateRange(t.getUpdateRange());
 		et.setPackageVersions(this.findPackageVersions(et.getPackageVersions(), t.getVersions(), et.getRepos()));

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PackageStateChangeHandler {
+	
 	@Autowired
 	private ITemplateDAO templateDAO;
 	@Autowired
@@ -79,7 +80,12 @@ public class PackageStateChangeHandler {
 		RESTAssert.assertNotNull(template);
 		List<EPackageVersion> nominal = this.packageVersionDAO.findByIds(template.getPackageVersions());
 		TreeSet<EPackageVersion> toInstall = this.findInstalls(actual, nominal);
-		TreeSet<EPackageVersion> toErase = this.findDeletes(actual, nominal, this.repoDAO.findByIds(template.getRepos()));
+		TreeSet<EPackageVersion> toErase;
+		if (template.getNoUninstalls() == null || !template.getNoUninstalls()) {
+			toErase = this.findDeletes(actual, nominal, this.repoDAO.findByIds(template.getRepos()));
+		} else {
+			toErase = new TreeSet<>(new PackageVersionComparator());
+		}
 		TreeSet<EPackageVersion> toUpdate = this.findUpdates(toInstall, toErase);
 		
 		// Convert the lists of package versions to lists of RPM descriptions (RPM name, release, and version).

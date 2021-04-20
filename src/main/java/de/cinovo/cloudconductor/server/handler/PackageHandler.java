@@ -135,7 +135,7 @@ public class PackageHandler {
 	 * @return latest provided package version in update range of template or null if none was found
 	 */
 	public EPackageVersion getLatestPackageInRepos(EPackageVersion currentPV, ETemplate template) {
-		return getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
+		return this.getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class PackageHandler {
 	 * @return latest provided package version or null if none was found
 	 */
 	public EPackageVersion getLatestPackageInRepos(EPackageVersion currentPV, Collection<Long> repoIds, UpdateRange customRange) {
-		return getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), repoIds, customRange);
+		return this.getLatestPackageInRepos(currentPV.getPkgName(), currentPV.getVersion(), repoIds, customRange);
 	}
 
 	/**
@@ -160,14 +160,26 @@ public class PackageHandler {
 			return null;
 		}
 
-		return getProvidedPackageVersions(pkgName, currentVersion, availableRepoIds, range).stream().max(new PackageVersionComparator()).orElse(null);
+		return this.getProvidedPackageVersions(pkgName, currentVersion, availableRepoIds, range).stream().max(new PackageVersionComparator()).orElse(null);
 	}
-
+	
+	/**
+	 * @param currentPV the package version entity
+	 * @param template	the template entity
+	 * @return list of package versions within template update range
+	 */
 	public List<EPackageVersion> getProvidedPackageVersions(EPackageVersion currentPV, ETemplate template) {
-		return getProvidedPackageVersions(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
+		return this.getProvidedPackageVersions(currentPV.getPkgName(), currentPV.getVersion(), template.getRepos(), template.getUpdateRange());
 	}
-
-	public List<EPackageVersion> getProvidedPackageVersions(String pkgName, String currentVersion, Collection<Long> availableRepoIds, UpdateRange range) {
+	
+	/**
+	 * @param pkgName			the name of the package
+	 * @param currentVersion	the version installed
+	 * @param availableRepoIds	the ids of the repositories available
+	 * @param range				the update range to check
+	 * @return list of provided package versions in update range
+	 */
+	private List<EPackageVersion> getProvidedPackageVersions(String pkgName, String currentVersion, Collection<Long> availableRepoIds, UpdateRange range) {
 		String[] versionParts = this.versionSeparator.split(currentVersion);
 		switch (range) {
 			case all:
@@ -208,7 +220,7 @@ public class PackageHandler {
 	 * @param repos   the repos ids you want to check
 	 * @return true, if the version is contained in one of the given repos
 	 */
-	public boolean versionAvailableInRepo(EPackageVersion version, List<Long> repos) {
+	boolean versionAvailableInRepo(EPackageVersion version, List<Long> repos) {
 		for (Long repoId : repos) {
 			if (version.getRepos().contains(repoId)) {
 				return true;
