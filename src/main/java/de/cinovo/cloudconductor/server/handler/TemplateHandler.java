@@ -19,6 +19,8 @@ import de.cinovo.cloudconductor.server.websockets.model.WSChangeEvent.ChangeType
 import de.cinovo.cloudconductor.server.ws.host.HostDetailWSHandler;
 import de.cinovo.cloudconductor.server.ws.template.TemplateDetailWSHandler;
 import de.taimos.restutils.RESTAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TemplateHandler {
+	
+	private final Logger logger = LoggerFactory.getLogger(TemplateHandler.class);
 	
 	@Autowired
 	private ITemplateDAO templateDAO;
@@ -264,26 +268,34 @@ public class TemplateHandler {
 		List<Long> result = new ArrayList<>();
 		if (currentVersions != null) {
 			for (EPackageVersion version : this.packageVersionDAO.findByIds(currentVersions)) {
-				if (targetVersions.containsKey(version.getName())) {
-					if (version.getVersion().equals(targetVersions.get(version.getName()))) {
-						// if package version has not changed, keep it even if it is not provided anymore
-						result.add(version.getId());
-					} else {
-						EPackageVersion ePackageVersion = this.packageVersionDAO.findProvided(version.getName(), targetVersions.get(version.getName()), repos);
-						if (ePackageVersion != null) {
-							result.add(ePackageVersion.getId());
-						}
-					}
-					targetVersions.remove(version.getName());
+				String targetVersion = targetVersions.get(version.getPkgName());
+				if (targetVersion == null) {
+					continue; // package not included anymore
 				}
+				
+				if (version.getVersion().equals(targetVersion)) {
+					// if package version has not changed, keep it even if it is not provided anymore
+					result.add(version.getId());
+				} else {
+					EPackageVersion updatedPV = this.packageVersionDAO.findProvided(version.getPkgName(), targetVersion, repos);
+					if (updatedPV != null) {
+						result.add(updatedPV.getId());
+					} else {
+						this.logger.warn("Updated Pkg {}:{} not available in repos {}", version.getPkgName(), targetVersion, repos);
+					}
+				}
+				targetVersions.remove(version.getPkgName());
 			}
 		}
+		
 		if (targetVersions != null) {
 			for (Entry<String, String> target : targetVersions.entrySet()) {
-				EPackageVersion ePackageVersion = this.packageVersionDAO.find(target.getKey(), target.getValue());
-				if (ePackageVersion != null) {
-					if (this.packageHandler.versionAvailableInRepo(ePackageVersion, repos)) {
-						result.add(ePackageVersion.getId());
+				EPackageVersion addedPV = this.packageVersionDAO.find(target.getKey(), target.getValue());
+				if (addedPV != null) {
+					if (this.packageHandler.versionAvailableInRepo(addedPV, repos)) {
+						result.add(addedPV.getId());
+					} else {
+						this.logger.warn("Additional pkg {}:{} not available in repos {}", target.getKey(), target.getValue(), repos.stream().sorted().collect(Collectors.toList()));
 					}
 				}
 			}
