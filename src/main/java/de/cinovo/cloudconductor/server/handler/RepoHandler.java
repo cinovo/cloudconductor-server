@@ -251,6 +251,9 @@ public class RepoHandler {
 	 * @return the primary mirror of that repo
 	 */
 	public ERepoMirror findPrimaryMirror(ERepo repo) {
+		if (repo.getPrimaryMirrorId() == null) {
+			return null;
+		}
 		return this.repoMirrorDAO.findById(repo.getPrimaryMirrorId());
 	}
 	
