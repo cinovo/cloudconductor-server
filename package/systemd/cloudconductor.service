@@ -1,5 +1,7 @@
 [Unit]
 Description=cloudconductor
+StartLimitIntervalSec=120
+StartLimitBurst=5
 
 [Service]
 User=root
@@ -9,6 +11,10 @@ Environment=jarfile=de.cinovo.cloudconductor.cloudconductor-server.jar LANG=en_U
 ExecStart=/usr/bin/java -Xmx1024m -XX:+ExitOnOutOfMemoryError -DdevelopmentMode=false -DstartupMode=run -jar $jarfile
 WorkingDirectory=/opt/cloudconductor/
 Restart=on-failure
+RestartSec=1
+# following entries still needed for compatibility with systemd < v229 (centos/rhel 7)
+StartLimitInterval=120
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target
