@@ -37,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -265,7 +266,7 @@ public class ETemplate implements IEntity<Long>, INamed {
 		template.setDescription(this.description);
 		template.setVersions(packageVersionDAO.findByIds(this.packageVersions).stream().collect(Collectors.toMap(EPackageVersion::getPkgName, EPackageVersion::getVersion, (a, b) -> b)));
 		template.setHosts(hostDAO.findHostsForTemplate(this.getId()).stream().map(EHost::toHostIdentifier).collect(Collectors.toSet()));
-		template.setRepos(repoDAO.findByIds(this.repos).stream().map(INamed::getName).collect(Collectors.toSet()));
+		template.setRepos(new LinkedHashSet<>(repoDAO.findNamesByIds(this.repos)));
 		template.setAutoUpdate(this.autoUpdate);
 		template.setSmoothUpdate(this.smoothUpdate);
 		template.setNoUninstalls(this.noUninstalls);

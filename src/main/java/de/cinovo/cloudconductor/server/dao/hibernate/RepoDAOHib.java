@@ -54,7 +54,7 @@ public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepo
 	@Override
 	public List<ERepo> findByNames(Iterable<String> repoNames) {
 		//language=HQL
-		return this.findListByQuery("FROM ERepo AS r WHERE r.name IN ?1", repoNames);
+		return this.findListByQuery("FROM ERepo AS r WHERE r.name IN ?1 ORDER BY r.name", repoNames);
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepo
 			return new ArrayList<>();
 		}
 		//language=HQL
-		String q = "SELECT r.name FROM ERepo AS r WHERE r.id IN ?1";
+		String q = "SELECT r.name FROM ERepo AS r WHERE r.id IN ?1 ORDER BY r.name";
 		return this.entityManager.createQuery(q, String.class).setParameter(1, ids).getResultList();
 	}
 	
@@ -73,9 +73,7 @@ public class RepoDAOHib extends EntityDAOHibernate<ERepo, Long> implements IRepo
 			return new ArrayList<>();
 		}
 		//language=HQL
-		String q = "FROM ERepo AS r WHERE r.id IN ?1";
+		String q = "FROM ERepo AS r WHERE r.id IN ?1 ORDER BY r.name";
 		return this.findListByQuery(q, repos);
 	}
-	
-	
 }
