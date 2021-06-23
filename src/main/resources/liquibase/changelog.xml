@@ -1293,4 +1293,7 @@
             <column name="nouninstalls" type="boolean" defaultValueBoolean="false" />
         </addColumn>
     </changeSet>
+    <changeSet id="94fc879d-b76d-4241-8246-2473c465a79c" author="mweise">
+        <modifyDataType schemaName="cloudconductor" tableName="dependency" columnName="name" newDataType="varchar(255)" />
+    </changeSet>
 </databaseChangeLog>
