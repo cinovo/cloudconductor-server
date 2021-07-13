@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StreamUtils;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.InputStream;
 
@@ -28,7 +29,7 @@ public class ReposProviderImpl implements IReposProvider {
 	public Response get(String repo, String file) {
 		RESTAssert.assertNotEmpty(repo, Response.Status.NOT_FOUND);
 		RESTAssert.assertNotEmpty(file, Response.Status.NOT_FOUND);
-		RESTAssert.assertTrue(file.endsWith("/"));
+		RESTAssert.assertFalse(file.endsWith("/"), Status.NOT_FOUND);
 
 		IRepoProvider provider = this.repoHandler.findRepoProvider(repo);
 		RESTAssert.assertNotNull(provider, Response.Status.NOT_FOUND);
