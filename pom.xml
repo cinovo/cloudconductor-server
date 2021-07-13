@@ -293,7 +293,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
-                        <version>2.1-alpha-2</version>
+                        <version>2.2.0</version>
                         <executions>
                             <execution>
                                 <phase>verify</phase>
@@ -308,10 +308,17 @@
                             <summary>A server for managing host configurations in a network.</summary>
                             <vendor>Cinovo AG</vendor>
                             <packager>Cinovo AG</packager>
-                            <copyright>2017, Cinovo AG</copyright>
                             <group>Applications/System</group>
                             <prefix>/</prefix>
                             <changelogFile>package/changelog</changelogFile>
+                            <autoRequires>false</autoRequires>
+                            <autoProvides>false</autoProvides>
+                            <requires>
+                                <require>java &gt;= 1.8</require>
+                            </requires>
+                            <provides>
+                                <provide>cloudconductor</provide>
+                            </provides>
                             <mappings>
                                 <mapping>
                                     <directory>/etc/init.d</directory>
