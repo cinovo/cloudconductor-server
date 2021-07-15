@@ -459,7 +459,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>/yum/srv/s3-yum.cloudconductor.net</outputDirectory>
+                                    <outputDirectory>/srv/packages/s3-cloudconductor</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/target/rpm/cloudconductor/RPMS/noarch/</directory>
