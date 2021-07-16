@@ -1,7 +1,6 @@
+import { of as observableOf, BehaviorSubject, Observable } from 'rxjs';
+import { catchError, map, share, tap } from 'rxjs/operators';
 
-import {of as observableOf,  BehaviorSubject ,  Observable } from 'rxjs';
-
-import {catchError, map, share, tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -52,14 +51,13 @@ export class ConfigValueHttpService {
   }
 
   public deleteValue(val: ConfigValue): Observable<boolean> {
-    let ret;
+    let obs: Observable<boolean>;
     if (!Validator.notEmpty(val.service)) {
-      ret = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/null/${val.key}`);
+      obs = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/null/${val.key}`);
     } else {
-      ret = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/${val.service}/${val.key}`);
+      obs = this.http.delete<boolean>(`${this._basePathURL}/${val.template}/${val.service}/${val.key}`);
     }
-
-    return ret.do(() => this.reloadTemplates())
+    return obs.pipe(tap(() => this.reloadTemplates()));
   }
 
   public deleteForTemplate(template: string): Observable<boolean> {
