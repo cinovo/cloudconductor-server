@@ -1,10 +1,10 @@
 <cc-title [title]="'Hosts'" titleIcon="fa-laptop" [autorefresh]="true"></cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter mode="select" label="Template" [data]="templates" (onQueryChange)="searchTemplateQuery = $event"></cc-filter>
   </div>
 </div>

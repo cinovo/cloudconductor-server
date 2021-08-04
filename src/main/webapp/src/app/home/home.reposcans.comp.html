@@ -1,4 +1,4 @@
-<cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
+<cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="!!lastUpdate">
   <ng-container *ngIf="(reposObs | async) as repos; else loading" cc-panel-body>
     <div class="alert alert-warning" *ngIf="repos?.length < 1">
       No repository scans!
@@ -7,8 +7,8 @@
     <table class="table-responsive table table-striped table-hover dataTable" *ngIf="repos?.length > 0">
       <thead>
       <tr>
-        <th class="sorting" width="30%">Name</th>
-        <th class="sorting_asc">Last Indexed</th>
+        <th class="sorting" style="width: 50%">Name</th>
+        <th class="text-right sorting_asc" style="width: 50%">Last Indexed</th>
       </tr>
       </thead>
       <tbody>
@@ -19,7 +19,7 @@
         <td>
           {{repo.name}}
         </td>
-        <td>
+        <td class="text-right">
           <span *ngIf="!repo.lastIndex">Never</span>
           <span *ngIf="repo.lastIndex">{{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}</span>
         </td>

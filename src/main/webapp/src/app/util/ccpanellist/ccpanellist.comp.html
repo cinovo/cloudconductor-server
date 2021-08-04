@@ -1,73 +1,75 @@
 <cc-panel [title]="title" [icon]="icon">
-    <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
+  <div class="table-responsive" cc-panel-body>
+    <table class="table table-striped table-hover dataTable">
       <tbody>
-        <tr *ngIf="!elements || elements.length < 1; else elementList" class="danger">
-          <td colspan="3" class="text-center">
-            There are currently no {{type}}s selected.
+      <tr *ngIf="!elements || elements.length < 1; else elementList" class="danger">
+        <td colspan="3" class="text-center">
+          There are currently no {{type}}s selected.
+        </td>
+      </tr>
+
+      <ng-template #elementList>
+        <tr *ngFor="let element of elements">
+          <td>{{element}}</td>
+          <td width="30px">
+            <a *ngIf="showLinks" href="javascript:void(0)" [routerLink]="['/' + type, element]" title="Show {{type}}">
+              <i class="fa fa-external-link fa-fw"></i>
+            </a>
+          </td>
+          <td width="30px">
+            <a href="javascript:void(0)" mwlConfirmationPopover
+               title="Remove {{type}}"
+               [popoverTitle]="'Please verify!'"
+               [popoverMessage]="'Are you sure you want to remove the ' + type + ' \'' + element + '\'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="removeElement(element)">
+              <i class="fa fa-trash-o fa-fw"></i>
+            </a>
           </td>
         </tr>
+      </ng-template>
 
-        <ng-template #elementList>
-          <tr *ngFor="let element of elements">
-            <td>{{element}}</td>
-            <td width="30px">
-              <a *ngIf="showLinks" href="javascript:void(0)" [routerLink]="['/' + type, element]" title="Show {{type}}">
-                <i class="fa fa-external-link fa-fw"></i>
-              </a>
-            </td>
-            <td width="30px">
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                title="Remove {{type}}"
-                [popoverTitle]="'Please verify!'"
-                [popoverMessage]="'Are you sure you want to remove the ' + type + ' \'' + element + '\'?'"
-                placement="left"
-                confirmButtonType="danger"
-                (confirm)="removeElement(element)">
-                <i class="fa fa-trash-o fa-fw"></i>
-              </a>
-            </td>
-          </tr>
-        </ng-template>
+      <tr *ngIf="showNewElement">
+        <td colspan="3">
+          <div class="form-group">
+            <label for="addElement" class="control-label">
+              <i class="fa fa-plus fa-fw"></i>
+              Add {{type}}
+            </label>
 
-        <tr *ngIf="showNewElement">
-          <td colspan="3">
-            <div class="form-group">
-              <label for="addElement" class="control-label">
-                <i class="fa fa-plus fa-fw"></i>
-                Add {{type}}
-              </label>
-
-              <div *ngIf="!selectableElements || selectableElements.length < 1" class="alert alert-warning">
-                There are currently no more {{type}}s available.
-              </div>
-
-              <select *ngIf="selectableElements && selectableElements.length > 0" id="addElement" class="form-control" [(ngModel)]="newElement">
-                <option value="" selected></option>
-                <option *ngFor="let el of selectableElements" value="{{el}}">
-                  {{el}}
-                </option>
-              </select>
+            <div *ngIf="!selectableElements || selectableElements.length < 1" class="alert alert-warning">
+              There are currently no more {{type}}s available.
             </div>
-            <div class="pull-right">
-              <button type="button" (click)="showNewElement = false" class="btn btn-default">
-                Cancel
-              </button>
 
-              <button type="button" class="btn btn-success" (click)="addElement(newElement)"
-                [disabled]="!newElement || selectableElements.length < 1">
-                Add
-              </button>
-            </div>
-          </td>
-        </tr>
+            <select *ngIf="selectableElements && selectableElements.length > 0" id="addElement" class="form-control"
+                    [(ngModel)]="newElement">
+              <option value="" selected></option>
+              <option *ngFor="let el of selectableElements" value="{{el}}">
+                {{el}}
+              </option>
+            </select>
+          </div>
+          <div class="pull-right">
+            <button type="button" (click)="showNewElement = false" class="btn btn-default">
+              Cancel
+            </button>
 
-        <tr *ngIf="!showNewElement" role="button" (click)="goToNewElement()">
-          <td colspan="3">
-            <i class="fa fa-plus fa-fw"></i>
-            Add {{type}}
-          </td>
-        </tr>
+            <button type="button" class="btn btn-success" (click)="addElement(newElement)"
+                    [disabled]="!newElement || selectableElements.length < 1">
+              Add
+            </button>
+          </div>
+        </td>
+      </tr>
 
+      <tr *ngIf="!showNewElement" role="button" (click)="goToNewElement()">
+        <td colspan="3">
+          <i class="fa fa-plus fa-fw"></i>
+          Add {{type}}
+        </td>
+      </tr>
       </tbody>
     </table>
+  </div>
 </cc-panel>

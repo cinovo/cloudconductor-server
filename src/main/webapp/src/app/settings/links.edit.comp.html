@@ -1,97 +1,97 @@
 <cc-panel [title]="'External Links'" icon="fa-external-link">
+  <div class="table-responsive" cc-panel-body>
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th width="30%">Label</th>
+        <th>URL</th>
+        <th width="15px"></th>
+        <th width="15px"></th>
+        <th width="15px"></th>
+      </tr>
 
-  <table class="table-responsive table table-striped table-hover" cc-panel-body>
-    <thead>
-    <tr>
-      <th width="30%">Label</th>
-      <th>URL</th>
-      <th width="15px"></th>
-      <th width="15px"></th>
-      <th width="15px"></th>
-    </tr>
+      </thead>
+      <tbody>
+      <tr *ngIf="links.length <= 0" class="warning">
+        <td colspan="5" class="text-center">
+          There are currently no links available.
+        </td>
+      </tr>
 
-    </thead>
-    <tbody>
-    <tr *ngIf="links.length <= 0" class="warning">
-      <td colspan="5" class="text-center">
-        There are currently no links available.
-      </td>
-    </tr>
+      <tr *ngFor="let link of links" (dblclick)="goToEditLink(link)">
+        <ng-template [ngIf]="!editLink || editLink.id != link.id">
+          <td>
+            {{link.label}}
+          </td>
+          <td>
+            {{link.url}}
+          </td>
+          <td>
+            <a href="{{link.url}}" target="_blank"><i class="fa fa-external-link fa-fw" title="Open Url"></i></a>
+          </td>
+          <td>
+            <a (click)="goToEditLink(link)" role="button"><i class="fa fa-edit fa-fw" title="Edit"></i></a>
+          </td>
+          <td>
+            <a href="javascript:void(0)" mwlConfirmationPopover
+               [popoverTitle]="'Please verify!'"
+               [popoverMessage]="'Are you sure you want to remove the following external link: '+ link.label +'?'"
+               placement="left"
+               confirmButtonType="danger"
+               (confirm)="deleteLink(link)">
+              <i class="fa fa-trash-o fa-fw" title="Delete"></i>
+            </a>
+          </td>
+        </ng-template>
 
-    <tr *ngFor="let link of links" (dblclick)="goToEditLink(link)">
-      <ng-template [ngIf]="!editLink || editLink.id != link.id">
-        <td>
-          {{link.label}}
-        </td>
-        <td>
-          {{link.url}}
-        </td>
-        <td>
-          <a href="{{link.url}}" target="_blank"><i class="fa fa-external-link fa-fw" title="Open Url"></i></a>
-        </td>
-        <td>
-          <a (click)="goToEditLink(link)" role="button"><i class="fa fa-edit fa-fw" title="Edit"></i></a>
-        </td>
-        <td>
-          <a href="javascript:void(0)" mwlConfirmationPopover
-             [popoverTitle]="'Please verify!'"
-             [popoverMessage]="'Are you sure you want to remove the following external link: '+ link.label +'?'"
-             placement="left"
-             confirmButtonType="danger"
-             (confirm)="deleteLink(link)">
-            <i class="fa fa-trash-o fa-fw" title="Delete"></i>
-          </a>
-        </td>
-      </ng-template>
+        <ng-template [ngIf]="editLink && editLink.id == link.id">
+          <td colspan="5">
+            <div class="form-group input-group inline-form" [class.has-error]="!isEditLinkLabelValid()">
+              <label class="input-group-addon" for="editLinkLabel">Label </label>
+              <input type="text" class="form-control" [(ngModel)]="editLink.label" id="editLinkLabel">
+            </div>
+            <div class="form-group input-group inline-form" [class.has-error]="!isEditLinkUrlValid()">
+              <label class="input-group-addon" for="editLinkURL">URL </label>
+              <input type="text" class="form-control" [(ngModel)]="editLink.url" id="editLinkURL">
+            </div>
 
-      <ng-template [ngIf]="editLink && editLink.id == link.id">
+            <div class="pull-right">
+              <button (click)="abortEditLink()" class="btn btn-default">Cancel</button>
+              <button (click)="saveEditLink()" class="btn btn-info"
+                      [disabled]="!isEditLinkLabelValid() || !isEditLinkUrlValid()">Save
+              </button>
+            </div>
+          </td>
+        </ng-template>
+      </tr>
+
+      <tr *ngIf="newLink">
         <td colspan="5">
-          <div class="form-group input-group inline-form" [class.has-error]="!isEditLinkLabelValid()">
-            <label class="input-group-addon" for="editLinkLabel">Label </label>
-            <input type="text" class="form-control" [(ngModel)]="editLink.label" id="editLinkLabel">
+          <label class="control-label"><i class="fa fa-plus fa-fw"></i> Add a new external link</label>
+          <div class="form-group input-group inline-form" [class.has-error]="!isNewLinkLabelValid()">
+            <label class="input-group-addon" for="addLinkLabel">Label </label>
+            <input type="text" class="form-control" [(ngModel)]="newLink.label" id="addLinkLabel">
           </div>
-          <div class="form-group input-group inline-form" [class.has-error]="!isEditLinkUrlValid()">
-            <label class="input-group-addon" for="editLinkURL">URL </label>
-            <input type="text" class="form-control" [(ngModel)]="editLink.url" id="editLinkURL">
+          <div class="form-group input-group inline-form" [class.has-error]="!isNewLinkUrlValid()">
+            <label class="input-group-addon" for="addLinkURL">URL </label>
+            <input type="text" class="form-control" [(ngModel)]="newLink.url" id="addLinkURL">
           </div>
 
           <div class="pull-right">
-            <button (click)="abortEditLink()" class="btn btn-default">Cancel</button>
-            <button (click)="saveEditLink()" class="btn btn-info"
-                    [disabled]="!isEditLinkLabelValid() || !isEditLinkUrlValid()">Save
+            <button (click)="abortNewLink()" class="btn btn-default">Cancel</button>
+            <button (click)="saveNewLink()" class="btn btn-success"
+                    [disabled]="!isNewLinkLabelValid() || !isNewLinkUrlValid()">Add
             </button>
           </div>
         </td>
-      </ng-template>
-    </tr>
+      </tr>
 
-    <tr *ngIf="newLink">
-      <td colspan="5">
-        <label class="control-label"><i class="fa fa-plus fa-fw"></i> Add a new external link</label>
-        <div class="form-group input-group inline-form" [class.has-error]="!isNewLinkLabelValid()">
-          <label class="input-group-addon" for="addLinkLabel">Label </label>
-          <input type="text" class="form-control" [(ngModel)]="newLink.label" id="addLinkLabel">
-        </div>
-        <div class="form-group input-group inline-form" [class.has-error]="!isNewLinkUrlValid()">
-          <label class="input-group-addon" for="addLinkURL">URL </label>
-          <input type="text" class="form-control" [(ngModel)]="newLink.url" id="addLinkURL">
-        </div>
-
-        <div class="pull-right">
-          <button (click)="abortNewLink()" class="btn btn-default">Cancel</button>
-          <button (click)="saveNewLink()" class="btn btn-success"
-                  [disabled]="!isNewLinkLabelValid() || !isNewLinkUrlValid()">Add
-          </button>
-        </div>
-      </td>
-    </tr>
-
-    <tr *ngIf="!newLink" (click)="goToAddLink()">
-      <td colspan="5" role="button"><i class="fa fa-plus fa-fw"></i>
-        Add a new external link
-      </td>
-    </tr>
-
-    </tbody>
-  </table>
+      <tr *ngIf="!newLink" (click)="goToAddLink()">
+        <td colspan="5" role="button"><i class="fa fa-plus fa-fw"></i>
+          Add a new external link
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </cc-panel>

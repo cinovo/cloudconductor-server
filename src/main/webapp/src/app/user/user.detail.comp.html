@@ -12,11 +12,11 @@
 </cc-title>
 
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-lg-8">
     <user-token [userObs]="user$" (onReload)="reloadUser()"></user-token>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-lg-4">
     <user-metadata [userObs]="user$" [mode]="modes.EDIT"></user-metadata>
 
     <user-agents [userObs]="user$"></user-agents>

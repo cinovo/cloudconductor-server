@@ -8,108 +8,101 @@
         </a>
       </li>
 
-      <table class="table-condensed table-responsive table table-striped table-hover dataTable" cc-panel-body>
-        <thead>
-        <tr>
-          <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
-          <th class="sorting_asc">Package-Name</th>
-          <th class="sorting">Installed</th>
-          <th class="sorting">Latest in range</th>
-          <th class="sorting">Latest available</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngIf="packageVersions.length <= 0" class="warning">
-          <td colspan="7" class="text-center">
-            There are currently no packages installed.
-          </td>
-        </tr>
-        <tr *ngFor="let pv of packageVersions;" [class.warning]="pvInRange && !isPkgLatestInRange(pv)">
-          <td>
-            <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="selectPackage(pv, $event)">
-          </td>
-          <td>
-            {{pv.pkg}}
-            <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
-          </td>
-          <td>
-            <cc-inlineedit *ngIf="pvAvailable; else readonly" [value]="pv.version" [options]="pvAvailable[pv.pkg]" (onSave)="updatePackageVersion(pv.pkg, $event)">
-            </cc-inlineedit>
-            <ng-template #readonly>
-              {{pv.version}}
-            </ng-template>
-          </td>
-          <td>
-            <span *ngIf="pvInRange">
-              {{getLatestPkgInRange(pv)}}
-            </span>
-          </td>
-          <td>
-            <span>
-              {{getLatestPkg(pv)}}
-            </span>
-          </td>
-          <td>
-            <a *ngIf="pvInRange && !isPkgLatestInRange(pv)" (click)="updatePackage(pv)" role="button" [title]="'Update package \'' + pv.pkg + '\' to latest'">
-              <i class="fa fa-refresh fa-fw"></i>
-            </a>
-          </td>
-          <td>
-            <a role="button" mwlConfirmationPopover
-              [attr.title]="'Remove package \'' + pv.pkg + '\' from template'"
-              [popoverTitle]="'Please verify!'"
-              [popoverMessage]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
-              placement="left"
-              confirmButtonType="danger"
-              (confirm)="removePackage(pv)">
-              <i class="fa fa-trash-o fa-fw"></i>
-            </a>
-          </td>
-        </tr>
+      <div class="table-responsive" cc-panel-body>
+        <table class="table-condensed table table-striped table-hover dataTable">
+          <thead>
+          <tr>
+            <th style="width: 15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all packages"></th>
+            <th class="sorting_asc">Package-Name</th>
+            <th class="sorting">Installed</th>
+            <th class="sorting">Latest in range</th>
+            <th style="width: 15px"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngIf="packageVersions.length <= 0" class="warning">
+            <td colspan="7" class="text-center">
+              There are currently no packages installed.
+            </td>
+          </tr>
+          <tr *ngFor="let pv of packageVersions;" [class.warning]="pvInRange && !isPkgLatestInRange(pv)">
+            <td>
+              <input type="checkbox" value="{{pv.pkg}}" [checked]="pv.selected" (change)="selectPackage(pv, $event)">
+            </td>
+            <td>
+              {{pv.pkg}}
+              <a [routerLink]="['/package', pv.pkg]" title="Show Package"><i class="fa fa-external-link fa-fw"></i></a>
+            </td>
+            <td>
+              <cc-inlineedit *ngIf="pvAvailable; else readonly" [value]="pv.version" [options]="pvAvailable[pv.pkg]" (onSave)="updatePackageVersion(pv.pkg, $event)">
+              </cc-inlineedit>
+              <ng-template #readonly>
+                {{pv.version}}
+              </ng-template>
+            </td>
+            <td>
+              <span *ngIf="pvInRange && getLatestPkgInRange(pv) as latest">
+                {{latest}}
+                <a *ngIf="pvInRange && !isPkgLatestInRange(pv)" (click)="updatePackage(pv)" class="pull-right" role="button"
+                   [title]="'Update \'' + pv.pkg + '\' to \'' + latest + '\''">
+                <i class="fa fa-refresh fa-fw"></i>
+              </a>
+              </span>
+            </td>
+            <td>
+              <a role="button" mwlConfirmationPopover
+                [attr.title]="'Remove package \'' + pv.pkg + '\' from template'"
+                [popoverTitle]="'Please verify!'"
+                [popoverMessage]="'Are you sure you want to remove the package \'' + pv.pkg + '\' from the template?'"
+                placement="left"
+                confirmButtonType="danger"
+                (confirm)="removePackage(pv)">
+                <i class="fa fa-trash-o fa-fw"></i>
+              </a>
+            </td>
+          </tr>
 
-        <tr *ngIf="newPackage">
-          <td colspan="7">
-            <label class="control-label">
-              <i class="fa fa-plus fa-fw"></i>
-              Add package to template
-            </label>
-            <div class="form-horizontal">
-              <div class="form-group">
-                <div class="col-sm-6">
-                  <select class="form-control" id="pkg" [(ngModel)]="newPackage.pkg" (ngModelChange)="onPackageChange()">
-                    <option *ngFor="let pkg of getInstallablePackages()" value="{{pkg}}">{{pkg}}</option>
-                  </select>
-                </div>
-                <div class="col-sm-6">
-                  <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!newPackage.pkg">
-                    <option *ngFor="let version of getAvailableVersionStrings(newPackage.pkg)" value="{{version}}">
-                      {{version}}
-                    </option>
-                  </select>
+          <tr *ngIf="newPackage">
+            <td colspan="7">
+              <label class="control-label">
+                <i class="fa fa-plus fa-fw"></i>
+                Add package to template
+              </label>
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <div class="col-sm-6">
+                    <select class="form-control" id="pkg" [(ngModel)]="newPackage.pkg" (ngModelChange)="onPackageChange()">
+                      <option *ngFor="let pkg of getInstallablePackages()" value="{{pkg}}">{{pkg}}</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <select class="form-control" id="version" [(ngModel)]="newPackage.version" [disabled]="!newPackage.pkg">
+                      <option *ngFor="let version of getAvailableVersionStrings(newPackage.pkg)" value="{{version}}">
+                        {{version}}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="pull-right">
-              <button (click)="cancelAddPackage()" class="btn btn-default">Cancel</button>
-              <button (click)="addNewPackage()" class="btn btn-success" [disabled]="!newPackage.pkg || !newPackage.version">
-                Add
-              </button>
-            </div>
-          </td>
-        </tr>
+              <div class="pull-right">
+                <button (click)="cancelAddPackage()" class="btn btn-default">Cancel</button>
+                <button (click)="addNewPackage()" class="btn btn-success" [disabled]="!newPackage.pkg || !newPackage.version">
+                  Add
+                </button>
+              </div>
+            </td>
+          </tr>
 
-        <tr *ngIf="!newPackage" (click)="goToAddPackage()">
-          <td colspan="7" role="button">
-            <i class="fa fa-plus fa-fw"></i>
-            Add package to template
-          </td>
-        </tr>
-
-        </tbody>
-      </table>
+          <tr *ngIf="!newPackage" (click)="goToAddPackage()">
+            <td colspan="7" role="button">
+              <i class="fa fa-plus fa-fw"></i>
+              Add package to template
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="pull-left form-inline" cc-panel-body>
         <div *ngIf="!importing; else spinner" class="form-group">

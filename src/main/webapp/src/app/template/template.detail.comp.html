@@ -1,14 +1,13 @@
 <cc-title [title]="'Template Details'" titleIcon="fa-institution" [subtitle]="currentTemplate.name" [autorefresh]="true"></cc-title>
 
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-lg-9">
     <template-packages [obsTemplate]="template"></template-packages>
     <template-agentoptions [obsTemplate]="template"></template-agentoptions>
     <template-services [obsTemplate]="template"></template-services>
   </div>
 
-  <div class="col-md-4">
-
+  <div class="col-lg-3">
     <template-metadata [obsTemplate]="template" [mode]="modes.EDIT"></template-metadata>
 
     <div class="row">

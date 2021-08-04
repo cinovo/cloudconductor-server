@@ -12,26 +12,23 @@
 </cc-title>
 
 <div class="row">
-  <div class="col-sm-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-9">
-    <div class="row pull-right">
-      <div class="col-sm-3">
-        <button [routerLink]="['/config','preview', template]" class="btn btn-default pull-right">
-          <i class="fa fa-eye fa-fw"></i> Preview rest call
-        </button>
-      </div>
-      <div class="col-sm-3">
-        <button [routerLink]="['/config', template, 'export']" class="btn btn-default pull-right">
-          <i class="fa fa-external-link fa-fw"></i> Export
-        </button>
-      </div>
-      <div class="col-sm-6">
-        <button [routerLink]="['/config', template, '', 'new']" class="btn btn-success pull-right">
-          <i class="fa fa-plus fa-fw"></i> Add a new Key-Value-Pair
-        </button>
-      </div>
+  <div class="col-md-6 col-lg-9">
+    <div class="pull-right">
+      <button [routerLink]="['/config','preview', template]" class="btn btn-default">
+        <i class="fa fa-eye fa-fw"></i>
+        Preview
+      </button>
+      <button [routerLink]="['/config', template, 'export']" class="btn btn-default">
+        <i class="fa fa-external-link fa-fw"></i>
+        Export
+      </button>
+      <button [routerLink]="['/config', template, '', 'new']" class="btn btn-success">
+        <i class="fa fa-plus fa-fw"></i>
+        New
+      </button>
     </div>
   </div>
 </div>
@@ -54,7 +51,7 @@
 </div>
 
 <div class="row" *ngIf="tree && tree.length > 0">
-  <div class="col-md-6" *ngFor="let service of tree">
+  <div class="col-md-12 col-lg-6" *ngFor="let service of tree">
     <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
       <li cc-panel-dropdown>
         <a [routerLink]="['/config', template, service.name, 'new']">Add new Key-Value</a>

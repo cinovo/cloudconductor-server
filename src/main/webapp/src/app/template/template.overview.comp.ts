@@ -141,7 +141,7 @@ export class TemplateOverview implements OnInit, OnDestroy {
 
   private loadRepos(): void {
     this.repoHttp.getRepos().subscribe(
-      (repos) => this.repos = repos,
+      (repos) => this.repos = repos.sort(Sorter.repo),
       (err) => console.error(err)
     );
   }

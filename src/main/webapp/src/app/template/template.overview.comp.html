@@ -1,14 +1,14 @@
 <cc-title [title]="'Templates'" titleIcon="fa-institution"></cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter mode="select" label="Repository" [data]="repos" [dataField]="'name'"
                (onQueryChange)="repoQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-12 col-lg-6">
     <div class="row pull-right">
       <div class="col-sm-6">
         <button [routerLink]="['diff']" class="btn btn-default pull-right">
@@ -35,7 +35,7 @@
 
 <div class="row" *ngIf="templatesLoaded && templates.length < 1">
   <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert-1">
+    <div class="alert alert-warning" role="alert">
       No templates found
     </div>
   </div>
@@ -62,60 +62,62 @@
         </a>
       </li>
 
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
-        <thead>
-        <tr>
-          <th class="sorting_asc" width="5px"></th>
-          <th class="sorting_asc" width="30%">Template</th>
-          <th class="sorting"># Hosts</th>
-          <th class="sorting"># Packages</th>
-          <th>Repos</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <ng-template ngFor let-treeElement [ngForOf]="templateTree">
-          <tr *ngIf="treeElement.group" class="info" (click)="treeElement.expanded = !treeElement.expanded">
-            <td *ngIf="treeElement.expanded"><i class="fa fa-folder-open" aria-hidden="true"></i></td>
-            <td *ngIf="!treeElement.expanded"><i class="fa fa-folder" aria-hidden="true"></i></td>
-            <td colspan="6">{{treeElement.group}}</td>
+      <div class="table-responsive" cc-panel-body>
+        <table class="table table-striped table-hover dataTable" >
+          <thead>
+          <tr>
+            <th class="sorting_asc" style="width: 5px"></th>
+            <th class="sorting_asc" style="width: 30%">Template</th>
+            <th class="text-right sorting"># Hosts</th>
+            <th class="text-right sorting"># Packages</th>
+            <th>Repos</th>
+            <th style="width: 15px"></th>
+            <th style="width: 15px"></th>
           </tr>
-          <tr *ngFor="let template of treeElement.templates" (dblclick)="gotoDetails(template)"
-              [class.warning]="template.hostCount < 1"
-              [class.danger]="template.hostCount < 1 && template.packageCount < 1"
-              [hidden]="treeElement.group != '' && !treeElement.expanded">
+          </thead>
+          <tbody>
+          <ng-template ngFor let-treeElement [ngForOf]="templateTree">
+            <tr *ngIf="treeElement.group" class="info" (click)="treeElement.expanded = !treeElement.expanded">
+              <td *ngIf="treeElement.expanded"><i class="fa fa-folder-open" aria-hidden="true"></i></td>
+              <td *ngIf="!treeElement.expanded"><i class="fa fa-folder" aria-hidden="true"></i></td>
+              <td colspan="6">{{treeElement.group}}</td>
+            </tr>
+            <tr *ngFor="let template of treeElement.templates" (dblclick)="gotoDetails(template)"
+                [class.warning]="template.hostCount < 1"
+                [class.danger]="template.hostCount < 1 && template.packageCount < 1"
+                [hidden]="treeElement.group != '' && !treeElement.expanded">
 
-            <td *ngIf="!treeElement.group" colspan="2">{{template.name}}</td>
-            <td *ngIf="treeElement.group"></td>
-            <td *ngIf="treeElement.group">{{template.name}}</td>
-            <td>
-              {{template.hostCount}}
-            </td>
-            <td>
-              {{template.packageCount}}
-            </td>
-            <td>
-              {{template.repos.join(", ")}}
-            </td>
-            <td>
-              <a title="Edit Template" [routerLink]="[template.name]"><i class="fa fa-edit fa-fw"></i></a>
-            </td>
-            <td>
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                 title="Delete Template"
-                 [popoverTitle]="'Please verify!'"
-                 [popoverMessage]="'Are you sure you want to delete the following template: '+ template.name+'?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deleteTemplate(template)">
-                <i class="fa fa-trash-o fa-fw"></i>
-              </a>
-            </td>
-          </tr>
-        </ng-template>
-        </tbody>
-      </table>
+              <td *ngIf="!treeElement.group" colspan="2">{{template.name}}</td>
+              <td *ngIf="treeElement.group"></td>
+              <td *ngIf="treeElement.group">{{template.name}}</td>
+              <td class="text-right">
+                {{template.hostCount}}
+              </td>
+              <td class="text-right">
+                {{template.packageCount}}
+              </td>
+              <td>
+                {{template.repos.join(", ")}}
+              </td>
+              <td>
+                <a title="Edit Template" [routerLink]="[template.name]"><i class="fa fa-edit fa-fw"></i></a>
+              </td>
+              <td>
+                <a href="javascript:void(0)" mwlConfirmationPopover
+                   title="Delete Template"
+                   [popoverTitle]="'Please verify!'"
+                   [popoverMessage]="'Are you sure you want to delete the following template: '+ template.name+'?'"
+                   placement="left"
+                   confirmButtonType="danger"
+                   (confirm)="deleteTemplate(template)">
+                  <i class="fa fa-trash-o fa-fw"></i>
+                </a>
+              </td>
+            </tr>
+          </ng-template>
+          </tbody>
+        </table>
+      </div>
     </cc-panel>
   </div>
 </div>

@@ -57,9 +57,8 @@ export class UserOverviewComponent implements OnInit, OnDestroy {
     this.reloadData();
 
     this._groupSub = this.groupHttp.getGroupNames().subscribe(
-      (groupNames) => {
-        this.groups = groupNames;
-      }, (err) => console.error(err)
+      (groupNames) => this.groups = groupNames.sort(),
+      (err) => console.error(err)
     );
   }
 
