@@ -27,7 +27,7 @@ export class PackageChangesService {
   constructor(private readonly packageHttp: PackageHttpService) { }
 
   public computePackageChanges(host: Host): Observable<PackageChange[]> {
-    if(!Validator.notEmpty(host.uuid)) {
+    if (!host || !Validator.notEmpty(host.uuid) || !host.packages) {
       const packageChanges: PackageChange[] = [];
       return observableOf(packageChanges);
     }
