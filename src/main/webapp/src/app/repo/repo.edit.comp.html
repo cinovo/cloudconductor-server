@@ -2,7 +2,7 @@
 <cc-title [title]="'New Repository'" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-lg-8">
     <cc-panel [title]="'Repository'" icon="fa-server">
       <form [formGroup]="repoForm" novalidate (ngSubmit)="save(repoForm.value)" cc-panel-body>
         <div class="form-group" [ngClass]="{ 'has-error': !repoForm.controls.name.pristine && !repoForm.controls.name.valid }">
@@ -71,13 +71,12 @@
         </div>
       </form>
     </cc-panel>
-
   </div>
 
-  <div class="col-md-6">
+  <div class="col-lg-4">
     <cc-panel [title]="'Provided packages'" icon="fa-server"
               subTitle="last indexed: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm:ss'}}"
-              [subTitleCondition]="repo.lastIndex" [collapsable]="true">
+              [subTitleCondition]="!!(repo.lastIndex)" [collapsable]="true">
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
            [popoverTitle]="'Please verify!'"
@@ -89,7 +88,7 @@
         </a>
       </li>
       <div cc-panel-body>
-        <div class="alert alert-warning" role="alert-1" *ngIf="packages.length < 1">
+        <div class="alert alert-warning" role="alert" *ngIf="packages.length < 1">
           There are currently no packages provided, these will be added with the next repo scan.
         </div>
 

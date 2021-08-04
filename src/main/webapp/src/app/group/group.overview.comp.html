@@ -1,13 +1,13 @@
 <cc-title [title]="'Groups'" titleIcon="fa-users"></cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter mode="select" label="Permission" [data]="permissions" (onQueryChange)="permissionQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-12 col-lg-6">
     <button class="btn btn-success pull-right" [routerLink]="['/group', 'new']">
       <i class="fa fa-plus fa-fw"></i>
       New Group
@@ -21,8 +21,9 @@
       No user groups found!
     </div>
     <cc-panel *ngIf="groups && groups.length > 0" [title]="'Groups'" icon="fa-users">
-      <table class="table table-responsive table-striped table-hover dataTable" *ngIf="groups && groups.length > 0" cc-panel-body>
-        <thead>
+      <div class="table-responsive" *ngIf="groups && groups.length > 0" cc-panel-body>
+        <table class="table table-striped table-hover dataTable">
+          <thead>
           <tr>
             <th width="15px"></th>
             <th class="sorting_asc">Name</th>
@@ -31,8 +32,8 @@
             <th width="15px"></th>
             <th width="15px"></th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr *ngFor="let group of groups" (dblclick)="goToGroup(group)">
             <td><i class="fa fa-users fa-fw"></i></td>
             <td>{{group.name}}</td>
@@ -50,17 +51,18 @@
             </td>
             <td>
               <a href="javascript:void(0)" mwlConfirmationPopover
-              [popoverTitle]="'Please verify!'"
-              [popoverMessage]="'Are you sure you want to delete the group \'' + group.name + '\'?'"
-              placement="left"
-              confirmButtonType="danger"
-              (confirm)="deleteGroup(group)">
+                 [popoverTitle]="'Please verify!'"
+                 [popoverMessage]="'Are you sure you want to delete the group \'' + group.name + '\'?'"
+                 placement="left"
+                 confirmButtonType="danger"
+                 (confirm)="deleteGroup(group)">
                 <i class="fa fa-trash-o fa-fw" title="Delete Group"></i>
               </a>
             </td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </cc-panel>
   </div>
 </div>

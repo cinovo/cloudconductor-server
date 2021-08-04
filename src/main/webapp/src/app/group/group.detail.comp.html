@@ -12,11 +12,11 @@
 </cc-title>
 
 <div class="row">
-  <div class="col-md-8">
-    <group-member [groupObs]="group$"></group-member>
-  </div>
-  <div class="col-md-4">
+  <div class="col-lg-4 col-lg-push-8">
     <group-metadata [groupObs]="group$" [mode]="modes.EDIT" (onReload)="reloadGroup()">
     </group-metadata>
+  </div>
+  <div class="col-lg-8 col-lg-pull-4">
+    <group-member [groupObs]="group$"></group-member>
   </div>
 </div>

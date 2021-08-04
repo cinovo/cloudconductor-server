@@ -1,10 +1,10 @@
 <cc-title [title]="'Services'" titleIcon="fa-flask"></cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-9">
+  <div class="col-md-6 col-lg-9">
     <button [routerLink]="['new']" class="btn btn-success pull-right"><i class="fa fa-plus fa-fw"></i> Add a new Service
     </button>
   </div>
@@ -21,7 +21,7 @@
 
 <div class="row" *ngIf="servicesLoaded && services && services.length < 1">
   <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert-1">
+    <div class="alert alert-warning" role="alert">
       No services found
     </div>
   </div>
@@ -38,12 +38,12 @@
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
-          <th class="sorting_asc" width="30%">Name</th>
+          <th class="sorting_asc" style="width: 30%">Name</th>
           <th class="sorting">Description</th>
-          <th class="sorting"># Providing Packages</th>
-          <th class="sorting"># Templates</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
+          <th class="text-right sorting"># Providing Packages</th>
+          <th class="text-right sorting"># Templates</th>
+          <th style="width: 15px"></th>
+          <th style="width: 15px"></th>
         </tr>
         </thead>
         <tbody>
@@ -56,11 +56,11 @@
           <td class="word-break">
             {{service.description}}
           </td>
-          <td>
+          <td class="text-right">
             <span *ngIf="service.packages">{{service.packages.length}}</span>
             <span *ngIf="!service.packages">0</span>
           </td>
-          <td>
+          <td class="text-right">
             <span *ngIf="service.templates">{{service.templates.length}}</span>
             <span *ngIf="!service.templates">0</span>
           </td>

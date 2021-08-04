@@ -17,7 +17,7 @@
 
 <div class="row" *ngIf="packagesLoaded && packages.length < 1">
   <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert-1">
+    <div class="alert alert-warning" role="alert">
       No packages found
     </div>
   </div>
@@ -44,14 +44,14 @@
 
         <div class="row">
           <div class="col-md-12">
-            <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+            <table class="table-responsive table table-striped table-hover dataTable">
               <thead>
               <tr>
-                <th class="sorting_asc" width="30%">Package-Name</th>
-                <th class="sorting"># Versions</th>
+                <th class="sorting_asc" style="width: 30%">Package-Name</th>
+                <th class="text-right sorting"># Versions</th>
                 <th class="sorting">Oldest version</th>
                 <th class="sorting">Latest version</th>
-                <th width="15px"></th>
+                <th style="width: 15px"></th>
               </tr>
               </thead>
               <tbody>
@@ -59,7 +59,7 @@
                 <td>
                   {{pkg.name}}
                 </td>
-                <td>
+                <td class="text-right">
                   {{pkg.versions.length}}
                 </td>
                 <td>

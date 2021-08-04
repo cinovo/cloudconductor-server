@@ -1,8 +1,7 @@
 <cc-title [title]="'Service Details'" titleIcon="fa-flask" [subtitle]="service.name"></cc-title>
 
 <div class="row">
-
-  <div class="col-md-6">
+  <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'Service-Details'" icon="fa-flask">
       <form [formGroup]="serviceForm" novalidate (ngSubmit)="save(serviceForm.value)" cc-panel-body>
         <div class="form-group" [ngClass]="{ 'has-error': !serviceForm.controls.name.pristine && !serviceForm.controls.name.valid }">
@@ -39,14 +38,14 @@
     </cc-panel>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'Provided by'" icon="fa-book" [collapsable]="true">
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
         <tr>
           <th class="sorting_asc">Package-Name</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
+          <th style="width: 15px"></th>
+          <th style="width: 15px"></th>
         </tr>
         </thead>
 
@@ -108,7 +107,7 @@
     </cc-panel>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-12 col-lg-6">
     <cc-panel [title]="'Template references'" icon="fa-institution" [collapsable]="true">
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>

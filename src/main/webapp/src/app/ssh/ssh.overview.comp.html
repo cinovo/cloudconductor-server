@@ -1,18 +1,18 @@
 <cc-title [title]="'SSH Keys'" [titleIcon]="'fa-key'"></cc-title>
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter (onQueryChange)="searchQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter label="User" (onQueryChange)="userQuery = $event"></cc-filter>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-lg-3">
     <cc-filter mode="select" label="Template" [data]="(templates$ | async)" (onQueryChange)="searchTemplateQuery = $event"
       [dataField]="'name'">
     </cc-filter>
   </div>
-  <div *ngIf="!showAddKey" class="col-md-3">
+  <div *ngIf="!showAddKey" class="col-md-6 col-lg-3">
     <button class="btn btn-success pull-right" role="button" (click)="goToAddKey()">
       <i class="fa fa-plus fa-fw"></i>
       Add SSH Key
@@ -29,7 +29,7 @@
   </div>
 </div>
 
-<div class="row" *ngIf="keysLoaded && sshKeys.length < 1">
+<div class="row" *ngIf="!showAddKey && keysLoaded && sshKeys.length < 1">
   <div class="col-sm-12">
     <div class="alert alert-warning">
         No SSH keys found
@@ -43,13 +43,13 @@
       <table class="table table-responsive table-striped table-hover dataTable" cc-panel-body>
         <thead>
           <tr>
-            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all keys"></th>
+            <th style="width: 15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all keys"></th>
             <th class="sorting_asc">Owner</th>
             <th class="sorting">User Name</th>
             <th>Templates</th>
             <th class="sorting">Last Modified</th>
-            <th width="15px"></th>
-            <th width="15px"></th>
+            <th style="width: 15px"></th>
+            <th style="width: 15px"></th>
           </tr>
         </thead>
         <tbody>
