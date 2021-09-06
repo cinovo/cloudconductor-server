@@ -57,8 +57,9 @@ public class PackageVersionDAOHib extends EntityDAOHibernate<EPackageVersion, Lo
 			return null;
 		}
 		// language=HQL
-		return this.findByQuery("FROM EPackageVersion AS pv LEFT JOIN pv.repos AS repos" +
-				" WHERE pv.pkgName = ?1 AND pv.version= ?2 AND repos IN ?3", pkgName, version, repoIds);
+		String query = "FROM EPackageVersion AS pv LEFT JOIN pv.repos AS repos" +
+				" WHERE pv.pkgName = ?1 AND pv.version= ?2 AND repos IN ?3";
+		return this.findListByQuery(query, pkgName, version, repoIds).stream().findFirst().orElse(null);
 	}
 
 	@Override
