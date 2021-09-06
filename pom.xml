@@ -7,7 +7,7 @@
     </parent>
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.8</version>
     <name>CloudConductor Server</name>
     <description>Server to manage deployment environments</description>
     <inceptionYear>2014</inceptionYear>
@@ -33,7 +33,7 @@
     <scm>
         <connection>scm:git:git@github.com:cinovo/cloudconductor-server.git</connection>
         <developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v3.8</tag>
     </scm>
     <developers>
         <developer>
