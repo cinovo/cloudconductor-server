@@ -1,5 +1,6 @@
 package de.cinovo.cloudconductor.server.security;
 
+import com.google.common.base.Strings;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -14,7 +15,6 @@ import de.cinovo.cloudconductor.server.model.EJWTToken;
 import de.cinovo.cloudconductor.server.model.EUser;
 import de.cinovo.cloudconductor.server.model.EUserGroup;
 import de.cinovo.cloudconductor.server.model.enums.AuthType;
-import de.taimos.dvalin.jaxrs.security.jwt.JWTAuth;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class TokenHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandler.class);
 	
 	@Value("${cloudconductor.tokenlength:32}")
-	private int TOKEN_LENGTH;
+	private int authTokenLength;
 	@Value("${jwtauth.timeout:3600000}")
 	private Long jwtTimeout;
 	@Value("${jwtauth.secret}")
@@ -52,8 +52,6 @@ public class TokenHandler {
 	private IAuthTokenDAO authTokenDao;
 	@Autowired
 	private IJWTTokenDAO jwtTokenDao;
-	@Autowired
-	private JWTAuth jwtAuth;
 	@Autowired
 	private IUserGroupDAO userGroupDAO;
 	
@@ -164,13 +162,15 @@ public class TokenHandler {
 	}
 	
 	private String generateToken() {
-		String generatedToken = new BigInteger(this.TOKEN_LENGTH * 5, new SecureRandom()).toString(32);
-		generatedToken = this.generatePartialUppercasedToken(this.TOKEN_LENGTH, generatedToken);
-		return this.shuffleWithFisherYates(generatedToken);
+		BigInteger randomNumber = new BigInteger(this.authTokenLength * 5, new SecureRandom());
+		String randomString = Strings.padStart(randomNumber.toString(32), this.authTokenLength, '0');
+		String partialUppercase = this.generatePartialUppercasedToken(randomString);
+		return this.shuffleWithFisherYates(partialUppercase);
 	}
 	
-	private String generatePartialUppercasedToken(int tokenLength, String currentToken) {
-		return currentToken.toUpperCase().substring(0, tokenLength / 2) + currentToken.substring(tokenLength / 2, tokenLength - 1);
+	private String generatePartialUppercasedToken(String input) {
+		int middle = input.length() / 2;
+		return input.substring(0, middle).toUpperCase() + input.substring(middle);
 	}
 	
 	private String shuffleWithFisherYates(String tokenStringToShuffle) {
