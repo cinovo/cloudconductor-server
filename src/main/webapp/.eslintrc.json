@@ -25,7 +25,22 @@
           "error",
           {
             "type": "element",
-            "prefix": ["app", "cc", "cv", "group", "home", "host", "links", "mirror", "package", "repo", "service", "settings", "template", "user"],
+            "prefix": [
+              "app",
+              "cc",
+              "cv",
+              "group",
+              "home",
+              "host",
+              "links",
+              "mirror",
+              "package",
+              "repo",
+              "service",
+              "settings",
+              "template",
+              "user"
+            ],
             "style": "kebab-case"
           }
         ],
