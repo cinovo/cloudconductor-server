@@ -1,4 +1,4 @@
-name: CI with Maven and Node.js
+name: Build
 
 on: push
 
