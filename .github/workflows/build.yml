@@ -20,5 +20,6 @@ jobs:
       with:
         node-version: '14.x'
         cache: npm
+        cache-dependency-path: 'src/main/webapp/package-lock.json'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
