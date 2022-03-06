@@ -24,7 +24,6 @@
     "angular-confirmation-popover": "^6.0.0",
     "bootstrap": "^3.3.7",
     "bootstrap-sass": "^3.3.7",
-    "classlist.js": "^1.1.20150312",
     "datatables.net": "~1.11.4",
     "datatables.net-bs": "~1.11.4",
     "datatables.net-responsive": "^2.2.9",
@@ -34,7 +33,6 @@
     "metismenu": "~1.1.3",
     "rxjs": "^6.6.3",
     "tslib": "^2.0.0",
-    "web-animations-js": "^2.3.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
