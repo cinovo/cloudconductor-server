@@ -5,13 +5,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { UserSettingsComponent } from './usersettings.comp';
-import { Role } from '../util/enums.util';
 import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
 
 const userSettingsRoutes: Routes = [
-  {path: '', component: UserSettingsComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  { path: '', component: UserSettingsComponent, canActivate: [AuthenticationGuard] }, // no special role needed
 ]
 
 /**
