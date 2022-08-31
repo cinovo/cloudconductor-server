@@ -3,7 +3,7 @@
     <parent>
         <artifactId>oss-parent</artifactId>
         <groupId>org.sonatype.oss</groupId>
-        <version>7</version>
+        <version>9</version>
     </parent>
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
@@ -58,8 +58,8 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.30</dvalin.version>
-        <cloudconductor.api.version>3.6</cloudconductor.api.version>
+        <dvalin.version>1.32</dvalin.version>
+        <cloudconductor.api.version>3.7</cloudconductor.api.version>
     </properties>
 
     <dependencies>
@@ -72,11 +72,60 @@
             <groupId>de.taimos</groupId>
             <artifactId>dvalin-jaxrs</artifactId>
             <version>${dvalin.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-io</artifactId>
+            <version>9.4.45.v20220203</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>9.4.45.v20220203</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-http</artifactId>
+            <version>9.4.45.v20220203</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.4.45.v20220203</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-continuation</artifactId>
+            <version>9.4.45.v20220203</version>
         </dependency>
         <dependency>
             <groupId>de.taimos</groupId>
             <artifactId>dvalin-jpa</artifactId>
             <version>${dvalin.version}</version>
+        </dependency>
+        <!-- Fixes CVE-2022-0839, remove liquibase dependency after next dvalin update-->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.8.0</version>
         </dependency>
         <dependency>
             <groupId>de.taimos</groupId>
@@ -86,19 +135,19 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.10.37</version>
+            <version>1.12.290</version>
         </dependency>
 
         <!-- Database drivers -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.2</version>
+            <version>42.3.4</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.45</version>
+            <version>8.0.30</version>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -108,7 +157,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -250,7 +299,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.5.0</version>
+                        <version>3.0.0</version>
                         <executions>
                             <execution>
                                 <id>npm install (initialize)</id>
@@ -438,7 +487,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.3.1</version>
                         <configuration>
                             <additionalDependencies>
                                 <dependency>
@@ -450,8 +499,9 @@
                         </configuration>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.6</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <phase>verify</phase>
