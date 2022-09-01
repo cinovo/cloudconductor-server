@@ -95,7 +95,7 @@ public class ConfigTest extends APITest {
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// remove template level config
-			h.removeConfig("dev", "", "foo");
+			h.removeConfig("dev", null, "foo");
 			for(ConfigValue configValue : h.getConfig("dev")) {
 				Assert.assertFalse(configValue.getKey().equals("foo"));
 			}
