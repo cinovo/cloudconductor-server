@@ -16,6 +16,9 @@ package de.cinovo.cloudconductor.server;
  * and limitations under the License. #L%
  */
 
+import java.io.File;
+import java.util.Map;
+
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.log4j.Log4jDaemonProperties;
@@ -23,10 +26,8 @@ import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
 import de.taimos.dvalin.daemon.DvalinLifecycleAdapter;
-import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Copyright 2012 Cinovo AG<br>
@@ -51,7 +52,7 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	/**
 	 * the logger
 	 */
-	private static final Logger log = Logger.getLogger(ServerStarter.class);
+	private static final Logger log = LoggerFactory.getLogger(ServerStarter.class);
 
 
 	/**

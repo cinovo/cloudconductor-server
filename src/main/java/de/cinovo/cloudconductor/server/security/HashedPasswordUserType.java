@@ -5,13 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import de.taimos.dvalin.jaxrs.security.HashedPassword;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 import org.hibernate.usertype.CompositeUserType;
-
-import de.taimos.dvalin.jaxrs.security.HashedPassword;
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -95,7 +94,7 @@ public class HashedPasswordUserType implements CompositeUserType, Serializable {
 	}
 	
 	@Override
-	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
+	public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
 		final Integer roundOffset = (Integer) StandardBasicTypes.INTEGER.nullSafeGet(rs, names[0], session, owner);
 		final String hash = (String) StandardBasicTypes.STRING.nullSafeGet(rs, names[1], session, owner);
 		final String salt = (String) StandardBasicTypes.STRING.nullSafeGet(rs, names[2], session, owner);
@@ -106,7 +105,7 @@ public class HashedPasswordUserType implements CompositeUserType, Serializable {
 	}
 	
 	@Override
-	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+	public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
 		if (value == null) {
 			StandardBasicTypes.INTEGER.nullSafeSet(st, null, index, session);
 			StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session);
@@ -144,17 +143,17 @@ public class HashedPasswordUserType implements CompositeUserType, Serializable {
 	}
 	
 	@Override
-	public Serializable disassemble(Object value, SessionImplementor session) throws HibernateException {
+	public Serializable disassemble(Object value, SharedSessionContractImplementor session) throws HibernateException {
 		return (Serializable) value;
 	}
 	
 	@Override
-	public Object assemble(Serializable cached, SessionImplementor session, Object owner) throws HibernateException {
+	public Object assemble(Serializable cached, SharedSessionContractImplementor session, Object owner) throws HibernateException {
 		return cached;
 	}
 	
 	@Override
-	public Object replace(Object original, Object target, SessionImplementor session, Object owner) throws HibernateException {
+	public Object replace(Object original, Object target, SharedSessionContractImplementor session, Object owner) throws HibernateException {
 		return this.deepCopy(original);
 	}
 	
