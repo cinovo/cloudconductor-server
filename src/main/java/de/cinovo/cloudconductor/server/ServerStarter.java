@@ -16,18 +16,19 @@ package de.cinovo.cloudconductor.server;
  * and limitations under the License. #L%
  */
 
-import java.io.File;
-import java.util.Map;
-
 import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.log4j.Log4jDaemonProperties;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
+import de.taimos.daemon.spring.Configuration;
 import de.taimos.dvalin.daemon.DvalinLifecycleAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * Copyright 2012 Cinovo AG<br>
@@ -46,18 +47,10 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 	 * the name of the server daemon
 	 */
 	public static final String DAEMON_NAME = "cloudconductor";
-
-	// Exception messages.
-	private static final String EXCEPTION_IN_PHASE = "Exception in phase %s.";
-	/**
-	 * the logger
-	 */
 	private static final Logger log = LoggerFactory.getLogger(ServerStarter.class);
 
 
 	/**
-	 * Main method.
-	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
@@ -73,15 +66,26 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 		File f = new File(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
 		return f.exists();
 	}
-
+	
 	@Override
-	protected void doAfterSpringStart() {
-		super.doAfterSpringStart();
+	protected void doBeforeSpringStart() {
+		super.doBeforeSpringStart();
+		
+		String profiles = System.getProperty(Configuration.PROFILES, Configuration.PROFILES_PRODUCTION);
+		if (!profiles.isEmpty()) {
+			profiles += ",";
+		}
+		profiles += "http";
+		System.setProperty(Configuration.PROFILES, profiles);
+		
+		this.logger.info("CloudConductor Version: {}", ServerStarter.class.getPackage().getImplementationVersion());
 	}
 
 	@Override
 	public void exception(LifecyclePhase phase, Throwable exception) {
-		ServerStarter.log.error(String.format(ServerStarter.EXCEPTION_IN_PHASE, phase.name()), exception);
+		if (ServerStarter.log.isErrorEnabled()) {
+			ServerStarter.log.error("Exception in phase " + phase.name() + ": ", exception);
+		}
 	}
 
 	@Override
