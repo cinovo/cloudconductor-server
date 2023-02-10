@@ -13,7 +13,7 @@
     <inceptionYear>2014</inceptionYear>
     <organization>
         <name>Cinovo AG</name>
-        <url>http://www.cinovo.de</url>
+        <url>https://www.cinovo.de</url>
     </organization>
     <url>https://github.com/cinovo/cloudconductor-server</url>
     <licenses>
@@ -23,8 +23,8 @@
         </license>
     </licenses>
     <ciManagement>
-        <system>TravisCI</system>
-        <url>https://travis-ci.org/cinovo/cloudconductor-server</url>
+        <system>GitHub Actions</system>
+        <url>https://github.com/cinovo/cloudconductor-server/actions</url>
     </ciManagement>
     <issueManagement>
         <system>Github</system>
@@ -58,75 +58,71 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.32</dvalin.version>
+        <dvalin.version>1.33</dvalin.version>
         <cloudconductor.api.version>3.7</cloudconductor.api.version>
+        <aws.version>1.12.344</aws.version>
+        <cxf.version>3.5.5</cxf.version>
+        <jackson.version>2.14.0</jackson.version>
     </properties>
 
     <dependencies>
+        <!-- TODO Release and update cloudconductor-api to match jackson version -->
         <dependency>
             <groupId>de.cinovo.cloudconductor</groupId>
             <artifactId>cloudconductor-api</artifactId>
             <version>${cloudconductor.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.taimos</groupId>
-            <artifactId>dvalin-jaxrs</artifactId>
-            <version>${dvalin.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-io</artifactId>
-            <version>9.4.45.v20220203</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.taimos</groupId>
+            <artifactId>dvalin-jaxrs</artifactId>
+            <version>${dvalin.version}</version>
+        </dependency>
+
+        <!-- CXF: needed to fix CVE-2022-40152, CVE-2022-46364 and CVE-2022-46363, can be removed when apache cxf dependency in dvalin is fixed -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <version>9.4.45.v20220203</version>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-http</artifactId>
-            <version>9.4.45.v20220203</version>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>9.4.45.v20220203</version>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-security-cors</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-continuation</artifactId>
-            <version>9.4.45.v20220203</version>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
+
         <dependency>
             <groupId>de.taimos</groupId>
             <artifactId>dvalin-jpa</artifactId>
             <version>${dvalin.version}</version>
         </dependency>
-        <!-- Fixes CVE-2022-0839, remove liquibase dependency after next dvalin update-->
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>4.8.0</version>
-        </dependency>
+
         <dependency>
             <groupId>de.taimos</groupId>
             <artifactId>dvalin-jaxrs-jwtauth</artifactId>
@@ -135,24 +131,32 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.290</version>
+            <version>${aws.version}</version>
         </dependency>
 
         <!-- Database drivers -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.4</version>
+            <version>42.5.2</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.30</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.31</version>
         </dependency>
+        <!-- MySQL: needed to fix CVE-2022-3171, CVE-2022-3509 and CVE-2022-3510, can be removed as soon as db driver is fixed -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.19.6</version>
+        </dependency>
+
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.3.5</version>
+            <version>2.5.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
