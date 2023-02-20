@@ -59,29 +59,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dvalin.version>1.33</dvalin.version>
-        <cloudconductor.api.version>3.7</cloudconductor.api.version>
+        <cloudconductor.api.version>3.8</cloudconductor.api.version>
         <aws.version>1.12.344</aws.version>
         <cxf.version>3.5.5</cxf.version>
         <jackson.version>2.14.0</jackson.version>
     </properties>
 
     <dependencies>
-        <!-- TODO Release and update cloudconductor-api to match jackson version -->
         <dependency>
             <groupId>de.cinovo.cloudconductor</groupId>
             <artifactId>cloudconductor-api</artifactId>
             <version>${cloudconductor.api.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
