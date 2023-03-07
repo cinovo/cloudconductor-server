@@ -53,7 +53,7 @@ export class TemplatePackages implements OnInit, OnDestroy {
   constructor(private readonly templateHttp: TemplateHttpService,
               private readonly alerts: AlertService,
               private readonly datePipe: DatePipe) {
-  };
+  }
 
   ngOnInit(): void {
     this.templateSub = this.obsTemplate.subscribe((template) => {
@@ -292,10 +292,12 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public exportFile(): void {
     const templateName = this.template.name;
 
+    const availableRepos = new Set(this.template.repos);
     this.templateHttp.getSimplePackageVersions(templateName).subscribe(
       (simplePVs) => {
-        const jsonBlob = new Blob([JSON.stringify(simplePVs, null, 2)], {type : 'application/json'});
-        const filename =  [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
+        const filteredPVs = simplePVs.map(pv => ({...pv, repos: pv.repos.filter(repo => availableRepos.has(repo))}));
+        const jsonBlob = new Blob([JSON.stringify(filteredPVs, null, 2)], {type : 'application/json'});
+        const filename = [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
         saveAs(jsonBlob, filename);
       },
       (err) => {
