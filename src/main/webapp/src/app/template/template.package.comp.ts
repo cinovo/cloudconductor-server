@@ -292,12 +292,10 @@ export class TemplatePackages implements OnInit, OnDestroy {
   public exportFile(): void {
     const templateName = this.template.name;
 
-    const availableRepos = new Set(this.template.repos);
     this.templateHttp.getSimplePackageVersions(templateName).subscribe(
       (simplePVs) => {
-        const filteredPVs = simplePVs.map(pv => ({...pv, repos: pv.repos.filter(repo => availableRepos.has(repo))}));
-        const jsonBlob = new Blob([JSON.stringify(filteredPVs, null, 2)], {type : 'application/json'});
-        const filename = [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
+        const jsonBlob = new Blob([JSON.stringify(simplePVs, null, 2)], {type : 'application/json'});
+        const filename =  [templateName, "template", this.datePipe.transform(new Date(), "yyyyMMdd")].join("-") + ".json";
         saveAs(jsonBlob, filename);
       },
       (err) => {
