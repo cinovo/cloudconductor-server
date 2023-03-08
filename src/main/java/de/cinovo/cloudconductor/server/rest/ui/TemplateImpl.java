@@ -304,10 +304,18 @@ public class TemplateImpl implements ITemplate {
 	@Override
 	@Transactional
 	public SimplePackageVersion[] getSimplePackageVersionsForTemplate(String templateName) {
-		return this.getTemplateByName(templateName).getPackageVersions().stream() //
-				.map(pvId -> this.packageVersionDAO.findById(pvId).toSimpleApi(this.repoDAO)) //
-				.sorted(Comparator.comparing(SimplePackageVersion::getName)) //
-				.toArray(SimplePackageVersion[]::new);
+		ETemplate template = this.getTemplateByName(templateName);
+		Set<Long> availableRepoIds = new HashSet<>(template.getRepos());
+		
+		List<SimplePackageVersion> simplePVs = new ArrayList<>();
+		for (EPackageVersion pv : this.packageVersionDAO.findByIds(template.getPackageVersions())) {
+			Set<Long> repoIds = new HashSet<>(pv.getRepos());
+			repoIds.retainAll(availableRepoIds);
+			List<String> repoNames = this.repoDAO.findNamesByIds(repoIds);
+			simplePVs.add(new SimplePackageVersion(pv.getPkgName(), pv.getVersion(), repoNames));
+		}
+		simplePVs.sort(Comparator.comparing(SimplePackageVersion::getName));
+		return simplePVs.toArray(new SimplePackageVersion[0]);
 	}
 
 	@Override
