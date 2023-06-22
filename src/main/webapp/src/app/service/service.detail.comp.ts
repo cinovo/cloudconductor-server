@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { throwError as observableThrowError, of } from 'rxjs';
@@ -32,14 +32,14 @@ export class ServiceDetail implements OnInit {
   private _allPackages: Package[] = [];
 
   public mode: Mode = 'edit';
-  public serviceForm: FormGroup;
+  public serviceForm: UntypedFormGroup;
 
   constructor(private readonly serviceHttp: ServiceHttpService,
               private readonly packageHttp: PackageHttpService,
               private readonly route: ActivatedRoute,
               private readonly router: Router,
               private readonly alerts: AlertService,
-              private readonly fb: FormBuilder) {
+              private readonly fb: UntypedFormBuilder) {
     this.serviceForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]],
       initScript: ['', Validators.required],

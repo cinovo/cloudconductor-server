@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { throwError as observableThrowError, Observable, Subscription, forkJoin, of} from 'rxjs';
@@ -44,8 +44,8 @@ export class TemplateMetaData implements OnInit, OnDestroy {
   public allRepos: Repo[] = [];
   public showNewRepo = false;
 
-  public templateForm: FormGroup;
-  public copyFrom: FormControl;
+  public templateForm: UntypedFormGroup;
+  public copyFrom: UntypedFormControl;
 
   public groups: string[] = [];
 
@@ -58,7 +58,7 @@ export class TemplateMetaData implements OnInit, OnDestroy {
               private readonly repoHttp: RepoHttpService,
               private readonly alerts: AlertService,
               private readonly router: Router,
-              private readonly fb: FormBuilder) {
+              private readonly fb: UntypedFormBuilder) {
     this.copyFrom = fb.control('');
     this.templateForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]],

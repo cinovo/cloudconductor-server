@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { SettingHttpService, Settings, timeUnits } from '../util/http/setting.http.service';
 import { AlertService } from '../util/alert/alert.service';
@@ -22,7 +22,7 @@ export class SettingsOverview implements OnInit {
 
   public readonly timeUnits = timeUnits;
 
-  public settingsForm: FormGroup;
+  public settingsForm: UntypedFormGroup;
 
   public allPackages: Package[] = [];
   public newPackage: string;
@@ -31,7 +31,7 @@ export class SettingsOverview implements OnInit {
   constructor(private readonly settingHttp: SettingHttpService,
               private readonly packageHttp: PackageHttpService,
               private readonly alerts: AlertService,
-              private readonly fb: FormBuilder,
+              private readonly fb: UntypedFormBuilder,
               private readonly location: Location) {
     this.settingsForm = fb.group({
       name: ['Default', [Validators.required]],

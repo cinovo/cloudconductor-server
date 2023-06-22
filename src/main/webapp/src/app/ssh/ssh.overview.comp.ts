@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { forkJoin, Observable, of } from 'rxjs';
@@ -37,7 +37,7 @@ export class SSHOverviewComponent implements OnInit {
   public templates$: Observable<Template[]>;
   public templateNames: Observable<string[]>;
 
-  public addTemplateForm: FormGroup;
+  public addTemplateForm: UntypedFormGroup;
 
   private static filterSSHKeys(key: SSHKey, query: string): boolean {
     if (Validator.notEmpty(query)) {
@@ -61,7 +61,7 @@ export class SSHOverviewComponent implements OnInit {
   }
 
   constructor(private readonly alertService: AlertService,
-              private readonly fb: FormBuilder,
+              private readonly fb: UntypedFormBuilder,
               private readonly sshKeyHttp: SSHKeyHttpService,
               private readonly templateHttp: TemplateHttpService,
               private readonly router: Router) {

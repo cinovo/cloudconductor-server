@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { throwError as observableThrowError, Observable, of} from 'rxjs';
@@ -30,7 +30,7 @@ export class RepoEdit implements OnInit {
 
   public packages: Array<PackageVersion> = [];
 
-  public repoForm: FormGroup;
+  public repoForm: UntypedFormGroup;
 
   constructor(private readonly repoHttp: RepoHttpService,
               private readonly mirrorHttp: RepoMirrorHttpService,
@@ -38,7 +38,7 @@ export class RepoEdit implements OnInit {
               private readonly route: ActivatedRoute,
               private readonly alerts: AlertService,
               private readonly router: Router,
-              private readonly fb: FormBuilder,
+              private readonly fb: UntypedFormBuilder,
               private readonly location: Location) {
     this.repoForm = fb.group({
       name: ['', [Validators.required, forbiddenNameValidator('new')]]

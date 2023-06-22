@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { throwError as _throw } from "rxjs";
@@ -22,7 +22,7 @@ import { Validator } from "../util/validator.util";
 })
 export class ConfigValueNew implements OnInit {
 
-  public kvForm: FormGroup;
+  public kvForm: UntypedFormGroup;
   public templates: string[] = [];
   public working = false;
 
@@ -31,7 +31,7 @@ export class ConfigValueNew implements OnInit {
               private readonly alerts: AlertService,
               private readonly router: Router,
               private readonly serviceHttp: ServiceHttpService,
-              private readonly fb: FormBuilder) {
+              private readonly fb: UntypedFormBuilder) {
     this.kvForm = this.fb.group({
       template: [''],
       newTemplate: ['', [Validators.required, Validators.pattern(/^[\w.-]+$/)]],

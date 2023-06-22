@@ -135,22 +135,10 @@
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "cloudconductor-frontend:serve"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }
   },
-  "defaultProject": "cloudconductor-frontend",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
@@ -159,5 +147,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

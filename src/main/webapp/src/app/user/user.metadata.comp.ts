@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { throwError as observableThrowError, Observable, Subscription, of } from 'rxjs';
@@ -39,7 +39,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
   @Input() mode: Mode;
 
   public user: User;
-  public userForm: FormGroup;
+  public userForm: UntypedFormGroup;
   public showNewGroup = false;
   public newGroup = '';
   public allGroups: string[] = [];
@@ -48,7 +48,7 @@ export class UserMetaDataComponent implements OnInit, OnDestroy {
   private _userSub: Subscription;
   private _groupSub: Subscription;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(private readonly fb: UntypedFormBuilder,
               private readonly location: Location,
               private readonly router: Router,
               private readonly userHttp: UserHttpService,
