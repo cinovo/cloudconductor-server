@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -21,12 +21,12 @@ import { AuthHttpService, Authentication } from '../util/http/auth.http.service'
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
-  public loginForm: FormGroup;
+  public loginForm: UntypedFormGroup;
 
   private _redirect = '/home';
   private _querySub: Subscription;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(private readonly fb: UntypedFormBuilder,
               private readonly authHttp: AuthHttpService,
               private readonly authTokenProvider: AuthTokenProviderService,
               private readonly alertService: AlertService,

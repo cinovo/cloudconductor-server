@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { Observable } from 'rxjs';
 
@@ -24,9 +24,9 @@ export class SSHEditComponent implements OnInit {
   @Output() onSave: EventEmitter<SSHKey> = new EventEmitter();
   @Output() onCancel: EventEmitter<string> = new EventEmitter();
 
-  public keyForm: FormGroup;
+  public keyForm: UntypedFormGroup;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(private readonly fb: UntypedFormBuilder) {
     this.createForm();
   }
 

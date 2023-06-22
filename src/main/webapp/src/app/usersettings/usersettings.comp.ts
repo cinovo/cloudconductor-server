@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -26,12 +26,12 @@ interface PwChangeForm {
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
 
-  public passwordForm: FormGroup;
+  public passwordForm: UntypedFormGroup;
 
   private _userSub: Subscription;
   private _username: string;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(private readonly fb: UntypedFormBuilder,
               private readonly location: Location,
               private readonly router: Router,
               private readonly alertService: AlertService,

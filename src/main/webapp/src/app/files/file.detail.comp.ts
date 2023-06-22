@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { throwError as observableThrowError, of as observableOf, Observable, Subscription } from 'rxjs';
@@ -28,7 +28,7 @@ export class FileDetailComponent implements OnInit, OnDestroy {
   public serviceNames: Observable<string[]>;
   public templateNames: Observable<string[]>;
 
-  public fileForm: FormGroup;
+  public fileForm: UntypedFormGroup;
 
   public formVerb = 'Edit';
   public formObj = 'File';
@@ -39,7 +39,7 @@ export class FileDetailComponent implements OnInit, OnDestroy {
 
   constructor(private readonly alertService: AlertService,
               private readonly fileHttpService: FileHttpService,
-              private readonly formBuilder: FormBuilder,
+              private readonly formBuilder: UntypedFormBuilder,
               private readonly route: ActivatedRoute,
               private readonly router: Router,
               private readonly serviceHttpService: ServiceHttpService,

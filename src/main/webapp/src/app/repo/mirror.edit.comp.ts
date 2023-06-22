@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
@@ -24,14 +24,14 @@ export class MirrorEdit implements OnInit {
 
   public mode = 'edit';
   public repoName: string;
-  public mirrorForm: FormGroup;
+  public mirrorForm: UntypedFormGroup;
 
   constructor(private readonly repoHttp: RepoHttpService,
               private readonly mirrorHttp: RepoMirrorHttpService,
               private readonly route: ActivatedRoute,
               private readonly alerts: AlertService,
               private readonly router: Router,
-              private readonly fb: FormBuilder,
+              private readonly fb: UntypedFormBuilder,
               private readonly location: Location) {
     this.mirrorForm = fb.group({
       id: '',

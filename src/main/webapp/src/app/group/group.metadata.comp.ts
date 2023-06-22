@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { throwError as observableThrowError, of as observableOf, Observable, Subscription } from 'rxjs';
@@ -28,14 +28,14 @@ export class GroupMetaDataComponent implements OnInit, OnDestroy {
   @Input() mode: Mode;
   @Output() onReload: EventEmitter<string> = new EventEmitter();
 
-  public userGroupForm: FormGroup;
+  public userGroupForm: UntypedFormGroup;
   public modes = Mode;
   public group: Group;
   public permissions: string[] = [];
 
   private _groupSub: Subscription;
 
-  constructor(private readonly fb: FormBuilder,
+  constructor(private readonly fb: UntypedFormBuilder,
               private readonly location: Location,
               private readonly router: Router,
               private readonly groupHttp: GroupHttpService,

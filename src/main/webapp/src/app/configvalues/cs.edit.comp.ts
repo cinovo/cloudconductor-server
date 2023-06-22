@@ -3,7 +3,7 @@ import { throwError as observableThrowError,  Observable } from 'rxjs';
 
 import { mergeMap } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ConfigValue, ConfigValueHttpService } from '../util/http/configValue.http.service';
@@ -24,7 +24,7 @@ import { Sorter } from '../util/sorters.util';
 })
 export class ConfigValueEdit implements OnInit {
 
-  public kvForm: FormGroup;
+  public kvForm: UntypedFormGroup;
   public template: string;
   public templates: string[] = [];
   public services: string[] = [];
@@ -34,7 +34,7 @@ export class ConfigValueEdit implements OnInit {
               private readonly alerts: AlertService,
               private readonly router: Router,
               private readonly serviceHttp: ServiceHttpService,
-              private readonly fb: FormBuilder) {
+              private readonly fb: UntypedFormBuilder) {
     this.kvForm = this.fb.group({
       key: ['', [Validators.required, Validators.pattern('^[\\w.-]+$'), forbiddenNameValidator('new')]],
       value: ['', Validators.required],
