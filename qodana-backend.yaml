@@ -3,3 +3,5 @@ linter: jetbrains/qodana-jvm:2023.2-eap
 projectJDK: 1.8
 profile:
     name: qodana.recommended
+include:
+  - name: CheckDependencyLicenses
