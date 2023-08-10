@@ -8,7 +8,7 @@ on:
       - 'releases/*'
 
 jobs:
-  qodana:
+  qodana-backend:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,7 +19,30 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
-      - name: 'Qodana Scan'
+      - name: 'Use qodana-backend config'
+        run: cp qodana-backend.yaml qodana.yaml
+      - name: 'Qodana Backend Scan'
         uses: JetBrains/qodana-action@v2023.2
+        with:
+          artifact-name: qodana-backend
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+  qodana-frontend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
+          fetch-depth: 0  # a full history is required for pull request analysis
+      - name: 'Use qodana-frontend config'
+        run: cp qodana-frontend.yaml qodana.yaml
+      - name: 'Qodana Frontend Scan'
+        uses: JetBrains/qodana-action@v2023.2
+        with:
+          artifact-name: qodana-frontend
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
