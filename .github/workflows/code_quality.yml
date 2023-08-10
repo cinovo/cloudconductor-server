@@ -45,4 +45,4 @@ jobs:
         with:
           artifact-name: qodana-frontend
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_FRONTEND }}
