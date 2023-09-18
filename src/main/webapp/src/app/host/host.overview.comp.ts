@@ -26,7 +26,7 @@ export class HostOverview implements OnInit, OnDestroy {
   private _searchQuery: string = null;
   private _searchTemplateQuery: string = null;
 
-  private _hosts: Array<Host> = [];
+  private _hosts: Host[] = [];
 
   public hostsLoaded = false;
   public templates: string[] = [];
@@ -57,7 +57,7 @@ export class HostOverview implements OnInit, OnDestroy {
               private readonly hostHttp: HostHttpService,
               public readonly hostsService: HostsService,
               private readonly router: Router,
-              private readonly wsService: WebSocketService) { };
+              private readonly wsService: WebSocketService) { }
 
   ngOnInit(): void {
     this.loadData();
@@ -68,23 +68,27 @@ export class HostOverview implements OnInit, OnDestroy {
       this._webSocketSub = this._webSocket.subscribe((event) => {
         const data: WSChangeEvent<Host> = JSON.parse(event.data);
 
-        let updatedHosts = this._hosts;
+        let updatedHosts = this._hosts.slice();
         switch (data.type) {
           case 'ADDED':
-            updatedHosts = this._hosts.concat(data.content);
+            updatedHosts = updatedHosts.concat(data.content);
             break;
 
           case 'UPDATED':
             const updatedHost = data.content;
-            const indexToUpdate = this._hosts.findIndex((h) => h.uuid === updatedHost.uuid);
-            updatedHosts.splice(indexToUpdate, 1, updatedHost);
+            const indexToUpdate = updatedHosts.findIndex((h) => h.uuid === updatedHost.uuid);
+            if (indexToUpdate > -1){
+              updatedHosts.splice(indexToUpdate, 1, updatedHost);
+            }
             break;
 
           case 'DELETED':
             const deletedHost = data.content;
-            const indexToDelete = this._hosts.findIndex((h) => h.uuid === deletedHost.uuid);
+            const indexToDelete = updatedHosts.findIndex((h) => h.uuid === deletedHost.uuid);
 
-            updatedHosts.splice(indexToDelete, 1);
+            if (indexToDelete > -1) {
+              updatedHosts.splice(indexToDelete, 1);
+            }
             break;
 
           default:
@@ -103,21 +107,19 @@ export class HostOverview implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this._heartBeatSub) {
-      this._heartBeatSub.unsubscribe();
-    }
-
+    this._heartBeatSub?.unsubscribe();
+    this._webSocketSub?.unsubscribe();
     this.wsService.disconnect();
   }
 
-  get hosts(): Array<Host> {
+  get hosts(): Host[] {
     return this._hosts;
   }
 
-  set hosts(value: Array<Host>) {
+  set hosts(value: Host[]) {
     this._hosts = value
-      .filter(repo => HostOverview.filterData(repo, this._searchQuery))
-      .filter(repo => HostOverview.filterTemplateData(repo, this._searchTemplateQuery))
+      .filter(host => HostOverview.filterData(host, this._searchQuery))
+      .filter(host => HostOverview.filterTemplateData(host, this._searchTemplateQuery))
       .sort(Sorter.host);
 
     this._hosts.forEach((h) => this.templates.indexOf(h.template) === -1 ? this.templates.push(h.template) : null);
@@ -147,11 +149,6 @@ export class HostOverview implements OnInit, OnDestroy {
       this.hostsLoaded = true;
     });
   }
-
-  public reloadHosts(): void {
-    this.loadData();
-  }
-
   public gotoDetails(host: Host): Promise<boolean> {
     return this.router.navigate(['host', host.uuid]);
   }
