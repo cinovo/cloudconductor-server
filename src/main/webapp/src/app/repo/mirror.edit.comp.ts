@@ -1,14 +1,13 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { Observable } from 'rxjs';
 
 import { AlertService } from '../util/alert/alert.service';
 import { forbiddenNameValidator, Validator } from '../util/validator.util';
 import { RepoMirror, RepoMirrorHttpService } from '../util/http/repomirror.http.service';
-import { RepoHttpService } from '../util/http/repo.http.service';
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -26,14 +25,12 @@ export class MirrorEdit implements OnInit {
   public repoName: string;
   public mirrorForm: UntypedFormGroup;
 
-  constructor(private readonly repoHttp: RepoHttpService,
-              private readonly mirrorHttp: RepoMirrorHttpService,
+  constructor(private readonly mirrorHttp: RepoMirrorHttpService,
               private readonly route: ActivatedRoute,
               private readonly alerts: AlertService,
-              private readonly router: Router,
               private readonly fb: UntypedFormBuilder,
               private readonly location: Location) {
-    this.mirrorForm = fb.group({
+    this.mirrorForm = this.fb.group({
       id: '',
       description: ['', [Validators.required, forbiddenNameValidator('new')]],
       path: ['', Validators.required],
@@ -46,14 +43,14 @@ export class MirrorEdit implements OnInit {
       accessKeyId: '',
       secretKey: ''
     });
-  };
+  }
 
   ngOnInit(): void {
     this.route.url.subscribe((value) => {
       if (value[value.length - 1].path === 'new') {
         this.mode = 'new';
         if (window.location.port) {
-          this.mirrorForm.patchValue({path: 'http://' + window.location.host + '/api/repos/'});
+          this.mirrorForm.patchValue({path: `http://${window.location.host}/api/repos/`});
         }
       }
       this.mirrorForm.get('basePath').valueChanges.subscribe(val => {
@@ -74,7 +71,7 @@ export class MirrorEdit implements OnInit {
     return this.mirrorForm.controls.providerType.value;
   }
 
-  save(formValue): void {
+  public save(formValue): void {
     const mirror: RepoMirror = {
       id: formValue.id,
       repo: formValue.repoName,
@@ -93,11 +90,11 @@ export class MirrorEdit implements OnInit {
     mirror.basePath = mirror.basePath.trim();
 
     this.doSave(mirror).subscribe(
-      (savedMirror) => {
-        this.alerts.success(`Successfully saved mirror '${savedMirror.description}'`);
+      (_) => {
+        this.alerts.success("Successfully saved mirror");
         this.location.back();
       },
-      (_) => this.alerts.danger('Failed to save the mirror')
+      (_) => this.alerts.danger('Failed to save mirror')
     );
   }
 
