@@ -21,10 +21,10 @@ import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ConfigFileHandler;
 import de.cinovo.cloudconductor.api.model.ConfigFile;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
@@ -36,30 +36,29 @@ import java.util.Set;
  * @author hoegertn
  * 
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class FileTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class FileTest extends APITest {
 	
 	@Test
-	public void test() throws CloudConductorException {
+	void test() throws CloudConductorException {
 		ConfigFileHandler h = new ConfigFileHandler(this.getCSApi(), this.getToken());
 		{
 			Set<ConfigFile> set = h.get();
-			Assert.assertEquals(1, set.size());
+			Assertions.assertEquals(1, set.size());
 			ConfigFile file = set.iterator().next();
-			Assert.assertEquals("file1", file.getName());
-			Assert.assertEquals("/root/foo", file.getTargetPath());
-			Assert.assertEquals("root", file.getOwner());
+			Assertions.assertEquals("file1", file.getName());
+			Assertions.assertEquals("/root/foo", file.getTargetPath());
+			Assertions.assertEquals("root", file.getOwner());
 		}
 		{
 			ConfigFile file = h.get("file1");
-			Assert.assertEquals("file1", file.getName());
-			Assert.assertEquals("/root/foo", file.getTargetPath());
-			Assert.assertEquals("root", file.getOwner());
+			Assertions.assertEquals("file1", file.getName());
+			Assertions.assertEquals("/root/foo", file.getTargetPath());
+			Assertions.assertEquals("root", file.getOwner());
 		}
 		{
 			String data = h.getData("file1");
-			Assert.assertEquals("Testfile for root", data);
+			Assertions.assertEquals("Testfile for root", data);
 		}
 		{
 			ConfigFile cf = new ConfigFile();
@@ -76,20 +75,20 @@ public class FileTest extends APITest {
 
 			h.save(cf);
 			Set<ConfigFile> set = h.get();
-			Assert.assertEquals(2, set.size());
+			Assertions.assertEquals(2, set.size());
 		}
 		{
 			ConfigFile file = h.get("file2");
-			Assert.assertEquals("file2", file.getName());
-			Assert.assertEquals("/root/bar", file.getTargetPath());
-			Assert.assertEquals("root", file.getOwner());
+			Assertions.assertEquals("file2", file.getName());
+			Assertions.assertEquals("/root/bar", file.getTargetPath());
+			Assertions.assertEquals("root", file.getOwner());
 		}
 		{
 			h.saveData("file2", "Testcontent 2");
 		}
 		{
 			String data = h.getData("file2");
-			Assert.assertEquals("Testcontent 2", data);
+			Assertions.assertEquals("Testcontent 2", data);
 		}
 		
 	}

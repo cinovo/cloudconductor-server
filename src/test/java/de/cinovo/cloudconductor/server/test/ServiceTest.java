@@ -22,10 +22,10 @@ import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ServiceHandler;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
@@ -35,21 +35,20 @@ import java.util.Set;
  *
  * @author hoegertn
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class ServiceTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class ServiceTest extends APITest {
 
 	@Test
-	public void test1() throws CloudConductorException {
+	void test1() throws CloudConductorException {
 		ServiceHandler h = new ServiceHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Service> set = h.get();
-			Assert.assertEquals(3, set.size());
+			Assertions.assertEquals(3, set.size());
 		}
 		{
 			Service svc = h.get("nginx");
-			Assert.assertEquals("nginx", svc.getName());
-			Assert.assertEquals("nginx", svc.getDescription());
+			Assertions.assertEquals("nginx", svc.getName());
+			Assertions.assertEquals("nginx", svc.getDescription());
 		}
 		{
 			Service s = new Service();
@@ -59,9 +58,9 @@ public class ServiceTest extends APITest {
 			s.setInitScript("svc1");
 			h.save(s);
 			Set<Service> set = h.get();
-			Assert.assertEquals(4, set.size());
+			Assertions.assertEquals(4, set.size());
 			Service svc = h.get("svc1");
-			Assert.assertEquals("svc1", svc.getName());
+			Assertions.assertEquals("svc1", svc.getName());
 		}
 		{
 			Service s = new Service();
@@ -72,16 +71,16 @@ public class ServiceTest extends APITest {
 			s.setPackages(Sets.newHashSet("jdk"));
 			h.save(s);
 			Set<Service> set = h.get();
-			Assert.assertEquals(5, set.size());
+			Assertions.assertEquals(5, set.size());
 			Service svc = h.get("svc2");
-			Assert.assertEquals("svc2", svc.getName());
-			Assert.assertEquals(1, svc.getPackages().size());
+			Assertions.assertEquals("svc2", svc.getName());
+			Assertions.assertEquals(1, svc.getPackages().size());
 		}
 		{
 			h.delete("svc1");
 			h.delete("svc2");
 			Set<Service> set = h.get();
-			Assert.assertEquals(3, set.size());
+			Assertions.assertEquals(3, set.size());
 		}
 	}
 

@@ -9,18 +9,18 @@ import de.cinovo.cloudconductor.api.model.PackageStateChanges;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.api.model.ServiceStates;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@RunWith(SpringDaemonTestRunner.class)
-public class AgentTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class AgentTest extends APITest {
 	
 	private static final String TEMPLATE = "dev";
 	
@@ -30,19 +30,19 @@ public class AgentTest extends APITest {
 	
 	
 	@Test
-	public void testPackagesBasic() throws CloudConductorException {
+	void testPackagesBasic() throws CloudConductorException {
 		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
 		AgentOption optionsC = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_C, null, "asd");
 		{
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_C, this.getPartiallyInstalled(), optionsC.getUuid());
-			Assert.assertEquals(4, result.getToInstall().size());
-			Assert.assertFalse(result.getToErase().isEmpty());
-			Assert.assertFalse(result.getToUpdate().isEmpty());
+			Assertions.assertEquals(4, result.getToInstall().size());
+			Assertions.assertFalse(result.getToErase().isEmpty());
+			Assertions.assertFalse(result.getToUpdate().isEmpty());
 		}
 	}
 	
 	@Test
-	public void testPackageMultiHost() throws CloudConductorException {
+	void testPackageMultiHost() throws CloudConductorException {
 		AgentHandler agent = new AgentHandler(this.getCSApi(), this.getToken());
 		AgentOption optionsA = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_A, null, "asd");
 		AgentOption optionsB = agent.heartBeat(AgentTest.TEMPLATE, AgentTest.HOST_B, null, "asd2");
@@ -51,31 +51,31 @@ public class AgentTest extends APITest {
 			// block the second host on update
 			agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getPartiallyInstalled(), optionsA.getUuid());
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), optionsB.getUuid());
-			Assert.assertTrue(result.getToInstall().isEmpty());
-			Assert.assertTrue(result.getToErase().isEmpty());
-			Assert.assertTrue(result.getToUpdate().isEmpty());
+			Assertions.assertTrue(result.getToInstall().isEmpty());
+			Assertions.assertTrue(result.getToErase().isEmpty());
+			Assertions.assertTrue(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on host a
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_A, this.getAllInstalled(), optionsA.getUuid());
-			Assert.assertTrue(result.getToInstall().isEmpty());
-			Assert.assertTrue(result.getToUpdate().isEmpty());
-			Assert.assertTrue(result.getToErase().isEmpty());
+			Assertions.assertTrue(result.getToInstall().isEmpty());
+			Assertions.assertTrue(result.getToUpdate().isEmpty());
+			Assertions.assertTrue(result.getToErase().isEmpty());
 			agent.notifyServiceState(AgentTest.TEMPLATE, AgentTest.HOST_A, new ServiceStates(new ArrayList<>()), optionsA.getUuid());
 		}
 		{
 			// finally start update on host b
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getPartiallyInstalled(), optionsB.getUuid());
-			Assert.assertEquals(4, result.getToInstall().size());
-			Assert.assertFalse(result.getToErase().isEmpty());
-			Assert.assertFalse(result.getToUpdate().isEmpty());
+			Assertions.assertEquals(4, result.getToInstall().size());
+			Assertions.assertFalse(result.getToErase().isEmpty());
+			Assertions.assertFalse(result.getToUpdate().isEmpty());
 		}
 		{
 			// finalize update on b
 			PackageStateChanges result = agent.notifyPackageState(AgentTest.TEMPLATE, AgentTest.HOST_B, this.getAllInstalled(), optionsB.getUuid());
-			Assert.assertTrue(result.getToInstall().isEmpty());
-			Assert.assertTrue(result.getToUpdate().isEmpty());
-			Assert.assertTrue(result.getToErase().isEmpty());
+			Assertions.assertTrue(result.getToInstall().isEmpty());
+			Assertions.assertTrue(result.getToUpdate().isEmpty());
+			Assertions.assertTrue(result.getToErase().isEmpty());
 		}
 	}
 	

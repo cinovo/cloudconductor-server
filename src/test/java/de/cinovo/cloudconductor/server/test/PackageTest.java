@@ -22,10 +22,10 @@ import de.cinovo.cloudconductor.api.lib.manager.PackageHandler;
 import de.cinovo.cloudconductor.api.model.Package;
 import de.cinovo.cloudconductor.api.model.PackageVersion;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
@@ -37,33 +37,32 @@ import java.util.Set;
  * @author hoegertn
  * 
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class PackageTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class PackageTest extends APITest {
 	
 	@Test
-	public void testPackages() throws CloudConductorException {
+	void testPackages() throws CloudConductorException {
 		PackageHandler h = new PackageHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Package> set = h.get();
-			Assert.assertEquals(6, set.size());
+			Assertions.assertEquals(6, set.size());
 		}
 		{
 			Package pkg = h.get("nginx");
-			Assert.assertEquals("nginx", pkg.getName());
-			Assert.assertEquals("Auto-generated from repository selected on 2013-09-04 14:20:08.", pkg.getDescription());
+			Assertions.assertEquals("nginx", pkg.getName());
+			Assertions.assertEquals("Auto-generated from repository selected on 2013-09-04 14:20:08.", pkg.getDescription());
 		}
 	}
 	
 	@Test
-	public void testVersion() throws CloudConductorException {
+	void testVersion() throws CloudConductorException {
 		PackageHandler h = new PackageHandler(this.getCSApi(), this.getToken());
 		{
 			Set<PackageVersion> rpms = h.getRPMS("nginx");
-			Assert.assertEquals(1, rpms.size());
+			Assertions.assertEquals(1, rpms.size());
 			PackageVersion pv = rpms.iterator().next();
-			Assert.assertEquals("nginx", pv.getName());
-			Assert.assertEquals("1.5.3-1", pv.getVersion());
+			Assertions.assertEquals("nginx", pv.getName());
+			Assertions.assertEquals("1.5.3-1", pv.getVersion());
 		}
 	}
 }

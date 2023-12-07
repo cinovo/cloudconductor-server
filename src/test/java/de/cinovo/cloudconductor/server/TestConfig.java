@@ -1,7 +1,7 @@
 package de.cinovo.cloudconductor.server;
 
 import de.taimos.daemon.spring.Configuration;
-import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfig;
+import de.taimos.daemon.spring.RunnerConfig;
 
 /**
  * 
