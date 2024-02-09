@@ -58,9 +58,9 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.35-SNAPSHOT</dvalin.version>
+        <dvalin.version>1.35</dvalin.version>
         <cloudconductor.api.version>3.9</cloudconductor.api.version>
-        <aws.version>1.12.595</aws.version>
+        <aws.version>1.12.641</aws.version>
         <junit.version>5.10.1</junit.version>
     </properties>
 
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.0</version>
+            <version>42.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -238,7 +238,9 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <descriptor>src/main/assembly/zip.xml</descriptor>
+                    <descriptors>
+                        <descriptor>src/main/assembly/zip.xml</descriptor>
+                    </descriptors>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
