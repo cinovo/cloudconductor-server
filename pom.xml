@@ -62,6 +62,7 @@
         <cloudconductor.api.version>3.9</cloudconductor.api.version>
         <aws.version>1.12.641</aws.version>
         <junit.version>5.10.1</junit.version>
+        <jetty.version>9.4.53.v20231009</jetty.version>
     </properties>
 
     <dependencies>
@@ -92,6 +93,22 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>${aws.version}</version>
+        </dependency>
+        <!-- needed for clean jetty dependencies, remove in future dvalin version if no longer needed -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-io</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-continuation</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
 
         <!-- Database drivers -->
