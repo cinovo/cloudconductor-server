@@ -8,19 +8,26 @@ import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 import { SharedModule } from '../shared/shared.module';
 import { FileDetailComponent } from './file.detail.comp';
 import { FileOverviewComponent } from './file.overview.comp';
-import { FileResolver } from './file.resolve';
+import { fileResolver } from './file.resolve';
 import { Role } from '../util/enums.util';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const fileRoutes: Routes = [
-  {path: '', component: FileOverviewComponent, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: FileDetailComponent, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':fileName', component: FileDetailComponent, resolve: { fileForm: FileResolver },
-  data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: FileOverviewComponent, title: 'Files',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS])]
+  },
+  {
+    path: 'new', component: FileDetailComponent, title: 'New file',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])]
+  },
+  {
+    path: ':fileName', component: FileDetailComponent,
+    title: r => `File ${r.paramMap.get('fileName')}`,
+    resolve: {fileForm: fileResolver},
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])]
+  },
 ];
 
 /**
@@ -42,8 +49,6 @@ const fileRoutes: Routes = [
   declarations: [
     FileDetailComponent,
     FileOverviewComponent,
-  ], providers: [
-    FileResolver
-  ]
+  ],
 })
 export class FileModule { }

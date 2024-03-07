@@ -8,14 +8,19 @@ import { SharedModule } from '../shared/shared.module';
 import { PackageOverview } from './package.overview.comp';
 import { PackageDetail } from './package.detail.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const packageRoutes: Routes = [
-  {path: '', component: PackageOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':packageName', component: PackageDetail, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]}
+  {
+    path: '', component: PackageOverview, title: 'Packages',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS])],
+  },
+  {
+    path: ':packageName', component: PackageDetail,
+    title: route => `Package ${route.paramMap.get('packageName')}`,
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS])],
+  },
 ];
 
 /**

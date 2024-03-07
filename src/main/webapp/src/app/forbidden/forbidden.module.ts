@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
-
 import { ForbiddenComponent } from './forbidden.comp';
 
 const forbiddenRoutes: Routes = [
-  {path: '', component: ForbiddenComponent}
+  {path: '', component: ForbiddenComponent, title: 'Forbidden'}
 ];
 
 /**

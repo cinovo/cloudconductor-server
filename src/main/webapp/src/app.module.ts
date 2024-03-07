@@ -2,6 +2,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { TitleStrategy } from "@angular/router";
 
 import { ConfirmationPopoverModule } from 'angular-confirmation-popover';
 
@@ -14,7 +16,7 @@ import { FooterComponent } from './app/footer/footer.comp';
 import { NavComponent } from './app/nav/nav.comp';
 import { TopNavComponent } from './app/nav/topNav.comp';
 import { routing } from './app/app.routing';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { CCTitleStrategy } from "./app/cc.title";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -41,6 +43,12 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     TopNavComponent,
     FooterComponent
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [
+    {
+      provide: TitleStrategy,
+      useClass: CCTitleStrategy
+    },
+  ]
 })
 export class AppModule {}

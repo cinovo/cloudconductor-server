@@ -12,16 +12,23 @@ import { GroupMetaDataComponent } from './group.metadata.comp';
 import { GroupNewComponent } from './group.new.comp';
 import { GroupMemberComponent } from './group.member.comp';
 import { Role } from '../util/enums.util';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const groupRoutes: Routes = [
-  {path: '', component: GroupOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: GroupNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':groupName', component: GroupDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]}
+  {
+    path: '', component: GroupOverviewComponent, title: 'Groups',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_USERS, Role.EDIT_USERS])]
+  },
+  {
+    path: 'new', component: GroupNewComponent, title: 'New group',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_USERS])]
+  },
+  {
+    path: ':groupName', component: GroupDetailComponent,
+    title: route => `Group ${route.paramMap.get('groupName')}`,
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_USERS])]
+  }
 ];
 
 /**

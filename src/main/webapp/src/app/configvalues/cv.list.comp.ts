@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { ConfigValueHttpService } from "../util/http/configValue.http.service";
-import { AuthorizationGuard } from "../util/auth/authorization.guard";
-import { Role } from "../util/enums.util";
-import { AlertService } from "../util/alert/alert.service";
 import { Subscription } from 'rxjs';
+
+import { AlertService } from "../util/alert/alert.service";
+import { AuthTokenProviderService } from "../util/auth/authtokenprovider.service";
+import { ConfigValueHttpService } from "../util/http/configValue.http.service";
+import { Role } from "../util/enums.util";
 
 @Component({
   selector: 'cv-list',
@@ -21,13 +22,13 @@ export class ConfigValueList implements OnInit, OnDestroy {
 
   constructor(private readonly confHttp: ConfigValueHttpService,
               private readonly router: Router,
-              private readonly authGuard: AuthorizationGuard,
+              private readonly authTokenProvider: AuthTokenProviderService,
               private readonly alerts: AlertService) {
   }
 
   ngOnInit(): void {
     this.confHttp.templates.subscribe((templates: string[]) => this.templates = templates);
-    this.roleSub = this.authGuard.hasRole(Role.EDIT_CONFIGVALUES).subscribe((mayEdit: boolean) => this.mayEdit = mayEdit);
+    this.roleSub = this.authTokenProvider.hasRole(Role.EDIT_CONFIGVALUES).subscribe((mayEdit: boolean) => this.mayEdit = mayEdit);
   }
 
   ngOnDestroy(): void {

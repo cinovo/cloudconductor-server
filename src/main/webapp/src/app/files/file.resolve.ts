@@ -1,37 +1,29 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, ResolveFn, Router } from '@angular/router';
 
-import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
-import { map, catchError, mergeMap } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 
 import { FileHttpService } from '../util/http/file.http.service';
 import { FileForm } from '../util/http/config-file.model';
 
-@Injectable()
-export class FileResolver implements Resolve<FileForm> {
+export const fileResolver: ResolveFn<FileForm> = (route: ActivatedRouteSnapshot) => {
+  const router = inject(Router);
+  const fileHttpService = inject(FileHttpService);
+  const fileName = route.paramMap.get('fileName');
 
-  constructor(private readonly fileHttpService: FileHttpService,
-              private readonly router: Router) { }
-
-  resolve(route: ActivatedRouteSnapshot): Observable<FileForm> {
-    const fileName = route.paramMap.get('fileName');
-
-    const emptyFileForm = new FileForm();
-
-    if (fileName && fileName.length > 0) {
-      return this.fileHttpService.getFile(fileName).pipe(mergeMap((file) => {
-        return this.fileHttpService.getFileData(file.name).pipe(map((data) => {
+  return fileHttpService.getFile(fileName).pipe(
+    mergeMap((file) => {
+      if (file) {
+        return fileHttpService.getFileData(file.name).pipe(map((data) => {
           const fileForm = file.toForm();
           fileForm.fileContent = data;
           return fileForm;
         }));
-      }),catchError(err => {
-        this.router.navigate(['/not-found', 'file', fileName]);
-        return observableThrowError(err);
-      }),);
-    } else {
-      return observableOf(emptyFileForm);
-    }
-  }
-
+      } else {
+        router.navigate(['/not-found', 'file', fileName]);
+        return EMPTY;
+      }
+    })
+  );
 }

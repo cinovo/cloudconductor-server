@@ -23,10 +23,6 @@ export class FileHttpService {
     return this.http.get<ConfigFile[]>(this._basePathURL);
   }
 
-  public getFilesForTemplate(templateName: string): Observable<ConfigFile[]> {
-    return this.http.get<ConfigFile[]>(`api/template/${templateName}`);
-  }
-
   public updateFile(updatedFile: ConfigFile): Observable<boolean> {
     return this.http.put<boolean>(this._basePathURL, {'@class': 'de.cinovo.cloudconductor.api.model.ConfigFile', ...updatedFile});
   }

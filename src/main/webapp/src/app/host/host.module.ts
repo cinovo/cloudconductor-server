@@ -10,14 +10,19 @@ import { HostServices } from './host.service.comp';
 import { HostOverview } from './host.overview.comp';
 import { HostDetail } from './host.detail.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const hostRoutes: Routes = [
-  {path: '', component: HostOverview, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':hostUuid', component: HostDetail, data: {rolesAllowed: [Role.VIEW_HOST, Role.EDIT_HOST]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]}
+  {
+    path: '', component: HostOverview, title: 'Hosts',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_HOST, Role.EDIT_HOST])],
+  },
+  {
+    path: ':hostUuid', component: HostDetail,
+    title: r => `Host ${r.paramMap.get("hostUuid")}`,
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_HOST, Role.EDIT_HOST])],
+  },
 ];
 
 /**

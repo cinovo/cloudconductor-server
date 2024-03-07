@@ -5,10 +5,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { UserSettingsComponent } from './usersettings.comp';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const userSettingsRoutes: Routes = [
-  { path: '', component: UserSettingsComponent, canActivate: [AuthenticationGuard] }, // no special role needed
+  {
+    path: '', component: UserSettingsComponent, title: 'User settings',
+    canActivate: [loggedIn(true)] // no special role needed
+  },
 ]
 
 /**

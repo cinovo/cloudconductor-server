@@ -13,16 +13,23 @@ import { UserTokenComponent } from './user.token.comp';
 import { UserAgentsComponent } from './user.agents.comp';
 import { UserDetailComponent } from './user.detail.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const userRoutes: Routes = [
-  {path: '', component: UserOverviewComponent, data: {rolesAllowed: [Role.VIEW_USERS, Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: UserNewComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':loginName', component: UserDetailComponent, data: {rolesAllowed: [Role.EDIT_USERS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: UserOverviewComponent, title: 'Users',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_USERS, Role.EDIT_USERS])],
+  },
+  {
+    path: 'new', component: UserNewComponent, title: 'New user',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_USERS])],
+  },
+  {
+    path: ':loginName', component: UserDetailComponent,
+    title: route => `User ${route.paramMap.get('loginName')}`,
+    canActivate: [loggedIn(true), hasRole( [Role.EDIT_USERS])],
+  },
 ];
 
 /**

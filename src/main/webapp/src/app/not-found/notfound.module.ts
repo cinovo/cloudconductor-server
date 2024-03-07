@@ -6,7 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { NotFoundComponent } from './not-found.comp';
 
 const notFoundRoutes: Routes = [
-  {path: ':type/:name', component: NotFoundComponent},
+  {path: ':type/:name', component: NotFoundComponent, title: 'Not found'},
 ];
 
 /**
