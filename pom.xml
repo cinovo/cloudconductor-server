@@ -110,12 +110,17 @@
             <artifactId>jetty-continuation</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-
+        <!-- needed to fix CVE-2023-52428, remove after dvalin fixes this vulnerability-->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.37.3</version>
+        </dependency>
         <!-- Database drivers -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.1</version>
+            <version>42.7.2</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -186,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.0.1</version>
                 <configuration>
                     <arguments>-Psonatype-oss-release,webapp</arguments>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
