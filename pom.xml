@@ -1,10 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>oss-parent</artifactId>
-        <groupId>org.sonatype.oss</groupId>
-        <version>9</version>
-    </parent>
+
     <groupId>de.cinovo.cloudconductor</groupId>
     <artifactId>cloudconductor-server</artifactId>
     <version>3.12-SNAPSHOT</version>
@@ -35,6 +31,33 @@
         <developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <developers>
         <developer>
             <id>psigloch</id>
@@ -58,13 +81,13 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
         <dvalin.version>1.35</dvalin.version>
         <cloudconductor.api.version>3.9</cloudconductor.api.version>
         <aws.version>1.12.641</aws.version>
         <junit.version>5.10.1</junit.version>
         <jetty.version>9.4.53.v20231009</jetty.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>de.cinovo.cloudconductor</groupId>
@@ -175,6 +198,11 @@
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -321,6 +349,19 @@
             <id>sonatype-oss-release</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
@@ -521,6 +562,20 @@
                                         </requireMavenVersion>
                                     </rules>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
