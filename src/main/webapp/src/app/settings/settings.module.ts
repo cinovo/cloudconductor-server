@@ -9,12 +9,14 @@ import { SharedModule } from '../shared/shared.module';
 import { LinksEdit } from './links.edit.comp';
 import { SettingsOverview } from './settings.overview.comp';
 import { Role } from '../util/enums.util';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const settingsRoutes: Routes = [
-  {path: '', component: SettingsOverview, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: SettingsOverview, title: 'Settings',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])]
+  },
 ];
 
 /**

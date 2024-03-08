@@ -1,42 +1,28 @@
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 
 import { map } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-
-import { Observable } from 'rxjs';
 
 import { AuthTokenProviderService } from './authtokenprovider.service';
 
 /**
- * Copyright 2017 Cinovo AG<br>
+ * Copyright 2023 Cinovo AG<br>
  * <br>
  *
  * @author mweise
  */
-@Injectable()
-export class AuthenticationGuard implements CanActivate {
+export const loggedIn: (expectedLoggedIn: boolean) => CanActivateFn = (expectedLoggedIn ) => {
+  return (route) => {
+    const router = inject(Router);
 
-  constructor(private readonly authTokenProvider: AuthTokenProviderService,
-              private readonly router: Router) { }
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let expectedLoggedIn = true;
-    if (route.data.loggedIn === false) {
-      expectedLoggedIn = false;
-    }
-
-    const requestedRoute = route.url;
-
-    return this.authTokenProvider.loggedIn.pipe(map(actualLoggedIn => {
-      const match = (actualLoggedIn === expectedLoggedIn);
-      if (!match) {
-        if (actualLoggedIn) {
-          this.router.navigate(['/home']);
-        } else {
-          this.router.navigate(['/login'], { queryParams: { redirect: requestedRoute}});
-        }
-      }
-      return match;
-    }));
+    const redirect = route.url;
+    return inject(AuthTokenProviderService).loggedIn.pipe(
+        map(actualLoggedIn => {
+          if (actualLoggedIn === expectedLoggedIn) {
+            return true;
+          }
+          return router.createUrlTree(['/login'], {queryParams: {redirect}});
+        })
+    );
   }
 }

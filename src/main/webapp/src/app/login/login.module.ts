@@ -5,11 +5,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 import { LoginComponent } from './login.comp';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const loginRoutes: Routes = [
-  {path: '', component: LoginComponent, data: {loggedIn: false},
-  canActivate: [AuthenticationGuard]}
+  {
+    path: '', component: LoginComponent, title: 'Login', canActivate: [loggedIn(false)]
+  },
 ];
 
 /**

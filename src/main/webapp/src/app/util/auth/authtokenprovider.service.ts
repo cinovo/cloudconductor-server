@@ -1,9 +1,11 @@
-import { Subject ,  ReplaySubject } from 'rxjs';
+import { Injectable } from "@angular/core";
 
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Subject, ReplaySubject, Observable } from 'rxjs';
+import { map } from "rxjs/operators";
 
 import { AuthenticatedUser, JwtClaimSet } from '../http/auth.http.service';
-import { Injectable } from "@angular/core";
+import { Role } from "../enums.util";
 
 /**
  * Copyright 2017 Cinovo AG<br>
@@ -25,12 +27,11 @@ export class AuthTokenProviderService {
   private jwtHelper: JwtHelperService;
 
   private static getUserFromJwt(jwt: JwtClaimSet): AuthenticatedUser {
-    const user: AuthenticatedUser = {
+    return {
       name: jwt.name,
       preferred_username: jwt.preferred_username,
       roles: jwt.roles
-    }
-    return user;
+    };
   }
 
   public static isAnonymous(user: AuthenticatedUser): boolean {
@@ -90,4 +91,13 @@ export class AuthTokenProviderService {
     this.currentUser.next(AuthTokenProviderService.ANONYMOUS);
   }
 
+  public hasRole(role: Role): Observable<boolean> {
+    return this.currentUser.pipe(map(user => user.roles.some(r => r == role)));
+  }
+
+  public hasSomeRole(rolesAllowed: Role[]): Observable<boolean> {
+    return this.currentUser.pipe(
+      map(user => user.roles.some(userRole => rolesAllowed.includes(userRole)))
+    );
+  }
 }

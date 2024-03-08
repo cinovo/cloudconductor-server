@@ -17,6 +17,4 @@ export class CCTitle {
   @Input() titleIcon: string;
   @Input() subtitle: string;
 
-  constructor() { };
-
 }

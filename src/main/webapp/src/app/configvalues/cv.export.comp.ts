@@ -1,5 +1,4 @@
-import { DOCUMENT } from "@angular/common";
-import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 
 import { Subscription } from "rxjs";
@@ -26,8 +25,7 @@ export class ConfigValueExport implements OnInit, OnDestroy {
 
   constructor(private readonly configHttp: ConfigValueHttpService,
               private readonly route: ActivatedRoute,
-              private readonly alerts: AlertService,
-              @Inject(DOCUMENT) private readonly dom: Document) {
+              private readonly alerts: AlertService) {
   }
 
   ngOnInit(): void {

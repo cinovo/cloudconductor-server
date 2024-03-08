@@ -9,14 +9,19 @@ import { SharedModule } from '../shared/shared.module';
 import { ServiceOverview } from './service.overview.comp';
 import { ServiceDetail } from './service.detail.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const serviceRoutes: Routes = [
-  {path: '', component: ServiceOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':serviceName', component: ServiceDetail, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: ServiceOverview, title: 'Services',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS])]
+  },
+  {
+    path: ':serviceName', component: ServiceDetail,
+    title: route => `Service ${route.paramMap.get('serviceName')}`,
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])]
+  },
 ];
 
 /**

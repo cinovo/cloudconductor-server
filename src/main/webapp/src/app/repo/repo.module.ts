@@ -10,20 +10,32 @@ import { RepoOverview } from './repo.overview.comp';
 import { RepoEdit } from './repo.edit.comp';
 import { MirrorEdit } from './mirror.edit.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const repoRoutes: Routes = [
-  {path: '', component: RepoOverview, data: {rolesAllowed: [Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: 'new', component: RepoEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':repoName', component: RepoEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':repoName/mirror/new', component: MirrorEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':repoName/mirror/:mirrorid', component: MirrorEdit, data: {rolesAllowed: [Role.EDIT_CONFIGURATIONS]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: RepoOverview, title: 'Repos',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_CONFIGURATIONS, Role.EDIT_CONFIGURATIONS])],
+  },
+  {
+    path: 'new', component: RepoEdit, title: 'New repo',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])],
+  },
+  {
+    path: ':repoName', component: RepoEdit,
+    title: route => `Repo ${route.paramMap.get('repoName')}`,
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])],
+  },
+  {
+    path: ':repoName/mirror/new', component: MirrorEdit, title: 'New mirror',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])],
+  },
+  {
+    path: ':repoName/mirror/:mirrorid', component: MirrorEdit,
+    title: route => `Mirror ${route.paramMap.get('mirrorid')}`,
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_CONFIGURATIONS])],
+  },
 ];
 
 /**

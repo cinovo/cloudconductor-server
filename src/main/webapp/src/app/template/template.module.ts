@@ -13,29 +13,29 @@ import { TemplateNew } from './template.new.comp';
 import { TemplateMetaData } from './template.metadata.comp';
 import { TemplateAgentOptions } from './template.agentoption.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 import { TemplateServiceComponent } from './template.service.comp';
 import { TemplateDiff } from "./template.diff.comp";
 
 const templateRoute: Routes = [
   {
-    path: '', component: TemplateOverview, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
-    canActivate: [AuthenticationGuard, AuthorizationGuard]
+    path: '', component: TemplateOverview, title: 'Templates',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE])]
   },
   {
-    path: 'new', component: TemplateNew, data: {rolesAllowed: [Role.EDIT_TEMPLATE]},
-    canActivate: [AuthenticationGuard, AuthorizationGuard]
+    path: 'new', component: TemplateNew, title: 'New template',
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_TEMPLATE])]
   },
   {
-    path: 'diff', component: TemplateDiff, data: {rolesAllowed: [Role.VIEW_TEMPLATE]},
-    canActivate: [AuthenticationGuard, AuthorizationGuard]
+    path: 'diff', component: TemplateDiff, title: 'Template diff',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_TEMPLATE])]
   },
   {
-    path: ':templateName', component: TemplateDetail, data: {rolesAllowed: [Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE]},
-    canActivate: [AuthenticationGuard, AuthorizationGuard]
+    path: ':templateName', component: TemplateDetail,
+    title: route => `Template ${route.paramMap.get('templateName')}`,
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_TEMPLATE, Role.EDIT_TEMPLATE])]
   },
-
 ];
 
 /**

@@ -19,6 +19,4 @@ export class CCDashboardPanel {
   @Input() detailLink: string;
   @Input() minValue: number;
 
-  constructor() { }
-
 }

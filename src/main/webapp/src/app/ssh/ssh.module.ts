@@ -10,14 +10,19 @@ import { SSHOverviewComponent } from './ssh.overview.comp';
 import { SSHDetailComponent } from './ssh.detail.comp';
 import { SSHEditComponent } from './ssh.edit.comp';
 import { Role } from '../util/enums.util';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
+import { hasRole } from '../util/auth/authorization.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const sshRoutes: Routes = [
-  {path: '', component: SSHOverviewComponent, data: {rolesAllowed: [Role.VIEW_SSH, Role.EDIT_SSH]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
-  {path: ':owner', component: SSHDetailComponent, data: {rolesAllowed: [Role.EDIT_SSH]},
-  canActivate: [AuthenticationGuard, AuthorizationGuard]},
+  {
+    path: '', component: SSHOverviewComponent, title: 'SSH keys',
+    canActivate: [loggedIn(true), hasRole([Role.VIEW_SSH, Role.EDIT_SSH])],
+  },
+  {
+    path: ':owner', component: SSHDetailComponent,
+    title: route => `SSH key ${route.paramMap.get('owner')}`,
+    canActivate: [loggedIn(true), hasRole([Role.EDIT_SSH])],
+  },
 ];
 
 /**

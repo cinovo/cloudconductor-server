@@ -9,10 +9,10 @@ import { HomePackageChangesComponent } from './home.pkgchanges.comp';
 import { HomeHostStatusComponent } from './home.hoststatus.comp';
 import { HomeRepoScansComponent } from './home.reposcans.comp';
 import { HomeStatsComponent } from './home.stats.comp';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
+import { loggedIn } from '../util/auth/authentication.guard';
 
 const homeRoutes: Routes = [
-  {path: '', component: HomeComponent, canActivate: [AuthenticationGuard] },
+  {path: '', component: HomeComponent, title: 'Home', canActivate: [loggedIn(true)]},
 ];
 
 /**

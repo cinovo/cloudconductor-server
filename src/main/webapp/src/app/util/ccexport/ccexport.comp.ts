@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from "@angular/core";
+import { Component, inject, Input} from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 
 /**
@@ -13,16 +13,15 @@ import { DOCUMENT } from "@angular/common";
   styleUrls: ['./ccexport.comp.scss']
 })
 export class CCExport {
+  private readonly dom = inject(DOCUMENT)
 
   @Input() fileName: string = CCExport.genFileName();
   @Input() title = 'Just copy the string below';
   @Input() export: string;
 
-  constructor(@Inject(DOCUMENT) private readonly dom: Document) { }
-
   public copyToClipboard(exportCV: HTMLTextAreaElement) {
     exportCV.select();
-    this.dom.execCommand("copy");
+    this.dom?.execCommand("copy");
     exportCV.setSelectionRange(0, 0);
   }
 

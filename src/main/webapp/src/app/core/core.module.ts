@@ -9,8 +9,6 @@ import { PackageChangesService } from '../util/packagechanges/packagechanges.ser
 import { RepoScansService } from '../util/reposcans/reposcans.service';
 import { JwtInterceptor } from '../util/http/jwt.interceptor';
 import { AuthTokenProviderService } from '../util/auth/authtokenprovider.service';
-import { AuthorizationGuard } from '../util/auth/authorization.guard';
-import { AuthenticationGuard } from '../util/auth/authentication.guard';
 import { ConfigValueHttpService } from '../util/http/configValue.http.service';
 import { RepoMirrorHttpService } from '../util/http/repomirror.http.service';
 import { RepoHttpService } from '../util/http/repo.http.service';
@@ -44,8 +42,6 @@ import { ServiceUsageHttpService } from '../util/http/serviceUsage.http.service'
   declarations: [],
   providers: [
     AlertService,
-    AuthenticationGuard,
-    AuthorizationGuard,
     AuthTokenProviderService,
     HostsService,
     PackageChangesService,
