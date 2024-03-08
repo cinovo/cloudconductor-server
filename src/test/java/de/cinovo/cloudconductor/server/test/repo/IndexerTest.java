@@ -6,7 +6,7 @@ import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.repo.indexer.RPMIndexer;
 import de.cinovo.cloudconductor.server.repo.provider.IRepoProvider;
 import de.taimos.dvalin.jaxrs.MapperFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.UUID;
  * @author psigloch
  *
  */
-public class IndexerTest {
+class IndexerTest {
 	
 	private static class ClasspathProvider implements IRepoProvider {
 		
@@ -64,7 +64,7 @@ public class IndexerTest {
 	 * @throws Exception on error
 	 */
 	@Test
-	public void testRPM1() throws Exception {
+	void testRPM1() throws Exception {
 		RPMIndexer indexer = new RPMIndexer();
 		
 		Set<PackageVersion> repoIndex = indexer.getRepoIndex(new ClasspathProvider());

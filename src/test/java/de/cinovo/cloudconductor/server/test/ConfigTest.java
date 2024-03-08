@@ -21,10 +21,10 @@ import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.ConfigValueHandler;
 import de.cinovo.cloudconductor.api.model.ConfigValue;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
@@ -36,71 +36,70 @@ import java.util.Set;
  * @author hoegertn
  * 
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class ConfigTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class ConfigTest extends APITest {
 	
 	@Test
-	public void loadConfigTemplate() throws CloudConductorException {
+	void loadConfigTemplate() throws CloudConductorException {
 		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 		Set<ConfigValue> config = h.getConfig("dev");
-		Assert.assertNotNull(config);
+		Assertions.assertNotNull(config);
 	}
 	
 	@Test
-	public void loadConfigService() throws CloudConductorException {
+	void loadConfigService() throws CloudConductorException {
 		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 		Set<ConfigValue> config = h.getConfig("dev", "service1");
-		Assert.assertNotNull(config);
+		Assertions.assertNotNull(config);
 	}
 	
 	@Test
-	public void loadConfigKey() throws CloudConductorException {
+	void loadConfigKey() throws CloudConductorException {
 		ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 		String config = h.getConfig("dev", "service1", "loggly.tags");
-		Assert.assertNotNull(config);
-		Assert.assertEquals("foo", config);
+		Assertions.assertNotNull(config);
+		Assertions.assertEquals("foo", config);
 	}
 	
 	@Test
-	public void testAddRemove() throws CloudConductorException {
+	void testAddRemove() throws CloudConductorException {
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// Check config does not exist
 			for(ConfigValue configValue : h.getConfig("dev")) {
-				Assert.assertFalse(configValue.getKey().equals("foo"));
+				Assertions.assertNotEquals("foo", configValue.getKey());
 			}
 			for(ConfigValue configValue : h.getConfig("dev", "svc")) {
-				Assert.assertFalse(configValue.getKey().equals("foo"));
+				Assertions.assertNotEquals("foo", configValue.getKey());
 			}
 		}
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// add template level config
 			h.addConfig("dev", "foo", "bar");
-			Assert.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
+			Assertions.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
 		}
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// add service level config
 			h.addConfig("dev", "svc", "foo", "baz");
-			Assert.assertEquals("baz", h.getConfig("dev", "svc", "foo"));
+			Assertions.assertEquals("baz", h.getConfig("dev", "svc", "foo"));
 		}
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// remove service level config
 			h.removeConfig("dev", "svc", "foo");
-			Assert.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
+			Assertions.assertEquals("bar", h.getConfig("dev", "svc", "foo"));
 		}
 		{
 			ConfigValueHandler h = new ConfigValueHandler(this.getCSApi(), this.getToken());
 			// remove template level config
 			h.removeConfig("dev", null, "foo");
 			for(ConfigValue configValue : h.getConfig("dev")) {
-				Assert.assertFalse(configValue.getKey().equals("foo"));
+				Assertions.assertNotEquals("foo", configValue.getKey());
 			}
 			for(ConfigValue configValue : h.getConfig("dev", "svc")) {
-				Assert.assertFalse(configValue.getKey().equals("foo"));
+				Assertions.assertNotEquals("foo", configValue.getKey());
 			}
 		}
 	}

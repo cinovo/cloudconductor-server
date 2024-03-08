@@ -21,10 +21,10 @@ import de.cinovo.cloudconductor.api.lib.exceptions.CloudConductorException;
 import de.cinovo.cloudconductor.api.lib.manager.HostHandler;
 import de.cinovo.cloudconductor.api.model.Host;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 
@@ -34,26 +34,25 @@ import java.util.Set;
  *
  * @author hoegertn
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class HostTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class HostTest extends APITest {
 	
 	private static final String HOST1 = "host1";
 	
 	
 	@Test
-	public void test1() throws CloudConductorException {
+	void test1() throws CloudConductorException {
 		HostHandler h = new HostHandler(this.getCSApi(), this.getToken());
 		{
 			Set<Host> hosts = h.get();
-			Assert.assertEquals(1, hosts.size());
+			Assertions.assertEquals(1, hosts.size());
 			Host next = hosts.iterator().next();
-			Assert.assertEquals(HostTest.HOST1, next.getName());
+			Assertions.assertEquals(HostTest.HOST1, next.getName());
 		}
 		{
 			Host host = h.get("123123-123123-123123");
-			Assert.assertNotNull(host);
-			Assert.assertEquals(HostTest.HOST1, host.getName());
+			Assertions.assertNotNull(host);
+			Assertions.assertEquals(HostTest.HOST1, host.getName());
 		}
 	}
 }

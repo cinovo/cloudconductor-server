@@ -19,7 +19,7 @@ package de.cinovo.cloudconductor.server;
 
 import de.cinovo.cloudconductor.api.lib.helper.AuthHandler;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
-import de.taimos.daemon.spring.SpringDaemonTestRunner.RunnerConfiguration;
+import de.taimos.daemon.spring.RunnerConfiguration;
 import de.taimos.httputils.HTTPRequest;
 import de.taimos.httputils.WS;
 
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @RunnerConfiguration(config = TestConfig.class, svc = "cloudconductor", loggingConfigurer = Log4jLoggingConfigurer.class)
 public abstract class APITest {
 
-	private String token;
+	private final String token;
 
 	protected APITest() {
 		this.token = new AuthHandler(this.getCSApi()).auth();

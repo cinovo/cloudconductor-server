@@ -141,7 +141,7 @@ public class GenericModelApiConverter {
 	}
 
 	private static String capitalize(String name) {
-		return name != null && name.length() != 0 ? name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1) : name;
+		return name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1) : name;
 	}
 
 	private static <Destination, Origin> HashMap<Field, Field> resolveFieldMapFromOrigin(Origin origin, Destination destination) {

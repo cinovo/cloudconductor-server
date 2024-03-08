@@ -26,10 +26,10 @@ import de.cinovo.cloudconductor.api.model.SSHKey;
 import de.cinovo.cloudconductor.api.model.Service;
 import de.cinovo.cloudconductor.api.model.Template;
 import de.cinovo.cloudconductor.server.APITest;
-import de.taimos.daemon.spring.SpringDaemonTestRunner;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import de.taimos.daemon.spring.SpringDaemonExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,24 +42,23 @@ import java.util.Set;
  *
  * @author hoegertn
  */
-@RunWith(SpringDaemonTestRunner.class)
-@SuppressWarnings("javadoc")
-public class TemplateTest extends APITest {
+@ExtendWith(SpringDaemonExtension.class)
+class TemplateTest extends APITest {
 
 	private static final String TEMPLATE = "dev";
 
-	private TemplateHandler h = new TemplateHandler(this.getCSApi(), this.getToken());
+	private final TemplateHandler h = new TemplateHandler(this.getCSApi(), this.getToken());
 
 	@Test
-	public void testBasic() throws CloudConductorException {
+	void testBasic() throws CloudConductorException {
 		this.delay();
 		{
 			Set<Template> set = this.h.get();
-			Assert.assertEquals(2, set.size());
+			Assertions.assertEquals(2, set.size());
 		}
 		{
 			Template template = this.h.get(TemplateTest.TEMPLATE);
-			Assert.assertEquals(TemplateTest.TEMPLATE, template.getName());
+			Assertions.assertEquals(TemplateTest.TEMPLATE, template.getName());
 		}
 		{
 			Set<HostIdentifier> servers = new HashSet<>();
@@ -71,40 +70,40 @@ public class TemplateTest extends APITest {
 
 			this.h.save(t);
 			Set<Template> set = this.h.get();
-			Assert.assertEquals(3, set.size());
+			Assertions.assertEquals(3, set.size());
 			Template template = this.h.get("template2");
-			Assert.assertEquals("template2", template.getName());
+			Assertions.assertEquals("template2", template.getName());
 		}
 		{
 			this.h.delete("template2");
 			Set<Template> set = this.h.get();
-			Assert.assertEquals(2, set.size());
+			Assertions.assertEquals(2, set.size());
 		}
 	}
 
 	@Test
-	public void testPackageUpdate() throws CloudConductorException {
+	void testPackageUpdate() throws CloudConductorException {
 		this.delay();
 		{
 			Set<PackageVersion> versions = this.h.getVersions(TemplateTest.TEMPLATE);
-			Assert.assertEquals(5, versions.size());
+			Assertions.assertEquals(5, versions.size());
 		}
 	}
 
 	@Test
-	public void testSSH() throws CloudConductorException {
+	void testSSH() throws CloudConductorException {
 		this.delay();
 		SSHKeyHandler ssh = new SSHKeyHandler(this.getCSApi(), this.getToken());
 		{
 			Set<SSHKey> keys = this.h.getSSHKeys(TemplateTest.TEMPLATE);
-			Assert.assertEquals(1, keys.size());
+			Assertions.assertEquals(1, keys.size());
 			SSHKey key = keys.iterator().next();
-			Assert.assertEquals("foobar", key.getOwner());
+			Assertions.assertEquals("foobar", key.getOwner());
 		}
 		{
 			ssh.delete("foobar");
 			Set<SSHKey> hosts = this.h.getSSHKeys(TemplateTest.TEMPLATE);
-			Assert.assertEquals(0, hosts.size());
+			Assertions.assertEquals(0, hosts.size());
 		}
 		{
 			SSHKey key = new SSHKey();
@@ -116,18 +115,18 @@ public class TemplateTest extends APITest {
 			key.setTemplates(templates);
 			ssh.save(key);
 			Set<SSHKey> keys = this.h.getSSHKeys(TemplateTest.TEMPLATE);
-			Assert.assertEquals(1, keys.size());
+			Assertions.assertEquals(1, keys.size());
 			key = keys.iterator().next();
-			Assert.assertEquals("foobar", key.getOwner());
+			Assertions.assertEquals("foobar", key.getOwner());
 		}
 	}
 
 	@Test
-	public void testServices() throws CloudConductorException {
+	void testServices() throws CloudConductorException {
 		this.delay();
 		{
 			Set<Service> services = this.h.getServices(TemplateTest.TEMPLATE);
-			Assert.assertEquals(2, services.size());
+			Assertions.assertEquals(2, services.size());
 		}
 	}
 }
