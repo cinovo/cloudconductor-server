@@ -12,16 +12,22 @@ import { AuthTokenProviderService } from './authtokenprovider.service';
  * @author mweise
  */
 export const loggedIn: (expectedLoggedIn: boolean) => CanActivateFn = (expectedLoggedIn ) => {
-  return (route) => {
+  return (_route, state) => {
     const router = inject(Router);
 
-    const redirect = route.url;
+    const redirect = state.url;
     return inject(AuthTokenProviderService).loggedIn.pipe(
         map(actualLoggedIn => {
           if (actualLoggedIn === expectedLoggedIn) {
             return true;
           }
-          return router.createUrlTree(['/login'], {queryParams: {redirect}});
+          if (!actualLoggedIn) {
+            return router.createUrlTree(['/login'], {queryParams: {redirect}});
+          }
+          if (redirect !== "/login") {
+            return router.createUrlTree([redirect]);
+          }
+          return router.createUrlTree(["/home"]);
         })
     );
   }
