@@ -85,6 +85,7 @@
         <dvalin.version>1.35</dvalin.version>
         <cloudconductor.api.version>3.9</cloudconductor.api.version>
         <aws.version>1.12.641</aws.version>
+        <cxf.version>3.5.8</cxf.version>
         <junit.version>5.10.1</junit.version>
         <jetty.version>9.4.53.v20231009</jetty.version>
     </properties>
@@ -138,6 +139,38 @@
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.37.3</version>
+        </dependency>
+        <!-- needed to fix CVE-2024-29857,CVE-2024-30171,CVE-2024-30172,CVE-2024-34447, remove after dvalin fixes this vulnerability-->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.78.1</version>
+        </dependency>
+        <!-- CXF: needed to fix CVE-2024-28752, can be removed when apache cxf dependency in dvalin is fixed -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-security-cors</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <version>${cxf.version}</version>
         </dependency>
         <!-- Database drivers -->
         <dependency>
