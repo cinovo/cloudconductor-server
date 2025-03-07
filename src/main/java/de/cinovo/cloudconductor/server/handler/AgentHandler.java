@@ -226,6 +226,9 @@ public class AgentHandler {
 		if (agent != null) {
 			host.setAgentId(agent.getId());
 		}
+		if (!hostName.equals(host.getName())) {
+			host.setName(hostName);
+		}
 		host = this.hostDAO.save(host);
 		this.hostDetailWsHandler.broadcastChange(host, ChangeType.UPDATED);
 		this.hostsWSHandler.broadcastEvent(host, ChangeType.UPDATED);
