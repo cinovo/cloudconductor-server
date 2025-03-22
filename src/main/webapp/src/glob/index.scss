@@ -1,6 +1,6 @@
 @import "_variables";
 
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/" !default;
+$icon-font-path: "bootstrap-sass/assets/fonts/bootstrap/" !default;
 @import "bootstrap-sass/assets/stylesheets/_bootstrap";
 
 @import 'font-awesome/scss/font-awesome.scss';
@@ -9,15 +9,15 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/" !default;
 
 html {
   height: 100%;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background-color: $gray-lightest;
   height: 100%;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 // Load Screen
