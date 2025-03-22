@@ -9,8 +9,9 @@ type FilterMode = 'text' | 'number' | 'select';
  * @author psigloch
  */
 @Component({
-  selector: 'cc-filter',
-  templateUrl: './ccfilter.comp.html'
+    selector: 'cc-filter',
+    templateUrl: './ccfilter.comp.html',
+    standalone: false
 })
 export class CCFilter implements OnInit {
 

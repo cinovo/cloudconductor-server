@@ -12,8 +12,9 @@ import { SSHKey } from '../util/http/sshkey.model';
  * @author mweise
  */
 @Component({
-  templateUrl: './ssh.edit.comp.html',
-  selector: 'app-ssh-edit'
+    templateUrl: './ssh.edit.comp.html',
+    selector: 'app-ssh-edit',
+    standalone: false
 })
 export class SSHEditComponent implements OnInit {
 

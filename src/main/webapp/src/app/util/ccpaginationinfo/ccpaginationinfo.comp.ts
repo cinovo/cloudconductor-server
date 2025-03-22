@@ -7,8 +7,9 @@ import { Component, Input } from '@angular/core';
  * @author mweise
  */
 @Component({
-  selector: 'cc-pagination-info',
-  templateUrl: './ccpaginationinfo.comp.html'
+    selector: 'cc-pagination-info',
+    templateUrl: './ccpaginationinfo.comp.html',
+    standalone: false
 })
 export class CCPaginationInfoComponent {
 

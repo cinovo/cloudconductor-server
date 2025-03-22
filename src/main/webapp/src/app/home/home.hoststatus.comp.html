@@ -1,4 +1,4 @@
-<cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="lastUpdate">
+<cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="!!lastUpdate">
   <ng-container *ngIf="(hostsObs | async) as hosts; else loading" cc-panel-body>
     <div class="alert alert-warning" *ngIf="hosts?.length < 1" cc-panel-body>
       No hosts found!
@@ -8,7 +8,7 @@
       <tr>
         <th class="sorting">Name</th>
         <th class="sorting">Template</th>
-        <th class="sorting_asc">Last Seen</th>
+        <th class="sorting_asc text-right">Last Seen</th>
       </tr>
       </thead>
       <tbody>
@@ -24,7 +24,7 @@
         <td>
           {{host.template}}
         </td>
-        <td>
+        <td class="text-right">
           {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
         </td>
       </tr>

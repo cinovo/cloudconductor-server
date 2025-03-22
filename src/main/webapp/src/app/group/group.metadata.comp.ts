@@ -19,8 +19,9 @@ import { forbiddenNamesValidator } from '../util/validator.util';
  * @author mweise
  */
 @Component({
-  selector: 'group-metadata',
-  templateUrl: './group.metadata.comp.html'
+    selector: 'group-metadata',
+    templateUrl: './group.metadata.comp.html',
+    standalone: false
 })
 export class GroupMetaDataComponent implements OnInit, OnDestroy {
 

@@ -7,9 +7,10 @@ import { Component, Input } from '@angular/core';
  * @author mweise
  */
 @Component({
-  selector: 'cc-dashboard-panel',
-  templateUrl: './ccdashboardpanel.comp.html',
-  styleUrls: ['./ccdashboardpanel.comp.scss'],
+    selector: 'cc-dashboard-panel',
+    templateUrl: './ccdashboardpanel.comp.html',
+    styleUrls: ['./ccdashboardpanel.comp.scss'],
+    standalone: false
 })
 export class CCDashboardPanel {
 

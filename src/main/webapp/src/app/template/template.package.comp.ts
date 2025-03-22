@@ -30,8 +30,9 @@ type NewPackageVersion = {
  * @author psigloch, mweise
  */
 @Component({
-  selector: 'template-packages',
-  templateUrl: './template.package.comp.html'
+    selector: 'template-packages',
+    templateUrl: './template.package.comp.html',
+    standalone: false
 })
 export class TemplatePackages implements OnInit, OnDestroy {
 

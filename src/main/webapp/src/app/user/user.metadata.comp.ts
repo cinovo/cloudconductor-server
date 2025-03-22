@@ -30,8 +30,9 @@ interface UserForm {
  * @author mweise
  */
 @Component({
-  selector: 'user-metadata',
-  templateUrl: './user.metadata.comp.html'
+    selector: 'user-metadata',
+    templateUrl: './user.metadata.comp.html',
+    standalone: false
 })
 export class UserMetaDataComponent implements OnInit, OnDestroy {
 

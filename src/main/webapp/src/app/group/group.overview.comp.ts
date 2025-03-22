@@ -15,7 +15,8 @@ import { Sorter } from '../util/sorters.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './group.overview.comp.html'
+    templateUrl: './group.overview.comp.html',
+    standalone: false
 })
 export class GroupOverviewComponent implements OnInit, OnDestroy {
 

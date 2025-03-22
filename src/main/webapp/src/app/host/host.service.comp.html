@@ -1,21 +1,19 @@
 <div class="row">
   <div class="col-md-12">
-    <cc-panel [title]="'Services'" icon="fa-flask" subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm:ss'}}">
-
+    <cc-panel [title]="'Services'" icon="fa-flask"
+              subTitle="last update: {{ (host && host.lastSeen) ? (host.lastSeen | date:'dd.MM.yyyy HH:mm:ss') : 'n/a' }}">
       <div cc-panel-body>
         <div class="alert alert-warning" *ngIf="!services || services.length <= 0">
           There are currently no services available on this host.
         </div>
-        <table class=" table-condensed table-responsive table table-striped table-hover dataTable"
+        <table class="table-condensed table-responsive table table-striped table-hover dataTable"
                *ngIf="services && services.length > 0">
           <thead>
           <tr>
-            <th width="15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all services"></th>
+            <th style="width: 15px"><input type="checkbox" [(ngModel)]="allSelected" title="Select all services"></th>
             <th class="sorting_asc">Service Name</th>
             <th class="sorting">State</th>
-            <th width="15px"></th>
-            <th width="15px"></th>
-            <th width="15px"></th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -25,34 +23,37 @@
             </td>
             <td>
               {{service.name}}
-              <a [routerLink]="['/service', service.name]" title="Go to service"><i class="fa fa-external-link fa-fw"></i></a>
+              <a [routerLink]="['/service', service.name]" title="Go to service">
+                <i class="fa fa-external-link fa-fw"></i>
+              </a>
             </td>
             <td>
               <span class="label label-default label-as-badge"
                     [class.label-success]="isServiceStarted(service)"
                     [class.label-warning]="isServiceTransient(service)"
-                    [class.label-danger]="isServiceStoped(service)">
+                    [class.label-danger]="isServiceStopped(service)">
                 <i class="fa fa-refresh fa-spin fa-fw" *ngIf="isServiceTransient(service)"></i>
                 {{service.state}}
               </span>
             </td>
-            <td>
-              <a class="btn btn-xs text-success" role="button" (click)="handleService('start', service)"
-                 [class.disabled]="isServiceStarted(service, true)">
-                <i class="fa fa-play fa-fw" title="Start service"></i>
-              </a>
-            </td>
-            <td>
-              <a class="btn btn-xs text-danger" role="button" (click)="handleService('stop', service)"
-                 [class.disabled]="isServiceStoped(service, true)">
-                <i class="fa fa-stop fa-fw" title="Stop service"></i>
-              </a>
-            </td>
-            <td>
-              <a class="btn btn-xs text-info" role="button" (click)="handleService('restart', service)"
-                 [class.disabled]="isServiceStoped(service, true) || isServiceTransient(service)">
-                <i class="fa fa-repeat fa-fw" title="Restart service"></i>
-              </a>
+            <td class="text-right">
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-xs text-success" (click)="start(service)"
+                        title="Start {{service.name}}" aria-label="Start {{service.name}}"
+                        [class.disabled]="isServiceStarted(service, true)">
+                  <i class="fa fa-play fa-fw"></i>
+                </button>
+                <button type="button" class="btn btn-xs text-danger" (click)="stop(service)"
+                        title="Stop {{service.name}}" aria-label="Stop {{service.name}}"
+                        [class.disabled]="isServiceStopped(service, true)">
+                  <i class="fa fa-stop fa-fw" ></i>
+                </button>
+                <button type="button" class="btn btn-xs text-info" (click)="restart(service)"
+                        title="Restart {{service.name}}" aria-label="Restart {{service.name}}"
+                        [class.disabled]="isServiceStopped(service, true) || isServiceTransient(service)">
+                  <i class="fa fa-repeat fa-fw"></i>
+                </button>
+              </div>
             </td>
           </tr>
           </tbody>

@@ -15,7 +15,8 @@ import { TemplateHttpService } from '../util/http/template.http.service';
  * @author mweise
  */
 @Component({
-  templateUrl: './ssh.detail.comp.html'
+    templateUrl: './ssh.detail.comp.html',
+    standalone: false
 })
 export class SSHDetailComponent implements OnInit, OnDestroy {
 

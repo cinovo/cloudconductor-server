@@ -17,8 +17,9 @@ import { Validator } from "../util/validator.util";
  * @author psigloch
  */
 @Component({
-  selector: 'cs-new',
-  templateUrl: './cs.new.comp.html'
+    selector: 'cs-new',
+    templateUrl: './cs.new.comp.html',
+    standalone: false
 })
 export class ConfigValueNew implements OnInit {
 
