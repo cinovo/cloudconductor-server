@@ -19,7 +19,8 @@ import { TemplateHttpService } from '../util/http/template.http.service';
  * @author mweise
  */
 @Component({
-  templateUrl: './file.detail.comp.html'
+    templateUrl: './file.detail.comp.html',
+    standalone: false
 })
 export class FileDetailComponent implements OnInit, OnDestroy {
 

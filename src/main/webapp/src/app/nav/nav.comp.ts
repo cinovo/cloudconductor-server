@@ -13,10 +13,11 @@ declare let $: any;
  * @author psigloch
  */
 @Component({
-  selector: 'main-navbar',
-  styleUrls: ['./nav.comp.scss'],
-  templateUrl: './nav.comp.html',
-  encapsulation: ViewEncapsulation.None
+    selector: 'main-navbar',
+    styleUrls: ['./nav.comp.scss'],
+    templateUrl: './nav.comp.html',
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class NavComponent implements AfterViewInit, OnInit {
 

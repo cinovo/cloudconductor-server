@@ -7,8 +7,9 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
  * @author psigloch
  */
 @Component({
-  selector: 'cc-inlineedit',
-  templateUrl: './ccinlineedit.comp.html'
+    selector: 'cc-inlineedit',
+    templateUrl: './ccinlineedit.comp.html',
+    standalone: false
 })
 export class CCInlineEdit {
 

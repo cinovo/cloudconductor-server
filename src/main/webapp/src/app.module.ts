@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -25,17 +25,6 @@ import { CCTitleStrategy } from "./app/cc.title";
  * @author psigloch, mweise
  */
 @NgModule({
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    routing,
-    FormsModule,
-    ReactiveFormsModule,
-    ConfirmationPopoverModule.forRoot(),
-    CoreModule,
-    SharedModule,
-  ],
   declarations: [
     AppComponent,
     AlertComponent,
@@ -44,11 +33,19 @@ import { CCTitleStrategy } from "./app/cc.title";
     FooterComponent
   ],
   bootstrap: [AppComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    routing,
+    FormsModule,
+    ReactiveFormsModule,
+    ConfirmationPopoverModule.forRoot(),
+    CoreModule,
+    SharedModule
+  ],
   providers: [
-    {
-      provide: TitleStrategy,
-      useClass: CCTitleStrategy
-    },
+    { provide: TitleStrategy, useClass: CCTitleStrategy },
+    provideHttpClient(withInterceptorsFromDi()),
   ]
 })
 export class AppModule {}

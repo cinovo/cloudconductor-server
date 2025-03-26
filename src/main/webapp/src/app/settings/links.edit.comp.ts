@@ -13,8 +13,9 @@ import { AlertService } from '../util/alert/alert.service';
  * @author psigloch
  */
 @Component({
-  selector: 'links-edit',
-  templateUrl: './links.edit.comp.html'
+    selector: 'links-edit',
+    templateUrl: './links.edit.comp.html',
+    standalone: false
 })
 export class LinksEdit implements OnInit, OnDestroy {
 

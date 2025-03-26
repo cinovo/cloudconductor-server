@@ -14,8 +14,9 @@ import { RepoMirrorHttpService, RepoMirror } from '../util/http/repomirror.http.
  * @author psigloch
  */
 @Component({
-  selector: 'repo-overview',
-  templateUrl: './repo.overview.comp.html'
+    selector: 'repo-overview',
+    templateUrl: './repo.overview.comp.html',
+    standalone: false
 })
 export class RepoOverview implements OnInit {
 

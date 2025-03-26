@@ -13,8 +13,9 @@ import { AlertService } from "../util/alert/alert.service";
  * @author psigloch
  */
 @Component({
-  selector: 'cs.export.comp',
-  templateUrl: './cv.export.comp.html'
+    selector: 'cs.export.comp',
+    templateUrl: './cv.export.comp.html',
+    standalone: false
 })
 export class ConfigValueExport implements OnInit, OnDestroy {
 

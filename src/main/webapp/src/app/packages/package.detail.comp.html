@@ -57,7 +57,7 @@
                 There are currently no repositories providing the package.
               </td>
             </tr>
-            <tr *ngFor="let repo of repos" (dblclick)="gotoRepo(repo)">
+            <tr *ngFor="let repo of repos" (dblclick)="gotoRepo(repo.name)">
               <td>
                 {{repo.name}}
               </td>

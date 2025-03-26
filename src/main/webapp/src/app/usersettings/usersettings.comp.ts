@@ -22,7 +22,8 @@ interface PwChangeForm {
  * @author mweise
  */
 @Component({
-  templateUrl: './usersettings.comp.html'
+    templateUrl: './usersettings.comp.html',
+    standalone: false
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
 

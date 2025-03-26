@@ -17,8 +17,9 @@ import { RepoHttpService } from '../util/http/repo.http.service';
  * @author psigloch
  */
 @Component({
-  selector: 'mirror-edit',
-  templateUrl: './mirror.edit.comp.html'
+    selector: 'mirror-edit',
+    templateUrl: './mirror.edit.comp.html',
+    standalone: false
 })
 export class MirrorEdit implements OnInit {
 

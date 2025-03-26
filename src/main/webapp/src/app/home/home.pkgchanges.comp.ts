@@ -16,8 +16,9 @@ interface PackageChangeMap { [key: string]: PackageChange[] }
  * @author mweise
  */
 @Component({
-  selector: 'home-packagechanges',
-  templateUrl: 'home.pkgchanges.comp.html'
+    selector: 'home-packagechanges',
+    templateUrl: 'home.pkgchanges.comp.html',
+    standalone: false
 })
 export class HomePackageChangesComponent implements OnInit, OnDestroy {
 

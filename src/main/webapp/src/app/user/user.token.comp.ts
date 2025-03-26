@@ -12,8 +12,9 @@ import { AuthToken, User, UserHttpService } from '../util/http/user.http.service
  * @author mweise
  */
 @Component({
-  selector: 'user-token',
-  templateUrl: './user.token.comp.html'
+    selector: 'user-token',
+    templateUrl: './user.token.comp.html',
+    standalone: false
 })
 export class UserTokenComponent implements OnInit {
 

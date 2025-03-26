@@ -7,9 +7,10 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, 
  * @author psigloch
  */
 @Component({
-  selector: 'cc-panel',
-  templateUrl: './ccpanel.comp.html',
-  encapsulation: ViewEncapsulation.None
+    selector: 'cc-panel',
+    templateUrl: './ccpanel.comp.html',
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class CCPanel implements AfterViewInit {
 
