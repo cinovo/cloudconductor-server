@@ -1,12 +1,14 @@
-<cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="!!lastUpdate">
+<cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}"
+          [subTitleCondition]="!!lastUpdate">
   <ng-container *ngIf="(hostsObs | async) as hosts; else loading" cc-panel-body>
     <div class="alert alert-warning" *ngIf="hosts?.length < 1" cc-panel-body>
       No hosts found!
     </div>
-    <table class="table-responsive table table-striped table-hover dataTable" *ngIf="hosts?.length > 0" cc-panel-body>
+    <table *ngIf="hosts?.length > 0" class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts"  cc-panel-body>
       <thead>
       <tr>
-        <th class="sorting">Name</th>
+        <th class="sorting">Host</th>
+        <th class="sorting">Agent</th>
         <th class="sorting">Template</th>
         <th class="sorting_asc text-right">Last Seen</th>
       </tr>
@@ -14,12 +16,11 @@
       <tbody>
       <tr *ngFor="let host of hosts" (dblclick)="onHostClicked.emit(host.uuid)"
         [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
-        <td class="word-break" *ngIf="!host.agent">
+        <td class="word-break">
           {{host.name}}
         </td>
-        <td class="word-break" *ngIf="host.agent">
+        <td class="word-break">
           {{host.agent}}
-          <small> - {{host.name}}</small>
         </td>
         <td>
           {{host.template}}
