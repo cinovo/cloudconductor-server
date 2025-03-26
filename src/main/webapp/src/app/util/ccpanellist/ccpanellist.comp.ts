@@ -7,8 +7,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
  * @author mweise
  */
 @Component({
-  selector: 'cc-panel-list',
-  templateUrl: './ccpanellist.comp.html'
+    selector: 'cc-panel-list',
+    templateUrl: './ccpanellist.comp.html',
+    standalone: false
 })
 export class CCPanelListComponent {
 

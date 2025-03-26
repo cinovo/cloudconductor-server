@@ -12,8 +12,9 @@ import { HostsService } from '../util/hosts/hosts.service';
  * @author mweise
  */
 @Component({
-  selector: 'home-hoststatus',
-  templateUrl: 'home.hoststatus.comp.html'
+    selector: 'home-hoststatus',
+    templateUrl: 'home.hoststatus.comp.html',
+    standalone: false
 })
 export class HomeHostStatusComponent implements OnInit, OnDestroy {
 

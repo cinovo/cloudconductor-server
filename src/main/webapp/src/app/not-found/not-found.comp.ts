@@ -8,8 +8,9 @@ import { ActivatedRoute } from '@angular/router';
  * @author mweise
  */
 @Component({
-  selector: 'not-found.comp',
-  templateUrl: './not-found.comp.html'
+    selector: 'not-found.comp',
+    templateUrl: './not-found.comp.html',
+    standalone: false
 })
 export class NotFoundComponent implements OnInit {
 

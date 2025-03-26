@@ -17,8 +17,9 @@ import { WSChangeEvent } from '../util/websockets/ws-change-event.model';
  * @author psigloch
  */
 @Component({
-  selector: 'template-detail',
-  templateUrl: './template.detail.comp.html'
+    selector: 'template-detail',
+    templateUrl: './template.detail.comp.html',
+    standalone: false
 })
 export class TemplateDetail implements OnInit, OnDestroy {
 

@@ -7,8 +7,9 @@ import { Component, Input} from '@angular/core';
  * @author psigloch
  */
 @Component({
-  selector: 'cc-title',
-  templateUrl: './cctitle.comp.html'
+    selector: 'cc-title',
+    templateUrl: './cctitle.comp.html',
+    standalone: false
 })
 export class CCTitle {
 

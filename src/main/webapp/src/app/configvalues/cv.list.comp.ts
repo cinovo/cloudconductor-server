@@ -9,8 +9,9 @@ import { ConfigValueHttpService } from "../util/http/configValue.http.service";
 import { Role } from "../util/enums.util";
 
 @Component({
-  selector: 'cv-list',
-  templateUrl: './cv.list.comp.html'
+    selector: 'cv-list',
+    templateUrl: './cv.list.comp.html',
+    standalone: false
 })
 export class ConfigValueList implements OnInit, OnDestroy {
 

@@ -15,8 +15,9 @@ import { Validator, gtValidator } from '../util/validator.util';
  * @author psigloch
  */
 @Component({
-  selector: 'settings-overview',
-  templateUrl: './settings.overview.comp.html'
+    selector: 'settings-overview',
+    templateUrl: './settings.overview.comp.html',
+    standalone: false
 })
 export class SettingsOverview implements OnInit {
 
