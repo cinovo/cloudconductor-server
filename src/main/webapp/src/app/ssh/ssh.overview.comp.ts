@@ -19,7 +19,8 @@ import { SSHKey } from '../util/http/sshkey.model';
  * @author mweise
  */
 @Component({
-  templateUrl: './ssh.overview.comp.html'
+    templateUrl: './ssh.overview.comp.html',
+    standalone: false
 })
 export class SSHOverviewComponent implements OnInit {
 

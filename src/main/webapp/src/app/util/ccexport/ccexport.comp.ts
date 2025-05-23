@@ -8,9 +8,10 @@ import { DOCUMENT } from "@angular/common";
  * @author psigloch
  */
 @Component({
-  selector: 'cc-export',
-  templateUrl: './ccexport.comp.html',
-  styleUrls: ['./ccexport.comp.scss']
+    selector: 'cc-export',
+    templateUrl: './ccexport.comp.html',
+    styleUrls: ['./ccexport.comp.scss'],
+    standalone: false
 })
 export class CCExport {
   private readonly dom = inject(DOCUMENT)

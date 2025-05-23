@@ -24,8 +24,9 @@ interface TemplateForm extends Partial<Template> {
  * @author psigloch
  */
 @Component({
-  selector: 'template-metadata',
-  templateUrl: './template.metadata.comp.html'
+    selector: 'template-metadata',
+    templateUrl: './template.metadata.comp.html',
+    standalone: false
 })
 export class TemplateMetaData implements OnInit, OnDestroy {
 

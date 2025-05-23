@@ -16,8 +16,9 @@ import { Validator } from '../util/validator.util';
  * @author psigloch
  */
 @Component({
-  selector: 'service-overview',
-  templateUrl: './service.overview.comp.html'
+    selector: 'service-overview',
+    templateUrl: './service.overview.comp.html',
+    standalone: false
 })
 export class ServiceOverview implements OnInit {
 

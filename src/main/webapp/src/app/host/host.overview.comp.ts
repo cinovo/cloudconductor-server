@@ -18,8 +18,9 @@ import { AlertService } from '../util/alert/alert.service';
  * @author psigloch
  */
 @Component({
-  selector: 'host-overview',
-  templateUrl: './host.overview.comp.html'
+    selector: 'host-overview',
+    templateUrl: './host.overview.comp.html',
+    standalone: false
 })
 export class HostOverview implements OnInit, OnDestroy {
 

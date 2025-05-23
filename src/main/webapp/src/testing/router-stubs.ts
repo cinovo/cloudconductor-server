@@ -1,10 +1,11 @@
 import { Directive, Input } from "@angular/core";
 
 @Directive({
-  selector: '[routerLink]',
-  host: {
-    '(click)': 'onClick()'
-  }
+    selector: '[routerLink]',
+    host: {
+        '(click)': 'onClick()'
+    },
+    standalone: false
 })
 export class RouterLinkStubDirective {
   @Input('routerLink') linkParams: any;
@@ -16,7 +17,8 @@ export class RouterLinkStubDirective {
 }
 
 @Directive({
-  selector: '[queryParams]'
+    selector: '[queryParams]',
+    standalone: false
 })
 export class QueryParamStubDirective {
   @Input('queryParams') params: any;

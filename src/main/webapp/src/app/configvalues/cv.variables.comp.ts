@@ -5,8 +5,9 @@ import { AlertService } from "../util/alert/alert.service";
 import { Sorter } from "../util/sorters.util";
 
 @Component({
-  selector: 'cv-variables',
-  templateUrl: './cv.variables.comp.html'
+    selector: 'cv-variables',
+    templateUrl: './cv.variables.comp.html',
+    standalone: false
 })
 export class ConfigValueVariables implements OnInit {
 

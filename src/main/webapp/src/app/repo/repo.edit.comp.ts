@@ -20,8 +20,9 @@ import { Sorter } from '../util/sorters.util';
  * @author psigloch
  */
 @Component({
-  selector: 'repo-edit',
-  templateUrl: './repo.edit.comp.html'
+    selector: 'repo-edit',
+    templateUrl: './repo.edit.comp.html',
+    standalone: false
 })
 export class RepoEdit implements OnInit {
 

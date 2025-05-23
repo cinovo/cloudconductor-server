@@ -18,8 +18,9 @@ interface AutoStartService {
  * @author mweise
  */
 @Component({
-  selector: 'template-services',
-  templateUrl: './template.service.comp.html'
+    selector: 'template-services',
+    templateUrl: './template.service.comp.html',
+    standalone: false
 })
 export class TemplateServiceComponent implements OnInit, OnDestroy {
 

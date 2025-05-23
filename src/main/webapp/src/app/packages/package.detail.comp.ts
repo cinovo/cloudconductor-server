@@ -25,8 +25,9 @@ interface TemplateRef {
  * @author psigloch
  */
 @Component({
-  selector: 'package-detail',
-  templateUrl: './package.detail.comp.html'
+    selector: 'package-detail',
+    templateUrl: './package.detail.comp.html',
+    standalone: false
 })
 export class PackageDetail implements AfterViewInit {
 

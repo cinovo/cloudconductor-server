@@ -12,8 +12,9 @@ import { Mode } from '../util/enums.util';
  * @author psigloch
  */
 @Component({
-  selector: 'template-new',
-  templateUrl: './template.new.comp.html'
+    selector: 'template-new',
+    templateUrl: './template.new.comp.html',
+    standalone: false
 })
 export class TemplateNew implements OnInit {
 

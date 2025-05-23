@@ -16,8 +16,9 @@ import { Package, PackageHttpService } from '../util/http/package.http.service';
  * @author psigloch
  */
 @Component({
-  selector: 'package-overview',
-  templateUrl: './package.overview.comp.html'
+    selector: 'package-overview',
+    templateUrl: './package.overview.comp.html',
+    standalone: false
 })
 export class PackageOverview implements OnInit, OnDestroy {
 

@@ -14,7 +14,8 @@ import { Mode } from '../util/enums.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './group.detail.comp.html'
+    templateUrl: './group.detail.comp.html',
+    standalone: false
 })
 export class GroupDetailComponent implements OnInit, OnDestroy {
 

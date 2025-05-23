@@ -17,8 +17,9 @@ export interface ConfigDiffGroup {
 }
 
 @Component({
-  selector: 'cv-diff',
-  templateUrl: './cv.diff.comp.html'
+    selector: 'cv-diff',
+    templateUrl: './cv.diff.comp.html',
+    standalone: false
 })
 export class ConfigValueDiff implements OnInit {
   protected reservedValues: string[] = ['GLOBAL', 'VARIABLES'];

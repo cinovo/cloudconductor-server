@@ -13,8 +13,9 @@ import { User } from '../util/http/user.http.service';
  * @author mweise
  */
 @Component({
-  selector: 'group-member',
-  templateUrl: './group.member.comp.html'
+    selector: 'group-member',
+    templateUrl: './group.member.comp.html',
+    standalone: false
 })
 export class GroupMemberComponent implements OnInit {
 

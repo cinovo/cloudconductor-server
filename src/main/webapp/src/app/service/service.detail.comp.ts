@@ -20,8 +20,9 @@ type Mode = 'new' | 'edit';
  * @author psigloch
  */
 @Component({
-  selector: 'service-detail',
-  templateUrl: './service.detail.comp.html'
+    selector: 'service-detail',
+    templateUrl: './service.detail.comp.html',
+    standalone: false
 })
 export class ServiceDetail implements OnInit {
 

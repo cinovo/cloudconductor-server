@@ -26,8 +26,9 @@ interface ServiceConfigMap {
  * @author psigloch
  */
 @Component({
-  selector: 'cv-overview',
-  templateUrl: './cv.overview.comp.html'
+    selector: 'cv-overview',
+    templateUrl: './cv.overview.comp.html',
+    standalone: false
 })
 export class ConfigValueOverview implements OnInit, OnDestroy {
 

@@ -16,8 +16,9 @@ import { AuthHttpService, Authentication } from '../util/http/auth.http.service'
  * @author mweise
  */
 @Component({
-  templateUrl: './login.comp.html',
-  styleUrls: ['./login.comp.scss']
+    templateUrl: './login.comp.html',
+    styleUrls: ['./login.comp.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit, OnDestroy {
 

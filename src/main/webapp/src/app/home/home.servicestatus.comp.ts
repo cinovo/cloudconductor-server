@@ -11,8 +11,9 @@ import { Service } from '../util/http/service.http.service';
  * @author mweise
  */
 @Component({
-  selector: 'home-servicestatus',
-  templateUrl: './home.servicestatus.comp.html'
+    selector: 'home-servicestatus',
+    templateUrl: './home.servicestatus.comp.html',
+    standalone: false
 })
 export class HomeServiceStatusComponent implements OnInit, OnDestroy {
 

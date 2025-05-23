@@ -17,8 +17,9 @@ import { TemplateHttpService } from '../util/http/template.http.service';
  * @author psigloch
  */
 @Component({
-  selector: 'host-detail',
-  templateUrl: './host.detail.comp.html'
+    selector: 'host-detail',
+    templateUrl: './host.detail.comp.html',
+    standalone: false
 })
 export class HostDetail implements OnInit, OnDestroy {
 

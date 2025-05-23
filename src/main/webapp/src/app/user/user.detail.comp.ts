@@ -15,7 +15,8 @@ import { Sorter } from '../util/sorters.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './user.detail.comp.html'
+    templateUrl: './user.detail.comp.html',
+    standalone: false
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
 

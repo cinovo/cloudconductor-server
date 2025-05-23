@@ -13,8 +13,9 @@ import { Validator } from '../util/validator.util';
  * @author psigloch
  */
 @Component({
-  selector: 'template-agentoptions',
-  templateUrl: './template.agentoption.comp.html'
+    selector: 'template-agentoptions',
+    templateUrl: './template.agentoption.comp.html',
+    standalone: false
 })
 export class TemplateAgentOptions implements AfterViewInit {
 

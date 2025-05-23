@@ -12,8 +12,9 @@ import { PackageChange, PackageChangesService } from '../util/packagechanges/pac
  * @author psigloch
  */
 @Component({
-  selector: 'host-packages',
-  templateUrl: './host.package.comp.html'
+    selector: 'host-packages',
+    templateUrl: './host.package.comp.html',
+    standalone: false
 })
 export class HostPackages implements OnInit, OnDestroy {
 

@@ -7,7 +7,8 @@ import { Component } from '@angular/core';
  * @author mweise
  */
 @Component({
-  templateUrl: './forbidden.comp.html'
+    templateUrl: './forbidden.comp.html',
+    standalone: false
 })
 export class ForbiddenComponent {
 

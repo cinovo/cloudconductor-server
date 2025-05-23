@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import {AfterViewInit, Component, inject, Input} from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -22,19 +22,20 @@ type ServiceActionType = 'start' | 'stop' | 'restart';
  * @author psigloch
  */
 @Component({
-  selector: 'host-services',
-  templateUrl: './host.service.comp.html'
+    selector: 'host-services',
+    templateUrl: './host.service.comp.html',
+    standalone: false
 })
 export class HostServices implements AfterViewInit {
 
   @Input() obsHost: Observable<Host>;
 
-  public services: Array<ServiceStateElement> = [];
-  public host: Host = {name: '', template: '', uuid: ''};
+  public services = [] as ServiceStateElement[];
+  public host = {name: '', template: '', uuid: ''} as Host;
 
   private _allSelected = false;
 
-  constructor(private readonly hostHTTP: HostHttpService) {  }
+  private readonly hostHTTP = inject(HostHttpService);
 
   ngAfterViewInit(): void {
     this.obsHost.subscribe(
@@ -64,11 +65,28 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  public handleService(type: ServiceActionType, service: ServiceStateElement): void {
+  public start(service: ServiceStateElement) {
     if (service) {
-      this.httpServiceCall(type, service.name,
-        () => {
-        },
+      this.hostHTTP.startService(this.host.uuid, service.name).subscribe(
+        () => {},
+        (err) => console.error(err)
+      );
+    }
+  }
+
+  public stop(service: ServiceStateElement) {
+    if (service) {
+      this.hostHTTP.stopService(this.host.uuid, service.name).subscribe(
+        () => {},
+        (err) => console.error(err)
+      );
+    }
+  }
+
+  public restart(service: ServiceStateElement) {
+    if (service) {
+      this.hostHTTP.restartService(this.host.uuid, service.name).subscribe(
+        () => {},
         (err) => console.error(err)
       );
     }
@@ -108,25 +126,22 @@ export class HostServices implements AfterViewInit {
     }
   }
 
-  public isServiceStarted(service: ServiceStateElement, includeTrannsient = false): boolean {
-    let ret: boolean = (service.state.toString() === ServiceState[ServiceState.STARTED] ||
-      service.state.toString() === ServiceState[ServiceState.IN_SERVICE]);
-    if (includeTrannsient && !ret) {
-      ret = service.state.toString() === ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service);
+  public isServiceStarted(service: ServiceStateElement, includeTransient = false): boolean {
+    if (service.state.toString() === ServiceState[ServiceState.STARTED] || service.state.toString() === ServiceState[ServiceState.IN_SERVICE]) {
+      return true;
     }
-    return ret;
+    return includeTransient && (service.state.toString() === ServiceState[ServiceState.STARTING] || this.isServiceRestarting(service));
   }
 
   public isServiceTransient(service: ServiceStateElement): boolean {
-    return !this.isServiceStarted(service) && !this.isServiceStoped(service)
+    return !this.isServiceStarted(service) && !this.isServiceStopped(service)
   }
 
-  public isServiceStoped(service: ServiceStateElement, includeTrannsient = false): boolean {
-    let ret: boolean = service.state.toString() === ServiceState[ServiceState.STOPPED];
-    if (includeTrannsient && !ret) {
-      ret = service.state.toString() === ServiceState[ServiceState.STOPPING] || this.isServiceRestarting(service);
+  public isServiceStopped(service: ServiceStateElement, includeTransient = false): boolean {
+    if (service.state.toString() === ServiceState[ServiceState.STOPPED]) {
+      return true;
     }
-    return ret;
+    return includeTransient && (service.state.toString() === ServiceState[ServiceState.STOPPING] || this.isServiceRestarting(service));
   }
 
   public isServiceRestarting(service: ServiceStateElement): boolean {
@@ -155,12 +170,12 @@ export class HostServices implements AfterViewInit {
             }
             break;
           case 'stop':
-            if (!this.isServiceStoped(service, true)) {
+            if (!this.isServiceStopped(service, true)) {
               return true;
             }
             break;
           case 'restart':
-            if (!this.isServiceStoped(service, true)) {
+            if (!this.isServiceStopped(service, true)) {
               return true;
             }
             break;

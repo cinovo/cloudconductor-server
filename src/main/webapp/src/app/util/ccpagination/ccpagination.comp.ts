@@ -7,9 +7,10 @@ import { Component, Input } from '@angular/core';
  * @author mweise
  */
 @Component({
-  selector: 'cc-pagination',
-  templateUrl: './ccpagination.comp.html',
-  styleUrls: ['./ccpagination.comp.scss']
+    selector: 'cc-pagination',
+    templateUrl: './ccpagination.comp.html',
+    styleUrls: ['./ccpagination.comp.scss'],
+    standalone: false
 })
 export class CCPagination {
 

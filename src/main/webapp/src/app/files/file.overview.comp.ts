@@ -12,7 +12,8 @@ import { Validator } from '../util/validator.util';
 import { ServiceHttpService, Service } from '../util/http/service.http.service';
 
 @Component({
-  templateUrl: './file.overview.comp.html'
+    templateUrl: './file.overview.comp.html',
+    standalone: false
 })
 export class FileOverviewComponent implements OnInit, OnDestroy {
 

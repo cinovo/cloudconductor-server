@@ -17,12 +17,12 @@
             <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
               There are currently no host using this template.
             </div>
-            <table class="table-condensed table-responsive table table-striped table-hover dataTable"
-                   *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0">
+            <table *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0" aria-label="Hosts using template"
+                   class="table-condensed table-responsive table table-striped table-hover dataTable">
               <thead>
               <tr>
-                <th class="sorting_asc">Agent-Name</th>
-                <th width="15px"></th>
+                <th class="sorting_asc">Host</th>
+                <th style="width: 15px"></th>
               </tr>
               </thead>
               <tbody>

@@ -19,8 +19,9 @@ import { Sorter } from '../util/sorters.util';
  * @author psigloch
  */
 @Component({
-  selector: 'cs-edit',
-  templateUrl: './cs.edit.comp.html'
+    selector: 'cs-edit',
+    templateUrl: './cs.edit.comp.html',
+    standalone: false
 })
 export class ConfigValueEdit implements OnInit {
 

@@ -12,8 +12,9 @@ import { Sorter } from "../util/sorters.util";
  * @author psigloch
  */
 @Component({
-  selector: 'template-diff',
-  templateUrl: './template.diff.comp.html'
+    selector: 'template-diff',
+    templateUrl: './template.diff.comp.html',
+    standalone: false
 })
 export class TemplateDiff implements OnInit {
 

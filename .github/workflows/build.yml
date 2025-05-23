@@ -7,25 +7,40 @@ on:
   push:
     branches:
       - master
+      - bugfix/**
+      - feature/**
 
 jobs:
-  build:
-
+  build_node:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node: [ 18, 20 ]
+    name: Build frontend with Node ${{ matrix.node }}
+    defaults:
+      run:
+        working-directory: src/main/webapp
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: 'src/main/webapp/package-lock.json'
+      - run: npm ci
+      - run: npm run-script build
+  
+  build_maven:
+    name: Build backend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
     - name: Set up JDK 8
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '8'
         cache: maven
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3.0.0
-      with:
-        node-version: '18'
-        cache: npm
-        cache-dependency-path: 'src/main/webapp/package-lock.json'
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Build with Maven without frontend
+      run: mvn -B package -P!webapp --file pom.xml

@@ -12,8 +12,9 @@ import { RepoScansService } from '../util/reposcans/reposcans.service';
  * @author mweise
  */
 @Component({
-  selector: 'home-reposcans',
-  templateUrl: 'home.reposcans.comp.html'
+    selector: 'home-reposcans',
+    templateUrl: 'home.reposcans.comp.html',
+    standalone: false
 })
 export class HomeRepoScansComponent implements OnInit, OnDestroy {
 

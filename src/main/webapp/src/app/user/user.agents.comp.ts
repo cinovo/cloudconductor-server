@@ -11,8 +11,9 @@ import { User } from '../util/http/user.http.service';
  * @author mweise
  */
 @Component({
-  selector: 'user-agents',
-  templateUrl: './user.agents.comp.html'
+    selector: 'user-agents',
+    templateUrl: './user.agents.comp.html',
+    standalone: false
 })
 export class UserAgentsComponent {
 

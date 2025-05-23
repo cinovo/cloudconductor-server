@@ -16,8 +16,9 @@ import { ServiceHttpService } from '../util/http/service.http.service';
  * @author psigloch
  */
 @Component({
-  selector: 'cs.preview.comp',
-  templateUrl: './cv.preview.comp.html'
+    selector: 'cs.preview.comp',
+    templateUrl: './cv.preview.comp.html',
+    standalone: false
 })
 export class ConfigValuePreview implements OnInit, OnDestroy {
 

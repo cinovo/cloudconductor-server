@@ -25,8 +25,9 @@ export interface TemplateGroup {
 }
 
 @Component({
-  selector: 'template-overview',
-  templateUrl: './template.overview.comp.html'
+    selector: 'template-overview',
+    templateUrl: './template.overview.comp.html',
+    standalone: false
 })
 export class TemplateOverview implements OnInit, OnDestroy {
 

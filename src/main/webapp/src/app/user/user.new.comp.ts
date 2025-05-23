@@ -12,7 +12,8 @@ import { Mode } from '../util/enums.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './user.new.comp.html'
+    templateUrl: './user.new.comp.html',
+    standalone: false
 })
 export class UserNewComponent implements OnInit {
 

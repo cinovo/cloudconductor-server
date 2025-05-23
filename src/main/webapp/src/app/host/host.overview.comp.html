@@ -47,33 +47,33 @@
         </a>
       </li>
 
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+      <table class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts" cc-panel-body>
         <thead>
         <tr>
-          <th class="sorting_asc">Name</th>
+          <th class="sorting_asc">Host</th>
+          <th class="sorting">Agent</th>
           <th class="sorting">Template</th>
-          <th class="sorting"># Services</th>
-          <th class="sorting"># Packages</th>
-          <th class="sorting">last seen</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
+          <th class="sorting text-right"># Services</th>
+          <th class="sorting text-right"># Packages</th>
+          <th class="sorting text-right">last seen</th>
+          <th style="width: 15px"></th>
+          <th style="width: 15px"></th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
-          <td class="word-break" *ngIf="!host.agent">
+          <td class="word-break">
             {{host.name}}
           </td>
-          <td class="word-break" *ngIf="host.agent">
+          <td class="word-break">
             {{host.agent}}
-            <small> - {{host.name}}</small>
           </td>
           <td>
             {{host.template}}
           </td>
-          <td>{{host.numberOfServices}}</td>
-          <td>{{host.numberOfPackages}}</td>
-          <td>
+          <td class="text-right">{{host.numberOfServices}}</td>
+          <td class="text-right">{{host.numberOfPackages}}</td>
+          <td class="text-right">
             {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
           </td>
           <td>

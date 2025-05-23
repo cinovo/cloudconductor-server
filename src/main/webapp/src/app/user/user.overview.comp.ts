@@ -15,7 +15,8 @@ import { Validator } from '../util/validator.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './user.overview.comp.html'
+    templateUrl: './user.overview.comp.html',
+    standalone: false
 })
 export class UserOverviewComponent implements OnInit, OnDestroy {
 

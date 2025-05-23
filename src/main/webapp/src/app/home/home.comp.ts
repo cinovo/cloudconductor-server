@@ -19,7 +19,8 @@ import { ServiceUsageHttpService } from '../util/http/serviceUsage.http.service'
  * @author psigloch
  */
 @Component({
-  templateUrl: './home.comp.html'
+    templateUrl: './home.comp.html',
+    standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
 

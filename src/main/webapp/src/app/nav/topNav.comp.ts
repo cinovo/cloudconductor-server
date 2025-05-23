@@ -16,10 +16,11 @@ import { VERSION } from "../../environments/version";
  * @author psigloch
  */
 @Component({
-  selector: 'top-navbar',
-  styleUrls: ['./topNav.comp.scss'],
-  templateUrl: './topNav.comp.html',
-  encapsulation: ViewEncapsulation.None
+    selector: 'top-navbar',
+    styleUrls: ['./topNav.comp.scss'],
+    templateUrl: './topNav.comp.html',
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TopNavComponent implements AfterContentInit, OnInit {
 

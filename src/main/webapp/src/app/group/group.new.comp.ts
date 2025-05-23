@@ -12,7 +12,8 @@ import { Mode } from '../util/enums.util';
  * @author mweise
  */
 @Component({
-  templateUrl: './group.new.comp.html'
+    templateUrl: './group.new.comp.html',
+    standalone: false
 })
 export class GroupNewComponent implements OnInit {
 

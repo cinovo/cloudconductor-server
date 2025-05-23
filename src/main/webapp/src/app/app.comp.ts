@@ -15,8 +15,9 @@ declare let $: any;
  * @author psigloch
  */
 @Component({
-  selector: 'app-component',
-  templateUrl: './app.comp.html'
+    selector: 'app-component',
+    templateUrl: './app.comp.html',
+    standalone: false
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
