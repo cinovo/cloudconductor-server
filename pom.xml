@@ -84,8 +84,8 @@
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
         <dvalin.version>1.37</dvalin.version>
         <cloudconductor.api.version>3.12</cloudconductor.api.version>
-        <aws.version>1.12.772</aws.version>
-        <cxf.version>3.5.10</cxf.version>
+        <aws.version>1.12.783</aws.version>
+        <cxf.version>3.5.11</cxf.version>
         <junit.version>5.10.3</junit.version>
         <jetty.version>9.4.56.v20240826</jetty.version>
     </properties>
