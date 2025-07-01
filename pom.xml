@@ -31,33 +31,6 @@
         <developerConnection>scm:git:git@github.com:cinovo/cloudconductor-server.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     <developers>
         <developer>
             <id>psigloch</id>
@@ -81,7 +54,6 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
         <dvalin.version>1.37</dvalin.version>
         <cloudconductor.api.version>3.12</cloudconductor.api.version>
         <aws.version>1.12.783</aws.version>
@@ -242,7 +214,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
-                    <arguments>-Psonatype-oss-release,webapp</arguments>
+                    <arguments>-Pcc-release,webapp</arguments>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
@@ -367,7 +339,7 @@
             </build>
         </profile>
         <profile>
-            <id>sonatype-oss-release</id>
+            <id>cc-release</id>
             <build>
                 <plugins>
                     <plugin>
