@@ -17,6 +17,9 @@
         [class.warning]="repoScans.isDue(repo)"
         [class.danger]="repoScans.isPastDue(repo)">
         <td>
+          <i class="fa fa-check-circle fa-fw text-success" *ngIf="!repoScans.isDue(repo) && !repoScans.isPastDue(repo)" title="Repository is up to date"></i>
+          <i class="fa fa-exclamation-triangle fa-fw text-warning" *ngIf="repoScans.isDue(repo) && !repoScans.isPastDue(repo)" title="Repository is due for scanning"></i>
+          <i class="fa fa-exclamation-circle fa-fw text-danger" *ngIf="repoScans.isPastDue(repo)" title="Repository is past due for scanning"></i>
           {{repo.name}}
         </td>
         <td class="text-right">

@@ -63,6 +63,8 @@
         <tbody>
         <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
           <td class="word-break">
+            <i class="fa fa-check-circle fa-fw text-success" *ngIf="hostsService.isAlive(host)" title="Host is available"></i>
+            <i class="fa fa-times-circle fa-fw text-danger" *ngIf="!hostsService.isAlive(host)" title="Host is unavailable"></i>
             {{host.name}}
           </td>
           <td class="word-break">
