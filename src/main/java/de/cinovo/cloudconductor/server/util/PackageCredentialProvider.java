@@ -1,10 +1,9 @@
 package de.cinovo.cloudconductor.server.util;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 /**
  * Copyright 2015 Cinovo AG<br>
@@ -13,20 +12,20 @@ import de.cinovo.cloudconductor.server.model.ERepoMirror;
  * @author psigloch
  *
  */
-public class PackageCredentialProvider implements AWSCredentialsProvider {
+public class PackageCredentialProvider implements AwsCredentialsProvider {
 	
-	private final BasicAWSCredentials cred;
+	private final AwsBasicCredentials cred;
 	
 	
 	/**
 	 * @param mirror the mirror to use
 	 */
 	public PackageCredentialProvider(ERepoMirror mirror) {
-		this.cred = new BasicAWSCredentials(mirror.getAccessKeyId(), mirror.getSecretKey());
+		this.cred = AwsBasicCredentials.create(mirror.getAccessKeyId(), mirror.getSecretKey());
 	}
 	
 	@Override
-	public AWSCredentials getCredentials() {
+	public AwsCredentials getCredentials() {
 		return this.cred;
 	}
 	

@@ -56,7 +56,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dvalin.version>1.37</dvalin.version>
         <cloudconductor.api.version>3.12</cloudconductor.api.version>
-        <aws.version>1.12.783</aws.version>
+        <aws.version>2.38.2</aws.version>
         <cxf.version>3.5.11</cxf.version>
         <junit.version>5.10.3</junit.version>
         <jetty.version>9.4.56.v20240826</jetty.version>
@@ -86,8 +86,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
             <version>${aws.version}</version>
         </dependency>
         <!-- needed for clean jetty dependencies, remove in future dvalin version if no longer needed -->
@@ -138,6 +138,16 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.5</version>
         </dependency>
+  <dependency>
+   <groupId>software.amazon.awssdk</groupId>
+   <artifactId>apache-client</artifactId>
+   <version>2.38.2</version>
+  </dependency>
+  <dependency>
+   <groupId>software.amazon.awssdk</groupId>
+   <artifactId>netty-nio-client</artifactId>
+   <version>2.38.2</version>
+  </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

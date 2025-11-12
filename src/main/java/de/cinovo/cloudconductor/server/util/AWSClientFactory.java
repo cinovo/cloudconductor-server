@@ -1,11 +1,10 @@
 package de.cinovo.cloudconductor.server.util;
 
-import com.amazonaws.AmazonWebServiceClient;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.awscore.AwsClient;
 
 /**
  * Copyright 2014 Hoegernet<br>
@@ -38,9 +37,9 @@ public final class AWSClientFactory {
 	 * @param clientClass the class of the client to create
 	 * @return the created client
 	 */
-	public static <T extends AmazonWebServiceClient> T createClient(Class<T> clientClass) {
+	public static <T extends AwsClient> T createClient(Class<T> clientClass) {
 		String regionName = System.getProperty("aws.region", "eu-west-1");
-		Region region = Region.getRegion(Regions.fromName(regionName));
+		Region region = Region.getRegion(software.amazon.awssdk.regions.Region.of(regionName));
 		
 		return region.createClient(clientClass, null, null);
 	}
@@ -51,14 +50,14 @@ public final class AWSClientFactory {
 	 * @param mirror the mirror information to use
 	 * @return the created client
 	 */
-	public static <T extends AmazonWebServiceClient> T createClient(Class<T> clientClass, ERepoMirror mirror) {
+	public static <T extends AwsClient> T createClient(Class<T> clientClass, ERepoMirror mirror) {
 		String regionName = "eu-west-1";
 		if ((mirror.getAwsRegion() != null) && !mirror.getAwsRegion().isEmpty()) {
 			regionName = mirror.getAwsRegion();
 		}
-		Region region = Region.getRegion(Regions.fromName(regionName));
+		Region region = Region.getRegion(software.amazon.awssdk.regions.Region.of(regionName));
 		
-		AWSCredentialsProvider credentialProvider = new PackageCredentialProvider(mirror);
+		AwsCredentialsProvider credentialProvider = new PackageCredentialProvider(mirror);
 		return region.createClient(clientClass, credentialProvider, null);
 	}
 	

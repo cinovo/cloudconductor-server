@@ -1,17 +1,15 @@
 package de.cinovo.cloudconductor.server.repo.provider;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-
+import com.amazonaws.services.s3.model.*;
 import de.cinovo.cloudconductor.api.enums.RepoProviderType;
 import de.cinovo.cloudconductor.server.model.ERepo;
 import de.cinovo.cloudconductor.server.model.ERepoMirror;
 import de.cinovo.cloudconductor.server.repo.RepoEntry;
 import de.cinovo.cloudconductor.server.util.AWSClientFactory;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ public class AWSS3Provider implements IRepoProvider {
 	
 	private final ERepo repo;
 	private ERepoMirror mirror;
-	private AmazonS3 s3Client;
+	private S3Client s3Client;
 	
 	
 	/**
@@ -39,7 +37,7 @@ public class AWSS3Provider implements IRepoProvider {
 		this.repo = repo;
 		if (mirror.getProviderType() == RepoProviderType.AWSS3) {
 			this.mirror = mirror;
-			this.s3Client = AWSClientFactory.createClient(AmazonS3Client.class, mirror);
+			this.s3Client = AWSClientFactory.createClient(S3Client.class, mirror);
 		}
 	}
 	
@@ -56,10 +54,11 @@ public class AWSS3Provider implements IRepoProvider {
 		}
 		Set<String> folderNames = new HashSet<>();
 		
-		ObjectListing objects = this.s3Client.listObjects(this.mirror.getBucketName(), folder);
-		List<S3ObjectSummary> summaries = objects.getObjectSummaries();
-		for (S3ObjectSummary objectSummary : summaries) {
-			String file = objectSummary.getKey().substring(folder.length());
+		ListObjectsResponse objects = this.s3Client.listObjects(ListObjectsRequest.builder().bucket(this.mirror.getBucketName()).prefix(folder)
+			.build());
+		List<S3Object> summaries = objects.objectSummaries();
+		for (S3Object objectSummary : summaries) {
+			String file = objectSummary.key().substring(folder.length());
 			if (file.contains("/")) {
 				file = file.substring(0, file.indexOf("/"));
 				if (!folderNames.contains(file)) {
@@ -73,9 +72,9 @@ public class AWSS3Provider implements IRepoProvider {
 				RepoEntry fil = new RepoEntry();
 				fil.setName(file);
 				fil.setDirectory(false);
-				fil.setModified(objectSummary.getLastModified());
-				fil.setSize(objectSummary.getSize());
-				fil.setChecksum(objectSummary.getETag());
+				fil.setModified(objectSummary.lastModified());
+				fil.setSize(objectSummary.size());
+				fil.setChecksum(objectSummary.eTag());
 				res.add(fil);
 			}
 		}
@@ -90,14 +89,15 @@ public class AWSS3Provider implements IRepoProvider {
 		if ((this.mirror == null) || (this.s3Client == null)) {
 			return null;
 		}
-		final ObjectMetadata obj = this.s3Client.getObjectMetadata(this.mirror.getBucketName(), key);
+		final HeadObjectResponse obj = this.s3Client.headObject(HeadObjectRequest.builder().bucket(this.mirror.getBucketName()).key(key)
+			.build());
 		RepoEntry fil = new RepoEntry();
 		fil.setName(key);
 		fil.setDirectory(false);
-		fil.setModified(obj.getLastModified());
-		fil.setSize(obj.getContentLength());
-		fil.setContentType(obj.getContentType());
-		fil.setChecksum(obj.getETag());
+		fil.setModified(/*AWS SDK for Java v2 migration: Transform for ObjectMetadata setter - lastModified - is not supported, please manually migrate the code by setting it on the v2 request/response object.*/obj.lastModified());
+		fil.setSize();
+		fil.setContentType();
+		fil.setChecksum(/*AWS SDK for Java v2 migration: Transform for ObjectMetadata setter - eTag - is not supported, please manually migrate the code by setting it on the v2 request/response object.*/obj.eTag());
 		return fil;
 	}
 	
@@ -106,8 +106,9 @@ public class AWSS3Provider implements IRepoProvider {
 		if ((this.mirror == null) || (this.s3Client == null)) {
 			return null;
 		}
-		S3Object s3Object = this.s3Client.getObject(this.mirror.getBucketName(), key);
-		return s3Object.getObjectContent();
+		ResponseInputStream<GetObjectResponse> s3Object = this.s3Client.getObject(GetObjectRequest.builder().bucket(this.mirror.getBucketName()).key(key)
+			.build());
+		return s3Object;
 	}
 	
 	@Override
