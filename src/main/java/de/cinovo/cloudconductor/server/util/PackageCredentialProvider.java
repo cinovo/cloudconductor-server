@@ -25,13 +25,9 @@ public class PackageCredentialProvider implements AwsCredentialsProvider {
 	}
 	
 	@Override
-	public AwsCredentials getCredentials() {
+	public AwsCredentials resolveCredentials() {
 		return this.cred;
 	}
 	
-	@Override
-	public void refresh() {
-		// nothing to do;
-	}
 	
 }
