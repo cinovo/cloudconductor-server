@@ -54,12 +54,11 @@
     <!-- Shared version number properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dvalin.version>1.37</dvalin.version>
+        <dvalin.version>1.38</dvalin.version>
         <cloudconductor.api.version>3.12</cloudconductor.api.version>
-        <aws.version>1.12.783</aws.version>
-        <cxf.version>3.5.11</cxf.version>
-        <junit.version>5.10.3</junit.version>
-        <jetty.version>9.4.56.v20240826</jetty.version>
+        <aws.version>1.12.793</aws.version>
+        <junit.version>5.11.4</junit.version>
+        <jetty.version>9.4.58.v20250814</jetty.version>
     </properties>
     <dependencies>
         <dependency>
@@ -111,37 +110,11 @@
             <artifactId>jetty-continuation</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-        <!-- CXF: needed to fix CVE-2025-23184, can be removed when apache cxf dependency in dvalin is fixed -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-core</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-security-cors</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-client</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
         <!-- Database drivers -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.8</version>
+            <version>42.7.9</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
