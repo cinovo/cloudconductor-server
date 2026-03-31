@@ -4,7 +4,9 @@
 
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <top-navbar></top-navbar>
-  <main-navbar *ngIf="(loggedIn | async)"></main-navbar>
+  @if ((loggedIn | async)) {
+    <main-navbar></main-navbar>
+  }
 </nav>
 
 <div [ngClass]="(loggedIn | async) ? 'page-wrapper' : 'container'">
@@ -14,4 +16,6 @@
 
 </div>
 
-<app-footer *ngIf="(loggedIn | async)"></app-footer>
+@if ((loggedIn | async)) {
+  <app-footer></app-footer>
+}

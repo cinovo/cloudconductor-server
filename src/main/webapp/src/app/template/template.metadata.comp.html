@@ -3,12 +3,14 @@
     <cc-panel [title]="'Template details'" icon="fa-institution" [collapsable]="true">
       <form [formGroup]="templateForm" novalidate (ngSubmit)="saveTemplateMetadata(templateForm.value)" cc-panel-body>
         <div class="form-group"
-             [ngClass]="{ 'has-error': !templateForm.controls.name.pristine && !templateForm.controls.name.valid }">
+          [ngClass]="{ 'has-error': !templateForm.controls.name.pristine && !templateForm.controls.name.valid }">
           <label class="control-label" for="name">Name</label>
           <input type="text" class="form-control" formControlName="name" id="name" [readOnly]="mode == modes.EDIT">
-          <span *ngIf="!templateForm.controls.name.pristine && !templateForm.controls.name.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!templateForm.controls.name.pristine && !templateForm.controls.name.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group">
@@ -18,33 +20,43 @@
         </div>
 
         <div class="form-group"
-             [ngClass]="{ 'has-error': !templateForm.controls.group.pristine && !templateForm.controls.group.valid }">
+          [ngClass]="{ 'has-error': !templateForm.controls.group.pristine && !templateForm.controls.group.valid }">
           <label class="control-label" for="group">Group</label>
           <input type="text" class="form-control" formControlName="group" id="group" list="groupList">
           <datalist id="groupList">
-            <option *ngFor="let group of groups" value="{{group}}"></option>
+            @for (group of groups; track group) {
+              <option value="{{group}}"></option>
+            }
           </datalist>
-          <span *ngIf="!templateForm.controls.group.pristine && !templateForm.controls.group.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!templateForm.controls.group.pristine && !templateForm.controls.group.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group">
           <label for="range" class="control-label">Update range</label>
           <select id="range" formControlName="updateRange" class="form-control">
-            <option *ngFor="let range of ranges" value="{{range}}">{{range}}</option>
+            @for (range of ranges; track range) {
+              <option value="{{range}}">{{range}}</option>
+            }
           </select>
-          <span *ngIf="!templateForm.controls.updateRange.pristine && !templateForm.controls.updateRange.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!templateForm.controls.updateRange.pristine && !templateForm.controls.updateRange.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
-        <div class="form-group" *ngIf="settings.allowautoupdate">
-          <label for="autoupdate">
-            <input type="checkbox" id="autoupdate" formControlName="autoUpdate">
-            Allow automated package updates for this template
-          </label>
-        </div>
+        @if (settings.allowautoupdate) {
+          <div class="form-group">
+            <label for="autoupdate">
+              <input type="checkbox" id="autoupdate" formControlName="autoUpdate">
+              Allow automated package updates for this template
+            </label>
+          </div>
+        }
 
         <div class="form-group">
           <label for="smoothupdates">
@@ -60,101 +72,122 @@
           </label>
         </div>
 
-        <div class="form-group" *ngIf="mode == modes.NEW">
-          <label for="copypackages">Copy behaviour from </label>
-          <select class="form-control" formControlName="copyFrom" id="copypackages">
-            <option value="" selected>None</option>
-            <option *ngFor="let existingTemplate of (existingTemplateNames | async)" value="{{existingTemplate}}">
-              {{existingTemplate}}
-            </option>
-          </select>
-        </div>
+        @if (mode == modes.NEW) {
+          <div class="form-group">
+            <label for="copypackages">Copy behaviour from </label>
+            <select class="form-control" formControlName="copyFrom" id="copypackages">
+              <option value="" selected>None</option>
+              @for (existingTemplate of (existingTemplateNames | async); track existingTemplate) {
+                <option value="{{existingTemplate}}">
+                  {{existingTemplate}}
+                </option>
+              }
+            </select>
+          </div>
+        }
 
         <cc-panel [title]="'Repositories'" icon="fa-server" [collapsable]="true">
-          <table class="table-responsive table table-striped table-hover" cc-panel-body
-                 *ngIf="mode === modes.EDIT || (mode === modes.NEW && !copyFrom.value)">
-            <tbody>
-            <tr *ngIf="!template.repos || template.repos.length < 1; else repoList" class="danger">
-              <td colspan="3" class="text-center">
-                There are currently no repositories selected.
-              </td>
-            </tr>
-            <ng-template #repoList>
-              <tr *ngFor="let repo of template.repos">
-                <td>
-                  {{repo}}
-                </td>
-                <td width="30px">
-                  <a [routerLink]="['/repo', repo]"><i class="fa fa-external-link fa-fw" title="Show repo"></i></a>
-                </td>
-                <td width="30px">
-                  <a href="javascript:void(0)" mwlConfirmationPopover
-                     [popoverTitle]="'Please verify!'"
-                     [popoverMessage]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
-                     placement="left"
-                     confirmButtonType="danger"
-                     (confirm)="removeRepo(repo)">
-                    <i class="fa fa-trash-o fa-fw" title="Remove repo from template"></i>
-                  </a>
-                </td>
-              </tr>
-            </ng-template>
-
-            <tr *ngIf="showNewRepo">
-              <td colspan="3">
-                <div class="form-group">
-                  <label class="control-label" for="addrepo"><i class="fa fa-plus fa-fw"></i> Add a repository</label>
-                  <div *ngIf="allRepos.length < 1" class="alert alert-warning">
-                    There are currently no more repositories available
-                  </div>
-                  <select *ngIf="allRepos.length > 0" class="form-control" formControlName="newRepo" id="addrepo">
-                    <option value="" selected></option>
-                    <option *ngFor="let rep of allRepos" value="{{rep.name}}">{{rep.name}}</option>
-                  </select>
-                </div>
-
-                <div class="pull-right">
-                  <button type="button" (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
-                  <button type="button" (click)="addNewRepo(templateForm.controls['newRepo'].value)"
+          @if (mode === modes.EDIT || (mode === modes.NEW && !copyFrom.value)) {
+            <table class="table-responsive table table-striped table-hover" cc-panel-body
+              >
+              <tbody>
+                @if (!template.repos || template.repos.length < 1) {
+                  <tr class="danger">
+                    <td colspan="3" class="text-center">
+                      There are currently no repositories selected.
+                    </td>
+                  </tr>
+                } @else {
+                  @for (repo of template.repos; track repo) {
+                    <tr>
+                      <td>
+                        {{repo}}
+                      </td>
+                      <td width="30px">
+                        <a [routerLink]="['/repo', repo]"><i class="fa fa-external-link fa-fw" title="Show repo"></i></a>
+                      </td>
+                      <td width="30px">
+                        <a href="javascript:void(0)" mwlConfirmationPopover
+                          [popoverTitle]="'Please verify!'"
+                          [popoverMessage]="'Are you sure you want to remove the repo \'' + repo + '\' and it\'s packages from the template?'"
+                          placement="left"
+                          confirmButtonType="danger"
+                          (confirm)="removeRepo(repo)">
+                          <i class="fa fa-trash-o fa-fw" title="Remove repo from template"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  }
+                }
+                @if (showNewRepo) {
+                  <tr>
+                    <td colspan="3">
+                      <div class="form-group">
+                        <label class="control-label" for="addrepo"><i class="fa fa-plus fa-fw"></i> Add a repository</label>
+                        @if (allRepos.length < 1) {
+                          <div class="alert alert-warning">
+                            There are currently no more repositories available
+                          </div>
+                        }
+                        @if (allRepos.length > 0) {
+                          <select class="form-control" formControlName="newRepo" id="addrepo">
+                            <option value="" selected></option>
+                            @for (rep of allRepos; track rep) {
+                              <option value="{{rep.name}}">{{rep.name}}</option>
+                            }
+                          </select>
+                        }
+                      </div>
+                      <div class="pull-right">
+                        <button type="button" (click)="showNewRepo = false" class="btn btn-default">Cancel</button>
+                        <button type="button" (click)="addNewRepo(templateForm.controls['newRepo'].value)"
                           class="btn btn-success"
                           [disabled]="templateForm.controls['newRepo'].length < 1 || allRepos.length < 1">Add
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <tr *ngIf="!showNewRepo" (click)="goToAddRepo()">
-              <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
-                Add a repository
-              </td>
-            </tr>
-
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+                @if (!showNewRepo) {
+                  <tr (click)="goToAddRepo()">
+                    <td colspan="3" role="button"><i class="fa fa-plus fa-fw"></i>
+                    Add a repository
+                  </td>
+                </tr>
+              }
             </tbody>
           </table>
+        }
 
-          <div class="alert alert-warning" cc-panel-body *ngIf="mode == modes.NEW && copyFrom.value !== ''">
+        @if (mode == modes.NEW && copyFrom.value !== '') {
+          <div class="alert alert-warning" cc-panel-body>
             Repositories will be copied from the template '{{copyFrom.value}}'.
           </div>
-        </cc-panel>
+        }
+      </cc-panel>
 
-        <div class="pull-right">
-          <a *ngIf="mode == modes.NEW" class="btn btn-default" [routerLink]="['/template']" role="button">
+      <div class="pull-right">
+        @if (mode == modes.NEW) {
+          <a class="btn btn-default" [routerLink]="['/template']" role="button">
             Cancel
           </a>
-          <button type="submit" class="btn btn-info" title="Save Template" [disabled]="templateForm.invalid">
-            Save
-          </button>
-          <button *ngIf="mode == modes.EDIT" type="button" class="btn btn-danger" mwlConfirmationPopover
-                  title="Delete Template"
-                  [popoverTitle]="'Please verify!'"
-                  [popoverMessage]="'Are you sure you want to remove this template and its configuration?'"
-                  placement="left"
-                  confirmButtonType="danger"
-                  (confirm)="deleteTemplate()">
+        }
+        <button type="submit" class="btn btn-info" title="Save Template" [disabled]="templateForm.invalid">
+          Save
+        </button>
+        @if (mode == modes.EDIT) {
+          <button type="button" class="btn btn-danger" mwlConfirmationPopover
+            title="Delete Template"
+            [popoverTitle]="'Please verify!'"
+            [popoverMessage]="'Are you sure you want to remove this template and its configuration?'"
+            placement="left"
+            confirmButtonType="danger"
+            (confirm)="deleteTemplate()">
             Delete
           </button>
-        </div>
-      </form>
-    </cc-panel>
-  </div>
+        }
+      </div>
+    </form>
+  </cc-panel>
+</div>
 </div>

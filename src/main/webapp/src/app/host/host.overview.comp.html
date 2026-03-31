@@ -9,90 +9,94 @@
   </div>
 </div>
 
-<div class="row" *ngIf="!hostsLoaded">
-  <div class="col-sm-12">
-    <div class="alert alert-info">
-      <i class="fa fa-spinner fa-pulse fa-fw"></i>
-      Loading hosts...
+@if (!hostsLoaded) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-info">
+        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        Loading hosts...
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div class="row" *ngIf="hostsLoaded && hosts.length < 1">
-  <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert">
-      No hosts found
+@if (hostsLoaded && hosts.length < 1) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning" role="alert">
+        No hosts found
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div class="row" *ngIf="hosts && hosts.length > 0">
-  <div class="col-md-12">
-    <cc-panel [icon]="'fa-laptop'" [title]="'All available hosts'">
-
-      <li cc-panel-dropdown>
-        <a [routerLink]="['new']">New host</a>
-      </li>
-
-      <li class="divider" cc-panel-dropdown></li>
-
-      <li cc-panel-dropdown>
-        <a href="javascript:void(0)" mwlConfirmationPopover
-           [popoverTitle]="'Please verify!'"
-           [popoverMessage]="'Are you sure you want to delete <strong>all<strong> hosts?'"
-           confirmButtonType="danger"
-           (confirm)="deleteHosts()"
-           [appendToBody]="true">
-          Delete all hosts
-        </a>
-      </li>
-
-      <table class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts" cc-panel-body>
-        <thead>
-        <tr>
-          <th class="sorting_asc">Host</th>
-          <th class="sorting">Agent</th>
-          <th class="sorting">Template</th>
-          <th class="sorting text-right"># Services</th>
-          <th class="sorting text-right"># Packages</th>
-          <th class="sorting text-right">last seen</th>
-          <th style="width: 15px"></th>
-          <th style="width: 15px"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let host of hosts" (dblclick)="gotoDetails(host)" [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
-          <td class="word-break">
-            {{host.name}}
-          </td>
-          <td class="word-break">
-            {{host.agent}}
-          </td>
-          <td>
-            {{host.template}}
-          </td>
-          <td class="text-right">{{host.numberOfServices}}</td>
-          <td class="text-right">{{host.numberOfPackages}}</td>
-          <td class="text-right">
-            {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
-          </td>
-          <td>
-            <a title="Edit Host" [routerLink]="[host.uuid]"><i class="fa fa-edit fa-fw"></i></a>
-          </td>
-          <td>
-            <a href="javascript:void(0)" mwlConfirmationPopover
-              title="Delete Host"
-              [popoverTitle]="'Please verify!'"
-              [popoverMessage]="'Are you sure you want to delete the following host: ' + host.name + '?'"
-              placement="left"
-              confirmButtonType="danger"
-              (confirm)="deleteHost(host)">
-              <i class="fa fa-trash-o fa-fw"></i>
-            </a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </cc-panel>
+@if (hosts && hosts.length > 0) {
+  <div class="row">
+    <div class="col-md-12">
+      <cc-panel [icon]="'fa-laptop'" [title]="'All available hosts'">
+        <li cc-panel-dropdown>
+          <a [routerLink]="['new']">New host</a>
+        </li>
+        <li class="divider" cc-panel-dropdown></li>
+        <li cc-panel-dropdown>
+          <a href="javascript:void(0)" mwlConfirmationPopover
+            [popoverTitle]="'Please verify!'"
+            [popoverMessage]="'Are you sure you want to delete <strong>all<strong> hosts?'"
+            confirmButtonType="danger"
+            (confirm)="deleteHosts()"
+            [appendToBody]="true">
+            Delete all hosts
+          </a>
+        </li>
+        <table class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts" cc-panel-body>
+          <thead>
+            <tr>
+              <th class="sorting_asc">Host</th>
+              <th class="sorting">Agent</th>
+              <th class="sorting">Template</th>
+              <th class="sorting text-right"># Services</th>
+              <th class="sorting text-right"># Packages</th>
+              <th class="sorting text-right">last seen</th>
+              <th style="width: 15px"></th>
+              <th style="width: 15px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (host of hosts; track host) {
+              <tr (dblclick)="gotoDetails(host)" [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
+                <td class="word-break">
+                  {{host.name}}
+                </td>
+                <td class="word-break">
+                  {{host.agent}}
+                </td>
+                <td>
+                  {{host.template}}
+                </td>
+                <td class="text-right">{{host.numberOfServices}}</td>
+                <td class="text-right">{{host.numberOfPackages}}</td>
+                <td class="text-right">
+                  {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
+                </td>
+                <td>
+                  <a title="Edit Host" [routerLink]="[host.uuid]"><i class="fa fa-edit fa-fw"></i></a>
+                </td>
+                <td>
+                  <a href="javascript:void(0)" mwlConfirmationPopover
+                    title="Delete Host"
+                    [popoverTitle]="'Please verify!'"
+                    [popoverMessage]="'Are you sure you want to delete the following host: ' + host.name + '?'"
+                    placement="left"
+                    confirmButtonType="danger"
+                    (confirm)="deleteHost(host)">
+                    <i class="fa fa-trash-o fa-fw"></i>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </cc-panel>
+    </div>
   </div>
-</div>
+}

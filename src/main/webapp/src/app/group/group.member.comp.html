@@ -1,37 +1,47 @@
 <cc-panel [title]="'Group Members'" icon="fa-user">
-    <div *ngIf="!groupMembers || groupMembers.length < 1" class="alert alert-warning" cc-panel-body>
+  @if (!groupMembers || groupMembers.length < 1) {
+    <div class="alert alert-warning" cc-panel-body>
       This group has no members!
     </div>
+  }
 
-  <div *ngIf="groupMembers && groupMembers.length > 0" class="table-responsive" cc-panel-body>
-    <table class="table table-striped table-hover dataTable">
-      <thead>
-      <tr>
-        <th style="width: 15px"></th>
-        <th>Login</th>
-        <th>Email</th>
-        <th class="text-right"># Agents</th>
-        <th class="text-right"># Auth Tokens</th>
-        <th style="width: 15px"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let member of groupMembers">
-        <td><i class="fa fa-user fa-fw"></i></td>
-        <td>{{member.loginName}}</td>
-        <td>
-          <span *ngIf="member.email">{{member.email}}</span>
-          <span *ngIf="!member.email">None</span>
-        </td>
-        <td class="text-right">{{member.agents?.length}}</td>
-        <td class="text-right">{{member.authTokens?.length}}</td>
-        <td>
-          <a [routerLink]="['/user', member.loginName]" title="Show User">
-            <i class="fa fa-external-link fa-fw"></i>
-          </a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (groupMembers && groupMembers.length > 0) {
+    <div class="table-responsive" cc-panel-body>
+      <table class="table table-striped table-hover dataTable">
+        <thead>
+          <tr>
+            <th style="width: 15px"></th>
+            <th>Login</th>
+            <th>Email</th>
+            <th class="text-right"># Agents</th>
+            <th class="text-right"># Auth Tokens</th>
+            <th style="width: 15px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of groupMembers; track member) {
+            <tr>
+              <td><i class="fa fa-user fa-fw"></i></td>
+              <td>{{member.loginName}}</td>
+              <td>
+                @if (member.email) {
+                  <span>{{member.email}}</span>
+                }
+                @if (!member.email) {
+                  <span>None</span>
+                }
+              </td>
+              <td class="text-right">{{member.agents?.length}}</td>
+              <td class="text-right">{{member.authTokens?.length}}</td>
+              <td>
+                <a [routerLink]="['/user', member.loginName]" title="Show User">
+                  <i class="fa fa-external-link fa-fw"></i>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </cc-panel>

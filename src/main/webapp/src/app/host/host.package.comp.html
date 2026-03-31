@@ -1,47 +1,63 @@
 <div class="row">
   <div class="col-md-12">
     <cc-panel [title]="'Package-Changes'" icon="fa-book" [collapsable]="true"
-              subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm:ss'}}">
+      subTitle="last update: {{host.lastSeen | date:'dd.MM.yyyy HH:mm:ss'}}">
 
       <div cc-panel-body>
-        <div class="alert alert-success" *ngIf="!packageChanges">
-          All Packages are in sync with the template.
-        </div>
+        @if (!packageChanges) {
+          <div class="alert alert-success">
+            All Packages are in sync with the template.
+          </div>
+        }
 
-        <table class="table-condensed table-responsive table table-striped table-hover"
-               *ngIf="packageChanges">
-          <thead>
-          <tr>
-            <th>State</th>
-            <th>Package Name</th>
-            <th>Host version</th>
-            <th>Template version</th>
-          </tr>
-          </thead>
-          <tbody>
-          <ng-template ngFor let-pkg [ngForOf]="packages">
-            <tr *ngIf="pkg.state !== 'ok'">
-              <td>
-                <span class="label label-default label-as-badge"
-                      [class.label-success]="pkg.state === 'installing' || pkg.state === 'upgrading'"
-                      [class.label-danger]="pkg.state === 'uninstalling' || pkg.state === 'downgrading'">
-                  <i class="fa fa-refresh fa-spin fa-fw" *ngIf="pkg.state !== 'protected'"></i>
-                  {{pkg.state}}
-                </span>
-              </td>
-              <td>{{pkg.name}}</td>
-              <td>
-                <span *ngIf="pkg.hostVersion">{{pkg.hostVersion}}</span>
-                <span *ngIf="!pkg.hostVersion">None</span>
-              </td>
-              <td>
-                <span *ngIf="pkg.templateVersion">{{pkg.templateVersion}}</span>
-                <span *ngIf="!pkg.templateVersion">None</span>
-              </td>
-            </tr>
-          </ng-template>
-          </tbody>
-        </table>
+        @if (packageChanges) {
+          <table class="table-condensed table-responsive table table-striped table-hover"
+            >
+            <thead>
+              <tr>
+                <th>State</th>
+                <th>Package Name</th>
+                <th>Host version</th>
+                <th>Template version</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pkg of packages; track pkg) {
+                @if (pkg.state !== 'ok') {
+                  <tr>
+                    <td>
+                      <span class="label label-default label-as-badge"
+                        [class.label-success]="pkg.state === 'installing' || pkg.state === 'upgrading'"
+                        [class.label-danger]="pkg.state === 'uninstalling' || pkg.state === 'downgrading'">
+                        @if (pkg.state !== 'protected') {
+                          <i class="fa fa-refresh fa-spin fa-fw"></i>
+                        }
+                        {{pkg.state}}
+                      </span>
+                    </td>
+                    <td>{{pkg.name}}</td>
+                    <td>
+                      @if (pkg.hostVersion) {
+                        <span>{{pkg.hostVersion}}</span>
+                      }
+                      @if (!pkg.hostVersion) {
+                        <span>None</span>
+                      }
+                    </td>
+                    <td>
+                      @if (pkg.templateVersion) {
+                        <span>{{pkg.templateVersion}}</span>
+                      }
+                      @if (!pkg.templateVersion) {
+                        <span>None</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        }
 
       </div>
     </cc-panel>

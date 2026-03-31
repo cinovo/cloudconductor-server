@@ -1,14 +1,16 @@
 <cc-title [title]="'Configuration Key-Value-Pairs'" titleIcon="fa-code-fork" subtitle="Template: {{template}}">
-  <a cc-subtitle-addition *ngIf="template !== 'GLOBAL'" href="javascript:void(0)" mwlConfirmationPopover
-     title="Delete all for template"
-     [popoverTitle]="'Please verify!'"
-     [placement]="'right'"
-     [popoverMessage]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
-     confirmButtonType="danger"
-     (confirm)="deleteCurrentTemplate()"
-     [appendToBody]="true">
-    <i class="fa fa-trash-o fa-fw"></i>
-  </a>
+  @if (template !== 'GLOBAL') {
+    <a cc-subtitle-addition href="javascript:void(0)" mwlConfirmationPopover
+      title="Delete all for template"
+      [popoverTitle]="'Please verify!'"
+      [placement]="'right'"
+      [popoverMessage]="'Are you sure you want to delete all key-value-pairs the following template: <strong>' + template + '</strong>?'"
+      confirmButtonType="danger"
+      (confirm)="deleteCurrentTemplate()"
+      [appendToBody]="true">
+      <i class="fa fa-trash-o fa-fw"></i>
+    </a>
+  }
 </cc-title>
 
 <div class="row">
@@ -33,80 +35,90 @@
   </div>
 </div>
 
-<div class="row" *ngIf="!kvLoaded">
-  <div class="col-sm-12">
-    <div class="alert alert-info">
-      <i class="fa fa-spinner fa-pulse fa-fw"></i>
-      Loading key-value-pairs...
-    </div>
-  </div>
-</div>
-
-<div class="row" *ngIf="kvLoaded && tree.length < 1">
-  <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert">
-      No key-value pairs found for this template
-    </div>
-  </div>
-</div>
-
-<div class="row" *ngIf="tree && tree.length > 0">
-  <div class="col-md-12 col-lg-6" *ngFor="let service of tree">
-    <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
-      <li cc-panel-dropdown>
-        <a [routerLink]="['/config', template, service.name, 'new']">Add new Key-Value</a>
-      </li>
-      <li class="divider" cc-panel-dropdown></li>
-      <li cc-panel-dropdown>
-        <a href="javascript:void(0)" mwlConfirmationPopover
-           [popoverTitle]="'Please verify!'"
-           [popoverMessage]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
-           confirmButtonType="danger"
-           (confirm)="deleteService(service.name)"
-           [appendToBody]="true">
-          Delete Service
-        </a>
-      </li>
-
-      <div class="table-responsive" cc-panel-body>
-        <table class="table table-striped table-hover dataTable">
-          <thead>
-          <tr>
-            <th class="sorting_asc" width="30%">Key</th>
-            <th class="sorting">Value</th>
-            <th width="35px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let kv of service.kvs" (dblclick)="triggerEdit(kv)">
-            <td>
-              {{kv.key}}
-            </td>
-            <td class="word-break">
-              <cc-inlineedit [value]="kv.value"
-                             [editMode]="edit[kv.service + kv.key]"
-                             (onSave)="save(kv, $event)"
-                             (onEditDone)="triggerEditDone(kv)">
-              </cc-inlineedit>
-            </td>
-            <td>
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                 title="Delete Pair"
-                 [popoverTitle]="'Please verify!'"
-                 [popoverMessage]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="doDelete(kv)">
-                <i class="fa fa-trash-o fa-fw"></i>
-              </a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+@if (!kvLoaded) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-info">
+        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        Loading key-value-pairs...
       </div>
-    </cc-panel>
+    </div>
   </div>
+}
 
-  <cv-vars [template]="template" *ngIf="template != 'GLOBAL'"></cv-vars>
-</div>
+@if (kvLoaded && tree.length < 1) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning" role="alert">
+        No key-value pairs found for this template
+      </div>
+    </div>
+  </div>
+}
+
+@if (tree && tree.length > 0) {
+  <div class="row">
+    @for (service of tree; track service) {
+      <div class="col-md-12 col-lg-6">
+        <cc-panel [icon]="service.icon" [title]="service.name" [collapsable]="true">
+          <li cc-panel-dropdown>
+            <a [routerLink]="['/config', template, service.name, 'new']">Add new Key-Value</a>
+          </li>
+          <li class="divider" cc-panel-dropdown></li>
+          <li cc-panel-dropdown>
+            <a href="javascript:void(0)" mwlConfirmationPopover
+              [popoverTitle]="'Please verify!'"
+              [popoverMessage]="'Are you sure you want to delete all key-value pairs for the following service: <strong>' + (service.name || 'GLOBAL') + '</strong>?'"
+              confirmButtonType="danger"
+              (confirm)="deleteService(service.name)"
+              [appendToBody]="true">
+              Delete Service
+            </a>
+          </li>
+          <div class="table-responsive" cc-panel-body>
+            <table class="table table-striped table-hover dataTable">
+              <thead>
+                <tr>
+                  <th class="sorting_asc" width="30%">Key</th>
+                  <th class="sorting">Value</th>
+                  <th width="35px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (kv of service.kvs; track kv) {
+                  <tr (dblclick)="triggerEdit(kv)">
+                    <td>
+                      {{kv.key}}
+                    </td>
+                    <td class="word-break">
+                      <cc-inlineedit [value]="kv.value"
+                        [editMode]="edit[kv.service + kv.key]"
+                        (onSave)="save(kv, $event)"
+                        (onEditDone)="triggerEditDone(kv)">
+                      </cc-inlineedit>
+                    </td>
+                    <td>
+                      <a href="javascript:void(0)" mwlConfirmationPopover
+                        title="Delete Pair"
+                        [popoverTitle]="'Please verify!'"
+                        [popoverMessage]="'Are you sure you want to delete the following key-value pair: \'' + kv.key + '\'?'"
+                        placement="left"
+                        confirmButtonType="danger"
+                        (confirm)="doDelete(kv)">
+                        <i class="fa fa-trash-o fa-fw"></i>
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </cc-panel>
+      </div>
+    }
+    @if (template != 'GLOBAL') {
+      <cv-vars [template]="template"></cv-vars>
+    }
+  </div>
+}
 

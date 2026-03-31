@@ -8,7 +8,9 @@
   <a class="navbar-left" [routerLink]="['/']"><img src="assets/images/50x50.jpg"></a>
   <a class="navbar-brand" [routerLink]="['/']">
     CloudConductor
-    <small *ngIf="(settingsObs | async) as settings"> - {{settings.name}}</small>
+    @if ((settingsObs | async); as settings) {
+      <small> - {{settings.name}}</small>
+    }
   </a>
 </div><!-- /.navbar-header -->
 
@@ -17,31 +19,39 @@
     <small>{{currentTime | date:'dd.MM.yyyy HH:mm:ss'}}</small>
   </span>
   <span class="navbar-brand nav-clock">
-    <small *ngIf="version">v{{version}}</small>
+    @if (version) {
+      <small>v{{version}}</small>
+    }
   </span>
-  <ng-container *ngIf="(userObs | async) as user">
-    <li *ngIf="user.preferred_username !== 'ANONYMOUS'" class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-user fa-fw"></i>
-        <span *ngIf="user.name">{{user.name}}</span>
-        <span *ngIf="!user.name">{{user?.preferred_username}}</span>
-        <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-user">
-        <li>
-          <a [routerLink]="['/usersettings']">
-            <i class="fa fa-user fa-fw"></i>
-            User Settings
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="javascript:void(0)" (click)="logOut()">
-            <i class="fa fa-sign-out fa-fw"></i>
-            Logout
-          </a>
-        </li>
-      </ul><!-- /.dropdown-user -->
-    </li><!-- /.dropdown -->
-  </ng-container>
-</ul><!-- /.navbar-top-links -->
+  @if ((userObs | async); as user) {
+    @if (user.preferred_username !== 'ANONYMOUS') {
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="fa fa-user fa-fw"></i>
+          @if (user.name) {
+            <span>{{user.name}}</span>
+          }
+          @if (!user.name) {
+            <span>{{user?.preferred_username}}</span>
+          }
+          <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-user">
+          <li>
+            <a [routerLink]="['/usersettings']">
+              <i class="fa fa-user fa-fw"></i>
+              User Settings
+            </a>
+          </li>
+          <li class="divider"></li>
+          <li>
+            <a href="javascript:void(0)" (click)="logOut()">
+              <i class="fa fa-sign-out fa-fw"></i>
+              Logout
+            </a>
+          </li>
+        </ul><!-- /.dropdown-user -->
+      </li>
+      }<!-- /.dropdown -->
+    }
+  </ul><!-- /.navbar-top-links -->

@@ -5,7 +5,9 @@
     {{title}}
 
     <div class="pull-right">
-      <small *ngIf="subTitle && subTitleCondition">{{subTitle}}</small>
+      @if (subTitle && subTitleCondition) {
+        <small>{{subTitle}}</small>
+      }
       <div class="btn-group" [class.hidden]="!showDropDown">
         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
           {{dropDownLabel}}
@@ -16,10 +18,16 @@
         </ul>
       </div>
 
-      <button class="btn btn-default btn-xs collapse-toggle" (click)="collapseBody = !collapseBody" role="button" *ngIf="collapsable">
-        <i class="fa fa-compress fa-fw" *ngIf="!collapseBody" title="Hide content"></i>
-        <i class="fa fa-expand fa-fw" *ngIf="collapseBody" title="Show content"></i>
-      </button>
+      @if (collapsable) {
+        <button class="btn btn-default btn-xs collapse-toggle" (click)="collapseBody = !collapseBody" role="button">
+          @if (!collapseBody) {
+            <i class="fa fa-compress fa-fw" title="Hide content"></i>
+          }
+          @if (collapseBody) {
+            <i class="fa fa-expand fa-fw" title="Show content"></i>
+          }
+        </button>
+      }
     </div>
 
   </div>

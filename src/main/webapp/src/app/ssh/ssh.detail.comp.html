@@ -1,14 +1,18 @@
 <cc-title [title]="'SSH Key Detail'"></cc-title>
 
-<div *ngIf="!key" class="alert alert-danger">
-  No SSH Key of '{{owner}}' was found!
-</div>
-
-<div *ngIf="key" class="row">
-  <div class="col-md-12">
-    <cc-panel [icon]="'fa-key'" [title]="'Edit SSH Key'">
-      <app-ssh-edit cc-panel-body [key]="key" [templateNames]="templateNames" (onSave)="saveKey($event)" (onCancel)="cancelEdit()">
-      </app-ssh-edit>
-    </cc-panel>
+@if (!key) {
+  <div class="alert alert-danger">
+    No SSH Key of '{{owner}}' was found!
   </div>
-</div>
+}
+
+@if (key) {
+  <div class="row">
+    <div class="col-md-12">
+      <cc-panel [icon]="'fa-key'" [title]="'Edit SSH Key'">
+        <app-ssh-edit cc-panel-body [key]="key" [templateNames]="templateNames" (onSave)="saveKey($event)" (onCancel)="cancelEdit()">
+        </app-ssh-edit>
+      </cc-panel>
+    </div>
+  </div>
+}

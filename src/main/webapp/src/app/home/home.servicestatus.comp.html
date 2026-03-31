@@ -1,43 +1,57 @@
 <cc-panel [title]="'Service Status'" icon="fa-flask" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="!!lastUpdate">
-  <ng-container *ngIf="(servicesObs | async) as services; else loading" cc-panel-body>
-    <div class="alert alert-warning" *ngIf="services?.length < 1" >
-      No services found!
-    </div>
-
-    <div *ngIf="services?.length > 0" class="table-responsive">
-      <table class="table table-striped table-hover dataTable" >
-        <thead>
-        <tr>
-          <th class="sorting_asc" style="width: 30%">Name</th>
-          <th class="text-right sorting"># Providing Packages</th>
-          <th class="text-right sorting"># Templates</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let service of services" (dblclick)="onServiceClicked.emit(service.name)"
-            [class.warning]="!service.templates || service.templates.length < 1"
-            [class.danger]="!service.packages || service.packages.length < 1">
-          <td>
-            {{service.name}}
-          </td>
-          <td class="text-right">
-            <span *ngIf="service.packages">{{service.packages.length}}</span>
-            <span *ngIf="!service.packages">0</span>
-          </td>
-          <td class="text-right">
-            <span *ngIf="service.templates">{{service.templates.length}}</span>
-            <span *ngIf="!service.templates">0</span>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </ng-container>
-
-  <ng-template #loading>
+  @if ((servicesObs | async); as services) {
+    <ng-container cc-panel-body>
+      @if (services?.length < 1) {
+        <div class="alert alert-warning" >
+          No services found!
+        </div>
+      }
+      @if (services?.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-striped table-hover dataTable" >
+            <thead>
+              <tr>
+                <th class="sorting_asc" style="width: 30%">Name</th>
+                <th class="text-right sorting"># Providing Packages</th>
+                <th class="text-right sorting"># Templates</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (service of services; track service) {
+                <tr (dblclick)="onServiceClicked.emit(service.name)"
+                  [class.warning]="!service.templates || service.templates.length < 1"
+                  [class.danger]="!service.packages || service.packages.length < 1">
+                  <td>
+                    {{service.name}}
+                  </td>
+                  <td class="text-right">
+                    @if (service.packages) {
+                      <span>{{service.packages.length}}</span>
+                    }
+                    @if (!service.packages) {
+                      <span>0</span>
+                    }
+                  </td>
+                  <td class="text-right">
+                    @if (service.templates) {
+                      <span>{{service.templates.length}}</span>
+                    }
+                    @if (!service.templates) {
+                      <span>0</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </ng-container>
+  } @else {
     <div class="alert alert-info">
       <i class="fa fa-spinner fa-pulse fa-fw"></i>
       Loading services...
     </div>
-  </ng-template>
+  }
+
 </cc-panel>

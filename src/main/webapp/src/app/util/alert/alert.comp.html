@@ -1,8 +1,10 @@
 <div class=" allert-container" [@alertAnim]="alerts.length">
-  <div *ngFor="let alert of alerts" class="alert alert-{{alert?.type}} alert-dismissible">
-    <button type="button" class="close" aria-label="Close" (click)="removeAlert(alert)">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    {{alert?.msg}}
-  </div>
+  @for (alert of alerts; track alert) {
+    <div class="alert alert-{{alert?.type}} alert-dismissible">
+      <button type="button" class="close" aria-label="Close" (click)="removeAlert(alert)">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {{alert?.msg}}
+    </div>
+  }
 </div>

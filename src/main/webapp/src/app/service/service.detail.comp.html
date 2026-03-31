@@ -7,17 +7,21 @@
         <div class="form-group" [ngClass]="{ 'has-error': !serviceForm.controls.name.pristine && !serviceForm.controls.name.valid }">
           <label class="control-label" for="name">Name</label>
           <input type="text" class="form-control" formControlName="name" id="name" [readOnly]="mode === 'edit'">
-          <span *ngIf="!serviceForm.controls.name.pristine && !serviceForm.controls.name.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!serviceForm.controls.name.pristine && !serviceForm.controls.name.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group" [ngClass]="{ 'has-error': !serviceForm.controls.initScript.pristine && !serviceForm.controls.initScript.valid }">
           <label class="control-label" for="script">Start-Script name</label>
           <input type="text" class="form-control" formControlName="initScript" id="script">
-          <span *ngIf="!serviceForm.controls.initScript.pristine && !serviceForm.controls.initScript.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!serviceForm.controls.initScript.pristine && !serviceForm.controls.initScript.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group">
@@ -42,100 +46,113 @@
     <cc-panel [title]="'Provided by'" icon="fa-book" [collapsable]="true">
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
-        <tr>
-          <th class="sorting_asc">Package-Name</th>
-          <th style="width: 15px"></th>
-          <th style="width: 15px"></th>
-        </tr>
+          <tr>
+            <th class="sorting_asc">Package-Name</th>
+            <th style="width: 15px"></th>
+            <th style="width: 15px"></th>
+          </tr>
         </thead>
 
         <tbody>
-        <tr *ngIf="!service.packages || service.packages.length <= 0" class="warning">
-          <td colspan="3" class="text-center">
-            This service is currently not provided by a package.
-          </td>
-        </tr>
-        <tr *ngFor="let pkg of service.packages" (dblclick)="gotoPackage(pkg)">
-          <td>
-            {{pkg}}
-          </td>
-          <td>
-            <a [routerLink]="['/package', pkg]" title="Show Package">
-              <i class="fa fa-external-link fa-fw"></i>
-            </a>
-          </td>
-          <td>
-            <a href="javascript:void(0)" mwlConfirmationPopover
-               [popoverTitle]="'Please verify!'"
-               [popoverMessage]="'Are you sure you want to remove the link to the package \'' + pkg + '\' from this service?'"
-               placement="left"
-               confirmButtonType="danger"
-               (confirm)="deletePackage(pkg)"
-               title="Delete package from service">
-              <i class="fa fa-trash-o fa-fw"></i>
-            </a>
-          </td>
-        </tr>
+          @if (!service.packages || service.packages.length <= 0) {
+            <tr class="warning">
+              <td colspan="3" class="text-center">
+                This service is currently not provided by a package.
+              </td>
+            </tr>
+          }
+          @for (pkg of service.packages; track pkg) {
+            <tr (dblclick)="gotoPackage(pkg)">
+              <td>
+                {{pkg}}
+              </td>
+              <td>
+                <a [routerLink]="['/package', pkg]" title="Show Package">
+                  <i class="fa fa-external-link fa-fw"></i>
+                </a>
+              </td>
+              <td>
+                <a href="javascript:void(0)" mwlConfirmationPopover
+                  [popoverTitle]="'Please verify!'"
+                  [popoverMessage]="'Are you sure you want to remove the link to the package \'' + pkg + '\' from this service?'"
+                  placement="left"
+                  confirmButtonType="danger"
+                  (confirm)="deletePackage(pkg)"
+                  title="Delete package from service">
+                  <i class="fa fa-trash-o fa-fw"></i>
+                </a>
+              </td>
+            </tr>
+          }
 
-        <tr *ngIf="showAddPackage">
-          <td colspan="3">
-            <div class="form-group">
-              <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a package providing
+          @if (showAddPackage) {
+            <tr>
+              <td colspan="3">
+                <div class="form-group">
+                  <label class="control-label" for="addpackage"><i class="fa fa-plus fa-fw"></i> Add a package providing
                 this service</label>
-              <select class="form-control" [(ngModel)]="newPackage" id="addpackage">
-                <option *ngFor="let pkg of allPackages" value="{{pkg.name}}">{{pkg.name}}</option>
-              </select>
-            </div>
+                <select class="form-control" [(ngModel)]="newPackage" id="addpackage">
+                  @for (pkg of allPackages; track pkg) {
+                    <option value="{{pkg.name}}">{{pkg.name}}</option>
+                  }
+                </select>
+              </div>
+              <div class="pull-right">
+                <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
+                <button (click)="saveNewPackage()" class="btn btn-success"
+                  [disabled]="!newPackage">Add
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
 
-            <div class="pull-right">
-              <button (click)="showAddPackage = false" class="btn btn-default">Cancel</button>
-              <button (click)="saveNewPackage()" class="btn btn-success"
-                      [disabled]="!newPackage">Add
-              </button>
-            </div>
-          </td>
-        </tr>
+        @if (!showAddPackage) {
+          <tr (click)="goToAddPackage()">
+            <td colspan="3" role="button">
+              <i class="fa fa-plus fa-fw"></i>
+              Add package providing this service
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </cc-panel>
+</div>
 
-        <tr *ngIf="!showAddPackage" (click)="goToAddPackage()">
-          <td colspan="3" role="button">
-            <i class="fa fa-plus fa-fw"></i>
-            Add package providing this service
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </cc-panel>
-  </div>
-
-  <div class="col-md-12 col-lg-6">
-    <cc-panel [title]="'Template references'" icon="fa-institution" [collapsable]="true">
-      <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
-        <thead>
+<div class="col-md-12 col-lg-6">
+  <cc-panel [title]="'Template references'" icon="fa-institution" [collapsable]="true">
+    <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
+      <thead>
         <tr>
           <th class="sorting_asc">Template</th>
           <th class="sorting">Package</th>
         </tr>
-        </thead>
+      </thead>
 
-        <tbody>
-        <tr *ngIf="!templateRefs || templateRefs.length <= 0" class="warning">
-          <td colspan="3" class="text-center">
-            This service is currently not used by any template.
-          </td>
-        </tr>
-        <tr *ngFor="let ref of templateRefs" (dblclick)="gotoTemplate(ref.template)">
-          <td>
-            {{ref.template}}
-            <a [routerLink]="['/template', ref.template]" title="Show Template">
-              <i class="fa fa-external-link fa-fw"></i>
-            </a>
-          </td>
-          <td class="word-break">
-            {{ref.pkg}}
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </cc-panel>
-  </div>
+      <tbody>
+        @if (!templateRefs || templateRefs.length <= 0) {
+          <tr class="warning">
+            <td colspan="3" class="text-center">
+              This service is currently not used by any template.
+            </td>
+          </tr>
+        }
+        @for (ref of templateRefs; track ref) {
+          <tr (dblclick)="gotoTemplate(ref.template)">
+            <td>
+              {{ref.template}}
+              <a [routerLink]="['/template', ref.template]" title="Show Template">
+                <i class="fa fa-external-link fa-fw"></i>
+              </a>
+            </td>
+            <td class="word-break">
+              {{ref.pkg}}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </cc-panel>
+</div>
 </div>

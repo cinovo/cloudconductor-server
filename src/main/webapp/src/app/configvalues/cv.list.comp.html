@@ -3,14 +3,16 @@
 <div class="row">
   <div class="col-md-12">
     <div class="form-group pull-right">
-      <button *ngIf="mayEdit" type="button" class="btn btn-default" mwlConfirmationPopover
-              [attr.title]="'Migrate global config'"
-              [popoverTitle]="'Please verify!'"
-              [popoverMessage]="'Are you sure you want to migrate global configurations?'"
-              confirmButtonType="warning"
-              (confirm)="migrateGlobalConfig()">
-        Migrate global config
-      </button>
+      @if (mayEdit) {
+        <button type="button" class="btn btn-default" mwlConfirmationPopover
+          [attr.title]="'Migrate global config'"
+          [popoverTitle]="'Please verify!'"
+          [popoverMessage]="'Are you sure you want to migrate global configurations?'"
+          confirmButtonType="warning"
+          (confirm)="migrateGlobalConfig()">
+          Migrate global config
+        </button>
+      }
       <a [routerLink]="['diff']" class="btn btn-default">
         <i class="fa fa-columns fa-fw"></i>
         Compare two config templates
@@ -29,35 +31,41 @@
 
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
-        <tr>
-          <th class="sorting_asc" width="100%">Template</th>
-          <th width="15px"></th>
-          <th width="15px"></th>
-          <th width="15px"></th>
-        </tr>
+          <tr>
+            <th class="sorting_asc" width="100%">Template</th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+            <th width="15px"></th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let template of templates" (dblclick)="gotoDetails(template)">
-          <td>{{template}}</td>
-          <td>
-            <a title="Preview config template" [routerLink]="['preview', template]"><i class="fa fa-eye fa-fw"></i></a>
-          </td>
-          <td>
-            <a title="Edit config template" [routerLink]="[template]"><i class="fa fa-edit fa-fw"></i></a>
-          </td>
-          <td>
-            <a *ngIf="mayEdit" href="javascript:void(0)" mwlConfirmationPopover
-               [attr.title]="'Delete template \'' + template + '\''"
-               [popoverTitle]="'Please verify!'"
-               [popoverMessage]="'Are you sure you want to delete the following template: '+ template + '?'"
-               placement="left"
-               confirmButtonType="danger"
-               (confirm)="deleteTemplate(template)">
-              <i class="fa fa-trash-o fa-fw"></i>
-            </a>
-            <i *ngIf="!mayEdit" class="fa fa-trash-o fa-fw"></i>
-          </td>
-        </tr>
+          @for (template of templates; track template) {
+            <tr (dblclick)="gotoDetails(template)">
+              <td>{{template}}</td>
+              <td>
+                <a title="Preview config template" [routerLink]="['preview', template]"><i class="fa fa-eye fa-fw"></i></a>
+              </td>
+              <td>
+                <a title="Edit config template" [routerLink]="[template]"><i class="fa fa-edit fa-fw"></i></a>
+              </td>
+              <td>
+                @if (mayEdit) {
+                  <a href="javascript:void(0)" mwlConfirmationPopover
+                    [attr.title]="'Delete template \'' + template + '\''"
+                    [popoverTitle]="'Please verify!'"
+                    [popoverMessage]="'Are you sure you want to delete the following template: '+ template + '?'"
+                    placement="left"
+                    confirmButtonType="danger"
+                    (confirm)="deleteTemplate(template)">
+                    <i class="fa fa-trash-o fa-fw"></i>
+                  </a>
+                }
+                @if (!mayEdit) {
+                  <i class="fa fa-trash-o fa-fw"></i>
+                }
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </cc-panel>
@@ -67,20 +75,22 @@
     <cc-panel [icon]="'fa-code-fork'" [title]="'Reserved config templates'">
       <table class="table-responsive table table-striped table-hover dataTable" cc-panel-body>
         <thead>
-        <tr>
-          <th class="sorting_asc" width="100%">Template</th>
-          <th width="15px"></th>
-        </tr>
+          <tr>
+            <th class="sorting_asc" width="100%">Template</th>
+            <th width="15px"></th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let template of reservedValues" (dblclick)="gotoDetails(template)">
-          <td>{{template}}</td>
-          <td>
-            <a title="Edit config template" [routerLink]="[template]">
-              <i class="fa fa-edit fa-fw"></i>
-            </a>
-          </td>
-        </tr>
+          @for (template of reservedValues; track template) {
+            <tr (dblclick)="gotoDetails(template)">
+              <td>{{template}}</td>
+              <td>
+                <a title="Edit config template" [routerLink]="[template]">
+                  <i class="fa fa-edit fa-fw"></i>
+                </a>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </cc-panel>
