@@ -1,5 +1,5 @@
-import { Component, inject, Input} from "@angular/core";
-import { DOCUMENT } from "@angular/common";
+import { Component, inject, Input, DOCUMENT } from "@angular/core";
+
 
 /**
  * Copyright 2017 Cinovo AG<br>

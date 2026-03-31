@@ -14,26 +14,32 @@
       <div class="col-md-12">
         <cc-panel [title]="'Hosts'" icon="fa-laptop" [collapsable]="true">
           <div cc-panel-body>
-            <div class="alert alert-warning" *ngIf="!currentTemplate.hosts || currentTemplate.hosts.length <= 0">
-              There are currently no host using this template.
-            </div>
-            <table *ngIf="currentTemplate.hosts && currentTemplate.hosts.length > 0" aria-label="Hosts using template"
-                   class="table-condensed table-responsive table table-striped table-hover dataTable">
-              <thead>
-              <tr>
-                <th class="sorting_asc">Host</th>
-                <th style="width: 15px"></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let host of currentTemplate.hosts">
-                <td>{{host.name}}</td>
-                <td>
-                  <a [routerLink]="['/host', host.uuid]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
-                </td>
-              </tr>
-              </tbody>
-            </table>
+            @if (!currentTemplate.hosts || currentTemplate.hosts.length <= 0) {
+              <div class="alert alert-warning">
+                There are currently no host using this template.
+              </div>
+            }
+            @if (currentTemplate.hosts && currentTemplate.hosts.length > 0) {
+              <table aria-label="Hosts using template"
+                class="table-condensed table-responsive table table-striped table-hover dataTable">
+                <thead>
+                  <tr>
+                    <th class="sorting_asc">Host</th>
+                    <th style="width: 15px"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (host of currentTemplate.hosts; track host) {
+                    <tr>
+                      <td>{{host.name}}</td>
+                      <td>
+                        <a [routerLink]="['/host', host.uuid]"><i class="fa fa-external-link fa-fw" title="Jump to host"></i></a>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
           </div>
         </cc-panel>
       </div>

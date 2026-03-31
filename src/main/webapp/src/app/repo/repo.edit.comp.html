@@ -1,5 +1,9 @@
-<cc-title [title]="'Repository Details'" titleIcon="fa-server" *ngIf="mode == 'edit'" [subtitle]="repo.name"></cc-title>
-<cc-title [title]="'New Repository'" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
+@if (mode == 'edit') {
+  <cc-title [title]="'Repository Details'" titleIcon="fa-server" [subtitle]="repo.name"></cc-title>
+}
+@if (mode == 'new') {
+  <cc-title [title]="'New Repository'" titleIcon="fa-server"></cc-title>
+}
 
 <div class="row">
   <div class="col-lg-8">
@@ -8,58 +12,69 @@
         <div class="form-group" [ngClass]="{ 'has-error': !repoForm.controls.name.pristine && !repoForm.controls.name.valid }">
           <label class="control-label" for="reponame">Repository Name</label>
           <input type="text" class="form-control" formControlName="name" id="reponame">
-          <span *ngIf="!repoForm.controls.name.pristine && !repoForm.controls.name.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!repoForm.controls.name.pristine && !repoForm.controls.name.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="space-20"></div>
 
-        <cc-panel *ngIf="repoForm.controls.name.valid" [title]="'Mirrors'" icon="fa-desktop">
-          <div class="table-responsive" cc-panel-body="">
-            <table class="table table-striped table-hover">
-              <tbody>
-              <tr *ngIf="!repo.mirrors || repo.mirrors.length <= 0" class="warning">
-                <td colspan="5" class="text-center">
-                  There are currently no mirrors defined.
-                </td>
-              </tr>
-              <tr *ngFor="let mirror of repo.mirrors"
-                  [class.info]="mirror.id == repo.primaryMirror"
-                  (dblclick)="editMirror(mirror.id)">
-                <td width="30px">
-                  <i class="fa fa-desktop fa-fw"></i>
-                </td>
-                <td *ngIf="mirror.id === repo.primaryMirror" width="30px"><i class="fa fa-check fa-fw"
-                                                                             title="Primary mirror"></i></td>
-                <td *ngIf="mirror.id !== repo.primaryMirror" width="30px">
-                  <input type="radio" name="primaryMirror" (click)="setPrimary(mirror.id)"
-                         title="Set as primary mirror">
-                </td>
-                <td>
-                  {{mirror.description}} -- {{mirror.path}}
-                  <a title="Go to Mirror" target="_blank" [href]="mirror.path"><i class="fa fa-external-link fa-fw"></i></a>
-                </td>
-                <td width="30px">
-                  <a role="button" title="Edit Mirror" (click)="editMirror(mirror.id)">
-                    <i class="fa fa-edit fa-fw"></i>
-                  </a>
-                </td>
-                <td width="30px">
-                  <a role="button" title="Delete Mirror" (click)="deleteMirror(mirror.id)">
-                    <i class="fa fa-trash-o fa-fw"></i>
-                  </a>
-                </td>
-              </tr>
-
-              <tr (click)="addMirror()" role="button">
-                <td width="30px"><i class="fa fa-plus fa-fw"></i></td>
-                <td colspan="4">Add new Mirror</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </cc-panel>
+        @if (repoForm.controls.name.valid) {
+          <cc-panel [title]="'Mirrors'" icon="fa-desktop">
+            <div class="table-responsive" cc-panel-body="">
+              <table class="table table-striped table-hover">
+                <tbody>
+                  @if (!repo.mirrors || repo.mirrors.length <= 0) {
+                    <tr class="warning">
+                      <td colspan="5" class="text-center">
+                        There are currently no mirrors defined.
+                      </td>
+                    </tr>
+                  }
+                  @for (mirror of repo.mirrors; track mirror) {
+                    <tr
+                      [class.info]="mirror.id == repo.primaryMirror"
+                      (dblclick)="editMirror(mirror.id)">
+                      <td width="30px">
+                        <i class="fa fa-desktop fa-fw"></i>
+                      </td>
+                      @if (mirror.id === repo.primaryMirror) {
+                        <td width="30px"><i class="fa fa-check fa-fw"
+                        title="Primary mirror"></i></td>
+                      }
+                      @if (mirror.id !== repo.primaryMirror) {
+                        <td width="30px">
+                          <input type="radio" name="primaryMirror" (click)="setPrimary(mirror.id)"
+                            title="Set as primary mirror">
+                        </td>
+                      }
+                      <td>
+                        {{mirror.description}} -- {{mirror.path}}
+                        <a title="Go to Mirror" target="_blank" [href]="mirror.path"><i class="fa fa-external-link fa-fw"></i></a>
+                      </td>
+                      <td width="30px">
+                        <a role="button" title="Edit Mirror" (click)="editMirror(mirror.id)">
+                          <i class="fa fa-edit fa-fw"></i>
+                        </a>
+                      </td>
+                      <td width="30px">
+                        <a role="button" title="Delete Mirror" (click)="deleteMirror(mirror.id)">
+                          <i class="fa fa-trash-o fa-fw"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  }
+                  <tr (click)="addMirror()" role="button">
+                    <td width="30px"><i class="fa fa-plus fa-fw"></i></td>
+                    <td colspan="4">Add new Mirror</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </cc-panel>
+        }
 
         <div class="pull-right">
           <button type="button" class="btn btn-default" (click)="goBack()">
@@ -75,48 +90,53 @@
 
   <div class="col-lg-4">
     <cc-panel [title]="'Provided packages'" icon="fa-server"
-              subTitle="last indexed: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm:ss'}}"
-              [subTitleCondition]="!!(repo.lastIndex)" [collapsable]="true">
+      subTitle="last indexed: {{repo.lastIndex | date:'dd.MM.yyyy HH:mm:ss'}}"
+      [subTitleCondition]="!!(repo.lastIndex)" [collapsable]="true">
       <li cc-panel-dropdown>
         <a href="javascript:void(0)" mwlConfirmationPopover
-           [popoverTitle]="'Please verify!'"
-           [popoverMessage]="'Are you sure you want to force an update on this repository: <strong>'+ repo.name+'</strong>?'"
-           confirmButtonType="warning"
-           (confirm)="forceReindex()"
-           [appendToBody]="true">
+          [popoverTitle]="'Please verify!'"
+          [popoverMessage]="'Are you sure you want to force an update on this repository: <strong>'+ repo.name+'</strong>?'"
+          confirmButtonType="warning"
+          (confirm)="forceReindex()"
+          [appendToBody]="true">
           Force a repo update
         </a>
       </li>
       <div cc-panel-body>
-        <div class="alert alert-warning" role="alert" *ngIf="packages.length < 1">
-          There are currently no packages provided, these will be added with the next repo scan.
-        </div>
+        @if (packages.length < 1) {
+          <div class="alert alert-warning" role="alert">
+            There are currently no packages provided, these will be added with the next repo scan.
+          </div>
+        }
 
-        <table class="table-responsive table table-striped table-hover dataTable" *ngIf="packages.length > 0">
-          <thead>
-          <tr>
-            <th class="sorting_asc" width="30%">Package</th>
-            <th class="sorting">Version</th>
-            <th width="15px"></th>
-          </tr>
-          </thead>
-
-          <tbody>
-          <tr *ngFor="let pkg of packages" (dblclick)="gotToPackage(pkg)">
-            <td>
-              {{pkg.name}}
-            </td>
-            <td>
-              {{pkg.version}}
-            </td>
-            <td>
-              <a [routerLink]="['/package', pkg.name]" title="Show Package">
-                <i class="fa fa-external-link fa-fw"></i>
-              </a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        @if (packages.length > 0) {
+          <table class="table-responsive table table-striped table-hover dataTable">
+            <thead>
+              <tr>
+                <th class="sorting_asc" width="30%">Package</th>
+                <th class="sorting">Version</th>
+                <th width="15px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pkg of packages; track pkg) {
+                <tr (dblclick)="gotToPackage(pkg)">
+                  <td>
+                    {{pkg.name}}
+                  </td>
+                  <td>
+                    {{pkg.version}}
+                  </td>
+                  <td>
+                    <a [routerLink]="['/package', pkg.name]" title="Show Package">
+                      <i class="fa fa-external-link fa-fw"></i>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
       </div>
     </cc-panel>
   </div>

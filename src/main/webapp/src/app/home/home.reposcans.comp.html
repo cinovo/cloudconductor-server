@@ -1,40 +1,54 @@
 <cc-panel [title]="'Repository Scans'" icon="fa-server" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}" [subTitleCondition]="!!lastUpdate">
-  <ng-container *ngIf="(reposObs | async) as repos; else loading" cc-panel-body>
-    <div class="alert alert-warning" *ngIf="repos?.length < 1">
-      No repository scans!
-    </div>
-
-    <table class="table-responsive table table-striped table-hover dataTable" *ngIf="repos?.length > 0">
-      <thead>
-      <tr>
-        <th class="sorting" style="width: 50%">Name</th>
-        <th class="text-right sorting_asc" style="width: 50%">Last Indexed</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let repo of repos" (dblclick)="onRepoClicked.emit(repo.name)"
-        [class.success]="!repoScans.isDue(repo)"
-        [class.warning]="repoScans.isDue(repo)"
-        [class.danger]="repoScans.isPastDue(repo)">
-        <td>
-          <i class="fa fa-check-circle fa-fw text-success" *ngIf="!repoScans.isDue(repo) && !repoScans.isPastDue(repo)" title="Repository is up to date"></i>
-          <i class="fa fa-exclamation-triangle fa-fw text-warning" *ngIf="repoScans.isDue(repo) && !repoScans.isPastDue(repo)" title="Repository is due for scanning"></i>
-          <i class="fa fa-exclamation-circle fa-fw text-danger" *ngIf="repoScans.isPastDue(repo)" title="Repository is past due for scanning"></i>
-          {{repo.name}}
-        </td>
-        <td class="text-right">
-          <span *ngIf="!repo.lastIndex">Never</span>
-          <span *ngIf="repo.lastIndex">{{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}</span>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </ng-container>
-
-  <ng-template #loading>
+  @if ((reposObs | async); as repos) {
+    <ng-container cc-panel-body>
+      @if (repos?.length < 1) {
+        <div class="alert alert-warning">
+          No repository scans!
+        </div>
+      }
+      @if (repos?.length > 0) {
+        <table class="table-responsive table table-striped table-hover dataTable">
+          <thead>
+            <tr>
+              <th class="sorting" style="width: 50%">Name</th>
+              <th class="text-right sorting_asc" style="width: 50%">Last Indexed</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (repo of repos; track repo) {
+              <tr (dblclick)="onRepoClicked.emit(repo.name)"
+                [class.success]="!repoScans.isDue(repo)"
+                [class.warning]="repoScans.isDue(repo)"
+                [class.danger]="repoScans.isPastDue(repo)">
+                <td>
+                  @if (!repoScans.isDue(repo) && !repoScans.isPastDue(repo)) {
+                    <i class="fa fa-check-circle fa-fw text-success" title="Repository is up to date"></i>
+                  } @else if (repoScans.isDue(repo) && !repoScans.isPastDue(repo)) {
+                    <i class="fa fa-exclamation-triangle fa-fw text-warning" title="Repository is due for scanning"></i>
+                  } @else {
+                    <i class="fa fa-exclamation-circle fa-fw text-danger" title="Repository is past due for scanning"></i>
+                  }
+                  {{repo.name}}
+                </td>
+                <td class="text-right">
+                  @if (!repo.lastIndex) {
+                    <span>Never</span>
+                  }
+                  @if (repo.lastIndex) {
+                    <span>{{repo.lastIndex | date: 'dd.MM.yyyy HH:mm'}}</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </ng-container>
+  } @else {
     <div class="alert alert-info">
       <i class="fa fa-spinner fa-pulse fa-fw"></i>
       Loading repository scans...
     </div>
-  </ng-template>
+  }
+
 </cc-panel>

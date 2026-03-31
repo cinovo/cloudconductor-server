@@ -1,6 +1,6 @@
 <div class="panel" [class.panel-primary]="!minValue"
-                    [class.panel-yellow]="minValue && number < minValue"
-                    [class.panel-green]="minValue && number >= minValue">
+  [class.panel-yellow]="minValue && number < minValue"
+  [class.panel-green]="minValue && number >= minValue">
   <div class="panel-heading">
     <div class="row">
       <div class="col-xs-3">
@@ -12,13 +12,15 @@
       </div>
     </div>
   </div>
-  <a *ngIf="detailLink" [routerLink]="['/' + detailLink]">
-    <div class="panel-footer">
-      <span class="pull-left">View Details</span>
-      <span class="pull-right">
-        <i class="fa fa-arrow-circle-right"></i>
-      </span>
-      <div class="clearfix"></div>
-    </div>
-  </a>
+  @if (detailLink) {
+    <a [routerLink]="['/' + detailLink]">
+      <div class="panel-footer">
+        <span class="pull-left">View Details</span>
+        <span class="pull-right">
+          <i class="fa fa-arrow-circle-right"></i>
+        </span>
+        <div class="clearfix"></div>
+      </div>
+    </a>
+  }
 </div>

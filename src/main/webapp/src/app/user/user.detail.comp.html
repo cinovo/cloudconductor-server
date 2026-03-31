@@ -1,14 +1,16 @@
 <cc-title [title]="'User Details'" titleIcon="fa-user" [subtitle]="(user$ | async)?.loginName">
-  <a cc-subtitle-addition *ngIf="mode === modes.EDIT" href="javascript:void(0)" mwlConfirmationPopover
-    title="Delete user"
-    [popoverTitle]="'Please verify!'"
-    [placement]="'right'"
-    [popoverMessage]="'Are you sure you want to delete the user \'' + loginName + '\'?'"
-    confirmButtonType="danger"
-    (confirm)="deleteUser()"
-    [appendToBody]="true">
-    <i class="fa fa-trash-o fa-fw"></i>
-  </a>
+  @if (mode === modes.EDIT) {
+    <a cc-subtitle-addition href="javascript:void(0)" mwlConfirmationPopover
+      title="Delete user"
+      [popoverTitle]="'Please verify!'"
+      [placement]="'right'"
+      [popoverMessage]="'Are you sure you want to delete the user \'' + loginName + '\'?'"
+      confirmButtonType="danger"
+      (confirm)="deleteUser()"
+      [appendToBody]="true">
+      <i class="fa fa-trash-o fa-fw"></i>
+    </a>
+  }
 </cc-title>
 
 <div class="row">

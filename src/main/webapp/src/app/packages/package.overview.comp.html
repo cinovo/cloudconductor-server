@@ -6,87 +6,98 @@
   </div>
 </div>
 
-<div class="row" *ngIf="!packagesLoaded">
-  <div class="col-sm-12">
-    <div class="alert alert-info">
-      <i class="fa fa-spinner fa-pulse fa-fw"></i>
-      Loading packages...
+@if (!packagesLoaded) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-info">
+        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        Loading packages...
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div class="row" *ngIf="packagesLoaded && packages.length < 1">
-  <div class="col-sm-12">
-    <div class="alert alert-warning" role="alert">
-      No packages found
+@if (packagesLoaded && packages.length < 1) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning" role="alert">
+        No packages found
+      </div>
     </div>
   </div>
-</div>
+}
 
-<div class="row" *ngIf="packages && packages.length > 0">
-  <div class="col-md-12">
-    <cc-panel [title]="'All available packages'" icon="fa-book">
-      <ng-container cc-panel-body>
-        <div *ngIf="page > 0" class="row">
-          <div class="col-md-4">
-            <div class="form-inline">
-              <label>Show</label>
-              <select class="form-control" [(ngModel)]="limit" id="labelquery">
-                <option *ngFor="let l of limits" value="{{l}}">{{l}}</option>
-              </select>
-              <label>packages per page</label>
+@if (packages && packages.length > 0) {
+  <div class="row">
+    <div class="col-md-12">
+      <cc-panel [title]="'All available packages'" icon="fa-book">
+        <ng-container cc-panel-body>
+          @if (page > 0) {
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-inline">
+                  <label>Show</label>
+                  <select class="form-control" [(ngModel)]="limit" id="labelquery">
+                    @for (l of limits; track l) {
+                      <option value="{{l}}">{{l}}</option>
+                    }
+                  </select>
+                  <label>packages per page</label>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <cc-pagination [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
+              </div>
+            </div>
+          }
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table-responsive table table-striped table-hover dataTable">
+                <thead>
+                  <tr>
+                    <th class="sorting_asc" style="width: 30%">Package-Name</th>
+                    <th class="text-right sorting"># Versions</th>
+                    <th class="sorting">Oldest version</th>
+                    <th class="sorting">Latest version</th>
+                    <th style="width: 15px"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (pkg of packages; track pkg) {
+                    <tr (dblclick)="gotoDetails(pkg)">
+                      <td>
+                        {{pkg.name}}
+                      </td>
+                      <td class="text-right">
+                        {{pkg.versions.length}}
+                      </td>
+                      <td>
+                        {{pkg.versions[0]}}
+                      </td>
+                      <td>
+                        {{pkg.versions[pkg.versions.length - 1]}}
+                      </td>
+                      <td>
+                        <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
           </div>
-          <div class="col-md-8">
-            <cc-pagination [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <table class="table-responsive table table-striped table-hover dataTable">
-              <thead>
-              <tr>
-                <th class="sorting_asc" style="width: 30%">Package-Name</th>
-                <th class="text-right sorting"># Versions</th>
-                <th class="sorting">Oldest version</th>
-                <th class="sorting">Latest version</th>
-                <th style="width: 15px"></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let pkg of packages" (dblclick)="gotoDetails(pkg)">
-                <td>
-                  {{pkg.name}}
-                </td>
-                <td class="text-right">
-                  {{pkg.versions.length}}
-                </td>
-                <td>
-                  {{pkg.versions[0]}}
-                </td>
-                <td>
-                  {{pkg.versions[pkg.versions.length - 1]}}
-                </td>
-                <td>
-                  <a title="Show Details" [routerLink]="[pkg.name]"><i class="fa fa-edit fa-fw"></i></a>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div *ngIf="page > 0" class="row">
-            <div class="col-md-6">
-              <cc-pagination-info [start]="start" [end]="end" [totalCount]="totalPackageCount"></cc-pagination-info>
+          @if (page > 0) {
+            <div class="row">
+              <div class="col-md-6">
+                <cc-pagination-info [start]="start" [end]="end" [totalCount]="totalPackageCount"></cc-pagination-info>
+              </div>
+              <div class="col-md-6">
+                <cc-pagination  [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
+              </div>
             </div>
-            <div class="col-md-6">
-              <cc-pagination  [pageCount]="pageCount" [pages]="pages" [currentPage]="page"></cc-pagination>
-            </div>
-        </div>
-
-      </ng-container>
-    </cc-panel>
+          }
+        </ng-container>
+      </cc-panel>
+    </div>
   </div>
-</div>
+}

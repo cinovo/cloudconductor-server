@@ -1,45 +1,55 @@
 <cc-panel [title]="'Host Status'" icon="fa-laptop" subTitle="last update: {{ lastUpdate | date:'dd.MM.yyyy HH:mm'}}"
-          [subTitleCondition]="!!lastUpdate">
-  <ng-container *ngIf="(hostsObs | async) as hosts; else loading" cc-panel-body>
-    <div class="alert alert-warning" *ngIf="hosts?.length < 1" cc-panel-body>
-      No hosts found!
-    </div>
-    <table *ngIf="hosts?.length > 0" class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts"  cc-panel-body>
-      <thead>
-      <tr>
-        <th class="sorting">Host</th>
-        <th class="sorting">Agent</th>
-        <th class="sorting">Template</th>
-        <th class="sorting_asc text-right">Last Seen</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let host of hosts" (dblclick)="onHostClicked.emit(host.uuid)"
-        [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
-        <td class="word-break">
-          <i class="fa fa-check-circle fa-fw text-success" *ngIf="hostsService.isAlive(host)" title="Host is available"></i>
-          <i class="fa fa-times-circle fa-fw text-danger" *ngIf="!hostsService.isAlive(host)" title="Host is unavailable"></i>
-          {{host.name}}
-        </td>
-        <td class="word-break">
-          {{host.agent}}
-        </td>
-        <td>
-          {{host.template}}
-        </td>
-        <td class="text-right">
-          {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </ng-container>
-
-  <ng-template #loading>
+  [subTitleCondition]="!!lastUpdate">
+  @if ((hostsObs | async); as hosts) {
+    <ng-container cc-panel-body>
+      @if (hosts?.length < 1) {
+        <div class="alert alert-warning" cc-panel-body>
+          No hosts found!
+        </div>
+      }
+      @if (hosts?.length > 0) {
+        <table class="table-responsive table table-striped table-hover dataTable" aria-label="List of hosts"  cc-panel-body>
+          <thead>
+            <tr>
+              <th class="sorting">Host</th>
+              <th class="sorting">Agent</th>
+              <th class="sorting">Template</th>
+              <th class="sorting_asc text-right">Last Seen</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (host of hosts; track host) {
+              <tr (dblclick)="onHostClicked.emit(host.uuid)"
+                [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
+                <td class="word-break">
+                  @if (hostsService.isAlive(host)) {
+                    <i class="fa fa-check-circle fa-fw text-success" title="Host is available"></i>
+                  } @else {
+                    <i class="fa fa-times-circle fa-fw text-danger" title="Host is unavailable"></i>
+                  }
+                  {{host.name}}
+                </td>
+                <td class="word-break">
+                  {{host.agent}}
+                </td>
+                <td>
+                  {{host.template}}
+                </td>
+                <td class="text-right">
+                  {{host.lastSeen | date:'dd.MM.yyyy HH:mm'}}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </ng-container>
+  } @else {
     <div class="alert alert-info">
       <i class="fa fa-spinner fa-pulse fa-fw"></i>
       Loading hosts...
     </div>
-  </ng-template>
+  }
+
 
 </cc-panel>

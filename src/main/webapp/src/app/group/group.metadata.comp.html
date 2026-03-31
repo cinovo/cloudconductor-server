@@ -4,9 +4,11 @@
       <div class="form-group" [ngClass]="{ 'has-error': !userGroupForm.controls.name.pristine && !userGroupForm.controls.name.valid}">
         <label for="name" class="control-label">Name</label>
         <input type="text" class="form-control" id="name" formControlName="name" [readOnly]="mode == modes.EDIT">
-        <span *ngIf="!userGroupForm.controls.name.pristine && !userGroupForm.controls.name.valid" class="help-block">
-          This field is required
-        </span>
+        @if (!userGroupForm.controls.name.pristine && !userGroupForm.controls.name.valid) {
+          <span class="help-block">
+            This field is required
+          </span>
+        }
       </div>
 
       <div class="form-group">

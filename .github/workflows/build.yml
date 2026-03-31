@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 18, 20 ]
+        node: [ 22 ]
     name: Build frontend with Node ${{ matrix.node }}
     defaults:
       run:
