@@ -22,6 +22,11 @@
               <tr (dblclick)="onHostClicked.emit(host.uuid)"
                 [class.success]="hostsService.isAlive(host)" [class.danger]="!hostsService.isAlive(host)">
                 <td class="word-break">
+                  @if (hostsService.isAlive(host)) {
+                    <i class="fa fa-check-circle fa-fw text-success" title="Host is available"></i>
+                  } @else {
+                    <i class="fa fa-times-circle fa-fw text-danger" title="Host is unavailable"></i>
+                  }
                   {{host.name}}
                 </td>
                 <td class="word-break">

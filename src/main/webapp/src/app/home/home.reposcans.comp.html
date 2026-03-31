@@ -21,6 +21,13 @@
                 [class.warning]="repoScans.isDue(repo)"
                 [class.danger]="repoScans.isPastDue(repo)">
                 <td>
+                  @if (!repoScans.isDue(repo) && !repoScans.isPastDue(repo)) {
+                    <i class="fa fa-check-circle fa-fw text-success" title="Repository is up to date"></i>
+                  } @else if (repoScans.isDue(repo) && !repoScans.isPastDue(repo)) {
+                    <i class="fa fa-exclamation-triangle fa-fw text-warning" title="Repository is due for scanning"></i>
+                  } @else {
+                    <i class="fa fa-exclamation-circle fa-fw text-danger" title="Repository is past due for scanning"></i>
+                  }
                   {{repo.name}}
                 </td>
                 <td class="text-right">
