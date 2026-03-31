@@ -20,96 +20,120 @@
   </div>
 </div>
 
-<div class="row" *ngIf="!filesLoaded">
-  <div class="col-sm-12">
-    <div class="alert alert-info">
-      <i class="fa fa-spinner fa-pulse fa-fw"></i>
-      Loading files and directories...
-    </div>
-  </div>
-</div>
-
-<div class="row" *ngIf="filesLoaded && (files | async).length < 1">
-  <div class="col-sm-12">
-    <div class="alert alert-warning">
-      No files or directories found
-    </div>
-  </div>
-</div>
-
-<div class="row" *ngIf="filesLoaded && (files | async)?.length > 0">
-  <div class="col-lg-12">
-    <cc-panel [title]="'All Files and Directories'" [icon]="'fa-file-text'">
-      <div class="table-responsive"  cc-panel-body>
-        <table class="table table-striped table-hover dataTable">
-          <thead>
-          <tr>
-            <th></th>
-            <th class="sorting_asc">Name</th>
-            <th class="sorting">Path</th>
-            <th class="sorting">Owner</th>
-            <th>File Mode</th>
-            <th>Is Template</th>
-            <th>Reloadable</th>
-            <th>Services</th>
-            <th>Templates</th>
-            <th width="15px"></th>
-            <th width="15px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let file of files | async" (dblclick)="gotoDetails(file)">
-            <td>
-              <i *ngIf="file.isDirectory" class="fa fa-folder-open fa-fw" title="Directory"></i>
-              <i *ngIf="!file.isDirectory" class="fa fa-file-text fa-fw" title="File"></i>
-            </td>
-            <td>{{ file.name }}</td>
-            <td>{{ file.targetPath }}</td>
-            <td>{{ file.owner }}:{{ file.group }} </td>
-            <td>{{ file.fileMode }}</td>
-            <td><input disabled type="checkbox" [checked]="file.isTemplate"></td>
-            <td><input disabled type="checkbox" [checked]="file.isReloadable"></td>
-            <td>
-              <span *ngIf="file?.dependentServices?.length < 1">None</span>
-              <ul *ngIf="file?.dependentServices?.length > 0">
-                <li *ngFor="let serviceName of file.dependentServices">
-                  {{ serviceName }}
-                </li>
-              </ul>
-            </td>
-            <td>
-              <span *ngIf="file?.templates?.length < 1">None</span>
-              <ul *ngIf="file?.templates?.length > 0">
-                <li *ngFor="let templateName of file.templates">{{ templateName }}</li>
-              </ul>
-            </td>
-            <td>
-              <a [routerLink]="['/files', file.name]">
-                <i class="fa fa-edit fa-fw" title="Edit"></i>
-              </a>
-            </td>
-            <td>
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                 [popoverTitle]="'Please verify!'"
-                 [popoverMessage]="'Are you sure you want to delete the file ' + file.name + '?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deleteFile(file)">
-                <i class="fa fa-trash-o fa-fw" title="Delete"></i>
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td role="button" [routerLink]="['new']">
-              <i class="fa fa-plus fa-fw"></i>
-            </td>
-            <td colspan="10" role="button" [routerLink]="['new']">
-              Create File or Directory
-            </td>
-          </tr>
-          </tbody>
-        </table>
+@if (!filesLoaded) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-info">
+        <i class="fa fa-spinner fa-pulse fa-fw"></i>
+        Loading files and directories...
       </div>
-    </cc-panel>
+    </div>
   </div>
-</div>
+}
+
+@if (filesLoaded && (files | async).length < 1) {
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="alert alert-warning">
+        No files or directories found
+      </div>
+    </div>
+  </div>
+}
+
+@if (filesLoaded && (files | async)?.length > 0) {
+  <div class="row">
+    <div class="col-lg-12">
+      <cc-panel [title]="'All Files and Directories'" [icon]="'fa-file-text'">
+        <div class="table-responsive"  cc-panel-body>
+          <table class="table table-striped table-hover dataTable">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="sorting_asc">Name</th>
+                <th class="sorting">Path</th>
+                <th class="sorting">Owner</th>
+                <th>File Mode</th>
+                <th>Is Template</th>
+                <th>Reloadable</th>
+                <th>Services</th>
+                <th>Templates</th>
+                <th width="15px"></th>
+                <th width="15px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (file of files | async; track file) {
+                <tr (dblclick)="gotoDetails(file)">
+                  <td>
+                    @if (file.isDirectory) {
+                      <i class="fa fa-folder-open fa-fw" title="Directory"></i>
+                    }
+                    @if (!file.isDirectory) {
+                      <i class="fa fa-file-text fa-fw" title="File"></i>
+                    }
+                  </td>
+                  <td>{{ file.name }}</td>
+                  <td>{{ file.targetPath }}</td>
+                  <td>{{ file.owner }}:{{ file.group }} </td>
+                  <td>{{ file.fileMode }}</td>
+                  <td><input disabled type="checkbox" [checked]="file.isTemplate"></td>
+                  <td><input disabled type="checkbox" [checked]="file.isReloadable"></td>
+                  <td>
+                    @if (file?.dependentServices?.length < 1) {
+                      <span>None</span>
+                    }
+                    @if (file?.dependentServices?.length > 0) {
+                      <ul>
+                        @for (serviceName of file.dependentServices; track serviceName) {
+                          <li>
+                            {{ serviceName }}
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </td>
+                  <td>
+                    @if (file?.templates?.length < 1) {
+                      <span>None</span>
+                    }
+                    @if (file?.templates?.length > 0) {
+                      <ul>
+                        @for (templateName of file.templates; track templateName) {
+                          <li>{{ templateName }}</li>
+                        }
+                      </ul>
+                    }
+                  </td>
+                  <td>
+                    <a [routerLink]="['/files', file.name]">
+                      <i class="fa fa-edit fa-fw" title="Edit"></i>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="javascript:void(0)" mwlConfirmationPopover
+                      [popoverTitle]="'Please verify!'"
+                      [popoverMessage]="'Are you sure you want to delete the file ' + file.name + '?'"
+                      placement="left"
+                      confirmButtonType="danger"
+                      (confirm)="deleteFile(file)">
+                      <i class="fa fa-trash-o fa-fw" title="Delete"></i>
+                    </a>
+                  </td>
+                </tr>
+              }
+              <tr>
+                <td role="button" [routerLink]="['new']">
+                  <i class="fa fa-plus fa-fw"></i>
+                </td>
+                <td colspan="10" role="button" [routerLink]="['new']">
+                  Create File or Directory
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </cc-panel>
+    </div>
+  </div>
+}

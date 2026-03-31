@@ -1,5 +1,9 @@
-<cc-title [title]="'Edit Repo-Mirror'" titleIcon="fa-server" *ngIf="mode == 'edit'"></cc-title>
-<cc-title [title]="'New Repo-Mirror'" titleIcon="fa-server" *ngIf="mode == 'new'"></cc-title>
+@if (mode == 'edit') {
+  <cc-title [title]="'Edit Repo-Mirror'" titleIcon="fa-server"></cc-title>
+}
+@if (mode == 'new') {
+  <cc-title [title]="'New Repo-Mirror'" titleIcon="fa-server"></cc-title>
+}
 
 <div class="row">
   <div class="col-md-12 col-lg-6">
@@ -10,17 +14,21 @@
         <div class="form-group" [ngClass]="{ 'has-error': !mirrorForm.controls.description.pristine && !mirrorForm.controls.description.valid }">
           <label class="control-label" for="description">Description</label>
           <input type="text" class="form-control" formControlName="description" id="description">
-          <span *ngIf="!mirrorForm.controls.description.pristine && !mirrorForm.controls.description.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!mirrorForm.controls.description.pristine && !mirrorForm.controls.description.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group" [ngClass]="{ 'has-error': !mirrorForm.controls.path.pristine && !mirrorForm.controls.path.valid }">
           <label class="control-label" for="path">Path</label>
           <input type="text" class="form-control" formControlName="path" id="path">
-          <span *ngIf="!mirrorForm.controls.path.pristine && !mirrorForm.controls.path.valid" class="help-block">
-            This field is required
-          </span>
+          @if (!mirrorForm.controls.path.pristine && !mirrorForm.controls.path.valid) {
+            <span class="help-block">
+              This field is required
+            </span>
+          }
         </div>
 
         <div class="form-group">
@@ -47,30 +55,38 @@
           </select>
         </div>
 
-        <div class="form-group" *ngIf="providerType === 'HTTP' || providerType === 'FILE'">
-          <label *ngIf="providerType === 'HTTP'" class="control-label" for="basepath">URL</label>
-          <label *ngIf="providerType === 'FILE'" class="control-label" for="basepath">File-Path</label>
-          <input type="text" class="form-control" formControlName="basePath" id="basepath">
-        </div>
+        @if (providerType === 'HTTP' || providerType === 'FILE') {
+          <div class="form-group">
+            @if (providerType === 'HTTP') {
+              <label class="control-label" for="basepath">URL</label>
+            }
+            @if (providerType === 'FILE') {
+              <label class="control-label" for="basepath">File-Path</label>
+            }
+            <input type="text" class="form-control" formControlName="basePath" id="basepath">
+          </div>
+        }
 
-        <div *ngIf="providerType === 'AWSS3'">
-          <div class="form-group">
-            <label class="control-label" for="s3bucketname">S3 Bucketname</label>
-            <input type="text" class="form-control" formControlName="bucketName" id="s3bucketname">
+        @if (providerType === 'AWSS3') {
+          <div>
+            <div class="form-group">
+              <label class="control-label" for="s3bucketname">S3 Bucketname</label>
+              <input type="text" class="form-control" formControlName="bucketName" id="s3bucketname">
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="s3region">AWS Region</label>
+              <input type="text" class="form-control" formControlName="awsRegion" id="s3region">
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="s3accesskey">S3 Access Key</label>
+              <input type="text" class="form-control" formControlName="accessKeyId" id="s3accesskey">
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="s3secret">S3 Secret Key</label>
+              <input type="text" class="form-control" formControlName="secretKey" id="s3secret">
+            </div>
           </div>
-          <div class="form-group">
-            <label class="control-label" for="s3region">AWS Region</label>
-            <input type="text" class="form-control" formControlName="awsRegion" id="s3region">
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="s3accesskey">S3 Access Key</label>
-            <input type="text" class="form-control" formControlName="accessKeyId" id="s3accesskey">
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="s3secret">S3 Secret Key</label>
-            <input type="text" class="form-control" formControlName="secretKey" id="s3secret">
-          </div>
-        </div>
+        }
         <div class="pull-right">
           <button type="button" (click)="goBack()" class="btn btn-default">
             Back

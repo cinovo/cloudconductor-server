@@ -19,9 +19,15 @@
   <div class="col-md-12">
     <cc-panel [title]="'Preview'" icon="fa-list-alt">
       <div cc-panel-body>
-        <pre *ngIf="preview && preview !== null && modeQuery === modes[0]">{{ preview | json }}</pre>
-        <pre *ngIf="preview && modeQuery !== modes[0]">{{ preview }}</pre>
-        <div class="alert alert-warning" *ngIf="!preview">Nothing found</div>
+        @if (preview && preview !== null && modeQuery === modes[0]) {
+          <pre>{{ preview | json }}</pre>
+        }
+        @if (preview && modeQuery !== modes[0]) {
+          <pre>{{ preview }}</pre>
+        }
+        @if (!preview) {
+          <div class="alert alert-warning">Nothing found</div>
+        }
       </div>
     </cc-panel>
   </div>

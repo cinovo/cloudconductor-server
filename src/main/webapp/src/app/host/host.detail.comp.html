@@ -37,7 +37,9 @@
                 </a>
               </label>
               <select class="form-control" id="template" [(ngModel)]="host.template" (ngModelChange)="templateChanged = true">
-                <option *ngFor="let template of templates" value="{{template}}">{{template}}</option>
+                @for (template of templates; track template) {
+                  <option value="{{template}}">{{template}}</option>
+                }
               </select>
             </div>
             <div class="text-right">

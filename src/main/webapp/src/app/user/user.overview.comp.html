@@ -15,69 +15,91 @@
   </div>
 </div>
 
-<div *ngIf="(users$ | async) as users" class="row">
-  <div class="col-sm-12">
-    <div *ngIf="!users || users.length < 1" class="alert alert-warning">
-      No users found
+@if ((users$ | async); as users) {
+  <div class="row">
+    <div class="col-sm-12">
+      @if (!users || users.length < 1) {
+        <div class="alert alert-warning">
+          No users found
+        </div>
+      }
+      @if (users && users.length > 0) {
+        <cc-panel [title]="'Users'" icon="fa-user">
+          <div class="table-responsive" cc-panel-body>
+            <table class="table table-striped table-hover dataTable">
+              <thead>
+                <tr>
+                  <th style="width: 15px"></th>
+                  <th>Login</th>
+                  <th>Email</th>
+                  <th>Groups</th>
+                  <th class="text-right"># Agents</th>
+                  <th class="text-right"># Auth Tokens</th>
+                  <th style="width: 15px"></th>
+                  <th style="width: 15px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of users; track user) {
+                  <tr (dblclick)="goToDetails(user)">
+                    <td>
+                      @if (user.active) {
+                        <i class="fa fa-circle fa-fw" title="active"></i>
+                      }
+                      @if (!user.active) {
+                        <i class="fa fa-circle-o fa-fw" title="not active"></i>
+                      }
+                    </td>
+                    <td>{{user.loginName}}</td>
+                    <td>
+                      @if (user.email && user.email.length > 0) {
+                        <span>{{user.email}}</span>
+                      }
+                      @if (!user.email) {
+                        <span>None</span>
+                      }
+                    </td>
+                    @if (user && user.userGroups && user.userGroups.length > 0) {
+                      <td>
+                        @for (group of user.userGroups; track group) {
+                          <ul>
+                            <li>
+                              {{group}}
+                              <a [routerLink]="['/group', group]" title="Show Group">
+                                <i class="fa fa-external-link fa-fw"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        }
+                      </td>
+                    }
+                    @if (!user.userGroups || user.userGroups.length < 1) {
+                      <td>None</td>
+                    }
+                    <td class="text-right">{{user.agents.length}}</td>
+                    <td class="text-right">{{user.authTokens.length}}</td>
+                    <td>
+                      <a [routerLink]="['/user', user.loginName]">
+                        <i class="fa fa-edit fa-fw" title="Edit User"></i>
+                      </a>
+                    </td>
+                    <td>
+                      <a href="javascript:void(0)" mwlConfirmationPopover
+                        [popoverTitle]="'Please verify!'"
+                        [popoverMessage]="'Are you sure you want to delete the user \'' + user.loginName + '\'?'"
+                        placement="left"
+                        confirmButtonType="danger"
+                        (confirm)="deleteUser(user)">
+                        <i class="fa fa-trash-o fa-fw" title="Delete User"></i>
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </cc-panel>
+      }
     </div>
-    <cc-panel *ngIf="users && users.length > 0" [title]="'Users'" icon="fa-user">
-      <div class="table-responsive" cc-panel-body>
-        <table class="table table-striped table-hover dataTable">
-          <thead>
-          <tr>
-            <th style="width: 15px"></th>
-            <th>Login</th>
-            <th>Email</th>
-            <th>Groups</th>
-            <th class="text-right"># Agents</th>
-            <th class="text-right"># Auth Tokens</th>
-            <th style="width: 15px"></th>
-            <th style="width: 15px"></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let user of users" (dblclick)="goToDetails(user)">
-            <td>
-              <i *ngIf="user.active" class="fa fa-circle fa-fw" title="active"></i>
-              <i *ngIf="!user.active" class="fa fa-circle-o fa-fw" title="not active"></i>
-            </td>
-            <td>{{user.loginName}}</td>
-            <td>
-              <span *ngIf="user.email && user.email.length > 0">{{user.email}}</span>
-              <span *ngIf="!user.email">None</span>
-            </td>
-            <td *ngIf="user && user.userGroups && user.userGroups.length > 0">
-              <ul *ngFor="let group of user.userGroups">
-                <li>
-                  {{group}}
-                  <a [routerLink]="['/group', group]" title="Show Group">
-                    <i class="fa fa-external-link fa-fw"></i>
-                  </a>
-                </li>
-              </ul>
-            </td>
-            <td *ngIf="!user.userGroups || user.userGroups.length < 1">None</td>
-            <td class="text-right">{{user.agents.length}}</td>
-            <td class="text-right">{{user.authTokens.length}}</td>
-            <td>
-              <a [routerLink]="['/user', user.loginName]">
-                <i class="fa fa-edit fa-fw" title="Edit User"></i>
-              </a>
-            </td>
-            <td>
-              <a href="javascript:void(0)" mwlConfirmationPopover
-                 [popoverTitle]="'Please verify!'"
-                 [popoverMessage]="'Are you sure you want to delete the user \'' + user.loginName + '\'?'"
-                 placement="left"
-                 confirmButtonType="danger"
-                 (confirm)="deleteUser(user)">
-                <i class="fa fa-trash-o fa-fw" title="Delete User"></i>
-              </a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </cc-panel>
   </div>
-</div>
+}

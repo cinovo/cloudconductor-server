@@ -51,12 +51,16 @@
       <li>
         <a [routerLink]="['settings']" routerLinkActive="active"><i class="fa fa-gear fa-fw"></i> Settings</a>
       </li>
-      <li *ngIf="(links$ | async) as links">
-        <a role="button"><i class="fa fa-external-link fa-fw"></i> External Links<i class="fa arrow"></i></a>
-        <ul class="nav nav-second-level">
-          <li *ngFor="let link of links"><a href="{{link.url}}" target="_blank">{{link.label}}</a></li>
-        </ul>
-      </li>
+      @if ((links$ | async); as links) {
+        <li>
+          <a role="button"><i class="fa fa-external-link fa-fw"></i> External Links<i class="fa arrow"></i></a>
+          <ul class="nav nav-second-level">
+            @for (link of links; track link) {
+              <li><a href="{{link.url}}" target="_blank">{{link.label}}</a></li>
+            }
+          </ul>
+        </li>
+      }
     </ul>
   </div>
 </div>

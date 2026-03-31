@@ -1,14 +1,16 @@
 <cc-title [title]="'Group Details'" [titleIcon]="'fa-users'" [subtitle]="(group$ | async)?.name">
-  <a cc-subtitle-addition *ngIf="mode === modes.EDIT" href="javascript:void(0)" mwlConfirmationPopover
-    title="Delete group"
-    [popoverTitle]="'Please verify!'"
-    [placement]="'right'"
-    [popoverMessage]="'Are you sure you want to delete the user group \'' + groupName + '\'?'"
-    confirmButtonType="danger"
-    (confirm)="deleteGroup()"
-    [appendToBody]="true">
-    <i class="fa fa-trash-o fa-fw"></i>
-  </a>
+  @if (mode === modes.EDIT) {
+    <a cc-subtitle-addition href="javascript:void(0)" mwlConfirmationPopover
+      title="Delete group"
+      [popoverTitle]="'Please verify!'"
+      [placement]="'right'"
+      [popoverMessage]="'Are you sure you want to delete the user group \'' + groupName + '\'?'"
+      confirmButtonType="danger"
+      (confirm)="deleteGroup()"
+      [appendToBody]="true">
+      <i class="fa fa-trash-o fa-fw"></i>
+    </a>
+  }
 </cc-title>
 
 <div class="row">

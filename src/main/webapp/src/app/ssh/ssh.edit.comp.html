@@ -1,36 +1,44 @@
 <form [formGroup]="keyForm" novalidate (ngSubmit)="save(keyForm.value)">
   <div class="form-group" [ngClass]="{ 'has-error': !keyForm.controls.owner.pristine && !keyForm.controls.owner.valid }">
-      <label for="owner" class="control-label">Owner</label>
-      <input id="owner" type="text" class="form-control" formControlName="owner" placeholder="name@company" [readonly]="!isCreate">
-      <span *ngIf="!keyForm.controls.owner.pristine && !keyForm.controls.owner.valid" class="help-block">
+    <label for="owner" class="control-label">Owner</label>
+    <input id="owner" type="text" class="form-control" formControlName="owner" placeholder="name@company" [readonly]="!isCreate">
+    @if (!keyForm.controls.owner.pristine && !keyForm.controls.owner.valid) {
+      <span class="help-block">
         Please enter a valid email address of the owner.
       </span>
+    }
   </div>
 
   <div class="form-group" [ngClass]="{ 'has-error': !keyForm.controls.username.pristine && !keyForm.controls.username.valid }">
-      <label for="username" class="control-label">User</label>
-      <input id="username" type="text" class="form-control" formControlName="username">
-      <span *ngIf="!keyForm.controls.username.pristine && !keyForm.controls.username.valid" class="help-block">
-          This field is required.
-        </span>
+    <label for="username" class="control-label">User</label>
+    <input id="username" type="text" class="form-control" formControlName="username">
+    @if (!keyForm.controls.username.pristine && !keyForm.controls.username.valid) {
+      <span class="help-block">
+        This field is required.
+      </span>
+    }
   </div>
 
   <div class="form-group" [ngClass]="{ 'has-error': !keyForm.controls.key.pristine && !keyForm.controls.key.valid }">
-      <label class="control-label" for="key">Key</label>
-      <textarea id="key" class="form-control" formControlName="key" cols="30" rows="10">
-      </textarea>
-      <span *ngIf="!keyForm.controls.key.pristine && !keyForm.controls.key.valid" class="help-block">
+    <label class="control-label" for="key">Key</label>
+    <textarea id="key" class="form-control" formControlName="key" cols="30" rows="10">
+    </textarea>
+    @if (!keyForm.controls.key.pristine && !keyForm.controls.key.valid) {
+      <span class="help-block">
         This field is required.
       </span>
+    }
   </div>
 
   <div class="form-group">
-      <label for="templates" class="control-label">Templates</label>
-      <select id="templates" multiple class="form-control" formControlName="templates">
-        <option *ngFor="let templateName of templateNames | async" [ngValue]="templateName">
+    <label for="templates" class="control-label">Templates</label>
+    <select id="templates" multiple class="form-control" formControlName="templates">
+      @for (templateName of templateNames | async; track templateName) {
+        <option [ngValue]="templateName">
           {{ templateName }}
         </option>
-      </select>
+      }
+    </select>
   </div>
 
   <div class="pull-right">

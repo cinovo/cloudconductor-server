@@ -1,30 +1,40 @@
 <div class="form-group input-group">
   <label class="input-group-addon" for="labelquery">{{label}}</label>
 
-  <ng-template [ngIf]="mode === 'text' || mode === 'number'">
+  @if (mode === 'text' || mode === 'number') {
     <input [type]="mode" class="form-control" [(ngModel)]="query" id="labelquery" list="queryList">
-    <datalist id="queryList" *ngIf="data && data.length > 0">
-      <ng-template [ngIf]="dataField">
-        <option *ngFor="let elem of data" value="{{elem[dataField]}}"></option>
-      </ng-template>
-      <ng-template [ngIf]="!dataField">
-        <option *ngFor="let elem of data" value="{{elem}}"></option>
-      </ng-template>
-    </datalist>
-  </ng-template>
+    @if (data && data.length > 0) {
+      <datalist id="queryList">
+        @if (dataField) {
+          @for (elem of data; track elem) {
+            <option value="{{elem[dataField]}}"></option>
+          }
+        }
+        @if (!dataField) {
+          @for (elem of data; track elem) {
+            <option value="{{elem}}"></option>
+          }
+        }
+      </datalist>
+    }
+  }
 
-  <ng-template [ngIf]="mode === 'select'">
+  @if (mode === 'select') {
     <select class="form-control" [(ngModel)]="query" id="labelquery">
       <option [value]="''">None</option>
-      <ng-template [ngIf]="dataField">
-        <option *ngFor="let elem of data" value="{{elem[dataField]}}">
-          {{elem[dataField]}}
-        </option>
-      </ng-template>
-      <ng-template [ngIf]="!dataField">
-        <option *ngFor="let elem of data" value="{{elem}}">{{elem}}</option>
-      </ng-template>
+      @if (dataField) {
+        @for (elem of data; track elem) {
+          <option value="{{elem[dataField]}}">
+            {{elem[dataField]}}
+          </option>
+        }
+      }
+      @if (!dataField) {
+        @for (elem of data; track elem) {
+          <option value="{{elem}}">{{elem}}</option>
+        }
+      }
     </select>
-  </ng-template>
+  }
 
 </div>
