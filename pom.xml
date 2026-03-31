@@ -57,6 +57,7 @@
         <dvalin.version>1.38</dvalin.version>
         <cloudconductor.api.version>3.12</cloudconductor.api.version>
         <aws.version>1.12.793</aws.version>
+        <hikariCP.version>4.0.3</hikariCP.version>
         <junit.version>5.11.4</junit.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
     </properties>
@@ -115,6 +116,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikariCP.version}</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
