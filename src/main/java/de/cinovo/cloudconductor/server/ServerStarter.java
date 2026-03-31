@@ -20,6 +20,8 @@ import de.taimos.daemon.DaemonStarter;
 import de.taimos.daemon.LifecyclePhase;
 import de.taimos.daemon.log4j.Log4jDaemonProperties;
 import de.taimos.daemon.log4j.Log4jLoggingConfigurer;
+import de.taimos.daemon.properties.BestEffortPropertyProviderChain;
+import de.taimos.daemon.properties.EnvPropertyProvider;
 import de.taimos.daemon.properties.FilePropertyProvider;
 import de.taimos.daemon.properties.IPropertyProvider;
 import de.taimos.daemon.spring.Configuration;
@@ -90,7 +92,12 @@ public class ServerStarter extends DvalinLifecycleAdapter {
 
 	@Override
 	public IPropertyProvider getPropertyProvider() {
-		return new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES);
+		BestEffortPropertyProviderChain chain = new BestEffortPropertyProviderChain();
+		chain.withProvider(new FilePropertyProvider(ServerStarter.CLOUDCONDUCTOR_PROPERTIES));
+		if (EnvPropertyProvider.isConfigured()) {
+			chain.withProvider(new EnvPropertyProvider());
+		}
+		return chain;
 	}
 
 	@Override
