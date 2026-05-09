@@ -59,7 +59,7 @@
     "karma-coverage": "2.0.3",
     "karma-jasmine": "4.0.1",
     "karma-jasmine-html-reporter": "1.5.4",
-    "postcss": "8.5.6",
+    "postcss": "8.5.14",
     "ts-node": "3.0.6",
     "tsconfig-glob": "0.4.3",
     "typescript": "5.9.3",
